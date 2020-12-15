@@ -49,10 +49,13 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the JCE name of the Algorithm that should be used for the
          * signer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: SHA256withRSA
          * Group: producer
+         * 
+         * @param algorithm the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder algorithm(String algorithm) {
             doSetProperty("algorithm", algorithm);
@@ -65,9 +68,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * the message header
          * org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param alias the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder alias(String alias) {
             doSetProperty("alias", alias);
@@ -77,9 +83,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the reference name for a PrivateKey that can be found in the
          * registry.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param certificateName the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder certificateName(
                 String certificateName) {
@@ -94,9 +103,13 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * supplied and there is only a single entry in the Keystore, then this
          * single entry will be used.
          * 
-         * The option is a: <code>java.security.KeyStore</code> type.
+         * The option is a: &lt;code&gt;java.security.KeyStore&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param keystore the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder keystore(KeyStore keystore) {
             doSetProperty("keystore", keystore);
@@ -110,10 +123,13 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * supplied and there is only a single entry in the Keystore, then this
          * single entry will be used.
          * 
-         * The option will be converted to a <code>java.security.KeyStore</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.security.KeyStore&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keystore the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder keystore(String keystore) {
             doSetProperty("keystore", keystore);
@@ -123,9 +139,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the reference name for a Keystore that can be found in the
          * registry.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keystoreName the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder keystoreName(String keystoreName) {
             doSetProperty("keystoreName", keystoreName);
@@ -142,10 +161,13 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -163,10 +185,14 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -176,9 +202,13 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the PrivateKey that should be used to sign the exchange.
          * 
-         * The option is a: <code>java.security.PrivateKey</code> type.
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder privateKey(PrivateKey privateKey) {
             doSetProperty("privateKey", privateKey);
@@ -188,9 +218,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the PrivateKey that should be used to sign the exchange.
          * 
          * The option will be converted to a
-         * <code>java.security.PrivateKey</code> type.
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder privateKey(String privateKey) {
             doSetProperty("privateKey", privateKey);
@@ -200,9 +233,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the reference name for a PrivateKey that can be found in the
          * registry.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param privateKeyName the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder privateKeyName(
                 String privateKeyName) {
@@ -213,9 +249,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the id of the security provider that provides the configured
          * Signature algorithm.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param provider the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder provider(String provider) {
             doSetProperty("provider", provider);
@@ -224,9 +263,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * references that should be resolved when the context changes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param publicKeyName the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder publicKeyName(
                 String publicKeyName) {
@@ -237,9 +279,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the reference name for a SecureRandom that can be found in the
          * registry.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secureRandomName the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder secureRandomName(
                 String secureRandomName) {
@@ -250,9 +295,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the name of the message header that should be used to store the
          * base64 encoded signature. This defaults to 'CamelDigitalSignature'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param signatureHeaderName the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder signatureHeaderName(
                 String signatureHeaderName) {
@@ -263,9 +311,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets the password used to access an aliased PrivateKey in the
          * KeyStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -285,10 +336,13 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the size of the buffer used to read in the Exchange payload data.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2048
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder bufferSize(
                 Integer bufferSize) {
@@ -298,11 +352,14 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the size of the buffer used to read in the Exchange payload data.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2048
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder bufferSize(
                 String bufferSize) {
@@ -313,9 +370,13 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the Certificate that should be used to verify the signature in
          * the exchange based on its payload.
          * 
-         * The option is a: <code>java.security.cert.Certificate</code> type.
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param certificate the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder certificate(
                 Certificate certificate) {
@@ -327,9 +388,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * the exchange based on its payload.
          * 
          * The option will be converted to a
-         * <code>java.security.cert.Certificate</code> type.
+         * &lt;code&gt;java.security.cert.Certificate&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param certificate the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder certificate(
                 String certificate) {
@@ -342,10 +406,13 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * at your extreme peril as vital private information such as Keys and
          * passwords may escape if unset.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param clearHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder clearHeaders(
                 boolean clearHeaders) {
@@ -358,10 +425,14 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * at your extreme peril as vital private information such as Keys and
          * passwords may escape if unset.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param clearHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder clearHeaders(
                 String clearHeaders) {
@@ -378,9 +449,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * entry will be used.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.KeyStoreParameters&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param keyStoreParameters the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
                 Object keyStoreParameters) {
@@ -397,9 +471,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * entry will be used.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.KeyStoreParameters&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param keyStoreParameters the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
                 String keyStoreParameters) {
@@ -410,9 +487,13 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the PublicKey that should be used to verify the signature in the
          * exchange.
          * 
-         * The option is a: <code>java.security.PublicKey</code> type.
+         * The option is a: &lt;code&gt;java.security.PublicKey&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder publicKey(
                 PublicKey publicKey) {
@@ -424,9 +505,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * exchange.
          * 
          * The option will be converted to a
-         * <code>java.security.PublicKey</code> type.
+         * &lt;code&gt;java.security.PublicKey&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder publicKey(
                 String publicKey) {
@@ -436,9 +520,13 @@ public interface DigitalSignatureEndpointBuilderFactory {
         /**
          * Set the SecureRandom used to initialize the Signature service.
          * 
-         * The option is a: <code>java.security.SecureRandom</code> type.
+         * The option is a: &lt;code&gt;java.security.SecureRandom&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param secureRandom the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder secureRandom(
                 SecureRandom secureRandom) {
@@ -449,9 +537,12 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Set the SecureRandom used to initialize the Signature service.
          * 
          * The option will be converted to a
-         * <code>java.security.SecureRandom</code> type.
+         * &lt;code&gt;java.security.SecureRandom&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param secureRandom the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder secureRandom(
                 String secureRandom) {
@@ -462,10 +553,13 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -476,10 +570,14 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDigitalSignatureEndpointBuilder synchronous(
                 String synchronous) {

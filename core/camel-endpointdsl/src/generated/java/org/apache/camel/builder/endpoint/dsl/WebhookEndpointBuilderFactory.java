@@ -49,10 +49,13 @@ public interface WebhookEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default WebhookEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -68,10 +71,14 @@ public interface WebhookEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default WebhookEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -82,10 +89,13 @@ public interface WebhookEndpointBuilderFactory {
          * Automatically register the webhook at startup and unregister it on
          * shutdown.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param webhookAutoRegister the value to set
+         * @return the dsl builder
          */
         default WebhookEndpointBuilder webhookAutoRegister(
                 boolean webhookAutoRegister) {
@@ -96,10 +106,14 @@ public interface WebhookEndpointBuilderFactory {
          * Automatically register the webhook at startup and unregister it on
          * shutdown.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param webhookAutoRegister the value to set
+         * @return the dsl builder
          */
         default WebhookEndpointBuilder webhookAutoRegister(
                 String webhookAutoRegister) {
@@ -111,9 +125,12 @@ public interface WebhookEndpointBuilderFactory {
          * a good practice to set it to a random string, so that it cannot be
          * guessed by unauthorized parties.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param webhookBasePath the value to set
+         * @return the dsl builder
          */
         default WebhookEndpointBuilder webhookBasePath(String webhookBasePath) {
             doSetProperty("webhookBasePath", webhookBasePath);
@@ -123,9 +140,12 @@ public interface WebhookEndpointBuilderFactory {
          * The Camel Rest component to use for the REST transport, such as
          * netty-http.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param webhookComponentName the value to set
+         * @return the dsl builder
          */
         default WebhookEndpointBuilder webhookComponentName(
                 String webhookComponentName) {
@@ -135,9 +155,12 @@ public interface WebhookEndpointBuilderFactory {
         /**
          * The URL of the current service as seen by the webhook provider.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param webhookExternalUrl the value to set
+         * @return the dsl builder
          */
         default WebhookEndpointBuilder webhookExternalUrl(
                 String webhookExternalUrl) {
@@ -148,9 +171,12 @@ public interface WebhookEndpointBuilderFactory {
          * The path where the webhook endpoint will be exposed (relative to
          * basePath, if any).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param webhookPath the value to set
+         * @return the dsl builder
          */
         default WebhookEndpointBuilder webhookPath(String webhookPath) {
             doSetProperty("webhookPath", webhookPath);
@@ -173,10 +199,13 @@ public interface WebhookEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedWebhookEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -190,9 +219,12 @@ public interface WebhookEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedWebhookEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -202,9 +234,13 @@ public interface WebhookEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedWebhookEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -215,9 +251,12 @@ public interface WebhookEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedWebhookEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -228,10 +267,13 @@ public interface WebhookEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWebhookEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -241,10 +283,14 @@ public interface WebhookEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWebhookEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

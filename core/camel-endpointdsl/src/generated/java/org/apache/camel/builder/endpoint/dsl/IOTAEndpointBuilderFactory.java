@@ -41,10 +41,13 @@ public interface IOTAEndpointBuilderFactory {
          * The depth determines how deep the tangle is analysed for getting
          * Tips.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 9
          * Group: producer
+         * 
+         * @param depth the value to set
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder depth(Integer depth) {
             doSetProperty("depth", depth);
@@ -54,11 +57,14 @@ public interface IOTAEndpointBuilderFactory {
          * The depth determines how deep the tangle is analysed for getting
          * Tips.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 9
          * Group: producer
+         * 
+         * @param depth the value to set
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder depth(String depth) {
             doSetProperty("depth", depth);
@@ -75,10 +81,13 @@ public interface IOTAEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -95,10 +104,14 @@ public interface IOTAEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -109,10 +122,13 @@ public interface IOTAEndpointBuilderFactory {
          * proof-of-work output/transaction hash must end with to be considered
          * valid by full nodes.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 14
          * Group: producer
+         * 
+         * @param minWeightMagnitude the value to set
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder minWeightMagnitude(
                 Integer minWeightMagnitude) {
@@ -124,11 +140,14 @@ public interface IOTAEndpointBuilderFactory {
          * proof-of-work output/transaction hash must end with to be considered
          * valid by full nodes.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 14
          * Group: producer
+         * 
+         * @param minWeightMagnitude the value to set
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder minWeightMagnitude(String minWeightMagnitude) {
             doSetProperty("minWeightMagnitude", minWeightMagnitude);
@@ -138,10 +157,13 @@ public interface IOTAEndpointBuilderFactory {
          * Which operation to perform, one of: sendTransfer, getNewAddress,
          * getTransfers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -150,9 +172,12 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * TAG.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param tag the value to set
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder tag(String tag) {
             doSetProperty("tag", tag);
@@ -161,10 +186,13 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Node url.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param url the value to set
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder url(String url) {
             doSetProperty("url", url);
@@ -173,10 +201,13 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Address security level.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: security
+         * 
+         * @param securityLevel the value to set
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder securityLevel(Integer securityLevel) {
             doSetProperty("securityLevel", securityLevel);
@@ -185,11 +216,14 @@ public interface IOTAEndpointBuilderFactory {
         /**
          * Address security level.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: security
+         * 
+         * @param securityLevel the value to set
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder securityLevel(String securityLevel) {
             doSetProperty("securityLevel", securityLevel);
@@ -210,10 +244,13 @@ public interface IOTAEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIOTAEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -223,10 +260,14 @@ public interface IOTAEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIOTAEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

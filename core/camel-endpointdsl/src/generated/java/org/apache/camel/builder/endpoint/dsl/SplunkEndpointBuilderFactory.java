@@ -49,9 +49,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk app.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param app the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder app(String app) {
             doSetProperty("app", app);
@@ -60,10 +63,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Timeout in MS when connecting to Splunk server.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -73,10 +79,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Timeout in MS when connecting to Splunk server.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -86,10 +95,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: localhost
          * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder host(String host) {
             doSetProperty("host", host);
@@ -98,9 +110,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk owner.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param owner the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder owner(String owner) {
             doSetProperty("owner", owner);
@@ -109,10 +124,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk port.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8089
          * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder port(int port) {
             doSetProperty("port", port);
@@ -121,10 +139,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk port.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8089
          * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder port(String port) {
             doSetProperty("port", port);
@@ -133,10 +154,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk scheme.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https
          * Group: common
+         * 
+         * @param scheme the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder scheme(String scheme) {
             doSetProperty("scheme", scheme);
@@ -151,10 +175,13 @@ public interface SplunkEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -170,10 +197,14 @@ public interface SplunkEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -183,9 +214,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * A number that indicates the maximum number of entities to return.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param count the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder count(int count) {
             doSetProperty("count", count);
@@ -194,9 +228,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * A number that indicates the maximum number of entities to return.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param count the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder count(String count) {
             doSetProperty("count", count);
@@ -205,9 +242,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Earliest time of the search time window.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param earliestTime the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder earliestTime(String earliestTime) {
             doSetProperty("earliestTime", earliestTime);
@@ -216,9 +256,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Initial start offset of the first search.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param initEarliestTime the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder initEarliestTime(
                 String initEarliestTime) {
@@ -228,9 +271,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Latest time of the search time window.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param latestTime the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder latestTime(String latestTime) {
             doSetProperty("latestTime", latestTime);
@@ -239,9 +285,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * The name of the query saved in Splunk to run.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param savedSearch the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder savedSearch(String savedSearch) {
             doSetProperty("savedSearch", savedSearch);
@@ -250,9 +299,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * The Splunk query to run.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param search the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder search(String search) {
             doSetProperty("search", search);
@@ -262,10 +314,13 @@ public interface SplunkEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -276,10 +331,14 @@ public interface SplunkEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -290,10 +349,13 @@ public interface SplunkEndpointBuilderFactory {
          * Sets streaming mode. Streaming mode sends exchanges as they are
          * received, rather than in a batch.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param streaming the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder streaming(boolean streaming) {
             doSetProperty("streaming", streaming);
@@ -303,10 +365,14 @@ public interface SplunkEndpointBuilderFactory {
          * Sets streaming mode. Streaming mode sends exchanges as they are
          * received, rather than in a batch.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param streaming the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder streaming(String streaming) {
             doSetProperty("streaming", streaming);
@@ -316,9 +382,12 @@ public interface SplunkEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -329,9 +398,12 @@ public interface SplunkEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -342,9 +414,12 @@ public interface SplunkEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -355,9 +430,12 @@ public interface SplunkEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -372,9 +450,12 @@ public interface SplunkEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -389,9 +470,12 @@ public interface SplunkEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -401,10 +485,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -413,10 +500,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -426,10 +516,13 @@ public interface SplunkEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -439,10 +532,14 @@ public interface SplunkEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -451,10 +548,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -463,10 +563,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -477,10 +580,13 @@ public interface SplunkEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -491,10 +597,13 @@ public interface SplunkEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -504,10 +613,14 @@ public interface SplunkEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -519,10 +632,13 @@ public interface SplunkEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -535,9 +651,12 @@ public interface SplunkEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -550,9 +669,12 @@ public interface SplunkEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -563,10 +685,13 @@ public interface SplunkEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -576,10 +701,14 @@ public interface SplunkEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -589,13 +718,17 @@ public interface SplunkEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -607,13 +740,16 @@ public interface SplunkEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -622,10 +758,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -635,10 +774,14 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -648,10 +791,14 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -661,10 +808,13 @@ public interface SplunkEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -674,10 +824,13 @@ public interface SplunkEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -688,10 +841,14 @@ public interface SplunkEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -700,9 +857,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Password for Splunk.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -711,10 +871,14 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Set the ssl protocol to use.
          * 
-         * The option is a: <code>com.splunk.SSLSecurityProtocol</code> type.
+         * The option is a:
+         * &lt;code&gt;com.splunk.SSLSecurityProtocol&lt;/code&gt; type.
          * 
          * Default: TLSv1.2
          * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
@@ -725,10 +889,13 @@ public interface SplunkEndpointBuilderFactory {
          * Set the ssl protocol to use.
          * 
          * The option will be converted to a
-         * <code>com.splunk.SSLSecurityProtocol</code> type.
+         * &lt;code&gt;com.splunk.SSLSecurityProtocol&lt;/code&gt; type.
          * 
          * Default: TLSv1.2
          * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder sslProtocol(String sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
@@ -737,9 +904,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Username for Splunk.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -750,10 +920,13 @@ public interface SplunkEndpointBuilderFactory {
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useSunHttpsHandler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
@@ -765,10 +938,14 @@ public interface SplunkEndpointBuilderFactory {
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useSunHttpsHandler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointConsumerBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
@@ -792,10 +969,13 @@ public interface SplunkEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -809,9 +989,12 @@ public interface SplunkEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -821,9 +1004,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -834,9 +1021,12 @@ public interface SplunkEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -850,9 +1040,12 @@ public interface SplunkEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -866,9 +1059,12 @@ public interface SplunkEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -879,10 +1075,13 @@ public interface SplunkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -893,10 +1092,14 @@ public interface SplunkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -917,9 +1120,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk app.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param app the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder app(String app) {
             doSetProperty("app", app);
@@ -928,10 +1134,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Timeout in MS when connecting to Splunk server.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -941,10 +1150,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Timeout in MS when connecting to Splunk server.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -954,10 +1166,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: localhost
          * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder host(String host) {
             doSetProperty("host", host);
@@ -966,9 +1181,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk owner.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param owner the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder owner(String owner) {
             doSetProperty("owner", owner);
@@ -977,10 +1195,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk port.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8089
          * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder port(int port) {
             doSetProperty("port", port);
@@ -989,10 +1210,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk port.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8089
          * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder port(String port) {
             doSetProperty("port", port);
@@ -1001,10 +1225,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk scheme.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https
          * Group: common
+         * 
+         * @param scheme the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder scheme(String scheme) {
             doSetProperty("scheme", scheme);
@@ -1013,9 +1240,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Override the default Splunk event host field.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param eventHost the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder eventHost(String eventHost) {
             doSetProperty("eventHost", eventHost);
@@ -1024,9 +1254,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk index to write to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param index the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder index(String index) {
             doSetProperty("index", index);
@@ -1043,10 +1276,13 @@ public interface SplunkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1064,10 +1300,14 @@ public interface SplunkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1077,10 +1317,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Should the payload be inserted raw.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param raw the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder raw(boolean raw) {
             doSetProperty("raw", raw);
@@ -1089,10 +1332,14 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Should the payload be inserted raw.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param raw the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder raw(String raw) {
             doSetProperty("raw", raw);
@@ -1101,9 +1348,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk source argument.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param source the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder source(String source) {
             doSetProperty("source", source);
@@ -1112,9 +1362,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk sourcetype argument.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sourceType the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder sourceType(String sourceType) {
             doSetProperty("sourceType", sourceType);
@@ -1123,9 +1376,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk tcp receiver port.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param tcpReceiverPort the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder tcpReceiverPort(
                 int tcpReceiverPort) {
@@ -1135,9 +1391,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk tcp receiver port.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param tcpReceiverPort the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder tcpReceiverPort(
                 String tcpReceiverPort) {
@@ -1147,9 +1406,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Password for Splunk.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -1158,10 +1420,14 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Set the ssl protocol to use.
          * 
-         * The option is a: <code>com.splunk.SSLSecurityProtocol</code> type.
+         * The option is a:
+         * &lt;code&gt;com.splunk.SSLSecurityProtocol&lt;/code&gt; type.
          * 
          * Default: TLSv1.2
          * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
@@ -1172,10 +1438,13 @@ public interface SplunkEndpointBuilderFactory {
          * Set the ssl protocol to use.
          * 
          * The option will be converted to a
-         * <code>com.splunk.SSLSecurityProtocol</code> type.
+         * &lt;code&gt;com.splunk.SSLSecurityProtocol&lt;/code&gt; type.
          * 
          * Default: TLSv1.2
          * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder sslProtocol(String sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
@@ -1184,9 +1453,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Username for Splunk.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -1197,10 +1469,13 @@ public interface SplunkEndpointBuilderFactory {
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useSunHttpsHandler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
@@ -1212,10 +1487,14 @@ public interface SplunkEndpointBuilderFactory {
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useSunHttpsHandler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointProducerBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
@@ -1237,10 +1516,13 @@ public interface SplunkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1251,10 +1533,14 @@ public interface SplunkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1276,9 +1562,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk app.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param app the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder app(String app) {
             doSetProperty("app", app);
@@ -1287,10 +1576,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Timeout in MS when connecting to Splunk server.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder connectionTimeout(int connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -1299,10 +1591,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Timeout in MS when connecting to Splunk server.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder connectionTimeout(String connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -1311,10 +1606,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: localhost
          * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder host(String host) {
             doSetProperty("host", host);
@@ -1323,9 +1621,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk owner.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param owner the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder owner(String owner) {
             doSetProperty("owner", owner);
@@ -1334,10 +1635,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk port.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8089
          * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder port(int port) {
             doSetProperty("port", port);
@@ -1346,10 +1650,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk port.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8089
          * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder port(String port) {
             doSetProperty("port", port);
@@ -1358,10 +1665,13 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Splunk scheme.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https
          * Group: common
+         * 
+         * @param scheme the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder scheme(String scheme) {
             doSetProperty("scheme", scheme);
@@ -1370,9 +1680,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Password for Splunk.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -1381,10 +1694,14 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Set the ssl protocol to use.
          * 
-         * The option is a: <code>com.splunk.SSLSecurityProtocol</code> type.
+         * The option is a:
+         * &lt;code&gt;com.splunk.SSLSecurityProtocol&lt;/code&gt; type.
          * 
          * Default: TLSv1.2
          * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
@@ -1395,10 +1712,13 @@ public interface SplunkEndpointBuilderFactory {
          * Set the ssl protocol to use.
          * 
          * The option will be converted to a
-         * <code>com.splunk.SSLSecurityProtocol</code> type.
+         * &lt;code&gt;com.splunk.SSLSecurityProtocol&lt;/code&gt; type.
          * 
          * Default: TLSv1.2
          * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder sslProtocol(String sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
@@ -1407,9 +1727,12 @@ public interface SplunkEndpointBuilderFactory {
         /**
          * Username for Splunk.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -1420,10 +1743,13 @@ public interface SplunkEndpointBuilderFactory {
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useSunHttpsHandler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
@@ -1435,10 +1761,14 @@ public interface SplunkEndpointBuilderFactory {
          * Splunk Connection. Can be useful when running in application servers
          * to avoid app. server https handling.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useSunHttpsHandler the value to set
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
@@ -1461,10 +1791,13 @@ public interface SplunkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1474,10 +1807,14 @@ public interface SplunkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSplunkEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

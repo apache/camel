@@ -48,10 +48,13 @@ public interface StubEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default StubEndpointConsumerBuilder size(int size) {
             doSetProperty("size", size);
@@ -62,10 +65,13 @@ public interface StubEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default StubEndpointConsumerBuilder size(String size) {
             doSetProperty("size", size);
@@ -80,10 +86,13 @@ public interface StubEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default StubEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -99,10 +108,14 @@ public interface StubEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default StubEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -112,10 +125,13 @@ public interface StubEndpointBuilderFactory {
         /**
          * Number of concurrent threads processing exchanges.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default StubEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -125,10 +141,13 @@ public interface StubEndpointBuilderFactory {
         /**
          * Number of concurrent threads processing exchanges.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default StubEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -152,10 +171,13 @@ public interface StubEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -169,9 +191,12 @@ public interface StubEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -181,9 +206,13 @@ public interface StubEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -194,9 +223,12 @@ public interface StubEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -209,10 +241,13 @@ public interface StubEndpointBuilderFactory {
          * configured with a greater number. You can disable that check by
          * turning this option off.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param limitConcurrentConsumers the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder limitConcurrentConsumers(
                 boolean limitConcurrentConsumers) {
@@ -225,10 +260,14 @@ public interface StubEndpointBuilderFactory {
          * configured with a greater number. You can disable that check by
          * turning this option off.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param limitConcurrentConsumers the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder limitConcurrentConsumers(
                 String limitConcurrentConsumers) {
@@ -242,10 +281,13 @@ public interface StubEndpointBuilderFactory {
          * the message. When enabled, this option should be specified on every
          * consumer endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param multipleConsumers the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
@@ -259,10 +301,14 @@ public interface StubEndpointBuilderFactory {
          * the message. When enabled, this option should be specified on every
          * consumer endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param multipleConsumers the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
@@ -274,10 +320,13 @@ public interface StubEndpointBuilderFactory {
          * can check whether it is allowed to continue running. Setting a lower
          * value allows the consumer to react more quickly upon shutdown.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: consumer (advanced)
+         * 
+         * @param pollTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder pollTimeout(int pollTimeout) {
             doSetProperty("pollTimeout", pollTimeout);
@@ -288,10 +337,13 @@ public interface StubEndpointBuilderFactory {
          * can check whether it is allowed to continue running. Setting a lower
          * value allows the consumer to react more quickly upon shutdown.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: consumer (advanced)
+         * 
+         * @param pollTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder pollTimeout(
                 String pollTimeout) {
@@ -303,10 +355,13 @@ public interface StubEndpointBuilderFactory {
          * This allows to stop faster, as any pending messages on the queue is
          * discarded.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param purgeWhenStopping the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder purgeWhenStopping(
                 boolean purgeWhenStopping) {
@@ -318,10 +373,14 @@ public interface StubEndpointBuilderFactory {
          * This allows to stop faster, as any pending messages on the queue is
          * discarded.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param purgeWhenStopping the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder purgeWhenStopping(
                 String purgeWhenStopping) {
@@ -331,10 +390,13 @@ public interface StubEndpointBuilderFactory {
         /**
          * Define the queue instance which will be used by the endpoint.
          * 
-         * The option is a: <code>java.util.concurrent.BlockingQueue</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder queue(BlockingQueue queue) {
             doSetProperty("queue", queue);
@@ -344,9 +406,12 @@ public interface StubEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.BlockingQueue</code> type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder queue(String queue) {
             doSetProperty("queue", queue);
@@ -356,10 +421,13 @@ public interface StubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -370,10 +438,14 @@ public interface StubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -396,10 +468,13 @@ public interface StubEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder size(int size) {
             doSetProperty("size", size);
@@ -410,10 +485,13 @@ public interface StubEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder size(String size) {
             doSetProperty("size", size);
@@ -426,10 +504,13 @@ public interface StubEndpointBuilderFactory {
          * this option, the calling thread will instead block and wait until the
          * message can be accepted.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param blockWhenFull the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder blockWhenFull(boolean blockWhenFull) {
             doSetProperty("blockWhenFull", blockWhenFull);
@@ -442,10 +523,14 @@ public interface StubEndpointBuilderFactory {
          * this option, the calling thread will instead block and wait until the
          * message can be accepted.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param blockWhenFull the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder blockWhenFull(String blockWhenFull) {
             doSetProperty("blockWhenFull", blockWhenFull);
@@ -457,10 +542,13 @@ public interface StubEndpointBuilderFactory {
          * consumers. Only one of the options discardIfNoConsumers and
          * failIfNoConsumers can be enabled at the same time.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param discardIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder discardIfNoConsumers(
                 boolean discardIfNoConsumers) {
@@ -473,10 +561,14 @@ public interface StubEndpointBuilderFactory {
          * consumers. Only one of the options discardIfNoConsumers and
          * failIfNoConsumers can be enabled at the same time.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param discardIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder discardIfNoConsumers(
                 String discardIfNoConsumers) {
@@ -490,10 +582,13 @@ public interface StubEndpointBuilderFactory {
          * up sending and continue, meaning that the message was not sent to the
          * SEDA queue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param discardWhenFull the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder discardWhenFull(
                 boolean discardWhenFull) {
@@ -507,10 +602,14 @@ public interface StubEndpointBuilderFactory {
          * up sending and continue, meaning that the message was not sent to the
          * SEDA queue.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param discardWhenFull the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder discardWhenFull(
                 String discardWhenFull) {
@@ -523,10 +622,13 @@ public interface StubEndpointBuilderFactory {
          * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
          * time.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
@@ -539,10 +641,14 @@ public interface StubEndpointBuilderFactory {
          * discardIfNoConsumers and failIfNoConsumers can be enabled at the same
          * time.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
@@ -560,10 +666,13 @@ public interface StubEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -581,10 +690,14 @@ public interface StubEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -596,9 +709,12 @@ public interface StubEndpointBuilderFactory {
          * queue is full. You can disable timeout by using 0 or a negative
          * value.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param offerTimeout the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder offerTimeout(long offerTimeout) {
             doSetProperty("offerTimeout", offerTimeout);
@@ -609,9 +725,12 @@ public interface StubEndpointBuilderFactory {
          * queue is full. You can disable timeout by using 0 or a negative
          * value.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param offerTimeout the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder offerTimeout(String offerTimeout) {
             doSetProperty("offerTimeout", offerTimeout);
@@ -622,10 +741,13 @@ public interface StubEndpointBuilderFactory {
          * for an asynchronous task to complete. You can disable timeout by
          * using 0 or a negative value.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -636,10 +758,13 @@ public interface StubEndpointBuilderFactory {
          * for an asynchronous task to complete. You can disable timeout by
          * using 0 or a negative value.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -653,11 +778,14 @@ public interface StubEndpointBuilderFactory {
          * the message is Request Reply based. The default option is
          * IfReplyExpected.
          * 
-         * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.WaitForTaskToComplete&lt;/code&gt; type.
          * 
          * Default: IfReplyExpected
          * Group: producer
+         * 
+         * @param waitForTaskToComplete the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
@@ -673,10 +801,13 @@ public interface StubEndpointBuilderFactory {
          * IfReplyExpected.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.WaitForTaskToComplete</code> type.
+         * &lt;code&gt;org.apache.camel.WaitForTaskToComplete&lt;/code&gt; type.
          * 
          * Default: IfReplyExpected
          * Group: producer
+         * 
+         * @param waitForTaskToComplete the value to set
+         * @return the dsl builder
          */
         default StubEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
@@ -697,10 +828,13 @@ public interface StubEndpointBuilderFactory {
         /**
          * Define the queue instance which will be used by the endpoint.
          * 
-         * The option is a: <code>java.util.concurrent.BlockingQueue</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointProducerBuilder queue(BlockingQueue queue) {
             doSetProperty("queue", queue);
@@ -710,9 +844,12 @@ public interface StubEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.BlockingQueue</code> type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointProducerBuilder queue(String queue) {
             doSetProperty("queue", queue);
@@ -722,10 +859,13 @@ public interface StubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -736,10 +876,14 @@ public interface StubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -763,10 +907,13 @@ public interface StubEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default StubEndpointBuilder size(int size) {
             doSetProperty("size", size);
@@ -777,10 +924,13 @@ public interface StubEndpointBuilderFactory {
          * it can hold). Will by default use the defaultSize set on the SEDA
          * component.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param size the value to set
+         * @return the dsl builder
          */
         default StubEndpointBuilder size(String size) {
             doSetProperty("size", size);
@@ -801,10 +951,13 @@ public interface StubEndpointBuilderFactory {
         /**
          * Define the queue instance which will be used by the endpoint.
          * 
-         * The option is a: <code>java.util.concurrent.BlockingQueue</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointBuilder queue(BlockingQueue queue) {
             doSetProperty("queue", queue);
@@ -814,9 +967,12 @@ public interface StubEndpointBuilderFactory {
          * Define the queue instance which will be used by the endpoint.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.BlockingQueue</code> type.
+         * &lt;code&gt;java.util.concurrent.BlockingQueue&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointBuilder queue(String queue) {
             doSetProperty("queue", queue);
@@ -826,10 +982,13 @@ public interface StubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -839,10 +998,14 @@ public interface StubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStubEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

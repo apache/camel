@@ -49,10 +49,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * messages incoming to the event bus. This option cannot be used
          * together with listenerInterface option.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventClass the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointConsumerBuilder eventClass(
                 Class<Object> eventClass) {
@@ -68,9 +71,12 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * together with listenerInterface option.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventClass the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointConsumerBuilder eventClass(
                 String eventClass) {
@@ -84,10 +90,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * creating multi-event listeners and for handling DeadEvent properly.
          * This option cannot be used together with eventClass option.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listenerInterface the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointConsumerBuilder listenerInterface(
                 Class<Object> listenerInterface) {
@@ -102,9 +111,12 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * This option cannot be used together with eventClass option.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listenerInterface the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointConsumerBuilder listenerInterface(
                 String listenerInterface) {
@@ -120,10 +132,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -139,10 +154,14 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -166,10 +185,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -183,9 +205,12 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -195,9 +220,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -208,9 +237,12 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -221,10 +253,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -235,10 +270,14 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -264,10 +303,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * messages incoming to the event bus. This option cannot be used
          * together with listenerInterface option.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventClass the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointProducerBuilder eventClass(
                 Class<Object> eventClass) {
@@ -283,9 +325,12 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * together with listenerInterface option.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventClass the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointProducerBuilder eventClass(
                 String eventClass) {
@@ -299,10 +344,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * creating multi-event listeners and for handling DeadEvent properly.
          * This option cannot be used together with eventClass option.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listenerInterface the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointProducerBuilder listenerInterface(
                 Class<Object> listenerInterface) {
@@ -317,9 +365,12 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * This option cannot be used together with eventClass option.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listenerInterface the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointProducerBuilder listenerInterface(
                 String listenerInterface) {
@@ -337,10 +388,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -358,10 +412,14 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -383,10 +441,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -397,10 +458,14 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -427,10 +492,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * messages incoming to the event bus. This option cannot be used
          * together with listenerInterface option.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventClass the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointBuilder eventClass(Class<Object> eventClass) {
             doSetProperty("eventClass", eventClass);
@@ -445,9 +513,12 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * together with listenerInterface option.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventClass the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointBuilder eventClass(String eventClass) {
             doSetProperty("eventClass", eventClass);
@@ -460,10 +531,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * creating multi-event listeners and for handling DeadEvent properly.
          * This option cannot be used together with eventClass option.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listenerInterface the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointBuilder listenerInterface(
                 Class<Object> listenerInterface) {
@@ -478,9 +552,12 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * This option cannot be used together with eventClass option.
          * 
          * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.lang.Class&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listenerInterface the value to set
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointBuilder listenerInterface(
                 String listenerInterface) {
@@ -503,10 +580,13 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -517,10 +597,14 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGuavaEventBusEndpointBuilder synchronous(
                 String synchronous) {

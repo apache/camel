@@ -51,10 +51,13 @@ public interface DirectVmEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DirectVmEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -70,10 +73,14 @@ public interface DirectVmEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DirectVmEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -97,10 +104,13 @@ public interface DirectVmEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -114,9 +124,12 @@ public interface DirectVmEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -126,9 +139,13 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -139,9 +156,12 @@ public interface DirectVmEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -152,10 +172,13 @@ public interface DirectVmEndpointBuilderFactory {
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param propagateProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointConsumerBuilder propagateProperties(
                 boolean propagateProperties) {
@@ -166,10 +189,14 @@ public interface DirectVmEndpointBuilderFactory {
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param propagateProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointConsumerBuilder propagateProperties(
                 String propagateProperties) {
@@ -180,10 +207,13 @@ public interface DirectVmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -194,10 +224,14 @@ public interface DirectVmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -220,10 +254,13 @@ public interface DirectVmEndpointBuilderFactory {
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param block the value to set
+         * @return the dsl builder
          */
         default DirectVmEndpointProducerBuilder block(boolean block) {
             doSetProperty("block", block);
@@ -234,10 +271,14 @@ public interface DirectVmEndpointBuilderFactory {
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param block the value to set
+         * @return the dsl builder
          */
         default DirectVmEndpointProducerBuilder block(String block) {
             doSetProperty("block", block);
@@ -247,10 +288,13 @@ public interface DirectVmEndpointBuilderFactory {
          * Whether the producer should fail by throwing an exception, when
          * sending to a Direct-VM endpoint with no active consumers.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default DirectVmEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
@@ -261,10 +305,14 @@ public interface DirectVmEndpointBuilderFactory {
          * Whether the producer should fail by throwing an exception, when
          * sending to a Direct-VM endpoint with no active consumers.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default DirectVmEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
@@ -282,10 +330,13 @@ public interface DirectVmEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DirectVmEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -303,10 +354,14 @@ public interface DirectVmEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DirectVmEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -316,10 +371,13 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * The timeout value to use if block is enabled.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default DirectVmEndpointProducerBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -328,10 +386,13 @@ public interface DirectVmEndpointBuilderFactory {
         /**
          * The timeout value to use if block is enabled.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default DirectVmEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -354,9 +415,13 @@ public interface DirectVmEndpointBuilderFactory {
          * none.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -369,9 +434,13 @@ public interface DirectVmEndpointBuilderFactory {
          * none.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -382,10 +451,13 @@ public interface DirectVmEndpointBuilderFactory {
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param propagateProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointProducerBuilder propagateProperties(
                 boolean propagateProperties) {
@@ -396,10 +468,14 @@ public interface DirectVmEndpointBuilderFactory {
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param propagateProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointProducerBuilder propagateProperties(
                 String propagateProperties) {
@@ -410,10 +486,13 @@ public interface DirectVmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -424,10 +503,14 @@ public interface DirectVmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -462,10 +545,13 @@ public interface DirectVmEndpointBuilderFactory {
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param propagateProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointBuilder propagateProperties(
                 boolean propagateProperties) {
@@ -476,10 +562,14 @@ public interface DirectVmEndpointBuilderFactory {
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param propagateProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointBuilder propagateProperties(
                 String propagateProperties) {
@@ -490,10 +580,13 @@ public interface DirectVmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -503,10 +596,14 @@ public interface DirectVmEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectVmEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

@@ -44,9 +44,12 @@ public interface RestApiEndpointBuilderFactory {
          * The Camel Rest API component to use for generating the API of the
          * REST services, such as openapi.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param apiComponentName the value to set
+         * @return the dsl builder
          */
         default RestApiEndpointBuilder apiComponentName(String apiComponentName) {
             doSetProperty("apiComponentName", apiComponentName);
@@ -61,10 +64,13 @@ public interface RestApiEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RestApiEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -80,10 +86,14 @@ public interface RestApiEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RestApiEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -98,9 +108,12 @@ public interface RestApiEndpointBuilderFactory {
          * org.apache.camel.spi.RestConsumerFactory is registered in the
          * registry. If either one is found, then that is being used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param consumerComponentName the value to set
+         * @return the dsl builder
          */
         default RestApiEndpointBuilder consumerComponentName(
                 String consumerComponentName) {
@@ -124,10 +137,13 @@ public interface RestApiEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRestApiEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -141,9 +157,12 @@ public interface RestApiEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRestApiEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -153,9 +172,13 @@ public interface RestApiEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedRestApiEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -166,9 +189,12 @@ public interface RestApiEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedRestApiEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -179,10 +205,13 @@ public interface RestApiEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestApiEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -192,10 +221,14 @@ public interface RestApiEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestApiEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

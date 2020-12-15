@@ -46,10 +46,13 @@ public interface StringTemplateEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -63,10 +66,14 @@ public interface StringTemplateEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder allowContextMapAll(
                 String allowContextMapAll) {
@@ -80,10 +87,13 @@ public interface StringTemplateEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -97,10 +107,14 @@ public interface StringTemplateEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder allowTemplateFromHeader(
                 String allowTemplateFromHeader) {
@@ -110,10 +124,13 @@ public interface StringTemplateEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -122,10 +139,14 @@ public interface StringTemplateEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -134,10 +155,13 @@ public interface StringTemplateEndpointBuilderFactory {
         /**
          * The variable start delimiter.
          * 
-         * The option is a: <code>char</code> type.
+         * The option is a: &lt;code&gt;char&lt;/code&gt; type.
          * 
-         * Default: &lt;
+         * Default: &amp;lt;
          * Group: producer
+         * 
+         * @param delimiterStart the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder delimiterStart(char delimiterStart) {
             doSetProperty("delimiterStart", delimiterStart);
@@ -146,10 +170,13 @@ public interface StringTemplateEndpointBuilderFactory {
         /**
          * The variable start delimiter.
          * 
-         * The option will be converted to a <code>char</code> type.
+         * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
          * 
-         * Default: &lt;
+         * Default: &amp;lt;
          * Group: producer
+         * 
+         * @param delimiterStart the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder delimiterStart(
                 String delimiterStart) {
@@ -159,10 +186,13 @@ public interface StringTemplateEndpointBuilderFactory {
         /**
          * The variable end delimiter.
          * 
-         * The option is a: <code>char</code> type.
+         * The option is a: &lt;code&gt;char&lt;/code&gt; type.
          * 
-         * Default: &gt;
+         * Default: &amp;gt;
          * Group: producer
+         * 
+         * @param delimiterStop the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder delimiterStop(char delimiterStop) {
             doSetProperty("delimiterStop", delimiterStop);
@@ -171,10 +201,13 @@ public interface StringTemplateEndpointBuilderFactory {
         /**
          * The variable end delimiter.
          * 
-         * The option will be converted to a <code>char</code> type.
+         * The option will be converted to a &lt;code&gt;char&lt;/code&gt; type.
          * 
-         * Default: &gt;
+         * Default: &amp;gt;
          * Group: producer
+         * 
+         * @param delimiterStop the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder delimiterStop(String delimiterStop) {
             doSetProperty("delimiterStop", delimiterStop);
@@ -191,10 +224,13 @@ public interface StringTemplateEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -212,10 +248,14 @@ public interface StringTemplateEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -237,10 +277,13 @@ public interface StringTemplateEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStringTemplateEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -251,10 +294,14 @@ public interface StringTemplateEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStringTemplateEndpointBuilder synchronous(
                 String synchronous) {

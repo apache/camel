@@ -47,10 +47,13 @@ public interface MinaEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Mina session right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -60,10 +63,14 @@ public interface MinaEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Mina session right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -73,10 +80,13 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param minaLogger the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder minaLogger(boolean minaLogger) {
             doSetProperty("minaLogger", minaLogger);
@@ -86,10 +96,14 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param minaLogger the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder minaLogger(String minaLogger) {
             doSetProperty("minaLogger", minaLogger);
@@ -98,10 +112,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder sync(boolean sync) {
             doSetProperty("sync", sync);
@@ -110,10 +127,14 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder sync(String sync) {
             doSetProperty("sync", sync);
@@ -124,10 +145,13 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -138,10 +162,13 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -151,10 +178,13 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder writeTimeout(long writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -164,10 +194,13 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder writeTimeout(String writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -182,10 +215,13 @@ public interface MinaEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -201,10 +237,14 @@ public interface MinaEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -215,10 +255,13 @@ public interface MinaEndpointBuilderFactory {
          * If the clientMode is true, mina consumer will connect the address as
          * a TCP client.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param clientMode the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder clientMode(boolean clientMode) {
             doSetProperty("clientMode", clientMode);
@@ -228,10 +271,14 @@ public interface MinaEndpointBuilderFactory {
          * If the clientMode is true, mina consumer will connect the address as
          * a TCP client.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param clientMode the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder clientMode(String clientMode) {
             doSetProperty("clientMode", clientMode);
@@ -245,10 +292,13 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: codec
+         * 
+         * @param allowDefaultCodec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder allowDefaultCodec(
                 boolean allowDefaultCodec) {
@@ -263,10 +313,14 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: codec
+         * 
+         * @param allowDefaultCodec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder allowDefaultCodec(
                 String allowDefaultCodec) {
@@ -277,9 +331,12 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option is a:
-         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
+         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param codec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder codec(Object codec) {
             doSetProperty("codec", codec);
@@ -289,9 +346,12 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option will be converted to a
-         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
+         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param codec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder codec(String codec) {
             doSetProperty("codec", codec);
@@ -301,10 +361,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: codec
+         * 
+         * @param decoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
@@ -315,10 +378,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: codec
+         * 
+         * @param decoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
@@ -329,10 +395,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: codec
+         * 
+         * @param encoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder encoderMaxLineLength(
                 int encoderMaxLineLength) {
@@ -343,10 +412,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: codec
+         * 
+         * @param encoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder encoderMaxLineLength(
                 String encoderMaxLineLength) {
@@ -358,9 +430,12 @@ public interface MinaEndpointBuilderFactory {
          * textline codec and the UDP protocol. If not provided, Camel will use
          * the JVM default Charset.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -370,9 +445,12 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder filters(List<Object> filters) {
             doSetProperty("filters", filters);
@@ -382,9 +460,12 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder filters(String filters) {
             doSetProperty("filters", filters);
@@ -395,10 +476,13 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: codec
+         * 
+         * @param textline the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder textline(boolean textline) {
             doSetProperty("textline", textline);
@@ -409,10 +493,14 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: codec
+         * 
+         * @param textline the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder textline(String textline) {
             doSetProperty("textline", textline);
@@ -424,10 +512,12 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param textlineDelimiter the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder textlineDelimiter(
                 MinaTextLineDelimiter textlineDelimiter) {
@@ -440,10 +530,12 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param textlineDelimiter the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder textlineDelimiter(
                 String textlineDelimiter) {
@@ -453,10 +545,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Whether to auto start SSL handshake.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param autoStartTls the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder autoStartTls(boolean autoStartTls) {
             doSetProperty("autoStartTls", autoStartTls);
@@ -465,10 +560,14 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Whether to auto start SSL handshake.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param autoStartTls the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder autoStartTls(String autoStartTls) {
             doSetProperty("autoStartTls", autoStartTls);
@@ -478,9 +577,12 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -491,9 +593,12 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -515,10 +620,13 @@ public interface MinaEndpointBuilderFactory {
          * If sync is enabled then this option dictates MinaConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder disconnectOnNoReply(
                 boolean disconnectOnNoReply) {
@@ -529,10 +637,14 @@ public interface MinaEndpointBuilderFactory {
          * If sync is enabled then this option dictates MinaConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder disconnectOnNoReply(
                 String disconnectOnNoReply) {
@@ -545,10 +657,13 @@ public interface MinaEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -562,9 +677,12 @@ public interface MinaEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -574,9 +692,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -587,9 +709,12 @@ public interface MinaEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -600,10 +725,14 @@ public interface MinaEndpointBuilderFactory {
          * If sync is enabled this option dictates MinaConsumer which logging
          * level to use when logging a there is no reply to send back.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: WARN
          * Group: consumer (advanced)
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(
                 LoggingLevel noReplyLogLevel) {
@@ -615,10 +744,13 @@ public interface MinaEndpointBuilderFactory {
          * level to use when logging a there is no reply to send back.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: WARN
          * Group: consumer (advanced)
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(
                 String noReplyLogLevel) {
@@ -628,10 +760,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 16
          * Group: advanced
+         * 
+         * @param maximumPoolSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder maximumPoolSize(
                 int maximumPoolSize) {
@@ -641,10 +776,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 16
          * Group: advanced
+         * 
+         * @param maximumPoolSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder maximumPoolSize(
                 String maximumPoolSize) {
@@ -655,10 +793,13 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param orderedThreadPoolExecutor the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder orderedThreadPoolExecutor(
                 boolean orderedThreadPoolExecutor) {
@@ -669,10 +810,14 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param orderedThreadPoolExecutor the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder orderedThreadPoolExecutor(
                 String orderedThreadPoolExecutor) {
@@ -683,10 +828,13 @@ public interface MinaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -697,10 +845,14 @@ public interface MinaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -715,10 +867,13 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
@@ -733,10 +888,14 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
@@ -758,10 +917,13 @@ public interface MinaEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Mina session right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -771,10 +933,14 @@ public interface MinaEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Mina session right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -784,10 +950,13 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param minaLogger the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder minaLogger(boolean minaLogger) {
             doSetProperty("minaLogger", minaLogger);
@@ -797,10 +966,14 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param minaLogger the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder minaLogger(String minaLogger) {
             doSetProperty("minaLogger", minaLogger);
@@ -809,10 +982,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder sync(boolean sync) {
             doSetProperty("sync", sync);
@@ -821,10 +997,14 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder sync(String sync) {
             doSetProperty("sync", sync);
@@ -835,10 +1015,13 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -849,10 +1032,13 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -862,10 +1048,13 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder writeTimeout(long writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -875,10 +1064,13 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder writeTimeout(String writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -895,10 +1087,13 @@ public interface MinaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -916,10 +1111,14 @@ public interface MinaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -934,10 +1133,13 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: codec
+         * 
+         * @param allowDefaultCodec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder allowDefaultCodec(
                 boolean allowDefaultCodec) {
@@ -952,10 +1154,14 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: codec
+         * 
+         * @param allowDefaultCodec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder allowDefaultCodec(
                 String allowDefaultCodec) {
@@ -966,9 +1172,12 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option is a:
-         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
+         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param codec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder codec(Object codec) {
             doSetProperty("codec", codec);
@@ -978,9 +1187,12 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option will be converted to a
-         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
+         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param codec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder codec(String codec) {
             doSetProperty("codec", codec);
@@ -990,10 +1202,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: codec
+         * 
+         * @param decoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
@@ -1004,10 +1219,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: codec
+         * 
+         * @param decoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
@@ -1018,10 +1236,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: codec
+         * 
+         * @param encoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder encoderMaxLineLength(
                 int encoderMaxLineLength) {
@@ -1032,10 +1253,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: codec
+         * 
+         * @param encoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder encoderMaxLineLength(
                 String encoderMaxLineLength) {
@@ -1047,9 +1271,12 @@ public interface MinaEndpointBuilderFactory {
          * textline codec and the UDP protocol. If not provided, Camel will use
          * the JVM default Charset.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -1059,9 +1286,12 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder filters(List<Object> filters) {
             doSetProperty("filters", filters);
@@ -1071,9 +1301,12 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder filters(String filters) {
             doSetProperty("filters", filters);
@@ -1084,10 +1317,13 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: codec
+         * 
+         * @param textline the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder textline(boolean textline) {
             doSetProperty("textline", textline);
@@ -1098,10 +1334,14 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: codec
+         * 
+         * @param textline the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder textline(String textline) {
             doSetProperty("textline", textline);
@@ -1113,10 +1353,12 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param textlineDelimiter the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder textlineDelimiter(
                 MinaTextLineDelimiter textlineDelimiter) {
@@ -1129,10 +1371,12 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param textlineDelimiter the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder textlineDelimiter(
                 String textlineDelimiter) {
@@ -1142,10 +1386,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Whether to auto start SSL handshake.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param autoStartTls the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder autoStartTls(boolean autoStartTls) {
             doSetProperty("autoStartTls", autoStartTls);
@@ -1154,10 +1401,14 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Whether to auto start SSL handshake.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param autoStartTls the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder autoStartTls(String autoStartTls) {
             doSetProperty("autoStartTls", autoStartTls);
@@ -1167,9 +1418,12 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1180,9 +1434,12 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1204,10 +1461,13 @@ public interface MinaEndpointBuilderFactory {
          * Whether to create the InetAddress once and reuse. Setting this to
          * false allows to pickup DNS changes in the network.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param cachedAddress the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder cachedAddress(
                 boolean cachedAddress) {
@@ -1218,10 +1478,14 @@ public interface MinaEndpointBuilderFactory {
          * Whether to create the InetAddress once and reuse. Setting this to
          * false allows to pickup DNS changes in the network.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param cachedAddress the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder cachedAddress(
                 String cachedAddress) {
@@ -1232,10 +1496,13 @@ public interface MinaEndpointBuilderFactory {
          * Sessions can be lazily created to avoid exceptions, if the remote
          * server is not up and running when the Camel producer is started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param lazySessionCreation the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder lazySessionCreation(
                 boolean lazySessionCreation) {
@@ -1246,10 +1513,14 @@ public interface MinaEndpointBuilderFactory {
          * Sessions can be lazily created to avoid exceptions, if the remote
          * server is not up and running when the Camel producer is started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param lazySessionCreation the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder lazySessionCreation(
                 String lazySessionCreation) {
@@ -1259,10 +1530,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 16
          * Group: advanced
+         * 
+         * @param maximumPoolSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder maximumPoolSize(
                 int maximumPoolSize) {
@@ -1272,10 +1546,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 16
          * Group: advanced
+         * 
+         * @param maximumPoolSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder maximumPoolSize(
                 String maximumPoolSize) {
@@ -1286,10 +1563,13 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param orderedThreadPoolExecutor the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder orderedThreadPoolExecutor(
                 boolean orderedThreadPoolExecutor) {
@@ -1300,10 +1580,14 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param orderedThreadPoolExecutor the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder orderedThreadPoolExecutor(
                 String orderedThreadPoolExecutor) {
@@ -1314,10 +1598,13 @@ public interface MinaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1328,10 +1615,14 @@ public interface MinaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1346,10 +1637,13 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
@@ -1364,10 +1658,14 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointProducerBuilder transferExchange(
                 String transferExchange) {
@@ -1390,10 +1688,13 @@ public interface MinaEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Mina session right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -1403,10 +1704,14 @@ public interface MinaEndpointBuilderFactory {
          * Whether or not to disconnect(close) from Mina session right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -1416,10 +1721,13 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param minaLogger the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder minaLogger(boolean minaLogger) {
             doSetProperty("minaLogger", minaLogger);
@@ -1429,10 +1737,14 @@ public interface MinaEndpointBuilderFactory {
          * You can enable the Apache MINA logging filter. Apache MINA uses slf4j
          * logging at INFO level to log all input and output.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param minaLogger the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder minaLogger(String minaLogger) {
             doSetProperty("minaLogger", minaLogger);
@@ -1441,10 +1753,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder sync(boolean sync) {
             doSetProperty("sync", sync);
@@ -1453,10 +1768,14 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder sync(String sync) {
             doSetProperty("sync", sync);
@@ -1467,10 +1786,13 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -1481,10 +1803,13 @@ public interface MinaEndpointBuilderFactory {
          * response from a remote server. The timeout unit is in milliseconds,
          * so 60000 is 60 seconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -1494,10 +1819,13 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder writeTimeout(long writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -1507,10 +1835,13 @@ public interface MinaEndpointBuilderFactory {
          * Maximum amount of time it should take to send data to the MINA
          * session. Default is 10000 milliseconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder writeTimeout(String writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -1524,10 +1855,13 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: codec
+         * 
+         * @param allowDefaultCodec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder allowDefaultCodec(boolean allowDefaultCodec) {
             doSetProperty("allowDefaultCodec", allowDefaultCodec);
@@ -1541,10 +1875,14 @@ public interface MinaEndpointBuilderFactory {
          * another filter must be the first in the filter chain, like the SSL
          * filter.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: codec
+         * 
+         * @param allowDefaultCodec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder allowDefaultCodec(String allowDefaultCodec) {
             doSetProperty("allowDefaultCodec", allowDefaultCodec);
@@ -1554,9 +1892,12 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option is a:
-         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
+         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param codec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder codec(Object codec) {
             doSetProperty("codec", codec);
@@ -1566,9 +1907,12 @@ public interface MinaEndpointBuilderFactory {
          * To use a custom minda codec implementation.
          * 
          * The option will be converted to a
-         * <code>org.apache.mina.filter.codec.ProtocolCodecFactory</code> type.
+         * &lt;code&gt;org.apache.mina.filter.codec.ProtocolCodecFactory&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param codec the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder codec(String codec) {
             doSetProperty("codec", codec);
@@ -1578,10 +1922,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: codec
+         * 
+         * @param decoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
@@ -1592,10 +1939,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol decoder max line length. By default the
          * default value of Mina itself is used which are 1024.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: codec
+         * 
+         * @param decoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder decoderMaxLineLength(
                 String decoderMaxLineLength) {
@@ -1606,10 +1956,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: codec
+         * 
+         * @param encoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder encoderMaxLineLength(
                 int encoderMaxLineLength) {
@@ -1620,10 +1973,13 @@ public interface MinaEndpointBuilderFactory {
          * To set the textline protocol encoder max line length. By default the
          * default value of Mina itself is used which are Integer.MAX_VALUE.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: codec
+         * 
+         * @param encoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder encoderMaxLineLength(
                 String encoderMaxLineLength) {
@@ -1635,9 +1991,12 @@ public interface MinaEndpointBuilderFactory {
          * textline codec and the UDP protocol. If not provided, Camel will use
          * the JVM default Charset.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -1647,9 +2006,12 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder filters(List<Object> filters) {
             doSetProperty("filters", filters);
@@ -1659,9 +2021,12 @@ public interface MinaEndpointBuilderFactory {
          * You can set a list of Mina IoFilters to use.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.mina.core.filterchain.IoFilter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.mina.core.filterchain.IoFilter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder filters(String filters) {
             doSetProperty("filters", filters);
@@ -1672,10 +2037,13 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: codec
+         * 
+         * @param textline the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder textline(boolean textline) {
             doSetProperty("textline", textline);
@@ -1686,10 +2054,14 @@ public interface MinaEndpointBuilderFactory {
          * indicate a text line based codec; if not specified or the value is
          * false, then Object Serialization is assumed over TCP.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: codec
+         * 
+         * @param textline the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder textline(String textline) {
             doSetProperty("textline", textline);
@@ -1701,10 +2073,12 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param textlineDelimiter the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder textlineDelimiter(
                 MinaTextLineDelimiter textlineDelimiter) {
@@ -1717,10 +2091,12 @@ public interface MinaEndpointBuilderFactory {
          * used to mark the end of text.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mina.MinaTextLineDelimiter</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mina.MinaTextLineDelimiter&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param textlineDelimiter the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder textlineDelimiter(String textlineDelimiter) {
             doSetProperty("textlineDelimiter", textlineDelimiter);
@@ -1729,10 +2105,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Whether to auto start SSL handshake.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param autoStartTls the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder autoStartTls(boolean autoStartTls) {
             doSetProperty("autoStartTls", autoStartTls);
@@ -1741,10 +2120,14 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Whether to auto start SSL handshake.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param autoStartTls the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder autoStartTls(String autoStartTls) {
             doSetProperty("autoStartTls", autoStartTls);
@@ -1754,9 +2137,12 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1767,9 +2153,12 @@ public interface MinaEndpointBuilderFactory {
          * To configure SSL security.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MinaEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1791,10 +2180,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 16
          * Group: advanced
+         * 
+         * @param maximumPoolSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointBuilder maximumPoolSize(int maximumPoolSize) {
             doSetProperty("maximumPoolSize", maximumPoolSize);
@@ -1803,10 +2195,13 @@ public interface MinaEndpointBuilderFactory {
         /**
          * Number of worker threads in the worker pool for TCP and UDP.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 16
          * Group: advanced
+         * 
+         * @param maximumPoolSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointBuilder maximumPoolSize(
                 String maximumPoolSize) {
@@ -1817,10 +2212,13 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param orderedThreadPoolExecutor the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointBuilder orderedThreadPoolExecutor(
                 boolean orderedThreadPoolExecutor) {
@@ -1831,10 +2229,14 @@ public interface MinaEndpointBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param orderedThreadPoolExecutor the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointBuilder orderedThreadPoolExecutor(
                 String orderedThreadPoolExecutor) {
@@ -1845,10 +2247,13 @@ public interface MinaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1858,10 +2263,14 @@ public interface MinaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1875,10 +2284,13 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointBuilder transferExchange(
                 boolean transferExchange) {
@@ -1893,10 +2305,14 @@ public interface MinaEndpointBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedMinaEndpointBuilder transferExchange(
                 String transferExchange) {

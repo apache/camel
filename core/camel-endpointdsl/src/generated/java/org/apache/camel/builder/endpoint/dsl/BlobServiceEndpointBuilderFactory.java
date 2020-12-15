@@ -47,9 +47,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * The blob service client.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.blob.CloudBlob&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureBlobClient the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder azureBlobClient(
                 Object azureBlobClient) {
@@ -60,9 +64,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * The blob service client.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.blob.CloudBlob&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureBlobClient the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder azureBlobClient(
                 String azureBlobClient) {
@@ -73,10 +81,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param blobOffset the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder blobOffset(Long blobOffset) {
             doSetProperty("blobOffset", blobOffset);
@@ -86,10 +97,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param blobOffset the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder blobOffset(String blobOffset) {
             doSetProperty("blobOffset", blobOffset);
@@ -99,10 +114,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set a blob type, 'blockblob' is default.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.blob.BlobType&lt;/code&gt; type.
          * 
          * Default: blockblob
          * Group: common
+         * 
+         * @param blobType the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder blobType(BlobType blobType) {
             doSetProperty("blobType", blobType);
@@ -112,10 +130,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set a blob type, 'blockblob' is default.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.blob.BlobType&lt;/code&gt; type.
          * 
          * Default: blockblob
          * Group: common
+         * 
+         * @param blobType the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder blobType(String blobType) {
             doSetProperty("blobType", blobType);
@@ -124,10 +145,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param closeStreamAfterRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder closeStreamAfterRead(
                 boolean closeStreamAfterRead) {
@@ -137,10 +161,14 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param closeStreamAfterRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder closeStreamAfterRead(
                 String closeStreamAfterRead) {
@@ -151,9 +179,12 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder credentials(
                 Object credentials) {
@@ -164,9 +195,12 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder credentials(
                 String credentials) {
@@ -176,9 +210,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the data length for the download or page blob upload operations.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataLength the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder dataLength(Long dataLength) {
             doSetProperty("dataLength", dataLength);
@@ -187,9 +224,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the data length for the download or page blob upload operations.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataLength the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder dataLength(String dataLength) {
             doSetProperty("dataLength", dataLength);
@@ -198,9 +239,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the file directory where the downloaded blobs will be saved to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileDir the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder fileDir(String fileDir) {
             doSetProperty("fileDir", fileDir);
@@ -210,10 +254,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Storage resources can be public for reading their content, if this
          * property is enabled then the credentials do not have to be set.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param publicForRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder publicForRead(
                 boolean publicForRead) {
@@ -224,10 +271,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * Storage resources can be public for reading their content, if this
          * property is enabled then the credentials do not have to be set.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param publicForRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder publicForRead(
                 String publicForRead) {
@@ -237,9 +288,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the minimum read size in bytes when reading the blob content.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param streamReadSize the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder streamReadSize(
                 int streamReadSize) {
@@ -249,9 +303,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the minimum read size in bytes when reading the blob content.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param streamReadSize the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder streamReadSize(
                 String streamReadSize) {
@@ -261,10 +318,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder validateClientURI(
                 boolean validateClientURI) {
@@ -274,10 +334,14 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder validateClientURI(
                 String validateClientURI) {
@@ -293,10 +357,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -312,10 +379,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -325,9 +396,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the storage account key used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountKey the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder credentialsAccountKey(
                 String credentialsAccountKey) {
@@ -337,9 +411,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the storage account name used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountName the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointConsumerBuilder credentialsAccountName(
                 String credentialsAccountName) {
@@ -364,10 +441,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -381,9 +461,12 @@ public interface BlobServiceEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -393,9 +476,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -406,9 +493,12 @@ public interface BlobServiceEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedBlobServiceEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -419,10 +509,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBlobServiceEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -433,10 +526,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBlobServiceEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -459,9 +556,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * The blob service client.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.blob.CloudBlob&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureBlobClient the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder azureBlobClient(
                 Object azureBlobClient) {
@@ -472,9 +573,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * The blob service client.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.blob.CloudBlob&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureBlobClient the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder azureBlobClient(
                 String azureBlobClient) {
@@ -485,10 +590,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param blobOffset the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder blobOffset(Long blobOffset) {
             doSetProperty("blobOffset", blobOffset);
@@ -498,10 +606,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param blobOffset the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder blobOffset(String blobOffset) {
             doSetProperty("blobOffset", blobOffset);
@@ -511,10 +623,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set a blob type, 'blockblob' is default.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.blob.BlobType&lt;/code&gt; type.
          * 
          * Default: blockblob
          * Group: common
+         * 
+         * @param blobType the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder blobType(BlobType blobType) {
             doSetProperty("blobType", blobType);
@@ -524,10 +639,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set a blob type, 'blockblob' is default.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.blob.BlobType&lt;/code&gt; type.
          * 
          * Default: blockblob
          * Group: common
+         * 
+         * @param blobType the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder blobType(String blobType) {
             doSetProperty("blobType", blobType);
@@ -536,10 +654,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param closeStreamAfterRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder closeStreamAfterRead(
                 boolean closeStreamAfterRead) {
@@ -549,10 +670,14 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param closeStreamAfterRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder closeStreamAfterRead(
                 String closeStreamAfterRead) {
@@ -563,9 +688,12 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder credentials(
                 Object credentials) {
@@ -576,9 +704,12 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder credentials(
                 String credentials) {
@@ -588,9 +719,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the data length for the download or page blob upload operations.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataLength the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder dataLength(Long dataLength) {
             doSetProperty("dataLength", dataLength);
@@ -599,9 +733,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the data length for the download or page blob upload operations.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataLength the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder dataLength(String dataLength) {
             doSetProperty("dataLength", dataLength);
@@ -610,9 +748,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the file directory where the downloaded blobs will be saved to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileDir the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder fileDir(String fileDir) {
             doSetProperty("fileDir", fileDir);
@@ -622,10 +763,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Storage resources can be public for reading their content, if this
          * property is enabled then the credentials do not have to be set.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param publicForRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder publicForRead(
                 boolean publicForRead) {
@@ -636,10 +780,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * Storage resources can be public for reading their content, if this
          * property is enabled then the credentials do not have to be set.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param publicForRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder publicForRead(
                 String publicForRead) {
@@ -649,9 +797,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the minimum read size in bytes when reading the blob content.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param streamReadSize the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder streamReadSize(
                 int streamReadSize) {
@@ -661,9 +812,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the minimum read size in bytes when reading the blob content.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param streamReadSize the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder streamReadSize(
                 String streamReadSize) {
@@ -673,10 +827,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder validateClientURI(
                 boolean validateClientURI) {
@@ -686,10 +843,14 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder validateClientURI(
                 String validateClientURI) {
@@ -699,10 +860,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the blob meta-data.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param blobMetadata the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder blobMetadata(
                 Map<String, String> blobMetadata) {
@@ -713,10 +877,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the blob meta-data.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param blobMetadata the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder blobMetadata(
                 String blobMetadata) {
@@ -726,9 +893,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set a prefix which can be used for listing the blobs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param blobPrefix the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder blobPrefix(String blobPrefix) {
             doSetProperty("blobPrefix", blobPrefix);
@@ -737,10 +907,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Close the stream after write or keep it open, default is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param closeStreamAfterWrite the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder closeStreamAfterWrite(
                 boolean closeStreamAfterWrite) {
@@ -750,10 +923,14 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Close the stream after write or keep it open, default is true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param closeStreamAfterWrite the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder closeStreamAfterWrite(
                 String closeStreamAfterWrite) {
@@ -771,10 +948,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -792,10 +972,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -806,10 +990,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Blob service operation hint to the producer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.blob.BlobServiceOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.blob.BlobServiceOperations&lt;/code&gt; type.
          * 
          * Default: listBlobs
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder operation(
                 BlobServiceOperations operation) {
@@ -820,10 +1007,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Blob service operation hint to the producer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.blob.BlobServiceOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.blob.BlobServiceOperations&lt;/code&gt; type.
          * 
          * Default: listBlobs
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -832,9 +1022,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the size of the buffer for writing block and page blocks.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param streamWriteSize the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder streamWriteSize(
                 int streamWriteSize) {
@@ -844,9 +1037,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the size of the buffer for writing block and page blocks.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param streamWriteSize the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder streamWriteSize(
                 String streamWriteSize) {
@@ -856,10 +1052,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Specify if the flat or hierarchical blob listing should be used.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param useFlatListing the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder useFlatListing(
                 boolean useFlatListing) {
@@ -869,10 +1068,14 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Specify if the flat or hierarchical blob listing should be used.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param useFlatListing the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder useFlatListing(
                 String useFlatListing) {
@@ -882,9 +1085,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the storage account key used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountKey the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder credentialsAccountKey(
                 String credentialsAccountKey) {
@@ -894,9 +1100,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the storage account name used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountName the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointProducerBuilder credentialsAccountName(
                 String credentialsAccountName) {
@@ -919,10 +1128,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBlobServiceEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -933,10 +1145,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBlobServiceEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -960,9 +1176,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * The blob service client.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.blob.CloudBlob&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureBlobClient the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder azureBlobClient(
                 Object azureBlobClient) {
@@ -973,9 +1193,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * The blob service client.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.blob.CloudBlob</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.blob.CloudBlob&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureBlobClient the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder azureBlobClient(
                 String azureBlobClient) {
@@ -986,10 +1210,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param blobOffset the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder blobOffset(Long blobOffset) {
             doSetProperty("blobOffset", blobOffset);
@@ -999,10 +1226,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param blobOffset the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder blobOffset(String blobOffset) {
             doSetProperty("blobOffset", blobOffset);
@@ -1012,10 +1243,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set a blob type, 'blockblob' is default.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.blob.BlobType&lt;/code&gt; type.
          * 
          * Default: blockblob
          * Group: common
+         * 
+         * @param blobType the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder blobType(BlobType blobType) {
             doSetProperty("blobType", blobType);
@@ -1025,10 +1259,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set a blob type, 'blockblob' is default.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.blob.BlobType&lt;/code&gt; type.
          * 
          * Default: blockblob
          * Group: common
+         * 
+         * @param blobType the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder blobType(String blobType) {
             doSetProperty("blobType", blobType);
@@ -1037,10 +1274,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param closeStreamAfterRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder closeStreamAfterRead(
                 boolean closeStreamAfterRead) {
@@ -1050,10 +1290,14 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param closeStreamAfterRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder closeStreamAfterRead(
                 String closeStreamAfterRead) {
@@ -1064,9 +1308,12 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder credentials(Object credentials) {
             doSetProperty("credentials", credentials);
@@ -1076,9 +1323,12 @@ public interface BlobServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder credentials(String credentials) {
             doSetProperty("credentials", credentials);
@@ -1087,9 +1337,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the data length for the download or page blob upload operations.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataLength the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder dataLength(Long dataLength) {
             doSetProperty("dataLength", dataLength);
@@ -1098,9 +1351,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the data length for the download or page blob upload operations.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataLength the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder dataLength(String dataLength) {
             doSetProperty("dataLength", dataLength);
@@ -1109,9 +1366,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the file directory where the downloaded blobs will be saved to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileDir the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder fileDir(String fileDir) {
             doSetProperty("fileDir", fileDir);
@@ -1121,10 +1381,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Storage resources can be public for reading their content, if this
          * property is enabled then the credentials do not have to be set.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param publicForRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder publicForRead(boolean publicForRead) {
             doSetProperty("publicForRead", publicForRead);
@@ -1134,10 +1397,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * Storage resources can be public for reading their content, if this
          * property is enabled then the credentials do not have to be set.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param publicForRead the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder publicForRead(String publicForRead) {
             doSetProperty("publicForRead", publicForRead);
@@ -1146,9 +1413,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the minimum read size in bytes when reading the blob content.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param streamReadSize the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder streamReadSize(int streamReadSize) {
             doSetProperty("streamReadSize", streamReadSize);
@@ -1157,9 +1427,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the minimum read size in bytes when reading the blob content.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param streamReadSize the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder streamReadSize(String streamReadSize) {
             doSetProperty("streamReadSize", streamReadSize);
@@ -1168,10 +1441,13 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder validateClientURI(
                 boolean validateClientURI) {
@@ -1181,10 +1457,14 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder validateClientURI(
                 String validateClientURI) {
@@ -1194,9 +1474,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the storage account key used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountKey the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder credentialsAccountKey(
                 String credentialsAccountKey) {
@@ -1206,9 +1489,12 @@ public interface BlobServiceEndpointBuilderFactory {
         /**
          * Set the storage account name used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountName the value to set
+         * @return the dsl builder
          */
         default BlobServiceEndpointBuilder credentialsAccountName(
                 String credentialsAccountName) {
@@ -1232,10 +1518,13 @@ public interface BlobServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBlobServiceEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1246,10 +1535,14 @@ public interface BlobServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBlobServiceEndpointBuilder synchronous(
                 String synchronous) {

@@ -46,9 +46,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * The queue service client.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.queue.CloudQueue&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureQueueClient the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointConsumerBuilder azureQueueClient(
                 Object azureQueueClient) {
@@ -59,9 +63,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * The queue service client.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.queue.CloudQueue&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureQueueClient the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointConsumerBuilder azureQueueClient(
                 String azureQueueClient) {
@@ -72,9 +80,12 @@ public interface QueueServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointConsumerBuilder credentials(
                 Object credentials) {
@@ -85,9 +96,12 @@ public interface QueueServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointConsumerBuilder credentials(
                 String credentials) {
@@ -97,10 +111,13 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointConsumerBuilder validateClientURI(
                 boolean validateClientURI) {
@@ -110,10 +127,14 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointConsumerBuilder validateClientURI(
                 String validateClientURI) {
@@ -129,10 +150,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -148,10 +172,14 @@ public interface QueueServiceEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -161,9 +189,12 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Set the storage account key used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountKey the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointConsumerBuilder credentialsAccountKey(
                 String credentialsAccountKey) {
@@ -173,9 +204,12 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Set the storage account name used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountName the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointConsumerBuilder credentialsAccountName(
                 String credentialsAccountName) {
@@ -200,10 +234,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -217,9 +254,12 @@ public interface QueueServiceEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -229,9 +269,13 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -242,9 +286,12 @@ public interface QueueServiceEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueServiceEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -255,10 +302,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueServiceEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -269,10 +319,14 @@ public interface QueueServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueServiceEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -295,9 +349,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * The queue service client.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.queue.CloudQueue&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureQueueClient the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder azureQueueClient(
                 Object azureQueueClient) {
@@ -308,9 +366,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * The queue service client.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.queue.CloudQueue&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureQueueClient the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder azureQueueClient(
                 String azureQueueClient) {
@@ -321,9 +383,12 @@ public interface QueueServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder credentials(
                 Object credentials) {
@@ -334,9 +399,12 @@ public interface QueueServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder credentials(
                 String credentials) {
@@ -346,10 +414,13 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder validateClientURI(
                 boolean validateClientURI) {
@@ -359,10 +430,14 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder validateClientURI(
                 String validateClientURI) {
@@ -380,10 +455,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -401,10 +479,14 @@ public interface QueueServiceEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -414,9 +496,12 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Message Time To Live in seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageTimeToLive the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder messageTimeToLive(
                 int messageTimeToLive) {
@@ -426,9 +511,12 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Message Time To Live in seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageTimeToLive the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder messageTimeToLive(
                 String messageTimeToLive) {
@@ -438,9 +526,12 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Message Visibility Delay in seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageVisibilityDelay the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
                 int messageVisibilityDelay) {
@@ -450,9 +541,12 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Message Visibility Delay in seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageVisibilityDelay the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder messageVisibilityDelay(
                 String messageVisibilityDelay) {
@@ -463,10 +557,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * Queue service operation hint to the producer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.queue.QueueServiceOperations&lt;/code&gt; type.
          * 
          * Default: listQueues
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder operation(
                 QueueServiceOperations operation) {
@@ -477,10 +574,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * Queue service operation hint to the producer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.queue.QueueServiceOperations&lt;/code&gt; type.
          * 
          * Default: listQueues
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -489,9 +589,12 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Set a prefix which can be used for listing the queues.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param queuePrefix the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder queuePrefix(
                 String queuePrefix) {
@@ -501,9 +604,12 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Set the storage account key used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountKey the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder credentialsAccountKey(
                 String credentialsAccountKey) {
@@ -513,9 +619,12 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Set the storage account name used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountName the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointProducerBuilder credentialsAccountName(
                 String credentialsAccountName) {
@@ -538,10 +647,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueServiceEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -552,10 +664,14 @@ public interface QueueServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueServiceEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -579,9 +695,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * The queue service client.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.queue.CloudQueue&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureQueueClient the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointBuilder azureQueueClient(
                 Object azureQueueClient) {
@@ -592,9 +712,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * The queue service client.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.queue.CloudQueue&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureQueueClient the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointBuilder azureQueueClient(
                 String azureQueueClient) {
@@ -605,9 +729,12 @@ public interface QueueServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointBuilder credentials(Object credentials) {
             doSetProperty("credentials", credentials);
@@ -617,9 +744,12 @@ public interface QueueServiceEndpointBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option will be converted to a
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointBuilder credentials(String credentials) {
             doSetProperty("credentials", credentials);
@@ -628,10 +758,13 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointBuilder validateClientURI(
                 boolean validateClientURI) {
@@ -641,10 +774,14 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointBuilder validateClientURI(
                 String validateClientURI) {
@@ -654,9 +791,12 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Set the storage account key used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountKey the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointBuilder credentialsAccountKey(
                 String credentialsAccountKey) {
@@ -666,9 +806,12 @@ public interface QueueServiceEndpointBuilderFactory {
         /**
          * Set the storage account name used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountName the value to set
+         * @return the dsl builder
          */
         default QueueServiceEndpointBuilder credentialsAccountName(
                 String credentialsAccountName) {
@@ -692,10 +835,13 @@ public interface QueueServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueServiceEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -706,10 +852,14 @@ public interface QueueServiceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueServiceEndpointBuilder synchronous(
                 String synchronous) {

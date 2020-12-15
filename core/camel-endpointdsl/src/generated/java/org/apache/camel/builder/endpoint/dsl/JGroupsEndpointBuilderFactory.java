@@ -45,9 +45,12 @@ public interface JGroupsEndpointBuilderFactory {
          * Specifies configuration properties of the JChannel used by the
          * endpoint.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param channelProperties the value to set
+         * @return the dsl builder
          */
         default JGroupsEndpointConsumerBuilder channelProperties(
                 String channelProperties) {
@@ -63,10 +66,13 @@ public interface JGroupsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JGroupsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -82,10 +88,14 @@ public interface JGroupsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JGroupsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -97,10 +107,13 @@ public interface JGroupsEndpointBuilderFactory {
          * messages as well (not only org.jgroups.Message instances). By default
          * only regular messages are consumed by the endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param enableViewMessages the value to set
+         * @return the dsl builder
          */
         default JGroupsEndpointConsumerBuilder enableViewMessages(
                 boolean enableViewMessages) {
@@ -112,10 +125,14 @@ public interface JGroupsEndpointBuilderFactory {
          * messages as well (not only org.jgroups.Message instances). By default
          * only regular messages are consumed by the endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param enableViewMessages the value to set
+         * @return the dsl builder
          */
         default JGroupsEndpointConsumerBuilder enableViewMessages(
                 String enableViewMessages) {
@@ -139,10 +156,13 @@ public interface JGroupsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJGroupsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -156,9 +176,12 @@ public interface JGroupsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJGroupsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -168,9 +191,13 @@ public interface JGroupsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJGroupsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -181,9 +208,12 @@ public interface JGroupsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJGroupsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -194,10 +224,13 @@ public interface JGroupsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJGroupsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -208,10 +241,14 @@ public interface JGroupsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJGroupsEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -233,9 +270,12 @@ public interface JGroupsEndpointBuilderFactory {
          * Specifies configuration properties of the JChannel used by the
          * endpoint.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param channelProperties the value to set
+         * @return the dsl builder
          */
         default JGroupsEndpointProducerBuilder channelProperties(
                 String channelProperties) {
@@ -253,10 +293,13 @@ public interface JGroupsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JGroupsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -274,10 +317,14 @@ public interface JGroupsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JGroupsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -299,10 +346,13 @@ public interface JGroupsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJGroupsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -313,10 +363,14 @@ public interface JGroupsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJGroupsEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -339,9 +393,12 @@ public interface JGroupsEndpointBuilderFactory {
          * Specifies configuration properties of the JChannel used by the
          * endpoint.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param channelProperties the value to set
+         * @return the dsl builder
          */
         default JGroupsEndpointBuilder channelProperties(
                 String channelProperties) {
@@ -364,10 +421,13 @@ public interface JGroupsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJGroupsEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -377,10 +437,14 @@ public interface JGroupsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJGroupsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

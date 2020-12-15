@@ -40,10 +40,13 @@ public interface MsvEndpointBuilderFactory {
         /**
          * Whether to fail if no body exists.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullBody the value to set
+         * @return the dsl builder
          */
         default MsvEndpointBuilder failOnNullBody(boolean failOnNullBody) {
             doSetProperty("failOnNullBody", failOnNullBody);
@@ -52,10 +55,14 @@ public interface MsvEndpointBuilderFactory {
         /**
          * Whether to fail if no body exists.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullBody the value to set
+         * @return the dsl builder
          */
         default MsvEndpointBuilder failOnNullBody(String failOnNullBody) {
             doSetProperty("failOnNullBody", failOnNullBody);
@@ -64,10 +71,13 @@ public interface MsvEndpointBuilderFactory {
         /**
          * Whether to fail if no header exists when validating against a header.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullHeader the value to set
+         * @return the dsl builder
          */
         default MsvEndpointBuilder failOnNullHeader(boolean failOnNullHeader) {
             doSetProperty("failOnNullHeader", failOnNullHeader);
@@ -76,10 +86,14 @@ public interface MsvEndpointBuilderFactory {
         /**
          * Whether to fail if no header exists when validating against a header.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullHeader the value to set
+         * @return the dsl builder
          */
         default MsvEndpointBuilder failOnNullHeader(String failOnNullHeader) {
             doSetProperty("failOnNullHeader", failOnNullHeader);
@@ -88,9 +102,12 @@ public interface MsvEndpointBuilderFactory {
         /**
          * To validate against a header instead of the message body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param headerName the value to set
+         * @return the dsl builder
          */
         default MsvEndpointBuilder headerName(String headerName) {
             doSetProperty("headerName", headerName);
@@ -107,10 +124,13 @@ public interface MsvEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MsvEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -127,10 +147,14 @@ public interface MsvEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MsvEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -153,9 +177,12 @@ public interface MsvEndpointBuilderFactory {
          * default error handler captures the errors and throws an exception.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
+         * &lt;code&gt;org.apache.camel.support.processor.validation.ValidatorErrorHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder errorHandler(Object errorHandler) {
             doSetProperty("errorHandler", errorHandler);
@@ -167,9 +194,12 @@ public interface MsvEndpointBuilderFactory {
          * default error handler captures the errors and throws an exception.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.processor.validation.ValidatorErrorHandler</code> type.
+         * &lt;code&gt;org.apache.camel.support.processor.validation.ValidatorErrorHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder errorHandler(String errorHandler) {
             doSetProperty("errorHandler", errorHandler);
@@ -179,9 +209,13 @@ public interface MsvEndpointBuilderFactory {
          * To use a custom LSResourceResolver. Do not use together with
          * resourceResolverFactory.
          * 
-         * The option is a: <code>org.w3c.dom.ls.LSResourceResolver</code> type.
+         * The option is a:
+         * &lt;code&gt;org.w3c.dom.ls.LSResourceResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder resourceResolver(
                 Object resourceResolver) {
@@ -193,9 +227,12 @@ public interface MsvEndpointBuilderFactory {
          * resourceResolverFactory.
          * 
          * The option will be converted to a
-         * <code>org.w3c.dom.ls.LSResourceResolver</code> type.
+         * &lt;code&gt;org.w3c.dom.ls.LSResourceResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder resourceResolver(
                 String resourceResolver) {
@@ -209,9 +246,12 @@ public interface MsvEndpointBuilderFactory {
          * system. Do not use together with resourceResolver.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.validator.ValidatorResourceResolverFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolverFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder resourceResolverFactory(
                 Object resourceResolverFactory) {
@@ -225,9 +265,12 @@ public interface MsvEndpointBuilderFactory {
          * system. Do not use together with resourceResolver.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.validator.ValidatorResourceResolverFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolverFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder resourceResolverFactory(
                 String resourceResolverFactory) {
@@ -237,10 +280,13 @@ public interface MsvEndpointBuilderFactory {
         /**
          * To use a custom javax.xml.validation.SchemaFactory.
          * 
-         * The option is a: <code>javax.xml.validation.SchemaFactory</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.validation.SchemaFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param schemaFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder schemaFactory(Object schemaFactory) {
             doSetProperty("schemaFactory", schemaFactory);
@@ -250,9 +296,12 @@ public interface MsvEndpointBuilderFactory {
          * To use a custom javax.xml.validation.SchemaFactory.
          * 
          * The option will be converted to a
-         * <code>javax.xml.validation.SchemaFactory</code> type.
+         * &lt;code&gt;javax.xml.validation.SchemaFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param schemaFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder schemaFactory(String schemaFactory) {
             doSetProperty("schemaFactory", schemaFactory);
@@ -261,10 +310,13 @@ public interface MsvEndpointBuilderFactory {
         /**
          * Configures the W3C XML Schema Namespace URI.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://www.w3.org/2001/XMLSchema
          * Group: advanced
+         * 
+         * @param schemaLanguage the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder schemaLanguage(String schemaLanguage) {
             doSetProperty("schemaLanguage", schemaLanguage);
@@ -274,10 +326,13 @@ public interface MsvEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -287,10 +342,14 @@ public interface MsvEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -301,10 +360,13 @@ public interface MsvEndpointBuilderFactory {
          * introduced to work around a JDK 1.6.x bug. Xerces should not have
          * this issue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param useSharedSchema the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder useSharedSchema(
                 boolean useSharedSchema) {
@@ -316,10 +378,14 @@ public interface MsvEndpointBuilderFactory {
          * introduced to work around a JDK 1.6.x bug. Xerces should not have
          * this issue.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param useSharedSchema the value to set
+         * @return the dsl builder
          */
         default AdvancedMsvEndpointBuilder useSharedSchema(
                 String useSharedSchema) {

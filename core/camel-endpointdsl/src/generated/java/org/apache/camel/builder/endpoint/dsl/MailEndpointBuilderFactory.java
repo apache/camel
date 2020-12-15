@@ -58,10 +58,13 @@ public interface MailEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -77,10 +80,14 @@ public interface MailEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -92,10 +99,13 @@ public interface MailEndpointBuilderFactory {
          * this option to false and having disconnect=false as well, then the
          * consumer keep the folder open between polls.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param closeFolder the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder closeFolder(boolean closeFolder) {
             doSetProperty("closeFolder", closeFolder);
@@ -106,10 +116,14 @@ public interface MailEndpointBuilderFactory {
          * this option to false and having disconnect=false as well, then the
          * consumer keep the folder open between polls.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param closeFolder the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder closeFolder(String closeFolder) {
             doSetProperty("closeFolder", closeFolder);
@@ -121,9 +135,12 @@ public interface MailEndpointBuilderFactory {
          * a header with the key copyTo, allowing you to copy messages to folder
          * names configured at runtime.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param copyTo the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder copyTo(String copyTo) {
             doSetProperty("copyTo", copyTo);
@@ -136,10 +153,13 @@ public interface MailEndpointBuilderFactory {
          * option by setting a header with the key delete to determine if the
          * mail should be deleted or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param delete the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder delete(boolean delete) {
             doSetProperty("delete", delete);
@@ -152,10 +172,14 @@ public interface MailEndpointBuilderFactory {
          * option by setting a header with the key delete to determine if the
          * mail should be deleted or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param delete the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder delete(String delete) {
             doSetProperty("delete", delete);
@@ -165,10 +189,13 @@ public interface MailEndpointBuilderFactory {
          * Whether the consumer should disconnect after polling. If enabled this
          * forces Camel to connect on each poll.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -178,10 +205,14 @@ public interface MailEndpointBuilderFactory {
          * Whether the consumer should disconnect after polling. If enabled this
          * forces Camel to connect on each poll.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -195,10 +226,13 @@ public interface MailEndpointBuilderFactory {
          * default behavior would be the consumer throws an exception and no
          * mails from the batch would be able to be routed by Camel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param handleFailedMessage the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder handleFailedMessage(
                 boolean handleFailedMessage) {
@@ -213,10 +247,14 @@ public interface MailEndpointBuilderFactory {
          * default behavior would be the consumer throws an exception and no
          * mails from the batch would be able to be routed by Camel.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param handleFailedMessage the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder handleFailedMessage(
                 String handleFailedMessage) {
@@ -229,9 +267,12 @@ public interface MailEndpointBuilderFactory {
          * to avoid downloading thousands of files when the server starts up.
          * Set a value of 0 or negative to disable this option.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -244,9 +285,12 @@ public interface MailEndpointBuilderFactory {
          * to avoid downloading thousands of files when the server starts up.
          * Set a value of 0 or negative to disable this option.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -257,10 +301,13 @@ public interface MailEndpointBuilderFactory {
          * This option enables transparent MIME decoding and unfolding for mail
          * headers.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param mimeDecodeHeaders the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder mimeDecodeHeaders(
                 boolean mimeDecodeHeaders) {
@@ -271,10 +318,14 @@ public interface MailEndpointBuilderFactory {
          * This option enables transparent MIME decoding and unfolding for mail
          * headers.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param mimeDecodeHeaders the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder mimeDecodeHeaders(
                 String mimeDecodeHeaders) {
@@ -287,9 +338,12 @@ public interface MailEndpointBuilderFactory {
          * a header with the key moveTo, allowing you to move messages to folder
          * names configured at runtime.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param moveTo the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder moveTo(String moveTo) {
             doSetProperty("moveTo", moveTo);
@@ -302,10 +356,13 @@ public interface MailEndpointBuilderFactory {
          * which allows us to rollback the mail message if there is an error
          * processing in Camel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param peek the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder peek(boolean peek) {
             doSetProperty("peek", peek);
@@ -318,10 +375,14 @@ public interface MailEndpointBuilderFactory {
          * which allows us to rollback the mail message if there is an error
          * processing in Camel.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param peek the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder peek(String peek) {
             doSetProperty("peek", peek);
@@ -331,10 +392,13 @@ public interface MailEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -345,10 +409,14 @@ public interface MailEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -362,10 +430,13 @@ public interface MailEndpointBuilderFactory {
          * exception and no mails from the batch would be able to be routed by
          * Camel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param skipFailedMessage the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder skipFailedMessage(
                 boolean skipFailedMessage) {
@@ -379,10 +450,14 @@ public interface MailEndpointBuilderFactory {
          * exception and no mails from the batch would be able to be routed by
          * Camel.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param skipFailedMessage the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder skipFailedMessage(
                 String skipFailedMessage) {
@@ -392,10 +467,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to limit by unseen mails only.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param unseen the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder unseen(boolean unseen) {
             doSetProperty("unseen", unseen);
@@ -404,10 +482,14 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to limit by unseen mails only.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param unseen the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder unseen(String unseen) {
             doSetProperty("unseen", unseen);
@@ -420,9 +502,13 @@ public interface MailEndpointBuilderFactory {
          * consumer to process. By default no repository is in use.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder idempotentRepository(
                 IdempotentRepository idempotentRepository) {
@@ -436,9 +522,13 @@ public interface MailEndpointBuilderFactory {
          * consumer to process. By default no repository is in use.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder idempotentRepository(
                 String idempotentRepository) {
@@ -456,10 +546,13 @@ public interface MailEndpointBuilderFactory {
          * repository has little value. However this option allows to store the
          * message id, for whatever reason you may have.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param idempotentRepositoryRemoveOnCommit the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder idempotentRepositoryRemoveOnCommit(
                 boolean idempotentRepositoryRemoveOnCommit) {
@@ -477,10 +570,14 @@ public interface MailEndpointBuilderFactory {
          * repository has little value. However this option allows to store the
          * message id, for whatever reason you may have.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param idempotentRepositoryRemoveOnCommit the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder idempotentRepositoryRemoveOnCommit(
                 String idempotentRepositoryRemoveOnCommit) {
@@ -492,12 +589,17 @@ public interface MailEndpointBuilderFactory {
          * based on search criteria such as subject, body, from, sent after a
          * certain date etc.
          * 
-         * The option is a: <code>javax.mail.search.SearchTerm</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.mail.search.SearchTerm&lt;/code&gt; type.
          * The option is multivalued, and you can use the searchTerm(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: filter
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder searchTerm(String key, Object value) {
             doSetMultiValueProperty("searchTerm", "searchTerm." + key, value);
@@ -508,12 +610,16 @@ public interface MailEndpointBuilderFactory {
          * based on search criteria such as subject, body, from, sent after a
          * certain date etc.
          * 
-         * The option is a: <code>javax.mail.search.SearchTerm</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.mail.search.SearchTerm&lt;/code&gt; type.
          * The option is multivalued, and you can use the searchTerm(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: filter
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder searchTerm(Map values) {
             doSetMultiValueProperties("searchTerm", "searchTerm.", values);
@@ -523,9 +629,12 @@ public interface MailEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -536,9 +645,12 @@ public interface MailEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -549,9 +661,12 @@ public interface MailEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -562,9 +677,12 @@ public interface MailEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -579,9 +697,12 @@ public interface MailEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -596,9 +717,12 @@ public interface MailEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -608,10 +732,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -620,10 +747,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -633,10 +763,13 @@ public interface MailEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -646,10 +779,14 @@ public interface MailEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -658,10 +795,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -670,10 +810,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -684,10 +827,13 @@ public interface MailEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -698,10 +844,13 @@ public interface MailEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -711,10 +860,14 @@ public interface MailEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -726,10 +879,13 @@ public interface MailEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -742,9 +898,12 @@ public interface MailEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -757,9 +916,12 @@ public interface MailEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -770,10 +932,13 @@ public interface MailEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -783,10 +948,14 @@ public interface MailEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -796,13 +965,17 @@ public interface MailEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -814,13 +987,16 @@ public interface MailEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -829,10 +1005,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -842,10 +1021,14 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder startScheduler(String startScheduler) {
             doSetProperty("startScheduler", startScheduler);
@@ -854,10 +1037,14 @@ public interface MailEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -867,10 +1054,13 @@ public interface MailEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -880,10 +1070,13 @@ public interface MailEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -893,10 +1086,14 @@ public interface MailEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -905,9 +1102,12 @@ public interface MailEndpointBuilderFactory {
         /**
          * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -917,9 +1117,12 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -930,9 +1133,12 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -942,9 +1148,12 @@ public interface MailEndpointBuilderFactory {
         /**
          * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -955,9 +1164,13 @@ public interface MailEndpointBuilderFactory {
          * Emulated to some degree when using POP3 or when IMAP server does not
          * have the SORT capability.
          * 
-         * The option is a: <code>com.sun.mail.imap.SortTerm[]</code> type.
+         * The option is a:
+         * &lt;code&gt;com.sun.mail.imap.SortTerm[]&lt;/code&gt; type.
          * 
          * Group: sort
+         * 
+         * @param sortTerm the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder sortTerm(Object[] sortTerm) {
             doSetProperty("sortTerm", sortTerm);
@@ -969,9 +1182,12 @@ public interface MailEndpointBuilderFactory {
          * have the SORT capability.
          * 
          * The option will be converted to a
-         * <code>com.sun.mail.imap.SortTerm[]</code> type.
+         * &lt;code&gt;com.sun.mail.imap.SortTerm[]&lt;/code&gt; type.
          * 
          * Group: sort
+         * 
+         * @param sortTerm the value to set
+         * @return the dsl builder
          */
         default MailEndpointConsumerBuilder sortTerm(String sortTerm) {
             doSetProperty("sortTerm", sortTerm);
@@ -994,10 +1210,13 @@ public interface MailEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -1011,9 +1230,12 @@ public interface MailEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -1023,9 +1245,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -1036,9 +1262,12 @@ public interface MailEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -1053,10 +1282,13 @@ public interface MailEndpointBuilderFactory {
          * special corner case, where Camel will not consume any messages at
          * all.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer (advanced)
+         * 
+         * @param fetchSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder fetchSize(int fetchSize) {
             doSetProperty("fetchSize", fetchSize);
@@ -1070,10 +1302,13 @@ public interface MailEndpointBuilderFactory {
          * special corner case, where Camel will not consume any messages at
          * all.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer (advanced)
+         * 
+         * @param fetchSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder fetchSize(String fetchSize) {
             doSetProperty("fetchSize", fetchSize);
@@ -1082,10 +1317,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * The folder to poll.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: INBOX
          * Group: consumer (advanced)
+         * 
+         * @param folderName the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder folderName(String folderName) {
             doSetProperty("folderName", folderName);
@@ -1096,9 +1334,12 @@ public interface MailEndpointBuilderFactory {
          * generate UUID of the mail message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.MailUidGenerator</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailUidGenerator&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param mailUidGenerator the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder mailUidGenerator(
                 Object mailUidGenerator) {
@@ -1110,9 +1351,12 @@ public interface MailEndpointBuilderFactory {
          * generate UUID of the mail message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.MailUidGenerator</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailUidGenerator&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param mailUidGenerator the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder mailUidGenerator(
                 String mailUidGenerator) {
@@ -1129,10 +1373,13 @@ public interface MailEndpointBuilderFactory {
          * message by calling
          * exchange.getIn().getBody(javax.mail.Message.class).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param mapMailMessage the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder mapMailMessage(
                 boolean mapMailMessage) {
@@ -1149,10 +1396,14 @@ public interface MailEndpointBuilderFactory {
          * message by calling
          * exchange.getIn().getBody(javax.mail.Message.class).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param mapMailMessage the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder mapMailMessage(
                 String mapMailMessage) {
@@ -1166,9 +1417,12 @@ public interface MailEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -1182,9 +1436,12 @@ public interface MailEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -1196,10 +1453,12 @@ public interface MailEndpointBuilderFactory {
          * on the mailbox once the normal processing ended.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.MailBoxPostProcessAction</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailBoxPostProcessAction&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param postProcessAction the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder postProcessAction(
                 Object postProcessAction) {
@@ -1211,10 +1470,12 @@ public interface MailEndpointBuilderFactory {
          * on the mailbox once the normal processing ended.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.MailBoxPostProcessAction</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailBoxPostProcessAction&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param postProcessAction the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder postProcessAction(
                 String postProcessAction) {
@@ -1227,12 +1488,16 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder additionalJavaMailProperties(
                 String key,
@@ -1246,12 +1511,15 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder additionalJavaMailProperties(
                 Map values) {
@@ -1265,10 +1533,13 @@ public interface MailEndpointBuilderFactory {
          * email clients, set the alternative mail body with this key as a
          * header.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: CamelMailAlternativeBody
          * Group: advanced
+         * 
+         * @param alternativeBodyHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder alternativeBodyHeader(
                 String alternativeBodyHeader) {
@@ -1280,9 +1551,12 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param attachmentsContentTransferEncodingResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder attachmentsContentTransferEncodingResolver(
                 Object attachmentsContentTransferEncodingResolver) {
@@ -1294,9 +1568,12 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param attachmentsContentTransferEncodingResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder attachmentsContentTransferEncodingResolver(
                 String attachmentsContentTransferEncodingResolver) {
@@ -1309,9 +1586,12 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param authenticator the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder authenticator(
                 Object authenticator) {
@@ -1324,9 +1604,12 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param authenticator the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder authenticator(
                 String authenticator) {
@@ -1338,9 +1621,13 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.MailBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder binding(Object binding) {
             doSetProperty("binding", binding);
@@ -1351,9 +1638,13 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.MailBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder binding(String binding) {
             doSetProperty("binding", binding);
@@ -1362,10 +1653,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -1375,10 +1669,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -1388,10 +1685,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * The mail message content type. Use text/html for HTML mails.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: text/plain
          * Group: advanced
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder contentType(
                 String contentType) {
@@ -1402,10 +1702,12 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder contentTypeResolver(
                 Object contentTypeResolver) {
@@ -1416,10 +1718,12 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder contentTypeResolver(
                 String contentTypeResolver) {
@@ -1430,10 +1734,13 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param debugMode the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder debugMode(boolean debugMode) {
             doSetProperty("debugMode", debugMode);
@@ -1443,10 +1750,14 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param debugMode the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder debugMode(String debugMode) {
             doSetProperty("debugMode", debugMode);
@@ -1457,9 +1768,13 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -1471,9 +1786,13 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -1486,10 +1805,13 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUnsupportedCharset the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder ignoreUnsupportedCharset(
                 boolean ignoreUnsupportedCharset) {
@@ -1502,10 +1824,14 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUnsupportedCharset the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder ignoreUnsupportedCharset(
                 String ignoreUnsupportedCharset) {
@@ -1518,10 +1844,13 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUriScheme the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder ignoreUriScheme(
                 boolean ignoreUriScheme) {
@@ -1534,10 +1863,14 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUriScheme the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder ignoreUriScheme(
                 String ignoreUriScheme) {
@@ -1548,9 +1881,12 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param javaMailProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder javaMailProperties(
                 Properties javaMailProperties) {
@@ -1561,10 +1897,13 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param javaMailProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder javaMailProperties(
                 String javaMailProperties) {
@@ -1578,9 +1917,12 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option is a: <code>javax.mail.Session</code> type.
+         * The option is a: &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder session(Object session) {
             doSetProperty("session", session);
@@ -1593,10 +1935,13 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option will be converted to a <code>javax.mail.Session</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder session(String session) {
             doSetProperty("session", session);
@@ -1606,10 +1951,13 @@ public interface MailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -1620,10 +1968,14 @@ public interface MailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -1633,10 +1985,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param useInlineAttachments the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder useInlineAttachments(
                 boolean useInlineAttachments) {
@@ -1646,10 +2001,14 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param useInlineAttachments the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder useInlineAttachments(
                 String useInlineAttachments) {
@@ -1671,9 +2030,12 @@ public interface MailEndpointBuilderFactory {
          * Sets the BCC email address. Separate multiple email addresses with
          * comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param bcc the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder bcc(String bcc) {
             doSetProperty("bcc", bcc);
@@ -1683,9 +2045,12 @@ public interface MailEndpointBuilderFactory {
          * Sets the CC email address. Separate multiple email addresses with
          * comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cc the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder cc(String cc) {
             doSetProperty("cc", cc);
@@ -1694,10 +2059,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * The from email address.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: camel@localhost
          * Group: producer
+         * 
+         * @param from the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder from(String from) {
             doSetProperty("from", from);
@@ -1714,10 +2082,13 @@ public interface MailEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1735,10 +2106,14 @@ public interface MailEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1749,9 +2124,12 @@ public interface MailEndpointBuilderFactory {
          * The Reply-To recipients (the receivers of the response mail).
          * Separate multiple email addresses with a comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param replyTo the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder replyTo(String replyTo) {
             doSetProperty("replyTo", replyTo);
@@ -1761,9 +2139,12 @@ public interface MailEndpointBuilderFactory {
          * The Subject of the message being sent. Note: Setting the subject in
          * the header takes precedence over this option.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder subject(String subject) {
             doSetProperty("subject", subject);
@@ -1773,9 +2154,12 @@ public interface MailEndpointBuilderFactory {
          * Sets the To email address. Separate multiple email addresses with
          * comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param to the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder to(String to) {
             doSetProperty("to", to);
@@ -1784,9 +2168,12 @@ public interface MailEndpointBuilderFactory {
         /**
          * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -1796,9 +2183,12 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1809,9 +2199,12 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1821,9 +2214,12 @@ public interface MailEndpointBuilderFactory {
         /**
          * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default MailEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -1845,9 +2241,12 @@ public interface MailEndpointBuilderFactory {
          * sending emails.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.JavaMailSender</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.JavaMailSender&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param javaMailSender the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder javaMailSender(
                 Object javaMailSender) {
@@ -1859,9 +2258,12 @@ public interface MailEndpointBuilderFactory {
          * sending emails.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.JavaMailSender</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.JavaMailSender&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param javaMailSender the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder javaMailSender(
                 String javaMailSender) {
@@ -1874,12 +2276,16 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder additionalJavaMailProperties(
                 String key,
@@ -1893,12 +2299,15 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder additionalJavaMailProperties(
                 Map values) {
@@ -1912,10 +2321,13 @@ public interface MailEndpointBuilderFactory {
          * email clients, set the alternative mail body with this key as a
          * header.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: CamelMailAlternativeBody
          * Group: advanced
+         * 
+         * @param alternativeBodyHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder alternativeBodyHeader(
                 String alternativeBodyHeader) {
@@ -1927,9 +2339,12 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param attachmentsContentTransferEncodingResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder attachmentsContentTransferEncodingResolver(
                 Object attachmentsContentTransferEncodingResolver) {
@@ -1941,9 +2356,12 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param attachmentsContentTransferEncodingResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder attachmentsContentTransferEncodingResolver(
                 String attachmentsContentTransferEncodingResolver) {
@@ -1956,9 +2374,12 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param authenticator the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder authenticator(
                 Object authenticator) {
@@ -1971,9 +2392,12 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param authenticator the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder authenticator(
                 String authenticator) {
@@ -1985,9 +2409,13 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.MailBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder binding(Object binding) {
             doSetProperty("binding", binding);
@@ -1998,9 +2426,13 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.MailBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder binding(String binding) {
             doSetProperty("binding", binding);
@@ -2009,10 +2441,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -2022,10 +2457,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -2035,10 +2473,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * The mail message content type. Use text/html for HTML mails.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: text/plain
          * Group: advanced
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder contentType(
                 String contentType) {
@@ -2049,10 +2490,12 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder contentTypeResolver(
                 Object contentTypeResolver) {
@@ -2063,10 +2506,12 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder contentTypeResolver(
                 String contentTypeResolver) {
@@ -2077,10 +2522,13 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param debugMode the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder debugMode(boolean debugMode) {
             doSetProperty("debugMode", debugMode);
@@ -2090,10 +2538,14 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param debugMode the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder debugMode(String debugMode) {
             doSetProperty("debugMode", debugMode);
@@ -2104,9 +2556,13 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -2118,9 +2574,13 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -2133,10 +2593,13 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUnsupportedCharset the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder ignoreUnsupportedCharset(
                 boolean ignoreUnsupportedCharset) {
@@ -2149,10 +2612,14 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUnsupportedCharset the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder ignoreUnsupportedCharset(
                 String ignoreUnsupportedCharset) {
@@ -2165,10 +2632,13 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUriScheme the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder ignoreUriScheme(
                 boolean ignoreUriScheme) {
@@ -2181,10 +2651,14 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUriScheme the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder ignoreUriScheme(
                 String ignoreUriScheme) {
@@ -2195,9 +2669,12 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param javaMailProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder javaMailProperties(
                 Properties javaMailProperties) {
@@ -2208,10 +2685,13 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param javaMailProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder javaMailProperties(
                 String javaMailProperties) {
@@ -2225,9 +2705,12 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option is a: <code>javax.mail.Session</code> type.
+         * The option is a: &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder session(Object session) {
             doSetProperty("session", session);
@@ -2240,10 +2723,13 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option will be converted to a <code>javax.mail.Session</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder session(String session) {
             doSetProperty("session", session);
@@ -2253,10 +2739,13 @@ public interface MailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -2267,10 +2756,14 @@ public interface MailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -2280,10 +2773,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param useInlineAttachments the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder useInlineAttachments(
                 boolean useInlineAttachments) {
@@ -2293,10 +2789,14 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param useInlineAttachments the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder useInlineAttachments(
                 String useInlineAttachments) {
@@ -2318,9 +2818,12 @@ public interface MailEndpointBuilderFactory {
         /**
          * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default MailEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -2330,9 +2833,12 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MailEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -2343,9 +2849,12 @@ public interface MailEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default MailEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -2355,9 +2864,12 @@ public interface MailEndpointBuilderFactory {
         /**
          * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default MailEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -2381,12 +2893,16 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder additionalJavaMailProperties(
                 String key,
@@ -2400,12 +2916,15 @@ public interface MailEndpointBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalJavaMailProperties(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder additionalJavaMailProperties(
                 Map values) {
@@ -2419,10 +2938,13 @@ public interface MailEndpointBuilderFactory {
          * email clients, set the alternative mail body with this key as a
          * header.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: CamelMailAlternativeBody
          * Group: advanced
+         * 
+         * @param alternativeBodyHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder alternativeBodyHeader(
                 String alternativeBodyHeader) {
@@ -2434,9 +2956,12 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param attachmentsContentTransferEncodingResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder attachmentsContentTransferEncodingResolver(
                 Object attachmentsContentTransferEncodingResolver) {
@@ -2448,9 +2973,12 @@ public interface MailEndpointBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param attachmentsContentTransferEncodingResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder attachmentsContentTransferEncodingResolver(
                 String attachmentsContentTransferEncodingResolver) {
@@ -2463,9 +2991,12 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param authenticator the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder authenticator(Object authenticator) {
             doSetProperty("authenticator", authenticator);
@@ -2477,9 +3008,12 @@ public interface MailEndpointBuilderFactory {
          * must be read dynamically.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param authenticator the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder authenticator(String authenticator) {
             doSetProperty("authenticator", authenticator);
@@ -2490,9 +3024,13 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.MailBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder binding(Object binding) {
             doSetProperty("binding", binding);
@@ -2503,9 +3041,13 @@ public interface MailEndpointBuilderFactory {
          * Mail message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.MailBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder binding(String binding) {
             doSetProperty("binding", binding);
@@ -2514,10 +3056,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -2527,10 +3072,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -2540,10 +3088,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * The mail message content type. Use text/html for HTML mails.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: text/plain
          * Group: advanced
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder contentType(String contentType) {
             doSetProperty("contentType", contentType);
@@ -2553,10 +3104,12 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder contentTypeResolver(
                 Object contentTypeResolver) {
@@ -2567,10 +3120,12 @@ public interface MailEndpointBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder contentTypeResolver(
                 String contentTypeResolver) {
@@ -2581,10 +3136,13 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param debugMode the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder debugMode(boolean debugMode) {
             doSetProperty("debugMode", debugMode);
@@ -2594,10 +3152,14 @@ public interface MailEndpointBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param debugMode the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder debugMode(String debugMode) {
             doSetProperty("debugMode", debugMode);
@@ -2608,9 +3170,13 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -2622,9 +3188,13 @@ public interface MailEndpointBuilderFactory {
          * headers.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -2637,10 +3207,13 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUnsupportedCharset the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder ignoreUnsupportedCharset(
                 boolean ignoreUnsupportedCharset) {
@@ -2653,10 +3226,14 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUnsupportedCharset the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder ignoreUnsupportedCharset(
                 String ignoreUnsupportedCharset) {
@@ -2669,10 +3246,13 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUriScheme the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder ignoreUriScheme(
                 boolean ignoreUriScheme) {
@@ -2685,10 +3265,14 @@ public interface MailEndpointBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUriScheme the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder ignoreUriScheme(
                 String ignoreUriScheme) {
@@ -2699,9 +3283,12 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param javaMailProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder javaMailProperties(
                 Properties javaMailProperties) {
@@ -2712,10 +3299,13 @@ public interface MailEndpointBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param javaMailProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder javaMailProperties(
                 String javaMailProperties) {
@@ -2729,9 +3319,12 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option is a: <code>javax.mail.Session</code> type.
+         * The option is a: &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder session(Object session) {
             doSetProperty("session", session);
@@ -2744,10 +3337,13 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option will be converted to a <code>javax.mail.Session</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder session(String session) {
             doSetProperty("session", session);
@@ -2757,10 +3353,13 @@ public interface MailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -2770,10 +3369,14 @@ public interface MailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -2782,10 +3385,13 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param useInlineAttachments the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder useInlineAttachments(
                 boolean useInlineAttachments) {
@@ -2795,10 +3401,14 @@ public interface MailEndpointBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param useInlineAttachments the value to set
+         * @return the dsl builder
          */
         default AdvancedMailEndpointBuilder useInlineAttachments(
                 String useInlineAttachments) {

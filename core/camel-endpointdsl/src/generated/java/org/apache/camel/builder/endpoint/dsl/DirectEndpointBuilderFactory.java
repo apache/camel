@@ -50,10 +50,13 @@ public interface DirectEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DirectEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -69,10 +72,14 @@ public interface DirectEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DirectEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -96,10 +103,13 @@ public interface DirectEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -113,9 +123,12 @@ public interface DirectEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -125,9 +138,13 @@ public interface DirectEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -138,9 +155,12 @@ public interface DirectEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -151,10 +171,13 @@ public interface DirectEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -165,10 +188,14 @@ public interface DirectEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -191,10 +218,13 @@ public interface DirectEndpointBuilderFactory {
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param block the value to set
+         * @return the dsl builder
          */
         default DirectEndpointProducerBuilder block(boolean block) {
             doSetProperty("block", block);
@@ -205,10 +235,14 @@ public interface DirectEndpointBuilderFactory {
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param block the value to set
+         * @return the dsl builder
          */
         default DirectEndpointProducerBuilder block(String block) {
             doSetProperty("block", block);
@@ -218,10 +252,13 @@ public interface DirectEndpointBuilderFactory {
          * Whether the producer should fail by throwing an exception, when
          * sending to a DIRECT endpoint with no active consumers.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default DirectEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
@@ -232,10 +269,14 @@ public interface DirectEndpointBuilderFactory {
          * Whether the producer should fail by throwing an exception, when
          * sending to a DIRECT endpoint with no active consumers.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failIfNoConsumers the value to set
+         * @return the dsl builder
          */
         default DirectEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
@@ -253,10 +294,13 @@ public interface DirectEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DirectEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -274,10 +318,14 @@ public interface DirectEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DirectEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -287,10 +335,13 @@ public interface DirectEndpointBuilderFactory {
         /**
          * The timeout value to use if block is enabled.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default DirectEndpointProducerBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -299,10 +350,13 @@ public interface DirectEndpointBuilderFactory {
         /**
          * The timeout value to use if block is enabled.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default DirectEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -323,10 +377,13 @@ public interface DirectEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -337,10 +394,14 @@ public interface DirectEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -375,10 +436,13 @@ public interface DirectEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -388,10 +452,14 @@ public interface DirectEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDirectEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

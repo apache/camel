@@ -45,10 +45,13 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoAck the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder autoAck(boolean autoAck) {
             doSetProperty("autoAck", autoAck);
@@ -58,10 +61,14 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoAck the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder autoAck(String autoAck) {
             doSetProperty("autoAck", autoAck);
@@ -71,10 +78,13 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the buffering of HL7 payloads before writing to the
          * socket.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bufferWrites the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default MllpEndpointConsumerBuilder bufferWrites(boolean bufferWrites) {
@@ -85,10 +95,14 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the buffering of HL7 payloads before writing to the
          * socket.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bufferWrites the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default MllpEndpointConsumerBuilder bufferWrites(String bufferWrites) {
@@ -99,10 +113,13 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param hl7Headers the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder hl7Headers(boolean hl7Headers) {
             doSetProperty("hl7Headers", hl7Headers);
@@ -112,10 +129,14 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param hl7Headers the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder hl7Headers(String hl7Headers) {
             doSetProperty("hl7Headers", hl7Headers);
@@ -128,10 +149,13 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param requireEndOfData the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder requireEndOfData(
                 boolean requireEndOfData) {
@@ -145,10 +169,14 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param requireEndOfData the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder requireEndOfData(
                 String requireEndOfData) {
@@ -164,10 +192,13 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stringPayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder stringPayload(boolean stringPayload) {
             doSetProperty("stringPayload", stringPayload);
@@ -182,10 +213,14 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stringPayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder stringPayload(String stringPayload) {
             doSetProperty("stringPayload", stringPayload);
@@ -199,10 +234,13 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param validatePayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder validatePayload(
                 boolean validatePayload) {
@@ -217,10 +255,14 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param validatePayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder validatePayload(
                 String validatePayload) {
@@ -235,10 +277,13 @@ public interface MllpEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions by logging them at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -253,10 +298,14 @@ public interface MllpEndpointBuilderFactory {
          * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
          * with exceptions by logging them at WARN or ERROR level and ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -266,9 +315,12 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Set the CamelCharsetName property on the exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param charsetName the value to set
+         * @return the dsl builder
          */
         default MllpEndpointConsumerBuilder charsetName(String charsetName) {
             doSetProperty("charsetName", charsetName);
@@ -291,10 +343,13 @@ public interface MllpEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -308,9 +363,12 @@ public interface MllpEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -320,10 +378,14 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Default: InOut
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -334,10 +396,13 @@ public interface MllpEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Default: InOut
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -348,10 +413,13 @@ public interface MllpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used (this
          * component only supports synchronous operations).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -362,10 +430,14 @@ public interface MllpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used (this
          * component only supports synchronous operations).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -377,10 +449,13 @@ public interface MllpEndpointBuilderFactory {
          * request to connect) is set to the backlog parameter. If a connection
          * indication arrives when the queue is full, the connection is refused.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: tcp
+         * 
+         * @param backlog the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder backlog(Integer backlog) {
             doSetProperty("backlog", backlog);
@@ -391,11 +466,14 @@ public interface MllpEndpointBuilderFactory {
          * request to connect) is set to the backlog parameter. If a connection
          * indication arrives when the queue is full, the connection is refused.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: tcp
+         * 
+         * @param backlog the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder backlog(String backlog) {
             doSetProperty("backlog", backlog);
@@ -406,10 +484,13 @@ public interface MllpEndpointBuilderFactory {
          * ServerSocket is bound. In some environments, it may be desirable to
          * allow the endpoint to start before the TCP ServerSocket is bound.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: tcp
+         * 
+         * @param lenientBind the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder lenientBind(
                 boolean lenientBind) {
@@ -421,10 +502,14 @@ public interface MllpEndpointBuilderFactory {
          * ServerSocket is bound. In some environments, it may be desirable to
          * allow the endpoint to start before the TCP ServerSocket is bound.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: tcp
+         * 
+         * @param lenientBind the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder lenientBind(
                 String lenientBind) {
@@ -437,10 +522,13 @@ public interface MllpEndpointBuilderFactory {
          * are already established, the new connection will be reset
          * immediately.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: tcp
+         * 
+         * @param maxConcurrentConsumers the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
@@ -453,10 +541,13 @@ public interface MllpEndpointBuilderFactory {
          * are already established, the new connection will be reset
          * immediately.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: tcp
+         * 
+         * @param maxConcurrentConsumers the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder maxConcurrentConsumers(
                 String maxConcurrentConsumers) {
@@ -466,10 +557,13 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
                 Integer receiveBufferSize) {
@@ -479,11 +573,14 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
                 String receiveBufferSize) {
@@ -493,10 +590,13 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the SO_REUSEADDR socket option.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: tcp
+         * 
+         * @param reuseAddress the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder reuseAddress(
                 Boolean reuseAddress) {
@@ -506,11 +606,14 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the SO_REUSEADDR socket option.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: tcp
+         * 
+         * @param reuseAddress the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder reuseAddress(
                 String reuseAddress) {
@@ -520,10 +623,13 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
                 Integer sendBufferSize) {
@@ -533,11 +639,14 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
                 String sendBufferSize) {
@@ -548,10 +657,13 @@ public interface MllpEndpointBuilderFactory {
          * Timeout (in milliseconds) while waiting for a TCP connection TCP
          * Server Only.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: timeout
+         * 
+         * @param acceptTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder acceptTimeout(
                 int acceptTimeout) {
@@ -562,10 +674,13 @@ public interface MllpEndpointBuilderFactory {
          * Timeout (in milliseconds) while waiting for a TCP connection TCP
          * Server Only.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: timeout
+         * 
+         * @param acceptTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder acceptTimeout(
                 String acceptTimeout) {
@@ -576,10 +691,13 @@ public interface MllpEndpointBuilderFactory {
          * TCP Server Only - The number of milliseconds to wait between bind
          * attempts.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: timeout
+         * 
+         * @param bindRetryInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder bindRetryInterval(
                 int bindRetryInterval) {
@@ -590,10 +708,13 @@ public interface MllpEndpointBuilderFactory {
          * TCP Server Only - The number of milliseconds to wait between bind
          * attempts.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: timeout
+         * 
+         * @param bindRetryInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder bindRetryInterval(
                 String bindRetryInterval) {
@@ -604,10 +725,13 @@ public interface MllpEndpointBuilderFactory {
          * TCP Server Only - The number of milliseconds to retry binding to a
          * server port.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: timeout
+         * 
+         * @param bindTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder bindTimeout(int bindTimeout) {
             doSetProperty("bindTimeout", bindTimeout);
@@ -617,10 +741,13 @@ public interface MllpEndpointBuilderFactory {
          * TCP Server Only - The number of milliseconds to retry binding to a
          * server port.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: timeout
+         * 
+         * @param bindTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder bindTimeout(
                 String bindTimeout) {
@@ -632,9 +759,12 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: timeout
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder idleTimeout(
                 Integer idleTimeout) {
@@ -646,10 +776,13 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: timeout
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder idleTimeout(
                 String idleTimeout) {
@@ -660,9 +793,12 @@ public interface MllpEndpointBuilderFactory {
          * The maximum number of timeouts (specified by receiveTimeout) allowed
          * before the TCP Connection will be reset.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: timeout
+         * 
+         * @param maxReceiveTimeouts the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default AdvancedMllpEndpointConsumerBuilder maxReceiveTimeouts(
@@ -674,10 +810,13 @@ public interface MllpEndpointBuilderFactory {
          * The maximum number of timeouts (specified by receiveTimeout) allowed
          * before the TCP Connection will be reset.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: timeout
+         * 
+         * @param maxReceiveTimeouts the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default AdvancedMllpEndpointConsumerBuilder maxReceiveTimeouts(
@@ -689,10 +828,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: timeout
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder readTimeout(int readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -702,10 +844,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: timeout
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder readTimeout(
                 String readTimeout) {
@@ -716,10 +861,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: timeout
+         * 
+         * @param receiveTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder receiveTimeout(
                 int receiveTimeout) {
@@ -730,10 +878,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: timeout
+         * 
+         * @param receiveTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointConsumerBuilder receiveTimeout(
                 String receiveTimeout) {
@@ -755,10 +906,13 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoAck the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder autoAck(boolean autoAck) {
             doSetProperty("autoAck", autoAck);
@@ -768,10 +922,14 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoAck the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder autoAck(String autoAck) {
             doSetProperty("autoAck", autoAck);
@@ -781,10 +939,13 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the buffering of HL7 payloads before writing to the
          * socket.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bufferWrites the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default MllpEndpointProducerBuilder bufferWrites(boolean bufferWrites) {
@@ -795,10 +956,14 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the buffering of HL7 payloads before writing to the
          * socket.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bufferWrites the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default MllpEndpointProducerBuilder bufferWrites(String bufferWrites) {
@@ -809,10 +974,13 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param hl7Headers the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder hl7Headers(boolean hl7Headers) {
             doSetProperty("hl7Headers", hl7Headers);
@@ -822,10 +990,14 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param hl7Headers the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder hl7Headers(String hl7Headers) {
             doSetProperty("hl7Headers", hl7Headers);
@@ -838,10 +1010,13 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param requireEndOfData the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder requireEndOfData(
                 boolean requireEndOfData) {
@@ -855,10 +1030,14 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param requireEndOfData the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder requireEndOfData(
                 String requireEndOfData) {
@@ -874,10 +1053,13 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stringPayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder stringPayload(boolean stringPayload) {
             doSetProperty("stringPayload", stringPayload);
@@ -892,10 +1074,14 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stringPayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder stringPayload(String stringPayload) {
             doSetProperty("stringPayload", stringPayload);
@@ -909,10 +1095,13 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param validatePayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder validatePayload(
                 boolean validatePayload) {
@@ -927,10 +1116,14 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param validatePayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder validatePayload(
                 String validatePayload) {
@@ -948,10 +1141,13 @@ public interface MllpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -969,10 +1165,14 @@ public interface MllpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -982,9 +1182,12 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Set the CamelCharsetName property on the exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param charsetName the value to set
+         * @return the dsl builder
          */
         default MllpEndpointProducerBuilder charsetName(String charsetName) {
             doSetProperty("charsetName", charsetName);
@@ -1005,10 +1208,13 @@ public interface MllpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used (this
          * component only supports synchronous operations).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1019,10 +1225,14 @@ public interface MllpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used (this
          * component only supports synchronous operations).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1032,10 +1242,13 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the SO_KEEPALIVE socket option.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: tcp
+         * 
+         * @param keepAlive the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder keepAlive(Boolean keepAlive) {
             doSetProperty("keepAlive", keepAlive);
@@ -1044,11 +1257,14 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the SO_KEEPALIVE socket option.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: tcp
+         * 
+         * @param keepAlive the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder keepAlive(String keepAlive) {
             doSetProperty("keepAlive", keepAlive);
@@ -1057,10 +1273,13 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
                 Integer receiveBufferSize) {
@@ -1070,11 +1289,14 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
                 String receiveBufferSize) {
@@ -1084,10 +1306,13 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder sendBufferSize(
                 Integer sendBufferSize) {
@@ -1097,11 +1322,14 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder sendBufferSize(
                 String sendBufferSize) {
@@ -1111,10 +1339,13 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the TCP_NODELAY socket option.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: tcp
+         * 
+         * @param tcpNoDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder tcpNoDelay(
                 Boolean tcpNoDelay) {
@@ -1124,11 +1355,14 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Enable/disable the TCP_NODELAY socket option.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: tcp
+         * 
+         * @param tcpNoDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
             doSetProperty("tcpNoDelay", tcpNoDelay);
@@ -1138,10 +1372,13 @@ public interface MllpEndpointBuilderFactory {
          * Timeout (in milliseconds) for establishing for a TCP connection TCP
          * Client only.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: timeout
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
@@ -1152,10 +1389,13 @@ public interface MllpEndpointBuilderFactory {
          * Timeout (in milliseconds) for establishing for a TCP connection TCP
          * Client only.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: timeout
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
@@ -1167,9 +1407,12 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: timeout
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder idleTimeout(
                 Integer idleTimeout) {
@@ -1181,10 +1424,13 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: timeout
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder idleTimeout(
                 String idleTimeout) {
@@ -1195,10 +1441,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: timeout
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder readTimeout(int readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -1208,10 +1457,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: timeout
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder readTimeout(
                 String readTimeout) {
@@ -1222,10 +1474,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: timeout
+         * 
+         * @param receiveTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder receiveTimeout(
                 int receiveTimeout) {
@@ -1236,10 +1491,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: timeout
+         * 
+         * @param receiveTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointProducerBuilder receiveTimeout(
                 String receiveTimeout) {
@@ -1262,10 +1520,13 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoAck the value to set
+         * @return the dsl builder
          */
         default MllpEndpointBuilder autoAck(boolean autoAck) {
             doSetProperty("autoAck", autoAck);
@@ -1275,10 +1536,14 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of a MLLP Acknowledgement
          * MLLP Consumers only.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoAck the value to set
+         * @return the dsl builder
          */
         default MllpEndpointBuilder autoAck(String autoAck) {
             doSetProperty("autoAck", autoAck);
@@ -1288,10 +1553,13 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the buffering of HL7 payloads before writing to the
          * socket.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bufferWrites the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default MllpEndpointBuilder bufferWrites(boolean bufferWrites) {
@@ -1302,10 +1570,14 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the buffering of HL7 payloads before writing to the
          * socket.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param bufferWrites the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default MllpEndpointBuilder bufferWrites(String bufferWrites) {
@@ -1316,10 +1588,13 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param hl7Headers the value to set
+         * @return the dsl builder
          */
         default MllpEndpointBuilder hl7Headers(boolean hl7Headers) {
             doSetProperty("hl7Headers", hl7Headers);
@@ -1329,10 +1604,14 @@ public interface MllpEndpointBuilderFactory {
          * Enable/Disable the automatic generation of message headers from the
          * HL7 Message MLLP Consumers only.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param hl7Headers the value to set
+         * @return the dsl builder
          */
         default MllpEndpointBuilder hl7Headers(String hl7Headers) {
             doSetProperty("hl7Headers", hl7Headers);
@@ -1345,10 +1624,13 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param requireEndOfData the value to set
+         * @return the dsl builder
          */
         default MllpEndpointBuilder requireEndOfData(boolean requireEndOfData) {
             doSetProperty("requireEndOfData", requireEndOfData);
@@ -1361,10 +1643,14 @@ public interface MllpEndpointBuilderFactory {
          * setting controls whether or not the final END_OF_DATA byte is
          * required or optional.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param requireEndOfData the value to set
+         * @return the dsl builder
          */
         default MllpEndpointBuilder requireEndOfData(String requireEndOfData) {
             doSetProperty("requireEndOfData", requireEndOfData);
@@ -1379,10 +1665,13 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stringPayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointBuilder stringPayload(boolean stringPayload) {
             doSetProperty("stringPayload", stringPayload);
@@ -1397,10 +1686,14 @@ public interface MllpEndpointBuilderFactory {
          * character set. If MSH-18 is not set, then the default ISO-8859-1
          * character set will be use.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param stringPayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointBuilder stringPayload(String stringPayload) {
             doSetProperty("stringPayload", stringPayload);
@@ -1414,10 +1707,13 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param validatePayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointBuilder validatePayload(boolean validatePayload) {
             doSetProperty("validatePayload", validatePayload);
@@ -1431,10 +1727,14 @@ public interface MllpEndpointBuilderFactory {
          * MllpInvalidMessageException (for consumers) or a
          * MllpInvalidAcknowledgementException will be thrown.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param validatePayload the value to set
+         * @return the dsl builder
          */
         default MllpEndpointBuilder validatePayload(String validatePayload) {
             doSetProperty("validatePayload", validatePayload);
@@ -1443,9 +1743,12 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Set the CamelCharsetName property on the exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param charsetName the value to set
+         * @return the dsl builder
          */
         default MllpEndpointBuilder charsetName(String charsetName) {
             doSetProperty("charsetName", charsetName);
@@ -1467,10 +1770,13 @@ public interface MllpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used (this
          * component only supports synchronous operations).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1480,10 +1786,14 @@ public interface MllpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used (this
          * component only supports synchronous operations).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1492,10 +1802,13 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder receiveBufferSize(
                 Integer receiveBufferSize) {
@@ -1505,11 +1818,14 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_RCVBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder receiveBufferSize(
                 String receiveBufferSize) {
@@ -1519,10 +1835,13 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder sendBufferSize(
                 Integer sendBufferSize) {
@@ -1532,11 +1851,14 @@ public interface MllpEndpointBuilderFactory {
         /**
          * Sets the SO_SNDBUF option to the specified value (in bytes).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: tcp
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder sendBufferSize(String sendBufferSize) {
             doSetProperty("sendBufferSize", sendBufferSize);
@@ -1547,9 +1869,12 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: timeout
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder idleTimeout(Integer idleTimeout) {
             doSetProperty("idleTimeout", idleTimeout);
@@ -1560,10 +1885,13 @@ public interface MllpEndpointBuilderFactory {
          * will be reset. A null value or a value less than or equal to zero
          * will disable the idle timeout.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: timeout
+         * 
+         * @param idleTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder idleTimeout(String idleTimeout) {
             doSetProperty("idleTimeout", idleTimeout);
@@ -1573,10 +1901,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: timeout
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder readTimeout(int readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -1586,10 +1917,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used after the start of an
          * MLLP frame has been received.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: timeout
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder readTimeout(String readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -1599,10 +1933,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: timeout
+         * 
+         * @param receiveTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder receiveTimeout(int receiveTimeout) {
             doSetProperty("receiveTimeout", receiveTimeout);
@@ -1612,10 +1949,13 @@ public interface MllpEndpointBuilderFactory {
          * The SO_TIMEOUT value (in milliseconds) used when waiting for the
          * start of an MLLP frame.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: timeout
+         * 
+         * @param receiveTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedMllpEndpointBuilder receiveTimeout(String receiveTimeout) {
             doSetProperty("receiveTimeout", receiveTimeout);

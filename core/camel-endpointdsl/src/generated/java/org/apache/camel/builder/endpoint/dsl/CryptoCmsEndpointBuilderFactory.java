@@ -45,9 +45,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * operation. Use either this parameter or the parameter
          * 'keyStoreParameters'.
          * 
-         * The option is a: <code>java.security.KeyStore</code> type.
+         * The option is a: &lt;code&gt;java.security.KeyStore&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param keyStore the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder keyStore(KeyStore keyStore) {
             doSetProperty("keyStore", keyStore);
@@ -59,10 +63,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * operation. Use either this parameter or the parameter
          * 'keyStoreParameters'.
          * 
-         * The option will be converted to a <code>java.security.KeyStore</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.security.KeyStore&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param keyStore the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder keyStore(String keyStore) {
             doSetProperty("keyStore", keyStore);
@@ -74,9 +81,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * operation. Use either this parameter or the parameter 'keystore'.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.KeyStoreParameters&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param keyStoreParameters the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder keyStoreParameters(
                 Object keyStoreParameters) {
@@ -89,9 +99,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * operation. Use either this parameter or the parameter 'keystore'.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.KeyStoreParameters&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param keyStoreParameters the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder keyStoreParameters(
                 String keyStoreParameters) {
@@ -109,10 +122,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -130,10 +146,14 @@ public interface CryptoCmsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -146,9 +166,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * assumed that the password of the private keys is given by the
          * keystore password given in the KeyStoreParameters.
          * 
-         * The option is a: <code>char[]</code> type.
+         * The option is a: &lt;code&gt;char[]&lt;/code&gt; type.
          * 
          * Group: decrypt
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder password(Character[] password) {
             doSetProperty("password", password);
@@ -160,9 +183,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * assumed that the password of the private keys is given by the
          * keystore password given in the KeyStoreParameters.
          * 
-         * The option will be converted to a <code>char[]</code> type.
+         * The option will be converted to a &lt;code&gt;char[]&lt;/code&gt;
+         * type.
          * 
          * Group: decrypt
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -172,10 +199,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * If true then the CMS message is base 64 encoded and must be decoded
          * during the processing. Default value is false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: decrypt_verify
+         * 
+         * @param fromBase64 the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder fromBase64(boolean fromBase64) {
             doSetProperty("fromBase64", fromBase64);
@@ -185,10 +215,14 @@ public interface CryptoCmsEndpointBuilderFactory {
          * If true then the CMS message is base 64 encoded and must be decoded
          * during the processing. Default value is false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: decrypt_verify
+         * 
+         * @param fromBase64 the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder fromBase64(String fromBase64) {
             doSetProperty("fromBase64", fromBase64);
@@ -199,9 +233,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * possible values: DESede/CBC/PKCS5Padding, AES/CBC/PKCS5Padding,
          * Camellia/CBC/PKCS5Padding, CAST5/CBC/PKCS5Padding.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: encrypt
+         * 
+         * @param contentEncryptionAlgorithm the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder contentEncryptionAlgorithm(
                 String contentEncryptionAlgorithm) {
@@ -214,9 +251,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * null.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider</code> type.
+         * &lt;code&gt;org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider&lt;/code&gt; type.
          * 
          * Group: encrypt
+         * 
+         * @param originatorInformationProvider the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder originatorInformationProvider(
                 Object originatorInformationProvider) {
@@ -229,9 +269,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * null.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider</code> type.
+         * &lt;code&gt;org.apache.camel.component.crypto.cms.common.OriginatorInformationProvider&lt;/code&gt; type.
          * 
          * Group: encrypt
+         * 
+         * @param originatorInformationProvider the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder originatorInformationProvider(
                 String originatorInformationProvider) {
@@ -243,9 +286,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * org.apache.camel.component.crypto.cms.api.TransRecipientInfo.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&amp;gt;&lt;/code&gt; type.
          * 
          * Group: encrypt
+         * 
+         * @param recipient the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder recipient(List<Object> recipient) {
             doSetProperty("recipient", recipient);
@@ -256,9 +302,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * org.apache.camel.component.crypto.cms.api.TransRecipientInfo.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.camel.component.crypto.cms.crypt.RecipientInfo&amp;gt;&lt;/code&gt; type.
          * 
          * Group: encrypt
+         * 
+         * @param recipient the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder recipient(String recipient) {
             doSetProperty("recipient", recipient);
@@ -275,9 +324,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Camellia/CBC/PKCS5Padding also the key lengths 192 and 256 are
          * possible.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: encrypt
+         * 
+         * @param secretKeyLength the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder secretKeyLength(int secretKeyLength) {
             doSetProperty("secretKeyLength", secretKeyLength);
@@ -294,9 +346,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Camellia/CBC/PKCS5Padding also the key lengths 192 and 256 are
          * possible.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: encrypt
+         * 
+         * @param secretKeyLength the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder secretKeyLength(String secretKeyLength) {
             doSetProperty("secretKeyLength", secretKeyLength);
@@ -309,9 +364,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * https://tools.ietf.org/html/rfc5652#section-6.1.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider</code> type.
+         * &lt;code&gt;org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider&lt;/code&gt; type.
          * 
          * Group: encrypt
+         * 
+         * @param unprotectedAttributesGeneratorProvider the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
                 Object unprotectedAttributesGeneratorProvider) {
@@ -325,9 +383,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * https://tools.ietf.org/html/rfc5652#section-6.1.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider</code> type.
+         * &lt;code&gt;org.apache.camel.component.crypto.cms.common.AttributesGeneratorProvider&lt;/code&gt; type.
          * 
          * Group: encrypt
+         * 
+         * @param unprotectedAttributesGeneratorProvider the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
                 String unprotectedAttributesGeneratorProvider) {
@@ -338,10 +399,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Indicates whether the Signed Data or Enveloped Data instance shall be
          * base 64 encoded. Default value is false.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: encrypt_sign
+         * 
+         * @param toBase64 the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder toBase64(Boolean toBase64) {
             doSetProperty("toBase64", toBase64);
@@ -351,11 +415,14 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Indicates whether the Signed Data or Enveloped Data instance shall be
          * base 64 encoded. Default value is false.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: encrypt_sign
+         * 
+         * @param toBase64 the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder toBase64(String toBase64) {
             doSetProperty("toBase64", toBase64);
@@ -366,10 +433,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Signed Data instance. If false then a detached Signed Data instance
          * is created in the header CamelCryptoCmsSignedData.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: sign
+         * 
+         * @param includeContent the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder includeContent(Boolean includeContent) {
             doSetProperty("includeContent", includeContent);
@@ -380,11 +450,14 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Signed Data instance. If false then a detached Signed Data instance
          * is created in the header CamelCryptoCmsSignedData.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: sign
+         * 
+         * @param includeContent the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder includeContent(String includeContent) {
             doSetProperty("includeContent", includeContent);
@@ -395,9 +468,12 @@ public interface CryptoCmsEndpointBuilderFactory {
          * org.apache.camel.component.crypto.cms.api.SignerInfo. Multiple values
          * can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sign
+         * 
+         * @param signer the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder signer(String signer) {
             doSetProperty("signer", signer);
@@ -409,10 +485,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signatures. In the detached signature case, the header contains the
          * Signed Data object.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: verify
+         * 
+         * @param signedDataHeaderBase64 the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder signedDataHeaderBase64(
                 boolean signedDataHeaderBase64) {
@@ -425,10 +504,14 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signatures. In the detached signature case, the header contains the
          * Signed Data object.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: verify
+         * 
+         * @param signedDataHeaderBase64 the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder signedDataHeaderBase64(
                 String signedDataHeaderBase64) {
@@ -441,10 +524,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signer info matches with one of the specified certificates is
          * verified. Default value is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: verify
+         * 
+         * @param verifySignaturesOfAllSigners the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
                 boolean verifySignaturesOfAllSigners) {
@@ -457,10 +543,14 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signer info matches with one of the specified certificates is
          * verified. Default value is true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: verify
+         * 
+         * @param verifySignaturesOfAllSigners the value to set
+         * @return the dsl builder
          */
         default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
                 String verifySignaturesOfAllSigners) {
@@ -482,10 +572,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCryptoCmsEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -495,10 +588,14 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCryptoCmsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

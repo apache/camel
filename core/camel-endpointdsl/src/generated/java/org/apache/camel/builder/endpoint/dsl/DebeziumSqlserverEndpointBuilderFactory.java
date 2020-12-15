@@ -48,15 +48,19 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder additionalProperties(
                 String key,
@@ -70,15 +74,18 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * additionalProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder additionalProperties(Map values) {
             doSetMultiValueProperties("additionalProperties", "additionalProperties.", values);
@@ -93,10 +100,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -112,10 +122,14 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -126,10 +140,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * key data for offsets. The default is JSON converter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
+         * 
+         * @param internalKeyConverter the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder internalKeyConverter(
                 String internalKeyConverter) {
@@ -140,10 +157,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * value data for offsets. The default is JSON converter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
+         * 
+         * @param internalValueConverter the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder internalValueConverter(
                 String internalValueConverter) {
@@ -157,11 +177,14 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * implement the interface 'OffsetCommitPolicy'. The default is a
          * periodic commit policy based upon time intervals.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
          * io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy
          * Group: consumer
+         * 
+         * @param offsetCommitPolicy the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetCommitPolicy(
                 String offsetCommitPolicy) {
@@ -174,10 +197,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5s
          * Group: consumer
+         * 
+         * @param offsetCommitTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetCommitTimeoutMs(
                 long offsetCommitTimeoutMs) {
@@ -190,10 +216,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5s
          * Group: consumer
+         * 
+         * @param offsetCommitTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetCommitTimeoutMs(
                 String offsetCommitTimeoutMs) {
@@ -203,10 +232,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60s
          * Group: consumer
+         * 
+         * @param offsetFlushIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetFlushIntervalMs(
                 long offsetFlushIntervalMs) {
@@ -216,10 +248,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60s
          * Group: consumer
+         * 
+         * @param offsetFlushIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetFlushIntervalMs(
                 String offsetFlushIntervalMs) {
@@ -230,10 +265,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The name of the Java class that is responsible for persistence of
          * connector offsets.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
          * Group: consumer
+         * 
+         * @param offsetStorage the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetStorage(
                 String offsetStorage) {
@@ -244,9 +282,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Path to file where offsets are to be stored. Required when
          * offset.storage is set to the FileOffsetBackingStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageFileName the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetStorageFileName(
                 String offsetStorageFileName) {
@@ -257,9 +298,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStoragePartitions the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetStoragePartitions(
                 int offsetStoragePartitions) {
@@ -270,9 +314,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStoragePartitions the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetStoragePartitions(
                 String offsetStoragePartitions) {
@@ -283,9 +330,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageReplicationFactor the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetStorageReplicationFactor(
                 int offsetStorageReplicationFactor) {
@@ -296,9 +346,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageReplicationFactor the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetStorageReplicationFactor(
                 String offsetStorageReplicationFactor) {
@@ -309,9 +362,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The name of the Kafka topic where offsets are to be stored. Required
          * when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageTopic the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder offsetStorageTopic(
                 String offsetStorageTopic) {
@@ -322,9 +378,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Regular expressions matching columns to exclude from change events
          * (deprecated, use column.exclude.list instead).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param columnBlacklist the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder columnBlacklist(
                 String columnBlacklist) {
@@ -334,9 +393,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Regular expressions matching columns to exclude from change events.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param columnExcludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder columnExcludeList(
                 String columnExcludeList) {
@@ -346,9 +408,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Regular expressions matching columns to include in change events.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param columnIncludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder columnIncludeList(
                 String columnIncludeList) {
@@ -361,9 +426,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * and original length as parameters to the corresponding field schemas
          * in the emitted change records.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param columnPropagateSourceType the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder columnPropagateSourceType(
                 String columnPropagateSourceType) {
@@ -374,9 +442,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Regular expressions matching columns to include in change events
          * (deprecated, use column.include.list instead).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param columnWhitelist the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder columnWhitelist(
                 String columnWhitelist) {
@@ -388,9 +459,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param converters the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder converters(String converters) {
             doSetProperty("converters", converters);
@@ -400,9 +474,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The name of the database the connector should be monitoring. When
          * working with a multi-tenant set-up, must be set to the CDB name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param databaseDbname the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseDbname(
                 String databaseDbname) {
@@ -414,10 +491,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * and recover database schema changes. The configuration properties for
          * the history are prefixed with the 'database.history.' string.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: io.debezium.relational.history.FileDatabaseHistory
          * Group: sqlserver
+         * 
+         * @param databaseHistory the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseHistory(
                 String databaseHistory) {
@@ -428,9 +508,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The path to the file that will be used to record the database
          * history.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param databaseHistoryFileFilename the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryFileFilename(
                 String databaseHistoryFileFilename) {
@@ -444,9 +527,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * connector. This should point to the same Kafka cluster used by the
          * Kafka Connect process.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param databaseHistoryKafkaBootstrapServers the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaBootstrapServers(
                 String databaseHistoryKafkaBootstrapServers) {
@@ -459,10 +545,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * receiving no data is (recovery.attempts) x
          * (recovery.poll.interval.ms).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: sqlserver
+         * 
+         * @param databaseHistoryKafkaRecoveryAttempts the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaRecoveryAttempts(
                 int databaseHistoryKafkaRecoveryAttempts) {
@@ -475,10 +564,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * receiving no data is (recovery.attempts) x
          * (recovery.poll.interval.ms).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: sqlserver
+         * 
+         * @param databaseHistoryKafkaRecoveryAttempts the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaRecoveryAttempts(
                 String databaseHistoryKafkaRecoveryAttempts) {
@@ -489,10 +581,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The number of milliseconds to wait while polling for persisted data
          * during recovery.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100ms
          * Group: sqlserver
+         * 
+         * @param databaseHistoryKafkaRecoveryPollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
                 int databaseHistoryKafkaRecoveryPollIntervalMs) {
@@ -503,10 +598,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The number of milliseconds to wait while polling for persisted data
          * during recovery.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100ms
          * Group: sqlserver
+         * 
+         * @param databaseHistoryKafkaRecoveryPollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
                 String databaseHistoryKafkaRecoveryPollIntervalMs) {
@@ -516,9 +614,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * The name of the topic for the database schema history.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param databaseHistoryKafkaTopic the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaTopic(
                 String databaseHistoryKafkaTopic) {
@@ -528,9 +629,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Resolvable hostname or IP address of the SQL Server database server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param databaseHostname the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseHostname(
                 String databaseHostname) {
@@ -540,9 +644,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * The SQL Server instance name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param databaseInstance the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseInstance(
                 String databaseInstance) {
@@ -553,10 +660,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Password of the SQL Server database user to be used when connecting
          * to the database.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: sqlserver
+         * 
+         * @param databasePassword the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databasePassword(
                 String databasePassword) {
@@ -566,10 +676,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Port of the SQL Server database server.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1433
          * Group: sqlserver
+         * 
+         * @param databasePort the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databasePort(int databasePort) {
             doSetProperty("databasePort", databasePort);
@@ -578,10 +691,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Port of the SQL Server database server.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1433
          * Group: sqlserver
+         * 
+         * @param databasePort the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databasePort(
                 String databasePort) {
@@ -594,10 +710,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Each distinct installation should have a separate namespace and be
          * monitored by at most one Debezium connector.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: sqlserver
+         * 
+         * @param databaseServerName the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseServerName(
                 String databaseServerName) {
@@ -609,9 +728,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * transaction timestamp on the client sideOptions include: Any valid
          * Java ZoneId.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param databaseServerTimezone the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseServerTimezone(
                 String databaseServerTimezone) {
@@ -622,9 +744,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Name of the SQL Server database user to be used when connecting to
          * the database.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param databaseUser the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder databaseUser(
                 String databaseUser) {
@@ -637,9 +762,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * type and original length as parameters to the corresponding field
          * schemas in the emitted change records.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param datatypePropagateSourceType the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder datatypePropagateSourceType(
                 String datatypePropagateSourceType) {
@@ -656,10 +784,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * which may not offer the precision but will be far easier to use in
          * consumers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: precise
          * Group: sqlserver
+         * 
+         * @param decimalHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder decimalHandlingMode(
                 String decimalHandlingMode) {
@@ -674,10 +805,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * problematic event and its position will be logged and the event will
          * be skipped;'ignore' the problematic event will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: fail
          * Group: sqlserver
+         * 
+         * @param eventProcessingFailureHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder eventProcessingFailureHandlingMode(
                 String eventProcessingFailureHandlingMode) {
@@ -689,10 +823,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: sqlserver
+         * 
+         * @param heartbeatIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder heartbeatIntervalMs(
                 int heartbeatIntervalMs) {
@@ -704,10 +841,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: sqlserver
+         * 
+         * @param heartbeatIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder heartbeatIntervalMs(
                 String heartbeatIntervalMs) {
@@ -718,10 +858,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The prefix that is used to name heartbeat topics.Defaults to
          * __debezium-heartbeat.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: __debezium-heartbeat
          * Group: sqlserver
+         * 
+         * @param heartbeatTopicsPrefix the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder heartbeatTopicsPrefix(
                 String heartbeatTopicsPrefix) {
@@ -736,10 +879,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * and optionally the DDL statement(s).The default is 'true'. This is
          * independent of how the connector internally records database history.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: sqlserver
+         * 
+         * @param includeSchemaChanges the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder includeSchemaChanges(
                 boolean includeSchemaChanges) {
@@ -754,10 +900,14 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * and optionally the DDL statement(s).The default is 'true'. This is
          * independent of how the connector internally records database history.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: sqlserver
+         * 
+         * @param includeSchemaChanges the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder includeSchemaChanges(
                 String includeSchemaChanges) {
@@ -767,10 +917,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2048
          * Group: sqlserver
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder maxBatchSize(int maxBatchSize) {
             doSetProperty("maxBatchSize", maxBatchSize);
@@ -779,10 +932,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2048
          * Group: sqlserver
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder maxBatchSize(
                 String maxBatchSize) {
@@ -794,10 +950,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: sqlserver
+         * 
+         * @param maxQueueSize the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder maxQueueSize(int maxQueueSize) {
             doSetProperty("maxQueueSize", maxQueueSize);
@@ -808,10 +967,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: sqlserver
+         * 
+         * @param maxQueueSize the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder maxQueueSize(
                 String maxQueueSize) {
@@ -829,9 +991,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * used as message key.Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param messageKeyColumns the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder messageKeyColumns(
                 String messageKeyColumns) {
@@ -842,10 +1007,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Frequency in milliseconds to wait for new change events to appear
          * after receiving no events. Defaults to 500ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500ms
          * Group: sqlserver
+         * 
+         * @param pollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder pollIntervalMs(
                 long pollIntervalMs) {
@@ -856,10 +1024,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Frequency in milliseconds to wait for new change events to appear
          * after receiving no events. Defaults to 500ms.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500ms
          * Group: sqlserver
+         * 
+         * @param pollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder pollIntervalMs(
                 String pollIntervalMs) {
@@ -869,10 +1040,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: sqlserver
+         * 
+         * @param provideTransactionMetadata the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder provideTransactionMetadata(
                 boolean provideTransactionMetadata) {
@@ -882,10 +1056,14 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: sqlserver
+         * 
+         * @param provideTransactionMetadata the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder provideTransactionMetadata(
                 String provideTransactionMetadata) {
@@ -896,10 +1074,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * streaming. A value of 0 uses the default JDBC fetch size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: sqlserver
+         * 
+         * @param queryFetchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder queryFetchSize(
                 int queryFetchSize) {
@@ -910,10 +1091,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * streaming. A value of 0 uses the default JDBC fetch size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: sqlserver
+         * 
+         * @param queryFetchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder queryFetchSize(
                 String queryFetchSize) {
@@ -924,10 +1108,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: sqlserver
+         * 
+         * @param retriableRestartConnectorWaitMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder retriableRestartConnectorWaitMs(
                 long retriableRestartConnectorWaitMs) {
@@ -938,10 +1125,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: sqlserver
+         * 
+         * @param retriableRestartConnectorWaitMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder retriableRestartConnectorWaitMs(
                 String retriableRestartConnectorWaitMs) {
@@ -951,10 +1141,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Whether field names will be sanitized to Avro naming conventions.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: sqlserver
+         * 
+         * @param sanitizeFieldNames the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder sanitizeFieldNames(
                 boolean sanitizeFieldNames) {
@@ -964,10 +1157,14 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Whether field names will be sanitized to Avro naming conventions.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: sqlserver
+         * 
+         * @param sanitizeFieldNames the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder sanitizeFieldNames(
                 String sanitizeFieldNames) {
@@ -979,9 +1176,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
          * default, no operations will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param skippedOperations the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder skippedOperations(
                 String skippedOperations) {
@@ -991,10 +1191,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: sqlserver
+         * 
+         * @param snapshotDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder snapshotDelayMs(
                 long snapshotDelayMs) {
@@ -1004,10 +1207,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: sqlserver
+         * 
+         * @param snapshotDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder snapshotDelayMs(
                 String snapshotDelayMs) {
@@ -1018,9 +1224,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param snapshotFetchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder snapshotFetchSize(
                 int snapshotFetchSize) {
@@ -1031,9 +1240,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param snapshotFetchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder snapshotFetchSize(
                 String snapshotFetchSize) {
@@ -1058,10 +1270,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 'read_uncommitted' mode neither table nor row-level locks are
          * acquired, but connector does not guarantee snapshot consistency.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: repeatable_read
          * Group: sqlserver
+         * 
+         * @param snapshotIsolationMode the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder snapshotIsolationMode(
                 String snapshotIsolationMode) {
@@ -1073,10 +1288,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * of a snapshot. If locks cannot be acquired in this time frame, the
          * snapshot will be aborted. Defaults to 10 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: sqlserver
+         * 
+         * @param snapshotLockTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder snapshotLockTimeoutMs(
                 long snapshotLockTimeoutMs) {
@@ -1088,10 +1306,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * of a snapshot. If locks cannot be acquired in this time frame, the
          * snapshot will be aborted. Defaults to 10 seconds.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: sqlserver
+         * 
+         * @param snapshotLockTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder snapshotLockTimeoutMs(
                 String snapshotLockTimeoutMs) {
@@ -1106,10 +1327,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * run a snapshot of the schema when no offsets are available for the
          * logical server name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: initial
          * Group: sqlserver
+         * 
+         * @param snapshotMode the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder snapshotMode(
                 String snapshotMode) {
@@ -1130,9 +1354,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * setting a specific point where to start (resume) snapshotting, in
          * case a previous snapshotting was interrupted.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param snapshotSelectStatementOverrides the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder snapshotSelectStatementOverrides(
                 String snapshotSelectStatementOverrides) {
@@ -1143,10 +1370,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * A version of the format of the publicly visible source part in the
          * message.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: v2
          * Group: sqlserver
+         * 
+         * @param sourceStructVersion the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder sourceStructVersion(
                 String sourceStructVersion) {
@@ -1160,10 +1390,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * database'processing', the source timestamp is set to the instant
          * where the record was processed by Debezium.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: commit
          * Group: sqlserver
+         * 
+         * @param sourceTimestampMode the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder sourceTimestampMode(
                 String sourceTimestampMode) {
@@ -1175,9 +1408,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * fully-qualified names of tables to be excluded from monitoring
          * (deprecated, use table.exclude.list instead).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param tableBlacklist the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder tableBlacklist(
                 String tableBlacklist) {
@@ -1188,9 +1424,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param tableExcludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder tableExcludeList(
                 String tableExcludeList) {
@@ -1200,10 +1439,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Flag specifying whether built-in tables should be ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: sqlserver
+         * 
+         * @param tableIgnoreBuiltin the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder tableIgnoreBuiltin(
                 boolean tableIgnoreBuiltin) {
@@ -1213,10 +1455,14 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Flag specifying whether built-in tables should be ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: sqlserver
+         * 
+         * @param tableIgnoreBuiltin the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder tableIgnoreBuiltin(
                 String tableIgnoreBuiltin) {
@@ -1226,9 +1472,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * The tables for which changes are to be captured.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param tableIncludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder tableIncludeList(
                 String tableIncludeList) {
@@ -1239,9 +1488,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * The tables for which changes are to be captured (deprecated, use
          * table.include.list instead).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: sqlserver
+         * 
+         * @param tableWhitelist the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder tableWhitelist(
                 String tableWhitelist) {
@@ -1258,10 +1510,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * representations for Time, Date, and Timestamp, which uses millisecond
          * precision regardless of the database columns' precision .
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: adaptive
          * Group: sqlserver
+         * 
+         * @param timePrecisionMode the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder timePrecisionMode(
                 String timePrecisionMode) {
@@ -1275,10 +1530,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * completely delete all events pertaining to the given key once the
          * source record got deleted.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: sqlserver
+         * 
+         * @param tombstonesOnDelete the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder tombstonesOnDelete(
                 boolean tombstonesOnDelete) {
@@ -1292,10 +1550,14 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * completely delete all events pertaining to the given key once the
          * source record got deleted.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: sqlserver
+         * 
+         * @param tombstonesOnDelete the value to set
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder tombstonesOnDelete(
                 String tombstonesOnDelete) {
@@ -1320,10 +1582,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumSqlserverEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -1337,9 +1602,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumSqlserverEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -1349,9 +1617,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumSqlserverEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -1362,9 +1634,12 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumSqlserverEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -1375,10 +1650,13 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumSqlserverEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1389,10 +1667,14 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDebeziumSqlserverEndpointBuilder synchronous(
                 String synchronous) {

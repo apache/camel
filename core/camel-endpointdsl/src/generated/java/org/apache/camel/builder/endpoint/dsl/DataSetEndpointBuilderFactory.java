@@ -50,10 +50,13 @@ public interface DataSetEndpointBuilderFactory {
          * header value will be verified if it is present, and will be set if it
          * is not present.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: lenient
          * Group: common
+         * 
+         * @param dataSetIndex the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointConsumerBuilder dataSetIndex(String dataSetIndex) {
             doSetProperty("dataSetIndex", dataSetIndex);
@@ -68,10 +71,13 @@ public interface DataSetEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -87,10 +93,14 @@ public interface DataSetEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -100,10 +110,13 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Time period in millis to wait before starting sending messages.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: consumer
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -112,10 +125,13 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Time period in millis to wait before starting sending messages.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: consumer
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -124,10 +140,13 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Wait until the DataSet contains at least this number of messages.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer
+         * 
+         * @param minRate the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointConsumerBuilder minRate(int minRate) {
             doSetProperty("minRate", minRate);
@@ -136,10 +155,13 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Wait until the DataSet contains at least this number of messages.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer
+         * 
+         * @param minRate the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointConsumerBuilder minRate(String minRate) {
             doSetProperty("minRate", minRate);
@@ -149,10 +171,13 @@ public interface DataSetEndpointBuilderFactory {
          * Sets how many messages should be preloaded (sent) before the route
          * completes its initialization.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer
+         * 
+         * @param preloadSize the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointConsumerBuilder preloadSize(long preloadSize) {
             doSetProperty("preloadSize", preloadSize);
@@ -162,10 +187,13 @@ public interface DataSetEndpointBuilderFactory {
          * Sets how many messages should be preloaded (sent) before the route
          * completes its initialization.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer
+         * 
+         * @param preloadSize the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointConsumerBuilder preloadSize(String preloadSize) {
             doSetProperty("preloadSize", preloadSize);
@@ -175,10 +203,13 @@ public interface DataSetEndpointBuilderFactory {
          * Allows a delay to be specified which causes a delay when a message is
          * sent by the consumer (to simulate slow processing).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 3
          * Group: consumer
+         * 
+         * @param produceDelay the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointConsumerBuilder produceDelay(long produceDelay) {
             doSetProperty("produceDelay", produceDelay);
@@ -188,10 +219,13 @@ public interface DataSetEndpointBuilderFactory {
          * Allows a delay to be specified which causes a delay when a message is
          * sent by the consumer (to simulate slow processing).
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 3
          * Group: consumer
+         * 
+         * @param produceDelay the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointConsumerBuilder produceDelay(String produceDelay) {
             doSetProperty("produceDelay", produceDelay);
@@ -214,10 +248,13 @@ public interface DataSetEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -231,9 +268,12 @@ public interface DataSetEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -243,9 +283,13 @@ public interface DataSetEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -256,9 +300,12 @@ public interface DataSetEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -269,10 +316,13 @@ public interface DataSetEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -283,10 +333,14 @@ public interface DataSetEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -313,10 +367,13 @@ public interface DataSetEndpointBuilderFactory {
          * header value will be verified if it is present, and will be set if it
          * is not present.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: lenient
          * Group: common
+         * 
+         * @param dataSetIndex the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder dataSetIndex(String dataSetIndex) {
             doSetProperty("dataSetIndex", dataSetIndex);
@@ -332,10 +389,13 @@ public interface DataSetEndpointBuilderFactory {
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param assertPeriod the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder assertPeriod(long assertPeriod) {
             doSetProperty("assertPeriod", assertPeriod);
@@ -351,10 +411,13 @@ public interface DataSetEndpointBuilderFactory {
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param assertPeriod the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder assertPeriod(String assertPeriod) {
             doSetProperty("assertPeriod", assertPeriod);
@@ -364,10 +427,13 @@ public interface DataSetEndpointBuilderFactory {
          * Allows a delay to be specified which causes a delay when a message is
          * consumed by the producer (to simulate slow processing).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param consumeDelay the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder consumeDelay(long consumeDelay) {
             doSetProperty("consumeDelay", consumeDelay);
@@ -377,10 +443,13 @@ public interface DataSetEndpointBuilderFactory {
          * Allows a delay to be specified which causes a delay when a message is
          * consumed by the producer (to simulate slow processing).
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param consumeDelay the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder consumeDelay(String consumeDelay) {
             doSetProperty("consumeDelay", consumeDelay);
@@ -400,10 +469,13 @@ public interface DataSetEndpointBuilderFactory {
          * this mock endpoint, then see also the setAssertPeriod(long) method
          * for further details.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param expectedCount the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder expectedCount(int expectedCount) {
             doSetProperty("expectedCount", expectedCount);
@@ -423,10 +495,13 @@ public interface DataSetEndpointBuilderFactory {
          * this mock endpoint, then see also the setAssertPeriod(long) method
          * for further details.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param expectedCount the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder expectedCount(
                 String expectedCount) {
@@ -440,10 +515,13 @@ public interface DataSetEndpointBuilderFactory {
          * verifications. Is by default true. Set to false to use behavior as in
          * Camel 2.x.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failFast the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder failFast(boolean failFast) {
             doSetProperty("failFast", failFast);
@@ -456,10 +534,14 @@ public interface DataSetEndpointBuilderFactory {
          * verifications. Is by default true. Set to false to use behavior as in
          * Camel 2.x.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failFast the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder failFast(String failFast) {
             doSetProperty("failFast", failFast);
@@ -476,10 +558,13 @@ public interface DataSetEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -497,10 +582,14 @@ public interface DataSetEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -511,9 +600,12 @@ public interface DataSetEndpointBuilderFactory {
          * A number that is used to turn on throughput logging based on groups
          * of the size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param reportGroup the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder reportGroup(int reportGroup) {
             doSetProperty("reportGroup", reportGroup);
@@ -523,9 +615,12 @@ public interface DataSetEndpointBuilderFactory {
          * A number that is used to turn on throughput logging based on groups
          * of the size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param reportGroup the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder reportGroup(String reportGroup) {
             doSetProperty("reportGroup", reportGroup);
@@ -535,10 +630,13 @@ public interface DataSetEndpointBuilderFactory {
          * Sets the minimum expected amount of time (in millis) the
          * assertIsSatisfied() will wait on a latch until it is satisfied.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultMinimumWaitTime the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder resultMinimumWaitTime(
                 long resultMinimumWaitTime) {
@@ -549,10 +647,13 @@ public interface DataSetEndpointBuilderFactory {
          * Sets the minimum expected amount of time (in millis) the
          * assertIsSatisfied() will wait on a latch until it is satisfied.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultMinimumWaitTime the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder resultMinimumWaitTime(
                 String resultMinimumWaitTime) {
@@ -563,10 +664,13 @@ public interface DataSetEndpointBuilderFactory {
          * Sets the maximum amount of time (in millis) the assertIsSatisfied()
          * will wait on a latch until it is satisfied.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultWaitTime the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder resultWaitTime(
                 long resultWaitTime) {
@@ -577,10 +681,13 @@ public interface DataSetEndpointBuilderFactory {
          * Sets the maximum amount of time (in millis) the assertIsSatisfied()
          * will wait on a latch until it is satisfied.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultWaitTime the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder resultWaitTime(
                 String resultWaitTime) {
@@ -603,10 +710,13 @@ public interface DataSetEndpointBuilderFactory {
          * both setRetainFirst(int) and setRetainLast(int) methods, to limit
          * both the first and last received.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainFirst the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder retainFirst(int retainFirst) {
             doSetProperty("retainFirst", retainFirst);
@@ -628,10 +738,13 @@ public interface DataSetEndpointBuilderFactory {
          * both setRetainFirst(int) and setRetainLast(int) methods, to limit
          * both the first and last received.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainFirst the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder retainFirst(String retainFirst) {
             doSetProperty("retainFirst", retainFirst);
@@ -653,10 +766,13 @@ public interface DataSetEndpointBuilderFactory {
          * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
          * first and last received.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainLast the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder retainLast(int retainLast) {
             doSetProperty("retainLast", retainLast);
@@ -678,10 +794,13 @@ public interface DataSetEndpointBuilderFactory {
          * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
          * first and last received.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainLast the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder retainLast(String retainLast) {
             doSetProperty("retainLast", retainLast);
@@ -691,10 +810,13 @@ public interface DataSetEndpointBuilderFactory {
          * Allows a sleep to be specified to wait to check that this endpoint
          * really is empty when expectedMessageCount(int) is called with zero.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param sleepForEmptyTest the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder sleepForEmptyTest(
                 long sleepForEmptyTest) {
@@ -705,10 +827,13 @@ public interface DataSetEndpointBuilderFactory {
          * Allows a sleep to be specified to wait to check that this endpoint
          * really is empty when expectedMessageCount(int) is called with zero.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param sleepForEmptyTest the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointProducerBuilder sleepForEmptyTest(
                 String sleepForEmptyTest) {
@@ -730,10 +855,13 @@ public interface DataSetEndpointBuilderFactory {
          * Sets whether to make a deep copy of the incoming Exchange when
          * received at this mock endpoint. Is by default true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param copyOnExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointProducerBuilder copyOnExchange(
                 boolean copyOnExchange) {
@@ -744,10 +872,14 @@ public interface DataSetEndpointBuilderFactory {
          * Sets whether to make a deep copy of the incoming Exchange when
          * received at this mock endpoint. Is by default true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param copyOnExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointProducerBuilder copyOnExchange(
                 String copyOnExchange) {
@@ -758,10 +890,13 @@ public interface DataSetEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -772,10 +907,14 @@ public interface DataSetEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -803,10 +942,13 @@ public interface DataSetEndpointBuilderFactory {
          * header value will be verified if it is present, and will be set if it
          * is not present.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: lenient
          * Group: common
+         * 
+         * @param dataSetIndex the value to set
+         * @return the dsl builder
          */
         default DataSetEndpointBuilder dataSetIndex(String dataSetIndex) {
             doSetProperty("dataSetIndex", dataSetIndex);
@@ -828,10 +970,13 @@ public interface DataSetEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -841,10 +986,14 @@ public interface DataSetEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedDataSetEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

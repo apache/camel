@@ -40,10 +40,13 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Enables or disables batch mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param batch the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder batch(boolean batch) {
             doSetProperty("batch", batch);
@@ -52,10 +55,14 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Enables or disables batch mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param batch the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder batch(String batch) {
             doSetProperty("batch", batch);
@@ -64,9 +71,12 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Sets the DataSource to use to communicate with the database.
          * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
+         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataSource the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder dataSource(Object dataSource) {
             doSetProperty("dataSource", dataSource);
@@ -75,10 +85,13 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Sets the DataSource to use to communicate with the database.
          * 
-         * The option will be converted to a <code>javax.sql.DataSource</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataSource the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder dataSource(String dataSource) {
             doSetProperty("dataSource", dataSource);
@@ -87,10 +100,13 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Whether this call is for a function.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param function the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder function(boolean function) {
             doSetProperty("function", function);
@@ -99,10 +115,14 @@ public interface SqlStoredEndpointBuilderFactory {
         /**
          * Whether this call is for a function.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param function the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder function(String function) {
             doSetProperty("function", function);
@@ -119,10 +139,13 @@ public interface SqlStoredEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -140,10 +163,14 @@ public interface SqlStoredEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -154,10 +181,13 @@ public interface SqlStoredEndpointBuilderFactory {
          * If set, will ignore the results of the template and use the existing
          * IN message as the OUT message for the continuation of processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param noop the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder noop(boolean noop) {
             doSetProperty("noop", noop);
@@ -167,10 +197,14 @@ public interface SqlStoredEndpointBuilderFactory {
          * If set, will ignore the results of the template and use the existing
          * IN message as the OUT message for the continuation of processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param noop the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder noop(String noop) {
             doSetProperty("noop", noop);
@@ -184,9 +218,12 @@ public interface SqlStoredEndpointBuilderFactory {
          * the header to store the template result and the original message body
          * is preserved.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputHeader the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder outputHeader(String outputHeader) {
             doSetProperty("outputHeader", outputHeader);
@@ -197,10 +234,13 @@ public interface SqlStoredEndpointBuilderFactory {
          * parameters. If this option is enabled then the template in the uri is
          * not used.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useMessageBodyForTemplate the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder useMessageBodyForTemplate(
                 boolean useMessageBodyForTemplate) {
@@ -212,10 +252,14 @@ public interface SqlStoredEndpointBuilderFactory {
          * parameters. If this option is enabled then the template in the uri is
          * not used.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useMessageBodyForTemplate the value to set
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder useMessageBodyForTemplate(
                 String useMessageBodyForTemplate) {
@@ -237,10 +281,13 @@ public interface SqlStoredEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSqlStoredEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -250,10 +297,14 @@ public interface SqlStoredEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSqlStoredEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

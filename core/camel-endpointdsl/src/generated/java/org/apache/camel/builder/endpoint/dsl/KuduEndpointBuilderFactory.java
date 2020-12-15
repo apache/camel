@@ -49,10 +49,13 @@ public interface KuduEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KuduEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -69,10 +72,14 @@ public interface KuduEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KuduEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -82,9 +89,12 @@ public interface KuduEndpointBuilderFactory {
          * Operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.kudu.KuduOperations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default KuduEndpointBuilder operation(KuduOperations operation) {
             doSetProperty("operation", operation);
@@ -94,9 +104,12 @@ public interface KuduEndpointBuilderFactory {
          * Operation to perform.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.kudu.KuduOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.kudu.KuduOperations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default KuduEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -117,10 +130,13 @@ public interface KuduEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKuduEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -130,10 +146,14 @@ public interface KuduEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKuduEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

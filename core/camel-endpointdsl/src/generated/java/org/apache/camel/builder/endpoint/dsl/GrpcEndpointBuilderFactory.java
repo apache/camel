@@ -46,10 +46,13 @@ public interface GrpcEndpointBuilderFactory {
          * component will look for a ClientInterceptor instance in the registry
          * automatically otherwise it will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClientInterceptors the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder autoDiscoverClientInterceptors(
                 boolean autoDiscoverClientInterceptors) {
@@ -61,10 +64,14 @@ public interface GrpcEndpointBuilderFactory {
          * component will look for a ClientInterceptor instance in the registry
          * automatically otherwise it will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClientInterceptors the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder autoDiscoverClientInterceptors(
                 String autoDiscoverClientInterceptors) {
@@ -74,10 +81,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: common
+         * 
+         * @param flowControlWindow the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder flowControlWindow(
                 int flowControlWindow) {
@@ -87,10 +97,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: common
+         * 
+         * @param flowControlWindow the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder flowControlWindow(
                 String flowControlWindow) {
@@ -100,10 +113,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4194304
          * Group: common
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder maxMessageSize(int maxMessageSize) {
             doSetProperty("maxMessageSize", maxMessageSize);
@@ -112,10 +128,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4194304
          * Group: common
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder maxMessageSize(String maxMessageSize) {
             doSetProperty("maxMessageSize", maxMessageSize);
@@ -130,10 +149,13 @@ public interface GrpcEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -149,10 +171,14 @@ public interface GrpcEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -169,11 +195,13 @@ public interface GrpcEndpointBuilderFactory {
          * sender.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.grpc.GrpcConsumerStrategy&lt;/code&gt; type.
          * 
          * Default: PROPAGATION
          * Group: consumer
+         * 
+         * @param consumerStrategy the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder consumerStrategy(
                 GrpcConsumerStrategy consumerStrategy) {
@@ -190,11 +218,13 @@ public interface GrpcEndpointBuilderFactory {
          * sender.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.grpc.GrpcConsumerStrategy&lt;/code&gt; type.
          * 
          * Default: PROPAGATION
          * Group: consumer
+         * 
+         * @param consumerStrategy the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder consumerStrategy(
                 String consumerStrategy) {
@@ -204,10 +234,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Determines if onCompleted events should be pushed to the Camel route.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param forwardOnCompleted the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder forwardOnCompleted(
                 boolean forwardOnCompleted) {
@@ -217,10 +250,14 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Determines if onCompleted events should be pushed to the Camel route.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param forwardOnCompleted the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder forwardOnCompleted(
                 String forwardOnCompleted) {
@@ -231,10 +268,13 @@ public interface GrpcEndpointBuilderFactory {
          * Determines if onError events should be pushed to the Camel route.
          * Exceptions will be set as message body.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param forwardOnError the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder forwardOnError(
                 boolean forwardOnError) {
@@ -245,10 +285,14 @@ public interface GrpcEndpointBuilderFactory {
          * Determines if onError events should be pushed to the Camel route.
          * Exceptions will be set as message body.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param forwardOnError the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder forwardOnError(String forwardOnError) {
             doSetProperty("forwardOnError", forwardOnError);
@@ -258,10 +302,13 @@ public interface GrpcEndpointBuilderFactory {
          * The maximum number of concurrent calls permitted for each incoming
          * server connection.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: consumer
+         * 
+         * @param maxConcurrentCallsPerConnection the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
                 int maxConcurrentCallsPerConnection) {
@@ -272,10 +319,13 @@ public interface GrpcEndpointBuilderFactory {
          * The maximum number of concurrent calls permitted for each incoming
          * server connection.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: consumer
+         * 
+         * @param maxConcurrentCallsPerConnection the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
                 String maxConcurrentCallsPerConnection) {
@@ -289,10 +339,13 @@ public interface GrpcEndpointBuilderFactory {
          * Please note that the stream observer's onNext(), onError(),
          * onCompleted() methods should be called in the route.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param routeControlledStreamObserver the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder routeControlledStreamObserver(
                 boolean routeControlledStreamObserver) {
@@ -306,10 +359,14 @@ public interface GrpcEndpointBuilderFactory {
          * Please note that the stream observer's onNext(), onError(),
          * onCompleted() methods should be called in the route.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param routeControlledStreamObserver the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder routeControlledStreamObserver(
                 String routeControlledStreamObserver) {
@@ -320,10 +377,14 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
+         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
+         * type.
          * 
          * Default: NONE
          * Group: security
+         * 
+         * @param authenticationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder authenticationType(
                 GrpcAuthType authenticationType) {
@@ -334,10 +395,14 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
+         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
+         * type.
          * 
          * Default: NONE
          * Group: security
+         * 
+         * @param authenticationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder authenticationType(
                 String authenticationType) {
@@ -348,11 +413,13 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
          * 
          * Default: HMAC256
          * Group: security
+         * 
+         * @param jwtAlgorithm the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder jwtAlgorithm(
                 JwtAlgorithm jwtAlgorithm) {
@@ -363,11 +430,13 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
          * 
          * Default: HMAC256
          * Group: security
+         * 
+         * @param jwtAlgorithm the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder jwtAlgorithm(String jwtAlgorithm) {
             doSetProperty("jwtAlgorithm", jwtAlgorithm);
@@ -376,9 +445,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token issuer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param jwtIssuer the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder jwtIssuer(String jwtIssuer) {
             doSetProperty("jwtIssuer", jwtIssuer);
@@ -387,9 +459,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param jwtSecret the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder jwtSecret(String jwtSecret) {
             doSetProperty("jwtSecret", jwtSecret);
@@ -398,9 +473,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token subject.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param jwtSubject the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder jwtSubject(String jwtSubject) {
             doSetProperty("jwtSubject", jwtSubject);
@@ -409,9 +487,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The X.509 certificate chain file resource in PEM format link.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyCertChainResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder keyCertChainResource(
                 String keyCertChainResource) {
@@ -421,9 +502,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The PKCS#8 private key file password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyPassword the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder keyPassword(String keyPassword) {
             doSetProperty("keyPassword", keyPassword);
@@ -432,9 +516,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The PKCS#8 private key file resource in PEM format link.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder keyResource(String keyResource) {
             doSetProperty("keyResource", keyResource);
@@ -444,10 +531,14 @@ public interface GrpcEndpointBuilderFactory {
          * Identifies the security negotiation type used for HTTP/2
          * communication.
          * 
-         * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
+         * The option is a:
+         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder negotiationType(
                 NegotiationType negotiationType) {
@@ -459,10 +550,13 @@ public interface GrpcEndpointBuilderFactory {
          * communication.
          * 
          * The option will be converted to a
-         * <code>io.grpc.netty.NegotiationType</code> type.
+         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder negotiationType(
                 String negotiationType) {
@@ -473,9 +567,12 @@ public interface GrpcEndpointBuilderFactory {
          * Service Account key file in JSON format resource link supported by
          * the Google Cloud SDK.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param serviceAccountResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder serviceAccountResource(
                 String serviceAccountResource) {
@@ -486,9 +583,12 @@ public interface GrpcEndpointBuilderFactory {
          * The trusted certificates collection file resource in PEM format for
          * verifying the remote endpoint's certificate.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCertCollectionResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointConsumerBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
@@ -512,10 +612,13 @@ public interface GrpcEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -529,9 +632,12 @@ public interface GrpcEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGrpcEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -541,9 +647,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -554,9 +664,12 @@ public interface GrpcEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGrpcEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -567,10 +680,13 @@ public interface GrpcEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGrpcEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -581,10 +697,14 @@ public interface GrpcEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGrpcEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -607,10 +727,13 @@ public interface GrpcEndpointBuilderFactory {
          * component will look for a ClientInterceptor instance in the registry
          * automatically otherwise it will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClientInterceptors the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder autoDiscoverClientInterceptors(
                 boolean autoDiscoverClientInterceptors) {
@@ -622,10 +745,14 @@ public interface GrpcEndpointBuilderFactory {
          * component will look for a ClientInterceptor instance in the registry
          * automatically otherwise it will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClientInterceptors the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder autoDiscoverClientInterceptors(
                 String autoDiscoverClientInterceptors) {
@@ -635,10 +762,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: common
+         * 
+         * @param flowControlWindow the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder flowControlWindow(
                 int flowControlWindow) {
@@ -648,10 +778,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: common
+         * 
+         * @param flowControlWindow the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder flowControlWindow(
                 String flowControlWindow) {
@@ -661,10 +794,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4194304
          * Group: common
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder maxMessageSize(int maxMessageSize) {
             doSetProperty("maxMessageSize", maxMessageSize);
@@ -673,10 +809,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4194304
          * Group: common
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder maxMessageSize(String maxMessageSize) {
             doSetProperty("maxMessageSize", maxMessageSize);
@@ -693,10 +832,13 @@ public interface GrpcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -714,10 +856,14 @@ public interface GrpcEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -727,9 +873,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * gRPC method name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param method the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder method(String method) {
             doSetProperty("method", method);
@@ -743,11 +892,13 @@ public interface GrpcEndpointBuilderFactory {
          * 'stream').
          * 
          * The option is a:
-         * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.grpc.GrpcProducerStrategy&lt;/code&gt; type.
          * 
          * Default: SIMPLE
          * Group: producer
+         * 
+         * @param producerStrategy the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder producerStrategy(
                 GrpcProducerStrategy producerStrategy) {
@@ -762,11 +913,13 @@ public interface GrpcEndpointBuilderFactory {
          * 'stream').
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.grpc.GrpcProducerStrategy&lt;/code&gt; type.
          * 
          * Default: SIMPLE
          * Group: producer
+         * 
+         * @param producerStrategy the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder producerStrategy(
                 String producerStrategy) {
@@ -777,9 +930,12 @@ public interface GrpcEndpointBuilderFactory {
          * When using STREAMING client mode, it indicates the endpoint where
          * responses should be forwarded.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param streamRepliesTo the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder streamRepliesTo(
                 String streamRepliesTo) {
@@ -789,9 +945,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The user agent header passed to the server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param userAgent the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder userAgent(String userAgent) {
             doSetProperty("userAgent", userAgent);
@@ -801,10 +960,14 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
+         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
+         * type.
          * 
          * Default: NONE
          * Group: security
+         * 
+         * @param authenticationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder authenticationType(
                 GrpcAuthType authenticationType) {
@@ -815,10 +978,14 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
+         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
+         * type.
          * 
          * Default: NONE
          * Group: security
+         * 
+         * @param authenticationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder authenticationType(
                 String authenticationType) {
@@ -829,11 +996,13 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
          * 
          * Default: HMAC256
          * Group: security
+         * 
+         * @param jwtAlgorithm the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder jwtAlgorithm(
                 JwtAlgorithm jwtAlgorithm) {
@@ -844,11 +1013,13 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
          * 
          * Default: HMAC256
          * Group: security
+         * 
+         * @param jwtAlgorithm the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder jwtAlgorithm(String jwtAlgorithm) {
             doSetProperty("jwtAlgorithm", jwtAlgorithm);
@@ -857,9 +1028,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token issuer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param jwtIssuer the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder jwtIssuer(String jwtIssuer) {
             doSetProperty("jwtIssuer", jwtIssuer);
@@ -868,9 +1042,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param jwtSecret the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder jwtSecret(String jwtSecret) {
             doSetProperty("jwtSecret", jwtSecret);
@@ -879,9 +1056,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token subject.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param jwtSubject the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder jwtSubject(String jwtSubject) {
             doSetProperty("jwtSubject", jwtSubject);
@@ -890,9 +1070,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The X.509 certificate chain file resource in PEM format link.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyCertChainResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder keyCertChainResource(
                 String keyCertChainResource) {
@@ -902,9 +1085,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The PKCS#8 private key file password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyPassword the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder keyPassword(String keyPassword) {
             doSetProperty("keyPassword", keyPassword);
@@ -913,9 +1099,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The PKCS#8 private key file resource in PEM format link.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder keyResource(String keyResource) {
             doSetProperty("keyResource", keyResource);
@@ -925,10 +1114,14 @@ public interface GrpcEndpointBuilderFactory {
          * Identifies the security negotiation type used for HTTP/2
          * communication.
          * 
-         * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
+         * The option is a:
+         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder negotiationType(
                 NegotiationType negotiationType) {
@@ -940,10 +1133,13 @@ public interface GrpcEndpointBuilderFactory {
          * communication.
          * 
          * The option will be converted to a
-         * <code>io.grpc.netty.NegotiationType</code> type.
+         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder negotiationType(
                 String negotiationType) {
@@ -954,9 +1150,12 @@ public interface GrpcEndpointBuilderFactory {
          * Service Account key file in JSON format resource link supported by
          * the Google Cloud SDK.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param serviceAccountResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder serviceAccountResource(
                 String serviceAccountResource) {
@@ -967,9 +1166,12 @@ public interface GrpcEndpointBuilderFactory {
          * The trusted certificates collection file resource in PEM format for
          * verifying the remote endpoint's certificate.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCertCollectionResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointProducerBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
@@ -991,10 +1193,13 @@ public interface GrpcEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGrpcEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1005,10 +1210,14 @@ public interface GrpcEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGrpcEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1032,10 +1241,13 @@ public interface GrpcEndpointBuilderFactory {
          * component will look for a ClientInterceptor instance in the registry
          * automatically otherwise it will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClientInterceptors the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder autoDiscoverClientInterceptors(
                 boolean autoDiscoverClientInterceptors) {
@@ -1047,10 +1259,14 @@ public interface GrpcEndpointBuilderFactory {
          * component will look for a ClientInterceptor instance in the registry
          * automatically otherwise it will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClientInterceptors the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder autoDiscoverClientInterceptors(
                 String autoDiscoverClientInterceptors) {
@@ -1060,10 +1276,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: common
+         * 
+         * @param flowControlWindow the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder flowControlWindow(int flowControlWindow) {
             doSetProperty("flowControlWindow", flowControlWindow);
@@ -1072,10 +1291,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The HTTP/2 flow control window size (MiB).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: common
+         * 
+         * @param flowControlWindow the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder flowControlWindow(String flowControlWindow) {
             doSetProperty("flowControlWindow", flowControlWindow);
@@ -1084,10 +1306,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4194304
          * Group: common
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder maxMessageSize(int maxMessageSize) {
             doSetProperty("maxMessageSize", maxMessageSize);
@@ -1096,10 +1321,13 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The maximum message size allowed to be received/sent (MiB).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4194304
          * Group: common
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder maxMessageSize(String maxMessageSize) {
             doSetProperty("maxMessageSize", maxMessageSize);
@@ -1109,10 +1337,14 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
+         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
+         * type.
          * 
          * Default: NONE
          * Group: security
+         * 
+         * @param authenticationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder authenticationType(
                 GrpcAuthType authenticationType) {
@@ -1123,10 +1355,14 @@ public interface GrpcEndpointBuilderFactory {
          * Authentication method type in advance to the SSL/TLS negotiation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
+         * &lt;code&gt;org.apache.camel.component.grpc.GrpcAuthType&lt;/code&gt;
+         * type.
          * 
          * Default: NONE
          * Group: security
+         * 
+         * @param authenticationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder authenticationType(String authenticationType) {
             doSetProperty("authenticationType", authenticationType);
@@ -1136,11 +1372,13 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
          * 
          * Default: HMAC256
          * Group: security
+         * 
+         * @param jwtAlgorithm the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder jwtAlgorithm(JwtAlgorithm jwtAlgorithm) {
             doSetProperty("jwtAlgorithm", jwtAlgorithm);
@@ -1150,11 +1388,13 @@ public interface GrpcEndpointBuilderFactory {
          * JSON Web Token sign algorithm.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm&lt;/code&gt; type.
          * 
          * Default: HMAC256
          * Group: security
+         * 
+         * @param jwtAlgorithm the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder jwtAlgorithm(String jwtAlgorithm) {
             doSetProperty("jwtAlgorithm", jwtAlgorithm);
@@ -1163,9 +1403,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token issuer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param jwtIssuer the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder jwtIssuer(String jwtIssuer) {
             doSetProperty("jwtIssuer", jwtIssuer);
@@ -1174,9 +1417,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param jwtSecret the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder jwtSecret(String jwtSecret) {
             doSetProperty("jwtSecret", jwtSecret);
@@ -1185,9 +1431,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * JSON Web Token subject.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param jwtSubject the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder jwtSubject(String jwtSubject) {
             doSetProperty("jwtSubject", jwtSubject);
@@ -1196,9 +1445,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The X.509 certificate chain file resource in PEM format link.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyCertChainResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder keyCertChainResource(
                 String keyCertChainResource) {
@@ -1208,9 +1460,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The PKCS#8 private key file password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyPassword the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder keyPassword(String keyPassword) {
             doSetProperty("keyPassword", keyPassword);
@@ -1219,9 +1474,12 @@ public interface GrpcEndpointBuilderFactory {
         /**
          * The PKCS#8 private key file resource in PEM format link.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder keyResource(String keyResource) {
             doSetProperty("keyResource", keyResource);
@@ -1231,10 +1489,14 @@ public interface GrpcEndpointBuilderFactory {
          * Identifies the security negotiation type used for HTTP/2
          * communication.
          * 
-         * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
+         * The option is a:
+         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder negotiationType(
                 NegotiationType negotiationType) {
@@ -1246,10 +1508,13 @@ public interface GrpcEndpointBuilderFactory {
          * communication.
          * 
          * The option will be converted to a
-         * <code>io.grpc.netty.NegotiationType</code> type.
+         * &lt;code&gt;io.grpc.netty.NegotiationType&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param negotiationType the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder negotiationType(String negotiationType) {
             doSetProperty("negotiationType", negotiationType);
@@ -1259,9 +1524,12 @@ public interface GrpcEndpointBuilderFactory {
          * Service Account key file in JSON format resource link supported by
          * the Google Cloud SDK.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param serviceAccountResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder serviceAccountResource(
                 String serviceAccountResource) {
@@ -1272,9 +1540,12 @@ public interface GrpcEndpointBuilderFactory {
          * The trusted certificates collection file resource in PEM format for
          * verifying the remote endpoint's certificate.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCertCollectionResource the value to set
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder trustCertCollectionResource(
                 String trustCertCollectionResource) {
@@ -1297,10 +1568,13 @@ public interface GrpcEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGrpcEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1310,10 +1584,14 @@ public interface GrpcEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGrpcEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

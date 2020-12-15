@@ -44,10 +44,13 @@ public interface ServletEndpointBuilderFactory {
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder chunked(boolean chunked) {
             doSetProperty("chunked", chunked);
@@ -57,10 +60,14 @@ public interface ServletEndpointBuilderFactory {
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder chunked(String chunked) {
             doSetProperty("chunked", chunked);
@@ -84,10 +91,13 @@ public interface ServletEndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
@@ -112,10 +122,14 @@ public interface ServletEndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
@@ -127,9 +141,13 @@ public interface ServletEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -141,9 +159,13 @@ public interface ServletEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -153,10 +175,13 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Configure the consumer to work in async mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder async(boolean async) {
             doSetProperty("async", async);
@@ -165,10 +190,14 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Configure the consumer to work in async mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder async(String async) {
             doSetProperty("async", async);
@@ -183,10 +212,13 @@ public interface ServletEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -202,10 +234,14 @@ public interface ServletEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -217,9 +253,12 @@ public interface ServletEndpointBuilderFactory {
          * GET/POST/PUT etc. Multiple methods can be specified separated by
          * comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param httpMethodRestrict the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
@@ -230,10 +269,13 @@ public interface ServletEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param matchOnUriPrefix the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder matchOnUriPrefix(boolean matchOnUriPrefix) {
             doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
@@ -243,10 +285,14 @@ public interface ServletEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param matchOnUriPrefix the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder matchOnUriPrefix(String matchOnUriPrefix) {
             doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
@@ -256,10 +302,13 @@ public interface ServletEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder muteException(boolean muteException) {
             doSetProperty("muteException", muteException);
@@ -269,10 +318,14 @@ public interface ServletEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder muteException(String muteException) {
             doSetProperty("muteException", muteException);
@@ -281,9 +334,12 @@ public interface ServletEndpointBuilderFactory {
         /**
          * To use a custom buffer size on the javax.servlet.ServletResponse.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param responseBufferSize the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder responseBufferSize(
                 Integer responseBufferSize) {
@@ -293,10 +349,13 @@ public interface ServletEndpointBuilderFactory {
         /**
          * To use a custom buffer size on the javax.servlet.ServletResponse.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param responseBufferSize the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder responseBufferSize(
                 String responseBufferSize) {
@@ -306,10 +365,13 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Name of the servlet to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: CamelServlet
          * Group: consumer
+         * 
+         * @param servletName the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder servletName(String servletName) {
             doSetProperty("servletName", servletName);
@@ -326,10 +388,13 @@ public interface ServletEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder transferException(
                 boolean transferException) {
@@ -347,10 +412,14 @@ public interface ServletEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default ServletEndpointBuilder transferException(
                 String transferException) {
@@ -373,9 +442,13 @@ public interface ServletEndpointBuilderFactory {
          * message and HttpClient.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
+         * type.
          * 
          * Group: common (advanced)
+         * 
+         * @param httpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder httpBinding(Object httpBinding) {
             doSetProperty("httpBinding", httpBinding);
@@ -386,9 +459,13 @@ public interface ServletEndpointBuilderFactory {
          * message and HttpClient.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
+         * type.
          * 
          * Group: common (advanced)
+         * 
+         * @param httpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder httpBinding(String httpBinding) {
             doSetProperty("httpBinding", httpBinding);
@@ -402,10 +479,13 @@ public interface ServletEndpointBuilderFactory {
          * off by default as this may require servlet specific configuration to
          * enable this when using Servlet's.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param attachmentMultipartBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder attachmentMultipartBinding(
                 boolean attachmentMultipartBinding) {
@@ -420,10 +500,14 @@ public interface ServletEndpointBuilderFactory {
          * off by default as this may require servlet specific configuration to
          * enable this when using Servlet's.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param attachmentMultipartBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder attachmentMultipartBinding(
                 String attachmentMultipartBinding) {
@@ -435,10 +519,13 @@ public interface ServletEndpointBuilderFactory {
          * content-length header is 0 or not present. This can be turned on in
          * case HTTP clients do not send streamed data.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param eagerCheckContentAvailable the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder eagerCheckContentAvailable(
                 boolean eagerCheckContentAvailable) {
@@ -450,10 +537,14 @@ public interface ServletEndpointBuilderFactory {
          * content-length header is 0 or not present. This can be turned on in
          * case HTTP clients do not send streamed data.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param eagerCheckContentAvailable the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder eagerCheckContentAvailable(
                 String eagerCheckContentAvailable) {
@@ -466,10 +557,13 @@ public interface ServletEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -483,9 +577,12 @@ public interface ServletEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -495,9 +592,13 @@ public interface ServletEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -508,9 +609,12 @@ public interface ServletEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -522,9 +626,12 @@ public interface ServletEndpointBuilderFactory {
          * files. Multiple extensions can be separated by comma, such as
          * txt,xml.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param fileNameExtWhitelist the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder fileNameExtWhitelist(
                 String fileNameExtWhitelist) {
@@ -535,10 +642,13 @@ public interface ServletEndpointBuilderFactory {
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param optionsEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder optionsEnabled(
                 boolean optionsEnabled) {
@@ -549,10 +659,14 @@ public interface ServletEndpointBuilderFactory {
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param optionsEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder optionsEnabled(
                 String optionsEnabled) {
@@ -563,10 +677,13 @@ public interface ServletEndpointBuilderFactory {
          * Specifies whether to enable HTTP TRACE for this Servlet consumer. By
          * default TRACE is turned off.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param traceEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder traceEnabled(boolean traceEnabled) {
             doSetProperty("traceEnabled", traceEnabled);
@@ -576,10 +693,14 @@ public interface ServletEndpointBuilderFactory {
          * Specifies whether to enable HTTP TRACE for this Servlet consumer. By
          * default TRACE is turned off.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param traceEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder traceEnabled(String traceEnabled) {
             doSetProperty("traceEnabled", traceEnabled);
@@ -590,10 +711,13 @@ public interface ServletEndpointBuilderFactory {
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
@@ -605,10 +729,14 @@ public interface ServletEndpointBuilderFactory {
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
@@ -620,10 +748,13 @@ public interface ServletEndpointBuilderFactory {
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
@@ -635,10 +766,14 @@ public interface ServletEndpointBuilderFactory {
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
@@ -650,10 +785,13 @@ public interface ServletEndpointBuilderFactory {
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
@@ -665,10 +803,14 @@ public interface ServletEndpointBuilderFactory {
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
@@ -679,10 +821,13 @@ public interface ServletEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -692,10 +837,14 @@ public interface ServletEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedServletEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

@@ -45,10 +45,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
@@ -59,10 +62,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
@@ -73,10 +80,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointConsumerBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
@@ -87,10 +97,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointConsumerBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
@@ -106,10 +120,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -125,10 +142,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -153,10 +174,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -170,9 +194,12 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -182,9 +209,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -195,9 +226,12 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -208,10 +242,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -222,10 +259,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -247,10 +288,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
@@ -261,10 +305,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
@@ -275,10 +323,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
@@ -289,10 +340,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
@@ -303,10 +358,12 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The cluster group expression.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ignite.ClusterGroupExpression&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder clusterGroupExpression(
                 Object clusterGroupExpression) {
@@ -317,10 +374,12 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The cluster group expression.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ignite.ClusterGroupExpression&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder clusterGroupExpression(
                 String clusterGroupExpression) {
@@ -338,10 +397,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -359,10 +421,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -373,10 +439,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The send mode to use. Possible values: UNORDERED, ORDERED.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode</code> type.
+         * &lt;code&gt;org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode&lt;/code&gt; type.
          * 
          * Default: UNORDERED
          * Group: producer
+         * 
+         * @param sendMode the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder sendMode(
                 IgniteMessagingSendMode sendMode) {
@@ -387,10 +456,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The send mode to use. Possible values: UNORDERED, ORDERED.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode</code> type.
+         * &lt;code&gt;org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode&lt;/code&gt; type.
          * 
          * Default: UNORDERED
          * Group: producer
+         * 
+         * @param sendMode the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder sendMode(String sendMode) {
             doSetProperty("sendMode", sendMode);
@@ -399,9 +471,12 @@ public interface IgniteMessagingEndpointBuilderFactory {
         /**
          * The timeout for the send operation when using ordered messages.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder timeout(Long timeout) {
             doSetProperty("timeout", timeout);
@@ -410,9 +485,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
         /**
          * The timeout for the send operation when using ordered messages.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -434,10 +513,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -448,10 +530,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -474,10 +560,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
@@ -488,10 +577,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
@@ -502,10 +595,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
@@ -516,10 +612,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
@@ -542,10 +642,13 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -556,10 +659,14 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteMessagingEndpointBuilder synchronous(
                 String synchronous) {

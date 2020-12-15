@@ -44,10 +44,13 @@ public interface XJEndpointBuilderFactory {
          * library (camel-saxon). The Xalan library (default in JVM) does not
          * support StAXSource.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param allowStAX the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder allowStAX(boolean allowStAX) {
             doSetProperty("allowStAX", allowStAX);
@@ -59,10 +62,14 @@ public interface XJEndpointBuilderFactory {
          * library (camel-saxon). The Xalan library (default in JVM) does not
          * support StAXSource.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param allowStAX the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder allowStAX(String allowStAX) {
             doSetProperty("allowStAX", allowStAX);
@@ -75,10 +82,13 @@ public interface XJEndpointBuilderFactory {
          * can be forced to reload at runtime via JMX using the
          * clearCachedStylesheet operation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -91,10 +101,14 @@ public interface XJEndpointBuilderFactory {
          * can be forced to reload at runtime via JMX using the
          * clearCachedStylesheet operation.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -106,10 +120,13 @@ public interface XJEndpointBuilderFactory {
          * For example suppose the output file is a temporary file, then it can
          * be a good idea to delete it after use.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param deleteOutputFile the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder deleteOutputFile(boolean deleteOutputFile) {
             doSetProperty("deleteOutputFile", deleteOutputFile);
@@ -121,10 +138,14 @@ public interface XJEndpointBuilderFactory {
          * For example suppose the output file is a temporary file, then it can
          * be a good idea to delete it after use.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param deleteOutputFile the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder deleteOutputFile(String deleteOutputFile) {
             doSetProperty("deleteOutputFile", deleteOutputFile);
@@ -133,10 +154,13 @@ public interface XJEndpointBuilderFactory {
         /**
          * Whether or not to throw an exception if the input body is null.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullBody the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder failOnNullBody(boolean failOnNullBody) {
             doSetProperty("failOnNullBody", failOnNullBody);
@@ -145,10 +169,14 @@ public interface XJEndpointBuilderFactory {
         /**
          * Whether or not to throw an exception if the input body is null.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param failOnNullBody the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder failOnNullBody(String failOnNullBody) {
             doSetProperty("failOnNullBody", failOnNullBody);
@@ -165,10 +193,13 @@ public interface XJEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -185,10 +216,14 @@ public interface XJEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -204,10 +239,14 @@ public interface XJEndpointBuilderFactory {
          * an exception is thrown at runtime.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
+         * &lt;code&gt;org.apache.camel.component.xslt.XsltOutput&lt;/code&gt;
+         * type.
          * 
          * Default: string
          * Group: producer
+         * 
+         * @param output the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder output(XsltOutput output) {
             doSetProperty("output", output);
@@ -223,10 +262,14 @@ public interface XJEndpointBuilderFactory {
          * an exception is thrown at runtime.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
+         * &lt;code&gt;org.apache.camel.component.xslt.XsltOutput&lt;/code&gt;
+         * type.
          * 
          * Default: string
          * Group: producer
+         * 
+         * @param output the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder output(String output) {
             doSetProperty("output", output);
@@ -236,10 +279,13 @@ public interface XJEndpointBuilderFactory {
          * Transform direction. Either XML2JSON or JSON2XML.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xj.TransformDirection</code> type.
+         * &lt;code&gt;org.apache.camel.component.xj.TransformDirection&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param transformDirection the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder transformDirection(
                 TransformDirection transformDirection) {
@@ -250,10 +296,13 @@ public interface XJEndpointBuilderFactory {
          * Transform direction. Either XML2JSON or JSON2XML.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xj.TransformDirection</code> type.
+         * &lt;code&gt;org.apache.camel.component.xj.TransformDirection&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param transformDirection the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder transformDirection(String transformDirection) {
             doSetProperty("transformDirection", transformDirection);
@@ -263,10 +312,13 @@ public interface XJEndpointBuilderFactory {
          * The number of javax.xml.transform.Transformer object that are cached
          * for reuse to avoid calls to Template.newTransformer().
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param transformerCacheSize the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder transformerCacheSize(int transformerCacheSize) {
             doSetProperty("transformerCacheSize", transformerCacheSize);
@@ -276,10 +328,13 @@ public interface XJEndpointBuilderFactory {
          * The number of javax.xml.transform.Transformer object that are cached
          * for reuse to avoid calls to Template.newTransformer().
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param transformerCacheSize the value to set
+         * @return the dsl builder
          */
         default XJEndpointBuilder transformerCacheSize(
                 String transformerCacheSize) {
@@ -301,9 +356,13 @@ public interface XJEndpointBuilderFactory {
          * To use a custom org.xml.sax.EntityResolver with
          * javax.xml.transform.sax.SAXSource.
          * 
-         * The option is a: <code>org.xml.sax.EntityResolver</code> type.
+         * The option is a: &lt;code&gt;org.xml.sax.EntityResolver&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param entityResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder entityResolver(Object entityResolver) {
             doSetProperty("entityResolver", entityResolver);
@@ -314,9 +373,12 @@ public interface XJEndpointBuilderFactory {
          * javax.xml.transform.sax.SAXSource.
          * 
          * The option will be converted to a
-         * <code>org.xml.sax.EntityResolver</code> type.
+         * &lt;code&gt;org.xml.sax.EntityResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param entityResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder entityResolver(String entityResolver) {
             doSetProperty("entityResolver", entityResolver);
@@ -329,9 +391,13 @@ public interface XJEndpointBuilderFactory {
          * store information on the Exchange as properties is not in use. So
          * only use this option for special use-cases.
          * 
-         * The option is a: <code>javax.xml.transform.ErrorListener</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.transform.ErrorListener&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorListener the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder errorListener(Object errorListener) {
             doSetProperty("errorListener", errorListener);
@@ -345,9 +411,12 @@ public interface XJEndpointBuilderFactory {
          * only use this option for special use-cases.
          * 
          * The option will be converted to a
-         * <code>javax.xml.transform.ErrorListener</code> type.
+         * &lt;code&gt;javax.xml.transform.ErrorListener&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorListener the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder errorListener(String errorListener) {
             doSetProperty("errorListener", errorListener);
@@ -359,10 +428,12 @@ public interface XJEndpointBuilderFactory {
          * using custom org.apache.camel.builder.xml.ResultHandler types.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.xslt.ResultHandlerFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resultHandlerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder resultHandlerFactory(
                 Object resultHandlerFactory) {
@@ -375,10 +446,12 @@ public interface XJEndpointBuilderFactory {
          * using custom org.apache.camel.builder.xml.ResultHandler types.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xslt.ResultHandlerFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.xslt.ResultHandlerFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resultHandlerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder resultHandlerFactory(
                 String resultHandlerFactory) {
@@ -388,9 +461,13 @@ public interface XJEndpointBuilderFactory {
         /**
          * To use a custom Saxon configuration.
          * 
-         * The option is a: <code>net.sf.saxon.Configuration</code> type.
+         * The option is a: &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param saxonConfiguration the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder saxonConfiguration(
                 Object saxonConfiguration) {
@@ -401,9 +478,12 @@ public interface XJEndpointBuilderFactory {
          * To use a custom Saxon configuration.
          * 
          * The option will be converted to a
-         * <code>net.sf.saxon.Configuration</code> type.
+         * &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param saxonConfiguration the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder saxonConfiguration(
                 String saxonConfiguration) {
@@ -416,10 +496,13 @@ public interface XJEndpointBuilderFactory {
          * camel-saxon to the classpath. The function is looked up in the
          * registry, where you can comma to separate multiple values to lookup.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.Object&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param saxonExtensionFunctions the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder saxonExtensionFunctions(
                 List<Object> saxonExtensionFunctions) {
@@ -433,9 +516,12 @@ public interface XJEndpointBuilderFactory {
          * registry, where you can comma to separate multiple values to lookup.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.Object&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param saxonExtensionFunctions the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder saxonExtensionFunctions(
                 String saxonExtensionFunctions) {
@@ -446,10 +532,13 @@ public interface XJEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -459,10 +548,14 @@ public interface XJEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -471,10 +564,13 @@ public interface XJEndpointBuilderFactory {
         /**
          * To use a custom XSLT transformer factory.
          * 
-         * The option is a: <code>javax.xml.transform.TransformerFactory</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.transform.TransformerFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder transformerFactory(
                 Object transformerFactory) {
@@ -485,9 +581,12 @@ public interface XJEndpointBuilderFactory {
          * To use a custom XSLT transformer factory.
          * 
          * The option will be converted to a
-         * <code>javax.xml.transform.TransformerFactory</code> type.
+         * &lt;code&gt;javax.xml.transform.TransformerFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder transformerFactory(
                 String transformerFactory) {
@@ -498,9 +597,12 @@ public interface XJEndpointBuilderFactory {
          * To use a custom XSLT transformer factory, specified as a FQN class
          * name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactoryClass the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder transformerFactoryClass(
                 String transformerFactoryClass) {
@@ -512,9 +614,12 @@ public interface XJEndpointBuilderFactory {
          * TransformerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactoryConfigurationStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder transformerFactoryConfigurationStrategy(
                 Object transformerFactoryConfigurationStrategy) {
@@ -526,9 +631,12 @@ public interface XJEndpointBuilderFactory {
          * TransformerFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactoryConfigurationStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder transformerFactoryConfigurationStrategy(
                 String transformerFactoryConfigurationStrategy) {
@@ -538,9 +646,13 @@ public interface XJEndpointBuilderFactory {
         /**
          * To use a custom javax.xml.transform.URIResolver.
          * 
-         * The option is a: <code>javax.xml.transform.URIResolver</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder uriResolver(Object uriResolver) {
             doSetProperty("uriResolver", uriResolver);
@@ -550,9 +662,12 @@ public interface XJEndpointBuilderFactory {
          * To use a custom javax.xml.transform.URIResolver.
          * 
          * The option will be converted to a
-         * <code>javax.xml.transform.URIResolver</code> type.
+         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedXJEndpointBuilder uriResolver(String uriResolver) {
             doSetProperty("uriResolver", uriResolver);

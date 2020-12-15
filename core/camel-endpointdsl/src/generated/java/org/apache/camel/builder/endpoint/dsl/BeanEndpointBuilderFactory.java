@@ -42,9 +42,12 @@ public interface BeanEndpointBuilderFactory {
         /**
          * Use scope option instead.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cache the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default BeanEndpointBuilder cache(Boolean cache) {
@@ -54,10 +57,13 @@ public interface BeanEndpointBuilderFactory {
         /**
          * Use scope option instead.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cache the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default BeanEndpointBuilder cache(String cache) {
@@ -67,9 +73,12 @@ public interface BeanEndpointBuilderFactory {
         /**
          * Sets the name of the method to invoke on the bean.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param method the value to set
+         * @return the dsl builder
          */
         default BeanEndpointBuilder method(String method) {
             doSetProperty("method", method);
@@ -91,10 +100,14 @@ public interface BeanEndpointBuilderFactory {
          * configuration can act as either singleton or prototype scope. so when
          * using prototype then this depends on the delegated registry.
          * 
-         * The option is a: <code>org.apache.camel.BeanScope</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.BeanScope&lt;/code&gt;
+         * type.
          * 
          * Default: Singleton
          * Group: common
+         * 
+         * @param scope the value to set
+         * @return the dsl builder
          */
         default BeanEndpointBuilder scope(BeanScope scope) {
             doSetProperty("scope", scope);
@@ -117,10 +130,13 @@ public interface BeanEndpointBuilderFactory {
          * using prototype then this depends on the delegated registry.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.BeanScope</code> type.
+         * &lt;code&gt;org.apache.camel.BeanScope&lt;/code&gt; type.
          * 
          * Default: Singleton
          * Group: common
+         * 
+         * @param scope the value to set
+         * @return the dsl builder
          */
         default BeanEndpointBuilder scope(String scope) {
             doSetProperty("scope", scope);
@@ -137,10 +153,13 @@ public interface BeanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BeanEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -157,10 +176,14 @@ public interface BeanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BeanEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -180,13 +203,17 @@ public interface BeanEndpointBuilderFactory {
         /**
          * Used for configuring additional properties on the bean.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedBeanEndpointBuilder parameters(String key, Object value) {
             doSetMultiValueProperty("parameters", "bean." + key, value);
@@ -195,13 +222,16 @@ public interface BeanEndpointBuilderFactory {
         /**
          * Used for configuring additional properties on the bean.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the parameters(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedBeanEndpointBuilder parameters(Map values) {
             doSetMultiValueProperties("parameters", "bean.", values);
@@ -211,10 +241,13 @@ public interface BeanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -224,10 +257,14 @@ public interface BeanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

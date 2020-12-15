@@ -40,10 +40,13 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Hostname where Bonita engine runs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: localhost
          * Group: producer
+         * 
+         * @param hostname the value to set
+         * @return the dsl builder
          */
         default BonitaEndpointBuilder hostname(String hostname) {
             doSetProperty("hostname", hostname);
@@ -60,10 +63,13 @@ public interface BonitaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BonitaEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -81,10 +87,14 @@ public interface BonitaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BonitaEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -93,10 +103,13 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Port of the server hosting Bonita engine.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 8080
          * Group: producer
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default BonitaEndpointBuilder port(String port) {
             doSetProperty("port", port);
@@ -105,9 +118,12 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Name of the process involved in the operation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param processName the value to set
+         * @return the dsl builder
          */
         default BonitaEndpointBuilder processName(String processName) {
             doSetProperty("processName", processName);
@@ -116,9 +132,12 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Password to authenticate to Bonita engine.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default BonitaEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -127,9 +146,12 @@ public interface BonitaEndpointBuilderFactory {
         /**
          * Username to authenticate to Bonita engine.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default BonitaEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -150,10 +172,13 @@ public interface BonitaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBonitaEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -163,10 +188,14 @@ public interface BonitaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBonitaEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

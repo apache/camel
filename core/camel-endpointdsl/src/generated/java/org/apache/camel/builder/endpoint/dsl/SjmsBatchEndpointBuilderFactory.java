@@ -48,11 +48,14 @@ public interface SjmsBatchEndpointBuilderFactory {
          * The aggregation strategy to use, which merges all the batched
          * messages into a single message.
          * 
-         * The option is a: <code>org.apache.camel.AggregationStrategy</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.AggregationStrategy&lt;/code&gt; type.
          * 
          * Required: true
          * Group: consumer
+         * 
+         * @param aggregationStrategy the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder aggregationStrategy(
                 AggregationStrategy aggregationStrategy) {
@@ -64,10 +67,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * messages into a single message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.AggregationStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.AggregationStrategy&lt;/code&gt; type.
          * 
          * Required: true
          * Group: consumer
+         * 
+         * @param aggregationStrategy the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder aggregationStrategy(
                 String aggregationStrategy) {
@@ -78,10 +84,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Whether to allow sending messages with no body. If this option is
          * false and the message body is null, then an JMSException is thrown.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder allowNullBody(boolean allowNullBody) {
             doSetProperty("allowNullBody", allowNullBody);
@@ -91,10 +100,14 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Whether to allow sending messages with no body. If this option is
          * false and the message body is null, then an JMSException is thrown.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder allowNullBody(String allowNullBody) {
             doSetProperty("allowNullBody", allowNullBody);
@@ -109,10 +122,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -128,10 +144,14 @@ public interface SjmsBatchEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -145,10 +165,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * batch. Notice you cannot use both completion timeout and completion
          * interval at the same time, only one can be configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: consumer
+         * 
+         * @param completionInterval the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder completionInterval(
                 int completionInterval) {
@@ -162,10 +185,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * batch. Notice you cannot use both completion timeout and completion
          * interval at the same time, only one can be configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: consumer
+         * 
+         * @param completionInterval the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder completionInterval(
                 String completionInterval) {
@@ -180,9 +206,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * match the incoming message, as otherwise it matches the aggregated
          * message.
          * 
-         * The option is a: <code>org.apache.camel.Predicate</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param completionPredicate the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder completionPredicate(
                 Predicate completionPredicate) {
@@ -198,9 +228,12 @@ public interface SjmsBatchEndpointBuilderFactory {
          * message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Predicate</code> type.
+         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param completionPredicate the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder completionPredicate(
                 String completionPredicate) {
@@ -210,10 +243,13 @@ public interface SjmsBatchEndpointBuilderFactory {
         /**
          * The number of messages consumed at which the batch will be completed.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 200
          * Group: consumer
+         * 
+         * @param completionSize the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder completionSize(int completionSize) {
             doSetProperty("completionSize", completionSize);
@@ -222,10 +258,13 @@ public interface SjmsBatchEndpointBuilderFactory {
         /**
          * The number of messages consumed at which the batch will be completed.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 200
          * Group: consumer
+         * 
+         * @param completionSize the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder completionSize(String completionSize) {
             doSetProperty("completionSize", completionSize);
@@ -238,10 +277,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * use both completion timeout and completion interval at the same time,
          * only one can be configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: consumer
+         * 
+         * @param completionTimeout the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder completionTimeout(int completionTimeout) {
             doSetProperty("completionTimeout", completionTimeout);
@@ -254,10 +296,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * use both completion timeout and completion interval at the same time,
          * only one can be configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: consumer
+         * 
+         * @param completionTimeout the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder completionTimeout(
                 String completionTimeout) {
@@ -267,10 +312,13 @@ public interface SjmsBatchEndpointBuilderFactory {
         /**
          * The number of JMS sessions to consume from.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param consumerCount the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder consumerCount(int consumerCount) {
             doSetProperty("consumerCount", consumerCount);
@@ -279,10 +327,13 @@ public interface SjmsBatchEndpointBuilderFactory {
         /**
          * The number of JMS sessions to consume from.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param consumerCount the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder consumerCount(String consumerCount) {
             doSetProperty("consumerCount", consumerCount);
@@ -294,10 +345,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * without eager completion checking the completionPredicate will use
          * the aggregated Exchange.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param eagerCheckCompletion the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder eagerCheckCompletion(
                 boolean eagerCheckCompletion) {
@@ -310,10 +364,14 @@ public interface SjmsBatchEndpointBuilderFactory {
          * without eager completion checking the completionPredicate will use
          * the aggregated Exchange.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param eagerCheckCompletion the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder eagerCheckCompletion(
                 String eagerCheckCompletion) {
@@ -326,10 +384,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * JMSXAppID, and JMSXUserID etc. Note: If you are using a custom
          * headerFilterStrategy then this option does not apply.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeAllJMSXProperties the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
@@ -342,10 +403,14 @@ public interface SjmsBatchEndpointBuilderFactory {
          * JMSXAppID, and JMSXUserID etc. Note: If you are using a custom
          * headerFilterStrategy then this option does not apply.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeAllJMSXProperties the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
@@ -357,10 +422,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * suited payload type, such as javax.jms.TextMessage to a String etc.
          * See section about how mapping works below for more details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param mapJmsMessage the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder mapJmsMessage(boolean mapJmsMessage) {
             doSetProperty("mapJmsMessage", mapJmsMessage);
@@ -371,10 +439,14 @@ public interface SjmsBatchEndpointBuilderFactory {
          * suited payload type, such as javax.jms.TextMessage to a String etc.
          * See section about how mapping works below for more details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param mapJmsMessage the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder mapJmsMessage(String mapJmsMessage) {
             doSetProperty("mapJmsMessage", mapJmsMessage);
@@ -385,10 +457,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * completionTimeOut will be used if it is shorter and a batch has
          * started.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: consumer
+         * 
+         * @param pollDuration the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder pollDuration(int pollDuration) {
             doSetProperty("pollDuration", pollDuration);
@@ -399,10 +474,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * completionTimeOut will be used if it is shorter and a batch has
          * started.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: consumer
+         * 
+         * @param pollDuration the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder pollDuration(String pollDuration) {
             doSetProperty("pollDuration", pollDuration);
@@ -414,10 +492,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * this option is true and the batch is empty then an empty message is
          * added to the batch so an empty message is routed.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -430,10 +511,14 @@ public interface SjmsBatchEndpointBuilderFactory {
          * this option is true and the batch is empty then an empty message is
          * added to the batch so an empty message is routed.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -457,10 +542,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -474,9 +562,12 @@ public interface SjmsBatchEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -486,9 +577,13 @@ public interface SjmsBatchEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -499,9 +594,12 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -520,10 +618,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * logged at WARN level, and the consumer will not be able to receive
          * messages; You can then restart the route to retry.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param asyncStartListener the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder asyncStartListener(
                 boolean asyncStartListener) {
@@ -542,10 +643,14 @@ public interface SjmsBatchEndpointBuilderFactory {
          * logged at WARN level, and the consumer will not be able to receive
          * messages; You can then restart the route to retry.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param asyncStartListener the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder asyncStartListener(
                 String asyncStartListener) {
@@ -557,9 +662,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -571,9 +680,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -592,10 +705,12 @@ public interface SjmsBatchEndpointBuilderFactory {
          * using the # notation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param jmsKeyFormatStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
@@ -614,10 +729,12 @@ public interface SjmsBatchEndpointBuilderFactory {
          * using the # notation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param jmsKeyFormatStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
@@ -633,10 +750,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * SjmsBatchConsumer will bail out and the consumer will not stop
          * consuming new messages. The default is 5000 ms, that is, 5 seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param keepAliveDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder keepAliveDelay(
                 int keepAliveDelay) {
@@ -652,10 +772,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * SjmsBatchConsumer will bail out and the consumer will not stop
          * consuming new messages. The default is 5000 ms, that is, 5 seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param keepAliveDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder keepAliveDelay(
                 String keepAliveDelay) {
@@ -668,9 +791,12 @@ public interface SjmsBatchEndpointBuilderFactory {
          * sending a JMS message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.sjms.jms.MessageCreatedStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageCreatedStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
@@ -683,9 +809,12 @@ public interface SjmsBatchEndpointBuilderFactory {
          * sending a JMS message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.sjms.jms.MessageCreatedStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageCreatedStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
@@ -697,10 +826,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param recoveryInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder recoveryInterval(
                 int recoveryInterval) {
@@ -712,10 +844,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param recoveryInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder recoveryInterval(
                 String recoveryInterval) {
@@ -726,10 +861,13 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -739,10 +877,14 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -755,9 +897,12 @@ public interface SjmsBatchEndpointBuilderFactory {
          * every consumer.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param timeoutCheckerExecutorService the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder timeoutCheckerExecutorService(
                 ScheduledExecutorService timeoutCheckerExecutorService) {
@@ -771,9 +916,12 @@ public interface SjmsBatchEndpointBuilderFactory {
          * every consumer.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param timeoutCheckerExecutorService the value to set
+         * @return the dsl builder
          */
         default AdvancedSjmsBatchEndpointBuilder timeoutCheckerExecutorService(
                 String timeoutCheckerExecutorService) {

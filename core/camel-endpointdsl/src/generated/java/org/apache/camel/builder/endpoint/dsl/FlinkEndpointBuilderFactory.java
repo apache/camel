@@ -40,10 +40,13 @@ public interface FlinkEndpointBuilderFactory {
         /**
          * Indicates if results should be collected or counted.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param collect the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder collect(boolean collect) {
             doSetProperty("collect", collect);
@@ -52,10 +55,14 @@ public interface FlinkEndpointBuilderFactory {
         /**
          * Indicates if results should be collected or counted.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param collect the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder collect(String collect) {
             doSetProperty("collect", collect);
@@ -64,9 +71,13 @@ public interface FlinkEndpointBuilderFactory {
         /**
          * DataSet to compute against.
          * 
-         * The option is a: <code>org.apache.flink.api.java.DataSet</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.flink.api.java.DataSet&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataSet the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder dataSet(Object dataSet) {
             doSetProperty("dataSet", dataSet);
@@ -76,9 +87,12 @@ public interface FlinkEndpointBuilderFactory {
          * DataSet to compute against.
          * 
          * The option will be converted to a
-         * <code>org.apache.flink.api.java.DataSet</code> type.
+         * &lt;code&gt;org.apache.flink.api.java.DataSet&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataSet the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder dataSet(String dataSet) {
             doSetProperty("dataSet", dataSet);
@@ -88,9 +102,12 @@ public interface FlinkEndpointBuilderFactory {
          * Function performing action against a DataSet.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
+         * &lt;code&gt;org.apache.camel.component.flink.DataSetCallback&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataSetCallback the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder dataSetCallback(Object dataSetCallback) {
             doSetProperty("dataSetCallback", dataSetCallback);
@@ -100,9 +117,12 @@ public interface FlinkEndpointBuilderFactory {
          * Function performing action against a DataSet.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.flink.DataSetCallback</code> type.
+         * &lt;code&gt;org.apache.camel.component.flink.DataSetCallback&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataSetCallback the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder dataSetCallback(String dataSetCallback) {
             doSetProperty("dataSetCallback", dataSetCallback);
@@ -112,10 +132,12 @@ public interface FlinkEndpointBuilderFactory {
          * DataStream to compute against.
          * 
          * The option is a:
-         * <code>org.apache.flink.streaming.api.datastream.DataStream</code>
-         * type.
+         * &lt;code&gt;org.apache.flink.streaming.api.datastream.DataStream&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataStream the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder dataStream(Object dataStream) {
             doSetProperty("dataStream", dataStream);
@@ -125,10 +147,12 @@ public interface FlinkEndpointBuilderFactory {
          * DataStream to compute against.
          * 
          * The option will be converted to a
-         * <code>org.apache.flink.streaming.api.datastream.DataStream</code>
-         * type.
+         * &lt;code&gt;org.apache.flink.streaming.api.datastream.DataStream&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataStream the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder dataStream(String dataStream) {
             doSetProperty("dataStream", dataStream);
@@ -138,10 +162,12 @@ public interface FlinkEndpointBuilderFactory {
          * Function performing action against a DataStream.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.flink.DataStreamCallback</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.flink.DataStreamCallback&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataStreamCallback the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder dataStreamCallback(
                 Object dataStreamCallback) {
@@ -152,10 +178,12 @@ public interface FlinkEndpointBuilderFactory {
          * Function performing action against a DataStream.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.flink.DataStreamCallback</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.flink.DataStreamCallback&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataStreamCallback the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder dataStreamCallback(
                 String dataStreamCallback) {
@@ -173,10 +201,13 @@ public interface FlinkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -193,10 +224,14 @@ public interface FlinkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -217,10 +252,13 @@ public interface FlinkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFlinkEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -230,10 +268,14 @@ public interface FlinkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFlinkEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

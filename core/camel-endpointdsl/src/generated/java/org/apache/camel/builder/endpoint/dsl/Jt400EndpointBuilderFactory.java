@@ -50,9 +50,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets the CCSID to use for the connection with the IBM i system.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ccsid the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder ccsid(int ccsid) {
             doSetProperty("ccsid", ccsid);
@@ -61,9 +64,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets the CCSID to use for the connection with the IBM i system.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ccsid the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder ccsid(String ccsid) {
             doSetProperty("ccsid", ccsid);
@@ -73,10 +79,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
+         * 
+         * @param format the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder format(Format format) {
             doSetProperty("format", format);
@@ -86,10 +95,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
+         * 
+         * @param format the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder format(String format) {
             doSetProperty("format", format);
@@ -99,10 +111,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether IBM i prompting is enabled in the environment running
          * Camel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param guiAvailable the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder guiAvailable(boolean guiAvailable) {
             doSetProperty("guiAvailable", guiAvailable);
@@ -112,10 +127,14 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether IBM i prompting is enabled in the environment running
          * Camel.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param guiAvailable the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder guiAvailable(String guiAvailable) {
             doSetProperty("guiAvailable", guiAvailable);
@@ -124,10 +143,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether to use keyed or non-keyed data queues.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param keyed the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder keyed(boolean keyed) {
             doSetProperty("keyed", keyed);
@@ -136,10 +158,14 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether to use keyed or non-keyed data queues.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param keyed the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder keyed(String keyed) {
             doSetProperty("keyed", keyed);
@@ -148,9 +174,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Search key for keyed data queues.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param searchKey the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder searchKey(String searchKey) {
             doSetProperty("searchKey", searchKey);
@@ -165,10 +194,13 @@ public interface Jt400EndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -184,10 +216,14 @@ public interface Jt400EndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -200,10 +236,13 @@ public interface Jt400EndpointBuilderFactory {
          * or neither (SAME).
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$MessageAction</code> type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$MessageAction&lt;/code&gt; type.
          * 
          * Default: OLD
          * Group: consumer
+         * 
+         * @param messageAction the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder messageAction(
                 MessageAction messageAction) {
@@ -216,10 +255,13 @@ public interface Jt400EndpointBuilderFactory {
          * or neither (SAME).
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$MessageAction</code> type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$MessageAction&lt;/code&gt; type.
          * 
          * Default: OLD
          * Group: consumer
+         * 
+         * @param messageAction the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder messageAction(String messageAction) {
             doSetProperty("messageAction", messageAction);
@@ -229,10 +271,13 @@ public interface Jt400EndpointBuilderFactory {
          * Timeout in millis the consumer will wait while trying to read a new
          * message of the data queue.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: consumer
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder readTimeout(int readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -242,10 +287,13 @@ public interface Jt400EndpointBuilderFactory {
          * Timeout in millis the consumer will wait while trying to read a new
          * message of the data queue.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: consumer
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder readTimeout(String readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -255,10 +303,13 @@ public interface Jt400EndpointBuilderFactory {
          * Search type such as EQ for equal etc.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$SearchType&lt;/code&gt; type.
          * 
          * Default: EQ
          * Group: consumer
+         * 
+         * @param searchType the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder searchType(SearchType searchType) {
             doSetProperty("searchType", searchType);
@@ -268,10 +319,13 @@ public interface Jt400EndpointBuilderFactory {
          * Search type such as EQ for equal etc.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$SearchType&lt;/code&gt; type.
          * 
          * Default: EQ
          * Group: consumer
+         * 
+         * @param searchType the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder searchType(String searchType) {
             doSetProperty("searchType", searchType);
@@ -281,10 +335,13 @@ public interface Jt400EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -295,10 +352,14 @@ public interface Jt400EndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -309,9 +370,12 @@ public interface Jt400EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -322,9 +386,12 @@ public interface Jt400EndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -335,9 +402,12 @@ public interface Jt400EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -348,9 +418,12 @@ public interface Jt400EndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -365,9 +438,12 @@ public interface Jt400EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -382,9 +458,12 @@ public interface Jt400EndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -394,10 +473,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -406,10 +488,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -419,10 +504,13 @@ public interface Jt400EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -432,10 +520,14 @@ public interface Jt400EndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -444,10 +536,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -456,10 +551,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -470,10 +568,13 @@ public interface Jt400EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -484,10 +585,13 @@ public interface Jt400EndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -497,10 +601,14 @@ public interface Jt400EndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -512,10 +620,13 @@ public interface Jt400EndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -528,9 +639,12 @@ public interface Jt400EndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -543,9 +657,12 @@ public interface Jt400EndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -556,10 +673,13 @@ public interface Jt400EndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -569,10 +689,14 @@ public interface Jt400EndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -582,13 +706,17 @@ public interface Jt400EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -600,13 +728,16 @@ public interface Jt400EndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -615,10 +746,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -628,10 +762,14 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -641,10 +779,14 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -654,10 +796,13 @@ public interface Jt400EndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -667,10 +812,13 @@ public interface Jt400EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -680,10 +828,14 @@ public interface Jt400EndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -692,10 +844,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether connections to IBM i are secured with SSL.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secured the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder secured(boolean secured) {
             doSetProperty("secured", secured);
@@ -704,10 +859,14 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether connections to IBM i are secured with SSL.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secured the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointConsumerBuilder secured(String secured) {
             doSetProperty("secured", secured);
@@ -730,10 +889,13 @@ public interface Jt400EndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -747,9 +909,12 @@ public interface Jt400EndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -759,9 +924,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -772,9 +941,12 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -788,9 +960,12 @@ public interface Jt400EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -804,9 +979,12 @@ public interface Jt400EndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -817,10 +995,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -831,10 +1012,14 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -855,9 +1040,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets the CCSID to use for the connection with the IBM i system.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ccsid the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder ccsid(int ccsid) {
             doSetProperty("ccsid", ccsid);
@@ -866,9 +1054,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets the CCSID to use for the connection with the IBM i system.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ccsid the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder ccsid(String ccsid) {
             doSetProperty("ccsid", ccsid);
@@ -878,10 +1069,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
+         * 
+         * @param format the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder format(Format format) {
             doSetProperty("format", format);
@@ -891,10 +1085,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
+         * 
+         * @param format the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder format(String format) {
             doSetProperty("format", format);
@@ -904,10 +1101,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether IBM i prompting is enabled in the environment running
          * Camel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param guiAvailable the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder guiAvailable(boolean guiAvailable) {
             doSetProperty("guiAvailable", guiAvailable);
@@ -917,10 +1117,14 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether IBM i prompting is enabled in the environment running
          * Camel.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param guiAvailable the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder guiAvailable(String guiAvailable) {
             doSetProperty("guiAvailable", guiAvailable);
@@ -929,10 +1133,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether to use keyed or non-keyed data queues.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param keyed the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder keyed(boolean keyed) {
             doSetProperty("keyed", keyed);
@@ -941,10 +1148,14 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether to use keyed or non-keyed data queues.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param keyed the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder keyed(String keyed) {
             doSetProperty("keyed", keyed);
@@ -953,9 +1164,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Search key for keyed data queues.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param searchKey the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder searchKey(String searchKey) {
             doSetProperty("searchKey", searchKey);
@@ -972,10 +1186,13 @@ public interface Jt400EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -993,10 +1210,14 @@ public interface Jt400EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1006,9 +1227,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Specifies which fields (program parameters) are output parameters.
          * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer[]&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputFieldsIdxArray the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder outputFieldsIdxArray(
                 Integer[] outputFieldsIdxArray) {
@@ -1018,10 +1242,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Specifies which fields (program parameters) are output parameters.
          * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer[]&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputFieldsIdxArray the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder outputFieldsIdxArray(
                 String outputFieldsIdxArray) {
@@ -1032,9 +1259,12 @@ public interface Jt400EndpointBuilderFactory {
          * Specifies the fields (program parameters) length as in the IBM i
          * program definition.
          * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer[]&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputFieldsLengthArray the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder outputFieldsLengthArray(
                 Integer[] outputFieldsLengthArray) {
@@ -1045,10 +1275,13 @@ public interface Jt400EndpointBuilderFactory {
          * Specifies the fields (program parameters) length as in the IBM i
          * program definition.
          * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer[]&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputFieldsLengthArray the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder outputFieldsLengthArray(
                 String outputFieldsLengthArray) {
@@ -1058,9 +1291,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Procedure name from a service program to call.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param procedureName the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder procedureName(String procedureName) {
             doSetProperty("procedureName", procedureName);
@@ -1069,10 +1305,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether connections to IBM i are secured with SSL.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secured the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder secured(boolean secured) {
             doSetProperty("secured", secured);
@@ -1081,10 +1320,14 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether connections to IBM i are secured with SSL.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secured the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointProducerBuilder secured(String secured) {
             doSetProperty("secured", secured);
@@ -1105,10 +1348,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1119,10 +1365,14 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1144,9 +1394,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets the CCSID to use for the connection with the IBM i system.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ccsid the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder ccsid(int ccsid) {
             doSetProperty("ccsid", ccsid);
@@ -1155,9 +1408,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Sets the CCSID to use for the connection with the IBM i system.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param ccsid the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder ccsid(String ccsid) {
             doSetProperty("ccsid", ccsid);
@@ -1167,10 +1423,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
+         * 
+         * @param format the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder format(Format format) {
             doSetProperty("format", format);
@@ -1180,10 +1439,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets the data format for sending messages.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
+         * &lt;code&gt;org.apache.camel.component.jt400.Jt400Configuration$Format&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
+         * 
+         * @param format the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder format(String format) {
             doSetProperty("format", format);
@@ -1193,10 +1455,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether IBM i prompting is enabled in the environment running
          * Camel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param guiAvailable the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder guiAvailable(boolean guiAvailable) {
             doSetProperty("guiAvailable", guiAvailable);
@@ -1206,10 +1471,14 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether IBM i prompting is enabled in the environment running
          * Camel.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param guiAvailable the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder guiAvailable(String guiAvailable) {
             doSetProperty("guiAvailable", guiAvailable);
@@ -1218,10 +1487,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether to use keyed or non-keyed data queues.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param keyed the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder keyed(boolean keyed) {
             doSetProperty("keyed", keyed);
@@ -1230,10 +1502,14 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether to use keyed or non-keyed data queues.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param keyed the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder keyed(String keyed) {
             doSetProperty("keyed", keyed);
@@ -1242,9 +1518,12 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Search key for keyed data queues.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param searchKey the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder searchKey(String searchKey) {
             doSetProperty("searchKey", searchKey);
@@ -1253,10 +1532,13 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether connections to IBM i are secured with SSL.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secured the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder secured(boolean secured) {
             doSetProperty("secured", secured);
@@ -1265,10 +1547,14 @@ public interface Jt400EndpointBuilderFactory {
         /**
          * Whether connections to IBM i are secured with SSL.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secured the value to set
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder secured(String secured) {
             doSetProperty("secured", secured);
@@ -1290,10 +1576,13 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1303,10 +1592,14 @@ public interface Jt400EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJt400EndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

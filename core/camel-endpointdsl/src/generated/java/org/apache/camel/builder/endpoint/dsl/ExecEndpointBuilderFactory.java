@@ -41,9 +41,12 @@ public interface ExecEndpointBuilderFactory {
         /**
          * The arguments may be one or many whitespace-separated tokens.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param args the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder args(String args) {
             doSetProperty("args", args);
@@ -53,9 +56,13 @@ public interface ExecEndpointBuilderFactory {
          * A reference to a org.apache.commons.exec.ExecBinding in the Registry.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.exec.ExecBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.exec.ExecBinding&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder binding(Object binding) {
             doSetProperty("binding", binding);
@@ -65,9 +72,13 @@ public interface ExecEndpointBuilderFactory {
          * A reference to a org.apache.commons.exec.ExecBinding in the Registry.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.exec.ExecBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.exec.ExecBinding&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param binding the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder binding(String binding) {
             doSetProperty("binding", binding);
@@ -80,10 +91,12 @@ public interface ExecEndpointBuilderFactory {
          * hook for every executed command.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.exec.ExecCommandExecutor&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param commandExecutor the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder commandExecutor(Object commandExecutor) {
             doSetProperty("commandExecutor", commandExecutor);
@@ -96,10 +109,12 @@ public interface ExecEndpointBuilderFactory {
          * hook for every executed command.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.exec.ExecCommandExecutor</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.exec.ExecCommandExecutor&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param commandExecutor the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder commandExecutor(String commandExecutor) {
             doSetProperty("commandExecutor", commandExecutor);
@@ -110,10 +125,14 @@ public interface ExecEndpointBuilderFactory {
          * value is DEBUG. Possible values are TRACE, DEBUG, INFO, WARN, ERROR
          * or OFF. (Values of ExecCommandLogLevelType enum).
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: producer
+         * 
+         * @param commandLogLevel the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder commandLogLevel(LoggingLevel commandLogLevel) {
             doSetProperty("commandLogLevel", commandLogLevel);
@@ -125,10 +144,13 @@ public interface ExecEndpointBuilderFactory {
          * or OFF. (Values of ExecCommandLogLevelType enum).
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: producer
+         * 
+         * @param commandLogLevel the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder commandLogLevel(String commandLogLevel) {
             doSetProperty("commandLogLevel", commandLogLevel);
@@ -145,10 +167,13 @@ public interface ExecEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -165,10 +190,14 @@ public interface ExecEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -179,9 +208,12 @@ public interface ExecEndpointBuilderFactory {
          * considered as its output. If no outFile is set, the standard output
          * (stdout) of the executable will be used instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outFile the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder outFile(String outFile) {
             doSetProperty("outFile", outFile);
@@ -192,9 +224,12 @@ public interface ExecEndpointBuilderFactory {
          * terminated. If execution has not completed within the timeout, the
          * component will send a termination request.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -205,9 +240,12 @@ public interface ExecEndpointBuilderFactory {
          * terminated. If execution has not completed within the timeout, the
          * component will send a termination request.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -218,10 +256,13 @@ public interface ExecEndpointBuilderFactory {
          * populate the Camel Message Body with stderr. This behavior is
          * disabled (false) by default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useStderrOnEmptyStdout the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder useStderrOnEmptyStdout(
                 boolean useStderrOnEmptyStdout) {
@@ -233,10 +274,14 @@ public interface ExecEndpointBuilderFactory {
          * populate the Camel Message Body with stderr. This behavior is
          * disabled (false) by default.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param useStderrOnEmptyStdout the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder useStderrOnEmptyStdout(
                 String useStderrOnEmptyStdout) {
@@ -247,9 +292,12 @@ public interface ExecEndpointBuilderFactory {
          * The directory in which the command should be executed. If null, the
          * working directory of the current process will be used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param workingDir the value to set
+         * @return the dsl builder
          */
         default ExecEndpointBuilder workingDir(String workingDir) {
             doSetProperty("workingDir", workingDir);
@@ -270,10 +318,13 @@ public interface ExecEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedExecEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -283,10 +334,14 @@ public interface ExecEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedExecEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

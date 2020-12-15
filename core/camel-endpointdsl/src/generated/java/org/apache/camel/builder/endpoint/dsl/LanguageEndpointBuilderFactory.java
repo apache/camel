@@ -44,10 +44,13 @@ public interface LanguageEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -61,10 +64,14 @@ public interface LanguageEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder allowContextMapAll(
                 String allowContextMapAll) {
@@ -75,10 +82,13 @@ public interface LanguageEndpointBuilderFactory {
          * Whether the script is binary content or text content. By default the
          * script is read as text content (eg java.lang.String).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder binary(boolean binary) {
             doSetProperty("binary", binary);
@@ -88,10 +98,14 @@ public interface LanguageEndpointBuilderFactory {
          * Whether the script is binary content or text content. By default the
          * script is read as text content (eg java.lang.String).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder binary(String binary) {
             doSetProperty("binary", binary);
@@ -102,10 +116,13 @@ public interface LanguageEndpointBuilderFactory {
          * script can cause side effects from processing one Camel
          * org.apache.camel.Exchange to the next org.apache.camel.Exchange.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param cacheScript the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder cacheScript(boolean cacheScript) {
             doSetProperty("cacheScript", cacheScript);
@@ -116,10 +133,14 @@ public interface LanguageEndpointBuilderFactory {
          * script can cause side effects from processing one Camel
          * org.apache.camel.Exchange to the next org.apache.camel.Exchange.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param cacheScript the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder cacheScript(String cacheScript) {
             doSetProperty("cacheScript", cacheScript);
@@ -128,10 +149,13 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -140,10 +164,14 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -160,10 +188,13 @@ public interface LanguageEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -181,10 +212,14 @@ public interface LanguageEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -194,9 +229,12 @@ public interface LanguageEndpointBuilderFactory {
         /**
          * Sets the script to execute.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param script the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder script(String script) {
             doSetProperty("script", script);
@@ -206,10 +244,13 @@ public interface LanguageEndpointBuilderFactory {
          * Whether or not the result of the script should be used as message
          * body. This options is default true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param transform the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder transform(boolean transform) {
             doSetProperty("transform", transform);
@@ -219,10 +260,14 @@ public interface LanguageEndpointBuilderFactory {
          * Whether or not the result of the script should be used as message
          * body. This options is default true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param transform the value to set
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder transform(String transform) {
             doSetProperty("transform", transform);
@@ -243,10 +288,13 @@ public interface LanguageEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedLanguageEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -256,10 +304,14 @@ public interface LanguageEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedLanguageEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

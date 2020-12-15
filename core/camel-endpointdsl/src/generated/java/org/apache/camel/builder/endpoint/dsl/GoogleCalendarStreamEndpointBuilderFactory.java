@@ -51,9 +51,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Google Calendar application name. Example would be
          * camel-google-calendar/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder applicationName(
                 String applicationName) {
@@ -69,10 +72,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -88,10 +94,14 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -101,10 +111,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * The calendarId to be used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: primary
          * Group: consumer
+         * 
+         * @param calendarId the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder calendarId(String calendarId) {
             doSetProperty("calendarId", calendarId);
@@ -113,9 +126,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Client ID of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -125,10 +141,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Take into account the lastUpdate of the last event polled as start
          * date for the next poll.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param considerLastUpdate the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder considerLastUpdate(
                 boolean considerLastUpdate) {
@@ -139,10 +158,14 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Take into account the lastUpdate of the last event polled as start
          * date for the next poll.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param considerLastUpdate the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder considerLastUpdate(
                 String considerLastUpdate) {
@@ -152,10 +175,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Consume events in the selected calendar from now on.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param consumeFromNow the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder consumeFromNow(
                 boolean consumeFromNow) {
@@ -165,10 +191,14 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Consume events in the selected calendar from now on.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param consumeFromNow the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder consumeFromNow(
                 String consumeFromNow) {
@@ -178,10 +208,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Max results to be returned.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder maxResults(int maxResults) {
             doSetProperty("maxResults", maxResults);
@@ -190,10 +223,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Max results to be returned.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder maxResults(String maxResults) {
             doSetProperty("maxResults", maxResults);
@@ -202,9 +238,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * The query to execute on calendar.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder query(String query) {
             doSetProperty("query", query);
@@ -215,10 +254,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * have to a user account. See
          * https://developers.google.com/calendar/auth for more info.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder scopes(List<String> scopes) {
             doSetProperty("scopes", scopes);
@@ -230,9 +272,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * https://developers.google.com/calendar/auth for more info.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
@@ -242,10 +287,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -256,10 +304,14 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -270,9 +322,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -283,9 +338,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -296,9 +354,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -309,9 +370,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -326,9 +390,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -343,9 +410,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -355,10 +425,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -367,10 +440,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -380,10 +456,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -393,10 +472,14 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -405,10 +488,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder initialDelay(
                 long initialDelay) {
@@ -418,10 +504,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder initialDelay(
                 String initialDelay) {
@@ -433,10 +522,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -447,10 +539,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder repeatCount(
                 String repeatCount) {
@@ -461,10 +556,14 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -476,10 +575,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -492,9 +594,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -507,9 +612,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -520,10 +628,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -533,10 +644,14 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -546,13 +661,17 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder schedulerProperties(
                 String key,
@@ -564,13 +683,16 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder schedulerProperties(
                 Map values) {
@@ -580,10 +702,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder startScheduler(
                 boolean startScheduler) {
@@ -593,10 +718,14 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder startScheduler(
                 String startScheduler) {
@@ -606,10 +735,14 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -619,10 +752,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -632,10 +768,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -646,10 +785,14 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -660,9 +803,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder accessToken(
                 String accessToken) {
@@ -672,9 +818,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Client secret of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder clientSecret(
                 String clientSecret) {
@@ -686,9 +835,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder refreshToken(
                 String refreshToken) {
@@ -712,10 +864,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -729,9 +884,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -741,9 +899,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -754,9 +916,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -770,9 +935,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -786,9 +954,12 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder pollStrategy(
                 String pollStrategy) {
@@ -799,10 +970,13 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -813,10 +987,14 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(
                 String synchronous) {

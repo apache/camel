@@ -42,9 +42,12 @@ public interface Ses2EndpointBuilderFactory {
          * To use the AmazonSimpleEmailService as the client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.ses.SesClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.ses.SesClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSESClient the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder amazonSESClient(Object amazonSESClient) {
             doSetProperty("amazonSESClient", amazonSESClient);
@@ -54,9 +57,12 @@ public interface Ses2EndpointBuilderFactory {
          * To use the AmazonSimpleEmailService as the client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.services.ses.SesClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.ses.SesClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSESClient the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder amazonSESClient(String amazonSESClient) {
             doSetProperty("amazonSESClient", amazonSESClient);
@@ -73,10 +79,13 @@ public interface Ses2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -93,10 +102,14 @@ public interface Ses2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -105,9 +118,12 @@ public interface Ses2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SES client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -116,9 +132,12 @@ public interface Ses2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SES client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -127,10 +146,13 @@ public interface Ses2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SES client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -139,11 +161,14 @@ public interface Ses2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SES client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -153,10 +178,13 @@ public interface Ses2EndpointBuilderFactory {
          * To define a proxy protocol when instantiating the SES client.
          * 
          * The option will be converted to a
-         * <code>software.amazon.awssdk.core.Protocol</code> type.
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -168,9 +196,12 @@ public interface Ses2EndpointBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -180,10 +211,13 @@ public interface Ses2EndpointBuilderFactory {
          * List of reply-to email address(es) for the message, override it using
          * 'CamelAwsSesReplyToAddresses' header.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param replyToAddresses the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder replyToAddresses(
                 List<String> replyToAddresses) {
@@ -195,9 +229,12 @@ public interface Ses2EndpointBuilderFactory {
          * 'CamelAwsSesReplyToAddresses' header.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param replyToAddresses the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder replyToAddresses(String replyToAddresses) {
             doSetProperty("replyToAddresses", replyToAddresses);
@@ -207,9 +244,12 @@ public interface Ses2EndpointBuilderFactory {
          * The email address to which bounce notifications are to be forwarded,
          * override it using 'CamelAwsSesReturnPath' header.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param returnPath the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder returnPath(String returnPath) {
             doSetProperty("returnPath", returnPath);
@@ -219,9 +259,12 @@ public interface Ses2EndpointBuilderFactory {
          * The subject which is used if the message header 'CamelAwsSesSubject'
          * is not present.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder subject(String subject) {
             doSetProperty("subject", subject);
@@ -231,10 +274,13 @@ public interface Ses2EndpointBuilderFactory {
          * List of destination email address. Can be overriden with
          * 'CamelAwsSesTo' header.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param to the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder to(List<String> to) {
             doSetProperty("to", to);
@@ -245,9 +291,12 @@ public interface Ses2EndpointBuilderFactory {
          * 'CamelAwsSesTo' header.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param to the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder to(String to) {
             doSetProperty("to", to);
@@ -257,10 +306,13 @@ public interface Ses2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -271,10 +323,14 @@ public interface Ses2EndpointBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder trustAllCertificates(
                 String trustAllCertificates) {
@@ -284,9 +340,12 @@ public interface Ses2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -295,9 +354,12 @@ public interface Ses2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -319,10 +381,13 @@ public interface Ses2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSes2EndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -332,10 +397,14 @@ public interface Ses2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSes2EndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

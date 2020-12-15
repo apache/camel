@@ -40,9 +40,12 @@ public interface SdbEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -52,9 +55,12 @@ public interface SdbEndpointBuilderFactory {
          * To use the AmazonSimpleDB as the client.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpledb.AmazonSimpleDB</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpledb.AmazonSimpleDB&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSDBClient the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder amazonSDBClient(Object amazonSDBClient) {
             doSetProperty("amazonSDBClient", amazonSDBClient);
@@ -64,9 +70,12 @@ public interface SdbEndpointBuilderFactory {
          * To use the AmazonSimpleDB as the client.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.simpledb.AmazonSimpleDB</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpledb.AmazonSimpleDB&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSDBClient the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder amazonSDBClient(String amazonSDBClient) {
             doSetProperty("amazonSDBClient", amazonSDBClient);
@@ -76,10 +85,13 @@ public interface SdbEndpointBuilderFactory {
          * Determines whether or not strong consistency should be enforced when
          * data is read.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param consistentRead the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder consistentRead(boolean consistentRead) {
             doSetProperty("consistentRead", consistentRead);
@@ -89,10 +101,14 @@ public interface SdbEndpointBuilderFactory {
          * Determines whether or not strong consistency should be enforced when
          * data is read.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param consistentRead the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder consistentRead(String consistentRead) {
             doSetProperty("consistentRead", consistentRead);
@@ -109,10 +125,13 @@ public interface SdbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -129,10 +148,14 @@ public interface SdbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -142,9 +165,12 @@ public interface SdbEndpointBuilderFactory {
          * The maximum number of domain names you want returned. The range is 1
          * to 100.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param maxNumberOfDomains the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder maxNumberOfDomains(Integer maxNumberOfDomains) {
             doSetProperty("maxNumberOfDomains", maxNumberOfDomains);
@@ -154,10 +180,13 @@ public interface SdbEndpointBuilderFactory {
          * The maximum number of domain names you want returned. The range is 1
          * to 100.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param maxNumberOfDomains the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder maxNumberOfDomains(String maxNumberOfDomains) {
             doSetProperty("maxNumberOfDomains", maxNumberOfDomains);
@@ -167,10 +196,13 @@ public interface SdbEndpointBuilderFactory {
          * Operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.sdb.SdbOperations&lt;/code&gt; type.
          * 
          * Default: PutAttributes
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder operation(SdbOperations operation) {
             doSetProperty("operation", operation);
@@ -180,10 +212,13 @@ public interface SdbEndpointBuilderFactory {
          * Operation to perform.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.sdb.SdbOperations&lt;/code&gt; type.
          * 
          * Default: PutAttributes
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -192,9 +227,12 @@ public interface SdbEndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the SDB client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -203,9 +241,12 @@ public interface SdbEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SDB client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -214,10 +255,13 @@ public interface SdbEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the SDB client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -226,10 +270,14 @@ public interface SdbEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SDB client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -238,11 +286,14 @@ public interface SdbEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SDB client.
          * 
-         * The option will be converted to a <code>com.amazonaws.Protocol</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -254,9 +305,12 @@ public interface SdbEndpointBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -265,9 +319,12 @@ public interface SdbEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default SdbEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -288,10 +345,13 @@ public interface SdbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSdbEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -301,10 +361,14 @@ public interface SdbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSdbEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

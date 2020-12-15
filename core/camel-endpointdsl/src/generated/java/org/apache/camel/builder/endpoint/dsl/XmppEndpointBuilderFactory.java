@@ -45,10 +45,13 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param login the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder login(boolean login) {
             doSetProperty("login", login);
@@ -57,10 +60,14 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param login the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder login(String login) {
             doSetProperty("login", login);
@@ -70,9 +77,12 @@ public interface XmppEndpointBuilderFactory {
          * Use nickname when joining room. If room is specified and nickname is
          * not, user will be used for the nickname.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nickname the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder nickname(String nickname) {
             doSetProperty("nickname", nickname);
@@ -81,10 +91,13 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pubsub the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder pubsub(boolean pubsub) {
             doSetProperty("pubsub", pubsub);
@@ -93,10 +106,14 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pubsub the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder pubsub(String pubsub) {
             doSetProperty("pubsub", pubsub);
@@ -112,9 +129,12 @@ public interface XmppEndpointBuilderFactory {
          * not contain the symbol, the domain part will be discovered and added
          * by Camel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param room the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder room(String room) {
             doSetProperty("room", room);
@@ -124,9 +144,12 @@ public interface XmppEndpointBuilderFactory {
          * The name of the service you are connecting to. For Google Talk, this
          * would be gmail.com.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serviceName the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder serviceName(String serviceName) {
             doSetProperty("serviceName", serviceName);
@@ -141,10 +164,13 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
@@ -160,10 +186,14 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
@@ -179,10 +209,13 @@ public interface XmppEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -198,10 +231,14 @@ public interface XmppEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -214,10 +251,13 @@ public interface XmppEndpointBuilderFactory {
          * an initial consumer connection. Camel will try to re-establish a
          * connection if it has become inactive. Default is 10 seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param connectionPollDelay the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder connectionPollDelay(
                 int connectionPollDelay) {
@@ -230,10 +270,13 @@ public interface XmppEndpointBuilderFactory {
          * an initial consumer connection. Camel will try to re-establish a
          * connection if it has become inactive. Default is 10 seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param connectionPollDelay the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder connectionPollDelay(
                 String connectionPollDelay) {
@@ -245,10 +288,13 @@ public interface XmppEndpointBuilderFactory {
          * incoming packet; default is true if presence or pubsub are true,
          * otherwise false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param doc the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder doc(boolean doc) {
             doSetProperty("doc", doc);
@@ -259,10 +305,14 @@ public interface XmppEndpointBuilderFactory {
          * incoming packet; default is true if presence or pubsub are true,
          * otherwise false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param doc the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder doc(String doc) {
             doSetProperty("doc", doc);
@@ -273,9 +323,13 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -287,9 +341,13 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -299,9 +357,12 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -310,9 +371,12 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for room.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param roomPassword the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder roomPassword(String roomPassword) {
             doSetProperty("roomPassword", roomPassword);
@@ -322,9 +386,12 @@ public interface XmppEndpointBuilderFactory {
          * User name (without server name). If not specified, anonymous login
          * will be attempted.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default XmppEndpointConsumerBuilder user(String user) {
             doSetProperty("user", user);
@@ -345,10 +412,13 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param createAccount the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder createAccount(
                 boolean createAccount) {
@@ -359,10 +429,14 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param createAccount the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder createAccount(
                 String createAccount) {
@@ -372,10 +446,13 @@ public interface XmppEndpointBuilderFactory {
         /**
          * XMPP resource. The default is Camel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: Camel
          * Group: common (advanced)
+         * 
+         * @param resource the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder resource(String resource) {
             doSetProperty("resource", resource);
@@ -387,10 +464,13 @@ public interface XmppEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -404,9 +484,12 @@ public interface XmppEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -416,9 +499,13 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -429,9 +516,12 @@ public interface XmppEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -444,9 +534,12 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option is a:
-         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
+         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder connectionConfig(
                 Object connectionConfig) {
@@ -459,9 +552,12 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option will be converted to a
-         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
+         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder connectionConfig(
                 String connectionConfig) {
@@ -472,10 +568,13 @@ public interface XmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -486,10 +585,14 @@ public interface XmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -510,10 +613,13 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param login the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder login(boolean login) {
             doSetProperty("login", login);
@@ -522,10 +628,14 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param login the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder login(String login) {
             doSetProperty("login", login);
@@ -535,9 +645,12 @@ public interface XmppEndpointBuilderFactory {
          * Use nickname when joining room. If room is specified and nickname is
          * not, user will be used for the nickname.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nickname the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder nickname(String nickname) {
             doSetProperty("nickname", nickname);
@@ -546,10 +659,13 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pubsub the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder pubsub(boolean pubsub) {
             doSetProperty("pubsub", pubsub);
@@ -558,10 +674,14 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pubsub the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder pubsub(String pubsub) {
             doSetProperty("pubsub", pubsub);
@@ -577,9 +697,12 @@ public interface XmppEndpointBuilderFactory {
          * not contain the symbol, the domain part will be discovered and added
          * by Camel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param room the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder room(String room) {
             doSetProperty("room", room);
@@ -589,9 +712,12 @@ public interface XmppEndpointBuilderFactory {
          * The name of the service you are connecting to. For Google Talk, this
          * would be gmail.com.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serviceName the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder serviceName(String serviceName) {
             doSetProperty("serviceName", serviceName);
@@ -606,10 +732,13 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
@@ -625,10 +754,14 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
@@ -646,10 +779,13 @@ public interface XmppEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -667,10 +803,14 @@ public interface XmppEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -682,9 +822,13 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -696,9 +840,13 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -708,9 +856,12 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -719,9 +870,12 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for room.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param roomPassword the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder roomPassword(String roomPassword) {
             doSetProperty("roomPassword", roomPassword);
@@ -731,9 +885,12 @@ public interface XmppEndpointBuilderFactory {
          * User name (without server name). If not specified, anonymous login
          * will be attempted.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default XmppEndpointProducerBuilder user(String user) {
             doSetProperty("user", user);
@@ -754,10 +911,13 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param createAccount the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointProducerBuilder createAccount(
                 boolean createAccount) {
@@ -768,10 +928,14 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param createAccount the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointProducerBuilder createAccount(
                 String createAccount) {
@@ -781,10 +945,13 @@ public interface XmppEndpointBuilderFactory {
         /**
          * XMPP resource. The default is Camel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: Camel
          * Group: common (advanced)
+         * 
+         * @param resource the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointProducerBuilder resource(String resource) {
             doSetProperty("resource", resource);
@@ -796,9 +963,12 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option is a:
-         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
+         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointProducerBuilder connectionConfig(
                 Object connectionConfig) {
@@ -811,9 +981,12 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option will be converted to a
-         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
+         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointProducerBuilder connectionConfig(
                 String connectionConfig) {
@@ -824,10 +997,13 @@ public interface XmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -838,10 +1014,14 @@ public interface XmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -863,10 +1043,13 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param login the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder login(boolean login) {
             doSetProperty("login", login);
@@ -875,10 +1058,14 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Whether to login the user.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param login the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder login(String login) {
             doSetProperty("login", login);
@@ -888,9 +1075,12 @@ public interface XmppEndpointBuilderFactory {
          * Use nickname when joining room. If room is specified and nickname is
          * not, user will be used for the nickname.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nickname the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder nickname(String nickname) {
             doSetProperty("nickname", nickname);
@@ -899,10 +1089,13 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pubsub the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder pubsub(boolean pubsub) {
             doSetProperty("pubsub", pubsub);
@@ -911,10 +1104,14 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Accept pubsub packets on input, default is false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pubsub the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder pubsub(String pubsub) {
             doSetProperty("pubsub", pubsub);
@@ -930,9 +1127,12 @@ public interface XmppEndpointBuilderFactory {
          * not contain the symbol, the domain part will be discovered and added
          * by Camel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param room the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder room(String room) {
             doSetProperty("room", room);
@@ -942,9 +1142,12 @@ public interface XmppEndpointBuilderFactory {
          * The name of the service you are connecting to. For Google Talk, this
          * would be gmail.com.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serviceName the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder serviceName(String serviceName) {
             doSetProperty("serviceName", serviceName);
@@ -959,10 +1162,13 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
@@ -978,10 +1184,14 @@ public interface XmppEndpointBuilderFactory {
          * producer, and will poll for a consumer connection until the
          * connection is established. Default is true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
@@ -993,9 +1203,13 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -1007,9 +1221,13 @@ public interface XmppEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -1019,9 +1237,12 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -1030,9 +1251,12 @@ public interface XmppEndpointBuilderFactory {
         /**
          * Password for room.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param roomPassword the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder roomPassword(String roomPassword) {
             doSetProperty("roomPassword", roomPassword);
@@ -1042,9 +1266,12 @@ public interface XmppEndpointBuilderFactory {
          * User name (without server name). If not specified, anonymous login
          * will be attempted.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default XmppEndpointBuilder user(String user) {
             doSetProperty("user", user);
@@ -1066,10 +1293,13 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param createAccount the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointBuilder createAccount(boolean createAccount) {
             doSetProperty("createAccount", createAccount);
@@ -1079,10 +1309,14 @@ public interface XmppEndpointBuilderFactory {
          * If true, an attempt to create an account will be made. Default is
          * false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param createAccount the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointBuilder createAccount(String createAccount) {
             doSetProperty("createAccount", createAccount);
@@ -1091,10 +1325,13 @@ public interface XmppEndpointBuilderFactory {
         /**
          * XMPP resource. The default is Camel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: Camel
          * Group: common (advanced)
+         * 
+         * @param resource the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointBuilder resource(String resource) {
             doSetProperty("resource", resource);
@@ -1106,9 +1343,12 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option is a:
-         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
+         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointBuilder connectionConfig(
                 Object connectionConfig) {
@@ -1121,9 +1361,12 @@ public interface XmppEndpointBuilderFactory {
          * supported (XMPP over TCP).
          * 
          * The option will be converted to a
-         * <code>org.jivesoftware.smack.ConnectionConfiguration</code> type.
+         * &lt;code&gt;org.jivesoftware.smack.ConnectionConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointBuilder connectionConfig(
                 String connectionConfig) {
@@ -1134,10 +1377,13 @@ public interface XmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1147,10 +1393,14 @@ public interface XmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedXmppEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

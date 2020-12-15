@@ -45,10 +45,13 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param deep the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder deep(boolean deep) {
             doSetProperty("deep", deep);
@@ -58,10 +61,14 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param deep the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder deep(String deep) {
             doSetProperty("deep", deep);
@@ -72,9 +79,12 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventTypes the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder eventTypes(int eventTypes) {
             doSetProperty("eventTypes", eventTypes);
@@ -85,9 +95,12 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventTypes the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder eventTypes(String eventTypes) {
             doSetProperty("eventTypes", eventTypes);
@@ -98,9 +111,12 @@ public interface JcrEndpointBuilderFactory {
          * whose associated parent node has one of the node types (or a subtype
          * of one of the node types) in this list will be received.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nodeTypeNames the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder nodeTypeNames(String nodeTypeNames) {
             doSetProperty("nodeTypeNames", nodeTypeNames);
@@ -111,10 +127,13 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noLocal the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder noLocal(boolean noLocal) {
             doSetProperty("noLocal", noLocal);
@@ -125,10 +144,14 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noLocal the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder noLocal(String noLocal) {
             doSetProperty("noLocal", noLocal);
@@ -137,9 +160,12 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -149,10 +175,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: common
+         * 
+         * @param sessionLiveCheckInterval the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder sessionLiveCheckInterval(
                 long sessionLiveCheckInterval) {
@@ -163,10 +192,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: common
+         * 
+         * @param sessionLiveCheckInterval the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder sessionLiveCheckInterval(
                 String sessionLiveCheckInterval) {
@@ -177,10 +209,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 3000
          * Group: common
+         * 
+         * @param sessionLiveCheckIntervalOnStart the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder sessionLiveCheckIntervalOnStart(
                 long sessionLiveCheckIntervalOnStart) {
@@ -191,10 +226,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 3000
          * Group: common
+         * 
+         * @param sessionLiveCheckIntervalOnStart the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder sessionLiveCheckIntervalOnStart(
                 String sessionLiveCheckIntervalOnStart) {
@@ -204,9 +242,12 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -217,9 +258,12 @@ public interface JcrEndpointBuilderFactory {
          * associated parent node has one of the identifiers in the comma
          * separated uuid list will be received.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param uuids the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder uuids(String uuids) {
             doSetProperty("uuids", uuids);
@@ -229,9 +273,12 @@ public interface JcrEndpointBuilderFactory {
          * The workspace to access. If it's not specified then the default one
          * will be used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param workspaceName the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder workspaceName(String workspaceName) {
             doSetProperty("workspaceName", workspaceName);
@@ -246,10 +293,13 @@ public interface JcrEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -265,10 +315,14 @@ public interface JcrEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JcrEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -292,10 +346,13 @@ public interface JcrEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJcrEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -309,9 +366,12 @@ public interface JcrEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJcrEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -321,9 +381,13 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJcrEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -334,9 +398,12 @@ public interface JcrEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJcrEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -347,10 +414,13 @@ public interface JcrEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcrEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -361,10 +431,14 @@ public interface JcrEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcrEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -386,10 +460,13 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param deep the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder deep(boolean deep) {
             doSetProperty("deep", deep);
@@ -399,10 +476,14 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param deep the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder deep(String deep) {
             doSetProperty("deep", deep);
@@ -413,9 +494,12 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventTypes the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder eventTypes(int eventTypes) {
             doSetProperty("eventTypes", eventTypes);
@@ -426,9 +510,12 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventTypes the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder eventTypes(String eventTypes) {
             doSetProperty("eventTypes", eventTypes);
@@ -439,9 +526,12 @@ public interface JcrEndpointBuilderFactory {
          * whose associated parent node has one of the node types (or a subtype
          * of one of the node types) in this list will be received.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nodeTypeNames the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder nodeTypeNames(String nodeTypeNames) {
             doSetProperty("nodeTypeNames", nodeTypeNames);
@@ -452,10 +542,13 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noLocal the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder noLocal(boolean noLocal) {
             doSetProperty("noLocal", noLocal);
@@ -466,10 +559,14 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noLocal the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder noLocal(String noLocal) {
             doSetProperty("noLocal", noLocal);
@@ -478,9 +575,12 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -490,10 +590,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: common
+         * 
+         * @param sessionLiveCheckInterval the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder sessionLiveCheckInterval(
                 long sessionLiveCheckInterval) {
@@ -504,10 +607,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: common
+         * 
+         * @param sessionLiveCheckInterval the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder sessionLiveCheckInterval(
                 String sessionLiveCheckInterval) {
@@ -518,10 +624,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 3000
          * Group: common
+         * 
+         * @param sessionLiveCheckIntervalOnStart the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder sessionLiveCheckIntervalOnStart(
                 long sessionLiveCheckIntervalOnStart) {
@@ -532,10 +641,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 3000
          * Group: common
+         * 
+         * @param sessionLiveCheckIntervalOnStart the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder sessionLiveCheckIntervalOnStart(
                 String sessionLiveCheckIntervalOnStart) {
@@ -545,9 +657,12 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -558,9 +673,12 @@ public interface JcrEndpointBuilderFactory {
          * associated parent node has one of the identifiers in the comma
          * separated uuid list will be received.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param uuids the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder uuids(String uuids) {
             doSetProperty("uuids", uuids);
@@ -570,9 +688,12 @@ public interface JcrEndpointBuilderFactory {
          * The workspace to access. If it's not specified then the default one
          * will be used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param workspaceName the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder workspaceName(String workspaceName) {
             doSetProperty("workspaceName", workspaceName);
@@ -589,10 +710,13 @@ public interface JcrEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -610,10 +734,14 @@ public interface JcrEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JcrEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -635,10 +763,13 @@ public interface JcrEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcrEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -649,10 +780,14 @@ public interface JcrEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcrEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -675,10 +810,13 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param deep the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder deep(boolean deep) {
             doSetProperty("deep", deep);
@@ -688,10 +826,14 @@ public interface JcrEndpointBuilderFactory {
          * When isDeep is true, events whose associated parent node is at
          * absPath or within its subgraph are received.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param deep the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder deep(String deep) {
             doSetProperty("deep", deep);
@@ -702,9 +844,12 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventTypes the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder eventTypes(int eventTypes) {
             doSetProperty("eventTypes", eventTypes);
@@ -715,9 +860,12 @@ public interface JcrEndpointBuilderFactory {
          * mask value such as javax.jcr.observation.Event.NODE_ADDED,
          * javax.jcr.observation.Event.NODE_REMOVED, etc.).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventTypes the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder eventTypes(String eventTypes) {
             doSetProperty("eventTypes", eventTypes);
@@ -728,9 +876,12 @@ public interface JcrEndpointBuilderFactory {
          * whose associated parent node has one of the node types (or a subtype
          * of one of the node types) in this list will be received.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nodeTypeNames the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder nodeTypeNames(String nodeTypeNames) {
             doSetProperty("nodeTypeNames", nodeTypeNames);
@@ -741,10 +892,13 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noLocal the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder noLocal(boolean noLocal) {
             doSetProperty("noLocal", noLocal);
@@ -755,10 +909,14 @@ public interface JcrEndpointBuilderFactory {
          * which the listener was registered are ignored. Otherwise, they are
          * not ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noLocal the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder noLocal(String noLocal) {
             doSetProperty("noLocal", noLocal);
@@ -767,9 +925,12 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -779,10 +940,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: common
+         * 
+         * @param sessionLiveCheckInterval the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder sessionLiveCheckInterval(
                 long sessionLiveCheckInterval) {
@@ -793,10 +957,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before each session live checking
          * The default value is 60000 ms.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: common
+         * 
+         * @param sessionLiveCheckInterval the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder sessionLiveCheckInterval(
                 String sessionLiveCheckInterval) {
@@ -807,10 +974,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 3000
          * Group: common
+         * 
+         * @param sessionLiveCheckIntervalOnStart the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder sessionLiveCheckIntervalOnStart(
                 long sessionLiveCheckIntervalOnStart) {
@@ -821,10 +991,13 @@ public interface JcrEndpointBuilderFactory {
          * Interval in milliseconds to wait before the first session live
          * checking. The default value is 3000 ms.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 3000
          * Group: common
+         * 
+         * @param sessionLiveCheckIntervalOnStart the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder sessionLiveCheckIntervalOnStart(
                 String sessionLiveCheckIntervalOnStart) {
@@ -834,9 +1007,12 @@ public interface JcrEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -847,9 +1023,12 @@ public interface JcrEndpointBuilderFactory {
          * associated parent node has one of the identifiers in the comma
          * separated uuid list will be received.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param uuids the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder uuids(String uuids) {
             doSetProperty("uuids", uuids);
@@ -859,9 +1038,12 @@ public interface JcrEndpointBuilderFactory {
          * The workspace to access. If it's not specified then the default one
          * will be used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param workspaceName the value to set
+         * @return the dsl builder
          */
         default JcrEndpointBuilder workspaceName(String workspaceName) {
             doSetProperty("workspaceName", workspaceName);
@@ -883,10 +1065,13 @@ public interface JcrEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcrEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -896,10 +1081,14 @@ public interface JcrEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcrEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

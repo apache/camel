@@ -45,9 +45,12 @@ public interface PgEventEndpointBuilderFactory {
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
          * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
+         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointConsumerBuilder datasource(Object datasource) {
             doSetProperty("datasource", datasource);
@@ -57,10 +60,13 @@ public interface PgEventEndpointBuilderFactory {
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
          * 
-         * The option will be converted to a <code>javax.sql.DataSource</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointConsumerBuilder datasource(String datasource) {
             doSetProperty("datasource", datasource);
@@ -75,10 +81,13 @@ public interface PgEventEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -94,10 +103,14 @@ public interface PgEventEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -107,9 +120,12 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param pass the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointConsumerBuilder pass(String pass) {
             doSetProperty("pass", pass);
@@ -118,10 +134,13 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: postgres
          * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointConsumerBuilder user(String user) {
             doSetProperty("user", user);
@@ -145,10 +164,13 @@ public interface PgEventEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -162,9 +184,12 @@ public interface PgEventEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPgEventEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -174,9 +199,13 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -187,9 +216,12 @@ public interface PgEventEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPgEventEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -200,10 +232,13 @@ public interface PgEventEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPgEventEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -214,10 +249,14 @@ public interface PgEventEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPgEventEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -239,9 +278,12 @@ public interface PgEventEndpointBuilderFactory {
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
          * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
+         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointProducerBuilder datasource(Object datasource) {
             doSetProperty("datasource", datasource);
@@ -251,10 +293,13 @@ public interface PgEventEndpointBuilderFactory {
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
          * 
-         * The option will be converted to a <code>javax.sql.DataSource</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointProducerBuilder datasource(String datasource) {
             doSetProperty("datasource", datasource);
@@ -271,10 +316,13 @@ public interface PgEventEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -292,10 +340,14 @@ public interface PgEventEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -305,9 +357,12 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param pass the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointProducerBuilder pass(String pass) {
             doSetProperty("pass", pass);
@@ -316,10 +371,13 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: postgres
          * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointProducerBuilder user(String user) {
             doSetProperty("user", user);
@@ -341,10 +399,13 @@ public interface PgEventEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPgEventEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -355,10 +416,14 @@ public interface PgEventEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPgEventEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -381,9 +446,12 @@ public interface PgEventEndpointBuilderFactory {
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
          * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
+         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointBuilder datasource(Object datasource) {
             doSetProperty("datasource", datasource);
@@ -393,10 +461,13 @@ public interface PgEventEndpointBuilderFactory {
          * To connect using the given javax.sql.DataSource instead of using
          * hostname and port.
          * 
-         * The option will be converted to a <code>javax.sql.DataSource</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param datasource the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointBuilder datasource(String datasource) {
             doSetProperty("datasource", datasource);
@@ -405,9 +476,12 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Password for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param pass the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointBuilder pass(String pass) {
             doSetProperty("pass", pass);
@@ -416,10 +490,13 @@ public interface PgEventEndpointBuilderFactory {
         /**
          * Username for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: postgres
          * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default PgEventEndpointBuilder user(String user) {
             doSetProperty("user", user);
@@ -441,10 +518,13 @@ public interface PgEventEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPgEventEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -454,10 +534,14 @@ public interface PgEventEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPgEventEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

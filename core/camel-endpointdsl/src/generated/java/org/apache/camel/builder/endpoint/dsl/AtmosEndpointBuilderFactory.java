@@ -44,9 +44,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Local path to put files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param localPath the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointConsumerBuilder localPath(String localPath) {
             doSetProperty("localPath", localPath);
@@ -55,9 +58,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * New path on Atmos when moving files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param newRemotePath the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointConsumerBuilder newRemotePath(String newRemotePath) {
             doSetProperty("newRemotePath", newRemotePath);
@@ -66,9 +72,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Search query on Atmos.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointConsumerBuilder query(String query) {
             doSetProperty("query", query);
@@ -77,9 +86,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Where to put files on Atmos.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param remotePath the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointConsumerBuilder remotePath(String remotePath) {
             doSetProperty("remotePath", remotePath);
@@ -94,10 +106,13 @@ public interface AtmosEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -113,10 +128,14 @@ public interface AtmosEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -126,9 +145,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atmos client fullTokenId.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param fullTokenId the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointConsumerBuilder fullTokenId(String fullTokenId) {
             doSetProperty("fullTokenId", fullTokenId);
@@ -138,9 +160,12 @@ public interface AtmosEndpointBuilderFactory {
          * The secret key to pass to the Atmos client (should be base64
          * encoded).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointConsumerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -149,10 +174,13 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atmos SSL validation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslValidation the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointConsumerBuilder sslValidation(boolean sslValidation) {
             doSetProperty("sslValidation", sslValidation);
@@ -161,10 +189,14 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atmos SSL validation.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslValidation the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointConsumerBuilder sslValidation(String sslValidation) {
             doSetProperty("sslValidation", sslValidation);
@@ -187,10 +219,13 @@ public interface AtmosEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -204,9 +239,12 @@ public interface AtmosEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -216,9 +254,13 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -229,9 +271,12 @@ public interface AtmosEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -242,10 +287,13 @@ public interface AtmosEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -256,10 +304,14 @@ public interface AtmosEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -269,9 +321,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atomos server uri.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uri the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointConsumerBuilder uri(String uri) {
             doSetProperty("uri", uri);
@@ -291,9 +346,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Local path to put files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param localPath the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointProducerBuilder localPath(String localPath) {
             doSetProperty("localPath", localPath);
@@ -302,9 +360,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * New path on Atmos when moving files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param newRemotePath the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointProducerBuilder newRemotePath(String newRemotePath) {
             doSetProperty("newRemotePath", newRemotePath);
@@ -313,9 +374,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Search query on Atmos.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointProducerBuilder query(String query) {
             doSetProperty("query", query);
@@ -324,9 +388,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Where to put files on Atmos.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param remotePath the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointProducerBuilder remotePath(String remotePath) {
             doSetProperty("remotePath", remotePath);
@@ -343,10 +410,13 @@ public interface AtmosEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -364,10 +434,14 @@ public interface AtmosEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -377,9 +451,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atmos client fullTokenId.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param fullTokenId the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointProducerBuilder fullTokenId(String fullTokenId) {
             doSetProperty("fullTokenId", fullTokenId);
@@ -389,9 +466,12 @@ public interface AtmosEndpointBuilderFactory {
          * The secret key to pass to the Atmos client (should be base64
          * encoded).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointProducerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -400,10 +480,13 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atmos SSL validation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslValidation the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointProducerBuilder sslValidation(boolean sslValidation) {
             doSetProperty("sslValidation", sslValidation);
@@ -412,10 +495,14 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atmos SSL validation.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslValidation the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointProducerBuilder sslValidation(String sslValidation) {
             doSetProperty("sslValidation", sslValidation);
@@ -436,10 +523,13 @@ public interface AtmosEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -450,10 +540,14 @@ public interface AtmosEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -463,9 +557,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atomos server uri.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uri the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointProducerBuilder uri(String uri) {
             doSetProperty("uri", uri);
@@ -486,9 +583,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Local path to put files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param localPath the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointBuilder localPath(String localPath) {
             doSetProperty("localPath", localPath);
@@ -497,9 +597,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * New path on Atmos when moving files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param newRemotePath the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointBuilder newRemotePath(String newRemotePath) {
             doSetProperty("newRemotePath", newRemotePath);
@@ -508,9 +611,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Search query on Atmos.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointBuilder query(String query) {
             doSetProperty("query", query);
@@ -519,9 +625,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Where to put files on Atmos.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param remotePath the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointBuilder remotePath(String remotePath) {
             doSetProperty("remotePath", remotePath);
@@ -530,9 +639,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atmos client fullTokenId.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param fullTokenId the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointBuilder fullTokenId(String fullTokenId) {
             doSetProperty("fullTokenId", fullTokenId);
@@ -542,9 +654,12 @@ public interface AtmosEndpointBuilderFactory {
          * The secret key to pass to the Atmos client (should be base64
          * encoded).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -553,10 +668,13 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atmos SSL validation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslValidation the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointBuilder sslValidation(boolean sslValidation) {
             doSetProperty("sslValidation", sslValidation);
@@ -565,10 +683,14 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atmos SSL validation.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslValidation the value to set
+         * @return the dsl builder
          */
         default AtmosEndpointBuilder sslValidation(String sslValidation) {
             doSetProperty("sslValidation", sslValidation);
@@ -590,10 +712,13 @@ public interface AtmosEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -603,10 +728,14 @@ public interface AtmosEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -615,9 +744,12 @@ public interface AtmosEndpointBuilderFactory {
         /**
          * Atomos server uri.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uri the value to set
+         * @return the dsl builder
          */
         default AdvancedAtmosEndpointBuilder uri(String uri) {
             doSetProperty("uri", uri);

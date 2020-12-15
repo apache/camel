@@ -46,10 +46,13 @@ public interface FreemarkerEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -63,10 +66,14 @@ public interface FreemarkerEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder allowContextMapAll(
                 String allowContextMapAll) {
@@ -80,10 +87,13 @@ public interface FreemarkerEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -97,10 +107,14 @@ public interface FreemarkerEndpointBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder allowTemplateFromHeader(
                 String allowTemplateFromHeader) {
@@ -110,9 +124,13 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Sets the Freemarker configuration to use.
          * 
-         * The option is a: <code>freemarker.template.Configuration</code> type.
+         * The option is a:
+         * &lt;code&gt;freemarker.template.Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder configuration(Object configuration) {
             doSetProperty("configuration", configuration);
@@ -122,9 +140,12 @@ public interface FreemarkerEndpointBuilderFactory {
          * Sets the Freemarker configuration to use.
          * 
          * The option will be converted to a
-         * <code>freemarker.template.Configuration</code> type.
+         * &lt;code&gt;freemarker.template.Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder configuration(String configuration) {
             doSetProperty("configuration", configuration);
@@ -133,10 +154,13 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -145,10 +169,14 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -157,9 +185,12 @@ public interface FreemarkerEndpointBuilderFactory {
         /**
          * Sets the encoding to be used for loading the template file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -176,10 +207,13 @@ public interface FreemarkerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -197,10 +231,14 @@ public interface FreemarkerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -211,9 +249,12 @@ public interface FreemarkerEndpointBuilderFactory {
          * Number of seconds the loaded template resource will remain in the
          * cache.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param templateUpdateDelay the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder templateUpdateDelay(
                 int templateUpdateDelay) {
@@ -224,9 +265,12 @@ public interface FreemarkerEndpointBuilderFactory {
          * Number of seconds the loaded template resource will remain in the
          * cache.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param templateUpdateDelay the value to set
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder templateUpdateDelay(
                 String templateUpdateDelay) {
@@ -248,10 +292,13 @@ public interface FreemarkerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFreemarkerEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -262,10 +309,14 @@ public interface FreemarkerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFreemarkerEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

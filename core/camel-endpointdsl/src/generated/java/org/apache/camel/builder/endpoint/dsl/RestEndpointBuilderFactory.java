@@ -45,9 +45,12 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service accepts. By default we accept all kinds of types.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consumes the value to set
+         * @return the dsl builder
          */
         default RestEndpointConsumerBuilder consumes(String consumes) {
             doSetProperty("consumes", consumes);
@@ -56,9 +59,12 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the incoming POJO binding type as a FQN class name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inType the value to set
+         * @return the dsl builder
          */
         default RestEndpointConsumerBuilder inType(String inType) {
             doSetProperty("inType", inType);
@@ -67,9 +73,12 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the outgoing POJO binding type as a FQN class name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param outType the value to set
+         * @return the dsl builder
          */
         default RestEndpointConsumerBuilder outType(String outType) {
             doSetProperty("outType", outType);
@@ -79,9 +88,12 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service returns.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param produces the value to set
+         * @return the dsl builder
          */
         default RestEndpointConsumerBuilder produces(String produces) {
             doSetProperty("produces", produces);
@@ -90,9 +102,12 @@ public interface RestEndpointBuilderFactory {
         /**
          * Name of the route this REST services creates.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param routeId the value to set
+         * @return the dsl builder
          */
         default RestEndpointConsumerBuilder routeId(String routeId) {
             doSetProperty("routeId", routeId);
@@ -107,10 +122,13 @@ public interface RestEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RestEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -126,10 +144,14 @@ public interface RestEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RestEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -144,9 +166,12 @@ public interface RestEndpointBuilderFactory {
          * org.apache.camel.spi.RestConsumerFactory is registered in the
          * registry. If either one is found, then that is being used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param consumerComponentName the value to set
+         * @return the dsl builder
          */
         default RestEndpointConsumerBuilder consumerComponentName(
                 String consumerComponentName) {
@@ -156,9 +181,12 @@ public interface RestEndpointBuilderFactory {
         /**
          * Human description to document this REST service.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param description the value to set
+         * @return the dsl builder
          */
         default RestEndpointConsumerBuilder description(String description) {
             doSetProperty("description", description);
@@ -181,10 +209,13 @@ public interface RestEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRestEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -198,9 +229,12 @@ public interface RestEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRestEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -210,9 +244,13 @@ public interface RestEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedRestEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -223,9 +261,12 @@ public interface RestEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedRestEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -236,10 +277,13 @@ public interface RestEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -250,10 +294,14 @@ public interface RestEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -275,9 +323,12 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service accepts. By default we accept all kinds of types.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consumes the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder consumes(String consumes) {
             doSetProperty("consumes", consumes);
@@ -286,9 +337,12 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the incoming POJO binding type as a FQN class name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inType the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder inType(String inType) {
             doSetProperty("inType", inType);
@@ -297,9 +351,12 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the outgoing POJO binding type as a FQN class name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param outType the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder outType(String outType) {
             doSetProperty("outType", outType);
@@ -309,9 +366,12 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service returns.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param produces the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder produces(String produces) {
             doSetProperty("produces", produces);
@@ -320,9 +380,12 @@ public interface RestEndpointBuilderFactory {
         /**
          * Name of the route this REST services creates.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param routeId the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder routeId(String routeId) {
             doSetProperty("routeId", routeId);
@@ -332,9 +395,12 @@ public interface RestEndpointBuilderFactory {
          * The openapi api doc resource to use. The resource is loaded from
          * classpath by default and must be in JSON format.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param apiDoc the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder apiDoc(String apiDoc) {
             doSetProperty("apiDoc", apiDoc);
@@ -347,10 +413,12 @@ public interface RestEndpointBuilderFactory {
          * from json or xml to outType.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.RestConfiguration$RestBindingMode</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.spi.RestConfiguration$RestBindingMode&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param bindingMode the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder bindingMode(
                 RestBindingMode bindingMode) {
@@ -364,10 +432,12 @@ public interface RestEndpointBuilderFactory {
          * from json or xml to outType.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.RestConfiguration$RestBindingMode</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.spi.RestConfiguration$RestBindingMode&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param bindingMode the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder bindingMode(String bindingMode) {
             doSetProperty("bindingMode", bindingMode);
@@ -377,9 +447,12 @@ public interface RestEndpointBuilderFactory {
          * Host and port of HTTP service to use (override host in openapi
          * schema).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder host(String host) {
             doSetProperty("host", host);
@@ -396,10 +469,13 @@ public interface RestEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -417,10 +493,14 @@ public interface RestEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -435,9 +515,12 @@ public interface RestEndpointBuilderFactory {
          * is registered in the registry. If either one is found, then that is
          * being used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param producerComponentName the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder producerComponentName(
                 String producerComponentName) {
@@ -447,11 +530,14 @@ public interface RestEndpointBuilderFactory {
         /**
          * Query parameters for the HTTP service to call. The query parameters
          * can contain multiple parameters separated by ampersand such such as
-         * foo=123&amp;bar=456.
+         * foo=123&amp;amp;bar=456.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param queryParameters the value to set
+         * @return the dsl builder
          */
         default RestEndpointProducerBuilder queryParameters(
                 String queryParameters) {
@@ -473,10 +559,13 @@ public interface RestEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -487,10 +576,14 @@ public interface RestEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -513,9 +606,12 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service accepts. By default we accept all kinds of types.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consumes the value to set
+         * @return the dsl builder
          */
         default RestEndpointBuilder consumes(String consumes) {
             doSetProperty("consumes", consumes);
@@ -524,9 +620,12 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the incoming POJO binding type as a FQN class name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inType the value to set
+         * @return the dsl builder
          */
         default RestEndpointBuilder inType(String inType) {
             doSetProperty("inType", inType);
@@ -535,9 +634,12 @@ public interface RestEndpointBuilderFactory {
         /**
          * To declare the outgoing POJO binding type as a FQN class name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param outType the value to set
+         * @return the dsl builder
          */
         default RestEndpointBuilder outType(String outType) {
             doSetProperty("outType", outType);
@@ -547,9 +649,12 @@ public interface RestEndpointBuilderFactory {
          * Media type such as: 'text/xml', or 'application/json' this REST
          * service returns.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param produces the value to set
+         * @return the dsl builder
          */
         default RestEndpointBuilder produces(String produces) {
             doSetProperty("produces", produces);
@@ -558,9 +663,12 @@ public interface RestEndpointBuilderFactory {
         /**
          * Name of the route this REST services creates.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param routeId the value to set
+         * @return the dsl builder
          */
         default RestEndpointBuilder routeId(String routeId) {
             doSetProperty("routeId", routeId);
@@ -582,10 +690,13 @@ public interface RestEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -595,10 +706,14 @@ public interface RestEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
