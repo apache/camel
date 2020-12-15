@@ -51,9 +51,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Google sheets application name. Example would be
          * camel-google-sheets/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder applicationName(
                 String applicationName) {
@@ -69,10 +72,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -88,10 +94,14 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -101,9 +111,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Client ID of the sheets application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -112,10 +125,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * True if grid data should be returned.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeGridData the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder includeGridData(
                 boolean includeGridData) {
@@ -125,10 +141,14 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * True if grid data should be returned.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeGridData the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder includeGridData(
                 String includeGridData) {
@@ -138,10 +158,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Specifies the major dimension that results should use..
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ROWS
          * Group: consumer
+         * 
+         * @param majorDimension the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder majorDimension(
                 String majorDimension) {
@@ -153,9 +176,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * number of rows in a returned value range data set or the number of
          * returned value ranges in a batch request.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder maxResults(int maxResults) {
             doSetProperty("maxResults", maxResults);
@@ -166,9 +192,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * number of rows in a returned value range data set or the number of
          * returned value ranges in a batch request.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder maxResults(String maxResults) {
             doSetProperty("maxResults", maxResults);
@@ -177,9 +206,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Specifies the range of rows and columns in a sheet to get data from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param range the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder range(String range) {
             doSetProperty("range", range);
@@ -191,10 +223,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * https://developers.google.com/identity/protocols/googlescopes for
          * more info.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder scopes(List<String> scopes) {
             doSetProperty("scopes", scopes);
@@ -207,9 +242,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * more info.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
@@ -219,10 +257,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -233,10 +274,14 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -249,10 +294,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * represented with a separate exchange in batch processing. Otherwise
          * value range object is used as exchange junk size.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param splitResults the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder splitResults(
                 boolean splitResults) {
@@ -265,10 +313,14 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * represented with a separate exchange in batch processing. Otherwise
          * value range object is used as exchange junk size.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param splitResults the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder splitResults(
                 String splitResults) {
@@ -279,9 +331,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Specifies the spreadsheet identifier that is used to identify the
          * target to obtain.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param spreadsheetId the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder spreadsheetId(
                 String spreadsheetId) {
@@ -291,10 +346,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Determines how values should be rendered in the output.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: FORMATTED_VALUE
          * Group: consumer
+         * 
+         * @param valueRenderOption the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder valueRenderOption(
                 String valueRenderOption) {
@@ -305,9 +363,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -318,9 +379,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -331,9 +395,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -344,9 +411,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -361,9 +431,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -378,9 +451,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -390,10 +466,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -402,10 +481,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -415,10 +497,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -428,10 +513,14 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -440,10 +529,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -452,10 +544,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder initialDelay(
                 String initialDelay) {
@@ -467,10 +562,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -481,10 +579,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -494,10 +595,14 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -509,10 +614,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -525,9 +633,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -540,9 +651,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -553,10 +667,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -566,10 +683,14 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -579,13 +700,17 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder schedulerProperties(
                 String key,
@@ -597,13 +722,16 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -612,10 +740,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder startScheduler(
                 boolean startScheduler) {
@@ -625,10 +756,14 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder startScheduler(
                 String startScheduler) {
@@ -638,10 +773,14 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -651,10 +790,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -664,10 +806,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -678,10 +823,14 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -692,9 +841,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -703,9 +855,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Client secret of the sheets application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder clientSecret(
                 String clientSecret) {
@@ -717,9 +872,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder refreshToken(
                 String refreshToken) {
@@ -743,10 +901,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -760,9 +921,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -772,9 +936,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -785,9 +953,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -801,9 +972,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -817,9 +991,12 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder pollStrategy(
                 String pollStrategy) {
@@ -830,10 +1007,13 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -844,10 +1024,14 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(
                 String synchronous) {

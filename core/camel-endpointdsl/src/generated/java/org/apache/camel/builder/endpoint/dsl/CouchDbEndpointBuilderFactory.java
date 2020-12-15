@@ -45,10 +45,13 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Creates the database if it does not already exist.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param createDatabase the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder createDatabase(
                 boolean createDatabase) {
@@ -58,10 +61,14 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Creates the database if it does not already exist.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param createDatabase the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder createDatabase(
                 String createDatabase) {
@@ -77,10 +84,13 @@ public interface CouchDbEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -96,10 +106,14 @@ public interface CouchDbEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -109,10 +123,13 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Document deletes are published as events.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deletes the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder deletes(boolean deletes) {
             doSetProperty("deletes", deletes);
@@ -121,10 +138,14 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Document deletes are published as events.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deletes the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder deletes(String deletes) {
             doSetProperty("deletes", deletes);
@@ -133,10 +154,13 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * How often to send an empty message to keep socket alive in millis.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: consumer
+         * 
+         * @param heartbeat the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder heartbeat(long heartbeat) {
             doSetProperty("heartbeat", heartbeat);
@@ -145,10 +169,13 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * How often to send an empty message to keep socket alive in millis.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: consumer
+         * 
+         * @param heartbeat the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder heartbeat(String heartbeat) {
             doSetProperty("heartbeat", heartbeat);
@@ -158,9 +185,12 @@ public interface CouchDbEndpointBuilderFactory {
          * Start tracking changes immediately after the given update sequence.
          * The default, null, will start monitoring from the latest sequence.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param since the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder since(String since) {
             doSetProperty("since", since);
@@ -172,10 +202,13 @@ public interface CouchDbEndpointBuilderFactory {
          * all_docs will return all leaf revisions (including conflicts and
          * deleted former conflicts.).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: main_only
          * Group: consumer
+         * 
+         * @param style the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder style(String style) {
             doSetProperty("style", style);
@@ -184,10 +217,13 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Document inserts/updates are published as events.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param updates the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder updates(boolean updates) {
             doSetProperty("updates", updates);
@@ -196,10 +232,14 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Document inserts/updates are published as events.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param updates the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder updates(String updates) {
             doSetProperty("updates", updates);
@@ -208,9 +248,12 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Password for authenticated databases.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -219,9 +262,12 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Username in case of authenticated databases.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -244,10 +290,13 @@ public interface CouchDbEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchDbEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -261,9 +310,12 @@ public interface CouchDbEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchDbEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -273,9 +325,13 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchDbEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -286,9 +342,12 @@ public interface CouchDbEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchDbEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -299,10 +358,13 @@ public interface CouchDbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchDbEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -313,10 +375,14 @@ public interface CouchDbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchDbEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -337,10 +403,13 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Creates the database if it does not already exist.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param createDatabase the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointProducerBuilder createDatabase(
                 boolean createDatabase) {
@@ -350,10 +419,14 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Creates the database if it does not already exist.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param createDatabase the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointProducerBuilder createDatabase(
                 String createDatabase) {
@@ -371,10 +444,13 @@ public interface CouchDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -392,10 +468,14 @@ public interface CouchDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -405,9 +485,12 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Password for authenticated databases.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -416,9 +499,12 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Username in case of authenticated databases.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -439,10 +525,13 @@ public interface CouchDbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchDbEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -453,10 +542,14 @@ public interface CouchDbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchDbEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -478,10 +571,13 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Creates the database if it does not already exist.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param createDatabase the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointBuilder createDatabase(boolean createDatabase) {
             doSetProperty("createDatabase", createDatabase);
@@ -490,10 +586,14 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Creates the database if it does not already exist.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param createDatabase the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointBuilder createDatabase(String createDatabase) {
             doSetProperty("createDatabase", createDatabase);
@@ -502,9 +602,12 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Password for authenticated databases.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -513,9 +616,12 @@ public interface CouchDbEndpointBuilderFactory {
         /**
          * Username in case of authenticated databases.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CouchDbEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -537,10 +643,13 @@ public interface CouchDbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchDbEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -550,10 +659,14 @@ public interface CouchDbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCouchDbEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

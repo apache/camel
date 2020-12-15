@@ -42,10 +42,13 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * Flag to abort the route and throw a schematron validation exception.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param abort the value to set
+         * @return the dsl builder
          */
         default SchematronEndpointBuilder abort(boolean abort) {
             doSetProperty("abort", abort);
@@ -54,10 +57,14 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * Flag to abort the route and throw a schematron validation exception.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param abort the value to set
+         * @return the dsl builder
          */
         default SchematronEndpointBuilder abort(String abort) {
             doSetProperty("abort", abort);
@@ -74,10 +81,13 @@ public interface SchematronEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SchematronEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -95,10 +105,14 @@ public interface SchematronEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SchematronEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -108,9 +122,13 @@ public interface SchematronEndpointBuilderFactory {
         /**
          * To use the given schematron rules instead of loading from the path.
          * 
-         * The option is a: <code>javax.xml.transform.Templates</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.transform.Templates&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param rules the value to set
+         * @return the dsl builder
          */
         default SchematronEndpointBuilder rules(Object rules) {
             doSetProperty("rules", rules);
@@ -120,9 +138,12 @@ public interface SchematronEndpointBuilderFactory {
          * To use the given schematron rules instead of loading from the path.
          * 
          * The option will be converted to a
-         * <code>javax.xml.transform.Templates</code> type.
+         * &lt;code&gt;javax.xml.transform.Templates&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param rules the value to set
+         * @return the dsl builder
          */
         default SchematronEndpointBuilder rules(String rules) {
             doSetProperty("rules", rules);
@@ -143,10 +164,13 @@ public interface SchematronEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSchematronEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -157,10 +181,14 @@ public interface SchematronEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSchematronEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -170,9 +198,13 @@ public interface SchematronEndpointBuilderFactory {
          * Set the URIResolver to be used for resolving schematron includes in
          * the rules file.
          * 
-         * The option is a: <code>javax.xml.transform.URIResolver</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedSchematronEndpointBuilder uriResolver(Object uriResolver) {
             doSetProperty("uriResolver", uriResolver);
@@ -183,9 +215,12 @@ public interface SchematronEndpointBuilderFactory {
          * the rules file.
          * 
          * The option will be converted to a
-         * <code>javax.xml.transform.URIResolver</code> type.
+         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedSchematronEndpointBuilder uriResolver(String uriResolver) {
             doSetProperty("uriResolver", uriResolver);

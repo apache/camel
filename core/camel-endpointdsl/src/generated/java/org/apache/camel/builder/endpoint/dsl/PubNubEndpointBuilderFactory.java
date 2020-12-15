@@ -46,9 +46,12 @@ public interface PubNubEndpointBuilderFactory {
          * UUID to be used as a device identifier, a default UUID is generated
          * if not passed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param uuid the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder uuid(String uuid) {
             doSetProperty("uuid", uuid);
@@ -63,10 +66,13 @@ public interface PubNubEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -82,10 +88,14 @@ public interface PubNubEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -95,10 +105,13 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Also subscribe to related presence information.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param withPresence the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder withPresence(boolean withPresence) {
             doSetProperty("withPresence", withPresence);
@@ -107,10 +120,14 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Also subscribe to related presence information.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param withPresence the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder withPresence(String withPresence) {
             doSetProperty("withPresence", withPresence);
@@ -120,9 +137,12 @@ public interface PubNubEndpointBuilderFactory {
          * If Access Manager is utilized, client will use this authKey in all
          * restricted requests.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder authKey(String authKey) {
             doSetProperty("authKey", authKey);
@@ -132,9 +152,12 @@ public interface PubNubEndpointBuilderFactory {
          * If cipher is passed, all communications to/from PubNub will be
          * encrypted.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param cipherKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder cipherKey(String cipherKey) {
             doSetProperty("cipherKey", cipherKey);
@@ -144,9 +167,12 @@ public interface PubNubEndpointBuilderFactory {
          * The publish key obtained from your PubNub account. Required when
          * publishing messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param publishKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder publishKey(String publishKey) {
             doSetProperty("publishKey", publishKey);
@@ -155,9 +181,12 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * The secret key used for message signing.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -166,10 +195,13 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -178,10 +210,14 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -191,9 +227,12 @@ public interface PubNubEndpointBuilderFactory {
          * The subscribe key obtained from your PubNub account. Required when
          * subscribing to channels or listening for presence events.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param subscribeKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointConsumerBuilder subscribeKey(String subscribeKey) {
             doSetProperty("subscribeKey", subscribeKey);
@@ -216,10 +255,13 @@ public interface PubNubEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -233,9 +275,12 @@ public interface PubNubEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -245,9 +290,13 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -258,9 +307,12 @@ public interface PubNubEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -270,9 +322,12 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option is a: <code>com.pubnub.api.PubNub</code> type.
+         * The option is a: &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param pubnub the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointConsumerBuilder pubnub(Object pubnub) {
             doSetProperty("pubnub", pubnub);
@@ -281,10 +336,13 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option will be converted to a <code>com.pubnub.api.PubNub</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param pubnub the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointConsumerBuilder pubnub(String pubnub) {
             doSetProperty("pubnub", pubnub);
@@ -294,10 +352,13 @@ public interface PubNubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -308,10 +369,14 @@ public interface PubNubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -333,9 +398,12 @@ public interface PubNubEndpointBuilderFactory {
          * UUID to be used as a device identifier, a default UUID is generated
          * if not passed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param uuid the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointProducerBuilder uuid(String uuid) {
             doSetProperty("uuid", uuid);
@@ -352,10 +420,13 @@ public interface PubNubEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -373,10 +444,14 @@ public interface PubNubEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -397,9 +472,12 @@ public interface PubNubEndpointBuilderFactory {
          * key/value pairs specific to a subscriber uuid GETHISTORY: Fetches
          * historical messages of a channel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -409,9 +487,12 @@ public interface PubNubEndpointBuilderFactory {
          * If Access Manager is utilized, client will use this authKey in all
          * restricted requests.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointProducerBuilder authKey(String authKey) {
             doSetProperty("authKey", authKey);
@@ -421,9 +502,12 @@ public interface PubNubEndpointBuilderFactory {
          * If cipher is passed, all communications to/from PubNub will be
          * encrypted.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param cipherKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointProducerBuilder cipherKey(String cipherKey) {
             doSetProperty("cipherKey", cipherKey);
@@ -433,9 +517,12 @@ public interface PubNubEndpointBuilderFactory {
          * The publish key obtained from your PubNub account. Required when
          * publishing messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param publishKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointProducerBuilder publishKey(String publishKey) {
             doSetProperty("publishKey", publishKey);
@@ -444,9 +531,12 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * The secret key used for message signing.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointProducerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -455,10 +545,13 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointProducerBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -467,10 +560,14 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointProducerBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -480,9 +577,12 @@ public interface PubNubEndpointBuilderFactory {
          * The subscribe key obtained from your PubNub account. Required when
          * subscribing to channels or listening for presence events.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param subscribeKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointProducerBuilder subscribeKey(String subscribeKey) {
             doSetProperty("subscribeKey", subscribeKey);
@@ -502,9 +602,12 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option is a: <code>com.pubnub.api.PubNub</code> type.
+         * The option is a: &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param pubnub the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointProducerBuilder pubnub(Object pubnub) {
             doSetProperty("pubnub", pubnub);
@@ -513,10 +616,13 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option will be converted to a <code>com.pubnub.api.PubNub</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param pubnub the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointProducerBuilder pubnub(String pubnub) {
             doSetProperty("pubnub", pubnub);
@@ -526,10 +632,13 @@ public interface PubNubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -540,10 +649,14 @@ public interface PubNubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -566,9 +679,12 @@ public interface PubNubEndpointBuilderFactory {
          * UUID to be used as a device identifier, a default UUID is generated
          * if not passed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param uuid the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointBuilder uuid(String uuid) {
             doSetProperty("uuid", uuid);
@@ -578,9 +694,12 @@ public interface PubNubEndpointBuilderFactory {
          * If Access Manager is utilized, client will use this authKey in all
          * restricted requests.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointBuilder authKey(String authKey) {
             doSetProperty("authKey", authKey);
@@ -590,9 +709,12 @@ public interface PubNubEndpointBuilderFactory {
          * If cipher is passed, all communications to/from PubNub will be
          * encrypted.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param cipherKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointBuilder cipherKey(String cipherKey) {
             doSetProperty("cipherKey", cipherKey);
@@ -602,9 +724,12 @@ public interface PubNubEndpointBuilderFactory {
          * The publish key obtained from your PubNub account. Required when
          * publishing messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param publishKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointBuilder publishKey(String publishKey) {
             doSetProperty("publishKey", publishKey);
@@ -613,9 +738,12 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * The secret key used for message signing.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -624,10 +752,13 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -636,10 +767,14 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Use SSL for secure transmission.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -649,9 +784,12 @@ public interface PubNubEndpointBuilderFactory {
          * The subscribe key obtained from your PubNub account. Required when
          * subscribing to channels or listening for presence events.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param subscribeKey the value to set
+         * @return the dsl builder
          */
         default PubNubEndpointBuilder subscribeKey(String subscribeKey) {
             doSetProperty("subscribeKey", subscribeKey);
@@ -672,9 +810,12 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option is a: <code>com.pubnub.api.PubNub</code> type.
+         * The option is a: &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param pubnub the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointBuilder pubnub(Object pubnub) {
             doSetProperty("pubnub", pubnub);
@@ -683,10 +824,13 @@ public interface PubNubEndpointBuilderFactory {
         /**
          * Reference to a Pubnub client in the registry.
          * 
-         * The option will be converted to a <code>com.pubnub.api.PubNub</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.pubnub.api.PubNub&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param pubnub the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointBuilder pubnub(String pubnub) {
             doSetProperty("pubnub", pubnub);
@@ -696,10 +840,13 @@ public interface PubNubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -709,10 +856,14 @@ public interface PubNubEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPubNubEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

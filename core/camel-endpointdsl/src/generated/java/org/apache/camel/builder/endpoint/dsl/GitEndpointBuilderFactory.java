@@ -44,9 +44,12 @@ public interface GitEndpointBuilderFactory {
         /**
          * The branch name to work on.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param branchName the value to set
+         * @return the dsl builder
          */
         default GitEndpointConsumerBuilder branchName(String branchName) {
             doSetProperty("branchName", branchName);
@@ -61,10 +64,13 @@ public interface GitEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GitEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -80,10 +86,14 @@ public interface GitEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GitEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -94,9 +104,12 @@ public interface GitEndpointBuilderFactory {
          * The consumer type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.git.consumer.GitType</code> type.
+         * &lt;code&gt;org.apache.camel.component.git.consumer.GitType&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default GitEndpointConsumerBuilder type(GitType type) {
             doSetProperty("type", type);
@@ -106,9 +119,12 @@ public interface GitEndpointBuilderFactory {
          * The consumer type.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.git.consumer.GitType</code> type.
+         * &lt;code&gt;org.apache.camel.component.git.consumer.GitType&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default GitEndpointConsumerBuilder type(String type) {
             doSetProperty("type", type);
@@ -131,10 +147,13 @@ public interface GitEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGitEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -148,9 +167,12 @@ public interface GitEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGitEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -160,9 +182,13 @@ public interface GitEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGitEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -173,9 +199,12 @@ public interface GitEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGitEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -186,10 +215,13 @@ public interface GitEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGitEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -200,10 +232,14 @@ public interface GitEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGitEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -224,9 +260,12 @@ public interface GitEndpointBuilderFactory {
         /**
          * The branch name to work on.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param branchName the value to set
+         * @return the dsl builder
          */
         default GitEndpointProducerBuilder branchName(String branchName) {
             doSetProperty("branchName", branchName);
@@ -235,10 +274,13 @@ public interface GitEndpointBuilderFactory {
         /**
          * The flag to manage empty git commits.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param allowEmpty the value to set
+         * @return the dsl builder
          */
         default GitEndpointProducerBuilder allowEmpty(boolean allowEmpty) {
             doSetProperty("allowEmpty", allowEmpty);
@@ -247,10 +289,14 @@ public interface GitEndpointBuilderFactory {
         /**
          * The flag to manage empty git commits.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param allowEmpty the value to set
+         * @return the dsl builder
          */
         default GitEndpointProducerBuilder allowEmpty(String allowEmpty) {
             doSetProperty("allowEmpty", allowEmpty);
@@ -267,10 +313,13 @@ public interface GitEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GitEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -288,10 +337,14 @@ public interface GitEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GitEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -301,9 +354,12 @@ public interface GitEndpointBuilderFactory {
         /**
          * The operation to do on the repository.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default GitEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -312,9 +368,12 @@ public interface GitEndpointBuilderFactory {
         /**
          * Remote repository password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default GitEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -323,9 +382,12 @@ public interface GitEndpointBuilderFactory {
         /**
          * The remote repository name to use in particular operation like pull.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param remoteName the value to set
+         * @return the dsl builder
          */
         default GitEndpointProducerBuilder remoteName(String remoteName) {
             doSetProperty("remoteName", remoteName);
@@ -334,9 +396,12 @@ public interface GitEndpointBuilderFactory {
         /**
          * The remote repository path.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param remotePath the value to set
+         * @return the dsl builder
          */
         default GitEndpointProducerBuilder remotePath(String remotePath) {
             doSetProperty("remotePath", remotePath);
@@ -345,9 +410,12 @@ public interface GitEndpointBuilderFactory {
         /**
          * The tag name to work on.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param tagName the value to set
+         * @return the dsl builder
          */
         default GitEndpointProducerBuilder tagName(String tagName) {
             doSetProperty("tagName", tagName);
@@ -356,9 +424,12 @@ public interface GitEndpointBuilderFactory {
         /**
          * Remote repository username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default GitEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -379,10 +450,13 @@ public interface GitEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGitEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -393,10 +467,14 @@ public interface GitEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGitEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -418,9 +496,12 @@ public interface GitEndpointBuilderFactory {
         /**
          * The branch name to work on.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param branchName the value to set
+         * @return the dsl builder
          */
         default GitEndpointBuilder branchName(String branchName) {
             doSetProperty("branchName", branchName);
@@ -442,10 +523,13 @@ public interface GitEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGitEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -455,10 +539,14 @@ public interface GitEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGitEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

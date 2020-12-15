@@ -47,9 +47,12 @@ public interface SWFEndpointBuilderFactory {
          * To use the given AmazonSimpleWorkflowClient as client.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSWClient the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder amazonSWClient(Object amazonSWClient) {
             doSetProperty("amazonSWClient", amazonSWClient);
@@ -59,9 +62,12 @@ public interface SWFEndpointBuilderFactory {
          * To use the given AmazonSimpleWorkflowClient as client.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSWClient the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder amazonSWClient(String amazonSWClient) {
             doSetProperty("amazonSWClient", amazonSWClient);
@@ -73,10 +79,12 @@ public interface SWFEndpointBuilderFactory {
          * serializing/deserializing the data.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
-         * type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.DataConverter&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataConverter the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder dataConverter(Object dataConverter) {
             doSetProperty("dataConverter", dataConverter);
@@ -88,10 +96,12 @@ public interface SWFEndpointBuilderFactory {
          * serializing/deserializing the data.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
-         * type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.DataConverter&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataConverter the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder dataConverter(String dataConverter) {
             doSetProperty("dataConverter", dataConverter);
@@ -100,9 +110,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The workflow domain to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainName the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder domainName(String domainName) {
             doSetProperty("domainName", domainName);
@@ -111,9 +124,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The workflow or activity event name to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventName the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder eventName(String eventName) {
             doSetProperty("eventName", eventName);
@@ -124,9 +140,12 @@ public interface SWFEndpointBuilderFactory {
          * expect the capitalized name of the region (for example AP_EAST_1)
          * You'll need to use the name Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder region(String region) {
             doSetProperty("region", region);
@@ -135,9 +154,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The workflow or activity event version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param version the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder version(String version) {
             doSetProperty("version", version);
@@ -152,10 +174,13 @@ public interface SWFEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -171,10 +196,14 @@ public interface SWFEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -184,9 +213,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The list name to consume activities from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: activity
+         * 
+         * @param activityList the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder activityList(String activityList) {
             doSetProperty("activityList", activityList);
@@ -195,10 +227,13 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Maximum number of threads in work pool for activity.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: activity
+         * 
+         * @param activityThreadPoolSize the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder activityThreadPoolSize(
                 int activityThreadPoolSize) {
@@ -208,10 +243,13 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Maximum number of threads in work pool for activity.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: activity
+         * 
+         * @param activityThreadPoolSize the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder activityThreadPoolSize(
                 String activityThreadPoolSize) {
@@ -222,9 +260,12 @@ public interface SWFEndpointBuilderFactory {
          * Activity execution options.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions&lt;/code&gt; type.
          * 
          * Group: activity
+         * 
+         * @param activityTypeExecutionOptions the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder activityTypeExecutionOptions(
                 Object activityTypeExecutionOptions) {
@@ -235,9 +276,12 @@ public interface SWFEndpointBuilderFactory {
          * Activity execution options.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions&lt;/code&gt; type.
          * 
          * Group: activity
+         * 
+         * @param activityTypeExecutionOptions the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder activityTypeExecutionOptions(
                 String activityTypeExecutionOptions) {
@@ -248,9 +292,12 @@ public interface SWFEndpointBuilderFactory {
          * Activity registration options.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions&lt;/code&gt; type.
          * 
          * Group: activity
+         * 
+         * @param activityTypeRegistrationOptions the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder activityTypeRegistrationOptions(
                 Object activityTypeRegistrationOptions) {
@@ -261,9 +308,12 @@ public interface SWFEndpointBuilderFactory {
          * Activity registration options.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions&lt;/code&gt; type.
          * 
          * Group: activity
+         * 
+         * @param activityTypeRegistrationOptions the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder activityTypeRegistrationOptions(
                 String activityTypeRegistrationOptions) {
@@ -273,9 +323,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -284,9 +337,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -295,9 +351,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The list name to consume workflows from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param workflowList the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder workflowList(String workflowList) {
             doSetProperty("workflowList", workflowList);
@@ -307,9 +366,12 @@ public interface SWFEndpointBuilderFactory {
          * Workflow registration options.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param workflowTypeRegistrationOptions the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder workflowTypeRegistrationOptions(
                 Object workflowTypeRegistrationOptions) {
@@ -320,9 +382,12 @@ public interface SWFEndpointBuilderFactory {
          * Workflow registration options.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param workflowTypeRegistrationOptions the value to set
+         * @return the dsl builder
          */
         default SWFEndpointConsumerBuilder workflowTypeRegistrationOptions(
                 String workflowTypeRegistrationOptions) {
@@ -347,10 +412,13 @@ public interface SWFEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -364,9 +432,12 @@ public interface SWFEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -376,9 +447,13 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -389,9 +464,12 @@ public interface SWFEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -402,13 +480,17 @@ public interface SWFEndpointBuilderFactory {
          * To configure the ClientConfiguration using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigurationParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder clientConfigurationParameters(
                 String key,
@@ -420,13 +502,16 @@ public interface SWFEndpointBuilderFactory {
          * To configure the ClientConfiguration using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigurationParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder clientConfigurationParameters(
                 Map values) {
@@ -437,13 +522,17 @@ public interface SWFEndpointBuilderFactory {
          * To configure the StartWorkflowOptions using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * startWorkflowOptionsParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder startWorkflowOptionsParameters(
                 String key,
@@ -455,13 +544,16 @@ public interface SWFEndpointBuilderFactory {
          * To configure the StartWorkflowOptions using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * startWorkflowOptionsParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder startWorkflowOptionsParameters(
                 Map values) {
@@ -472,13 +564,17 @@ public interface SWFEndpointBuilderFactory {
          * To configure the AmazonSimpleWorkflowClient using the key/values from
          * the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * sWClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder sWClientParameters(
                 String key,
@@ -490,13 +586,16 @@ public interface SWFEndpointBuilderFactory {
          * To configure the AmazonSimpleWorkflowClient using the key/values from
          * the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * sWClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder sWClientParameters(Map values) {
             doSetMultiValueProperties("sWClientParameters", "sWClient.", values);
@@ -506,10 +605,13 @@ public interface SWFEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -520,10 +622,14 @@ public interface SWFEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -546,9 +652,12 @@ public interface SWFEndpointBuilderFactory {
          * To use the given AmazonSimpleWorkflowClient as client.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSWClient the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder amazonSWClient(Object amazonSWClient) {
             doSetProperty("amazonSWClient", amazonSWClient);
@@ -558,9 +667,12 @@ public interface SWFEndpointBuilderFactory {
          * To use the given AmazonSimpleWorkflowClient as client.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSWClient the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder amazonSWClient(String amazonSWClient) {
             doSetProperty("amazonSWClient", amazonSWClient);
@@ -572,10 +684,12 @@ public interface SWFEndpointBuilderFactory {
          * serializing/deserializing the data.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
-         * type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.DataConverter&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataConverter the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder dataConverter(Object dataConverter) {
             doSetProperty("dataConverter", dataConverter);
@@ -587,10 +701,12 @@ public interface SWFEndpointBuilderFactory {
          * serializing/deserializing the data.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
-         * type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.DataConverter&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataConverter the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder dataConverter(String dataConverter) {
             doSetProperty("dataConverter", dataConverter);
@@ -599,9 +715,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The workflow domain to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainName the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder domainName(String domainName) {
             doSetProperty("domainName", domainName);
@@ -610,9 +729,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The workflow or activity event name to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventName the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder eventName(String eventName) {
             doSetProperty("eventName", eventName);
@@ -623,9 +745,12 @@ public interface SWFEndpointBuilderFactory {
          * expect the capitalized name of the region (for example AP_EAST_1)
          * You'll need to use the name Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder region(String region) {
             doSetProperty("region", region);
@@ -634,9 +759,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The workflow or activity event version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param version the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder version(String version) {
             doSetProperty("version", version);
@@ -653,10 +781,13 @@ public interface SWFEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -674,10 +805,14 @@ public interface SWFEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -688,9 +823,12 @@ public interface SWFEndpointBuilderFactory {
          * Activity scheduling options.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions&lt;/code&gt; type.
          * 
          * Group: activity
+         * 
+         * @param activitySchedulingOptions the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder activitySchedulingOptions(
                 Object activitySchedulingOptions) {
@@ -701,9 +839,12 @@ public interface SWFEndpointBuilderFactory {
          * Activity scheduling options.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions&lt;/code&gt; type.
          * 
          * Group: activity
+         * 
+         * @param activitySchedulingOptions the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder activitySchedulingOptions(
                 String activitySchedulingOptions) {
@@ -713,9 +854,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -724,9 +868,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -735,9 +882,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The policy to use on child workflows when terminating a workflow.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param childPolicy the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder childPolicy(String childPolicy) {
             doSetProperty("childPolicy", childPolicy);
@@ -746,10 +896,13 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Set the execution start to close timeout.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 3600
          * Group: workflow
+         * 
+         * @param executionStartToCloseTimeout the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder executionStartToCloseTimeout(
                 String executionStartToCloseTimeout) {
@@ -759,10 +912,13 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Workflow operation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: START
          * Group: workflow
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -771,9 +927,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The name of the signal to send to the workflow.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param signalName the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder signalName(String signalName) {
             doSetProperty("signalName", signalName);
@@ -782,9 +941,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The type of the result when a workflow state is queried.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param stateResultType the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder stateResultType(
                 String stateResultType) {
@@ -794,10 +956,13 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Set the task start to close timeout.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 600
          * Group: workflow
+         * 
+         * @param taskStartToCloseTimeout the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder taskStartToCloseTimeout(
                 String taskStartToCloseTimeout) {
@@ -807,9 +972,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Details for terminating a workflow.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param terminationDetails the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder terminationDetails(
                 String terminationDetails) {
@@ -819,9 +987,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The reason for terminating a workflow.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param terminationReason the value to set
+         * @return the dsl builder
          */
         default SWFEndpointProducerBuilder terminationReason(
                 String terminationReason) {
@@ -844,13 +1015,17 @@ public interface SWFEndpointBuilderFactory {
          * To configure the ClientConfiguration using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigurationParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointProducerBuilder clientConfigurationParameters(
                 String key,
@@ -862,13 +1037,16 @@ public interface SWFEndpointBuilderFactory {
          * To configure the ClientConfiguration using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigurationParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointProducerBuilder clientConfigurationParameters(
                 Map values) {
@@ -879,13 +1057,17 @@ public interface SWFEndpointBuilderFactory {
          * To configure the StartWorkflowOptions using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * startWorkflowOptionsParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointProducerBuilder startWorkflowOptionsParameters(
                 String key,
@@ -897,13 +1079,16 @@ public interface SWFEndpointBuilderFactory {
          * To configure the StartWorkflowOptions using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * startWorkflowOptionsParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointProducerBuilder startWorkflowOptionsParameters(
                 Map values) {
@@ -914,13 +1099,17 @@ public interface SWFEndpointBuilderFactory {
          * To configure the AmazonSimpleWorkflowClient using the key/values from
          * the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * sWClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointProducerBuilder sWClientParameters(
                 String key,
@@ -932,13 +1121,16 @@ public interface SWFEndpointBuilderFactory {
          * To configure the AmazonSimpleWorkflowClient using the key/values from
          * the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * sWClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointProducerBuilder sWClientParameters(Map values) {
             doSetMultiValueProperties("sWClientParameters", "sWClient.", values);
@@ -948,10 +1140,13 @@ public interface SWFEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -962,10 +1157,14 @@ public interface SWFEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -988,9 +1187,12 @@ public interface SWFEndpointBuilderFactory {
          * To use the given AmazonSimpleWorkflowClient as client.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSWClient the value to set
+         * @return the dsl builder
          */
         default SWFEndpointBuilder amazonSWClient(Object amazonSWClient) {
             doSetProperty("amazonSWClient", amazonSWClient);
@@ -1000,9 +1202,12 @@ public interface SWFEndpointBuilderFactory {
          * To use the given AmazonSimpleWorkflowClient as client.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflowClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSWClient the value to set
+         * @return the dsl builder
          */
         default SWFEndpointBuilder amazonSWClient(String amazonSWClient) {
             doSetProperty("amazonSWClient", amazonSWClient);
@@ -1014,10 +1219,12 @@ public interface SWFEndpointBuilderFactory {
          * serializing/deserializing the data.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
-         * type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.DataConverter&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataConverter the value to set
+         * @return the dsl builder
          */
         default SWFEndpointBuilder dataConverter(Object dataConverter) {
             doSetProperty("dataConverter", dataConverter);
@@ -1029,10 +1236,12 @@ public interface SWFEndpointBuilderFactory {
          * serializing/deserializing the data.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
-         * type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.DataConverter&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataConverter the value to set
+         * @return the dsl builder
          */
         default SWFEndpointBuilder dataConverter(String dataConverter) {
             doSetProperty("dataConverter", dataConverter);
@@ -1041,9 +1250,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The workflow domain to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainName the value to set
+         * @return the dsl builder
          */
         default SWFEndpointBuilder domainName(String domainName) {
             doSetProperty("domainName", domainName);
@@ -1052,9 +1264,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The workflow or activity event name to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventName the value to set
+         * @return the dsl builder
          */
         default SWFEndpointBuilder eventName(String eventName) {
             doSetProperty("eventName", eventName);
@@ -1065,9 +1280,12 @@ public interface SWFEndpointBuilderFactory {
          * expect the capitalized name of the region (for example AP_EAST_1)
          * You'll need to use the name Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default SWFEndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -1076,9 +1294,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * The workflow or activity event version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param version the value to set
+         * @return the dsl builder
          */
         default SWFEndpointBuilder version(String version) {
             doSetProperty("version", version);
@@ -1087,9 +1308,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default SWFEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -1098,9 +1322,12 @@ public interface SWFEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default SWFEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -1123,13 +1350,17 @@ public interface SWFEndpointBuilderFactory {
          * To configure the ClientConfiguration using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigurationParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointBuilder clientConfigurationParameters(
                 String key,
@@ -1141,13 +1372,16 @@ public interface SWFEndpointBuilderFactory {
          * To configure the ClientConfiguration using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * clientConfigurationParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointBuilder clientConfigurationParameters(
                 Map values) {
@@ -1158,13 +1392,17 @@ public interface SWFEndpointBuilderFactory {
          * To configure the StartWorkflowOptions using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * startWorkflowOptionsParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointBuilder startWorkflowOptionsParameters(
                 String key,
@@ -1176,13 +1414,16 @@ public interface SWFEndpointBuilderFactory {
          * To configure the StartWorkflowOptions using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * startWorkflowOptionsParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointBuilder startWorkflowOptionsParameters(
                 Map values) {
@@ -1193,13 +1434,17 @@ public interface SWFEndpointBuilderFactory {
          * To configure the AmazonSimpleWorkflowClient using the key/values from
          * the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * sWClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointBuilder sWClientParameters(
                 String key,
@@ -1211,13 +1456,16 @@ public interface SWFEndpointBuilderFactory {
          * To configure the AmazonSimpleWorkflowClient using the key/values from
          * the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * sWClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointBuilder sWClientParameters(Map values) {
             doSetMultiValueProperties("sWClientParameters", "sWClient.", values);
@@ -1227,10 +1475,13 @@ public interface SWFEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1240,10 +1491,14 @@ public interface SWFEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSWFEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

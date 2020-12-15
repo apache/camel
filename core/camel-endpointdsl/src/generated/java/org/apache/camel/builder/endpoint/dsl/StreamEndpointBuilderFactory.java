@@ -46,9 +46,12 @@ public interface StreamEndpointBuilderFactory {
          * streams (for example, message body is a String object). If not
          * provided, Camel uses the JVM default Charset.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -58,9 +61,12 @@ public interface StreamEndpointBuilderFactory {
          * When using the stream:file URI format, this option specifies the
          * filename to stream to/from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
@@ -75,10 +81,13 @@ public interface StreamEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -94,10 +103,14 @@ public interface StreamEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -108,10 +121,13 @@ public interface StreamEndpointBuilderFactory {
          * To use JVM file watcher to listen for file change events to support
          * re-loading files that may be overwritten, somewhat like tail --retry.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param fileWatcher the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder fileWatcher(boolean fileWatcher) {
             doSetProperty("fileWatcher", fileWatcher);
@@ -121,10 +137,14 @@ public interface StreamEndpointBuilderFactory {
          * To use JVM file watcher to listen for file change events to support
          * re-loading files that may be overwritten, somewhat like tail --retry.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param fileWatcher the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder fileWatcher(String fileWatcher) {
             doSetProperty("fileWatcher", fileWatcher);
@@ -135,9 +155,12 @@ public interface StreamEndpointBuilderFactory {
          * lines and therefore only spit out an Exchange with 10 lines, instead
          * of 1 Exchange per line.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param groupLines the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder groupLines(int groupLines) {
             doSetProperty("groupLines", groupLines);
@@ -148,9 +171,12 @@ public interface StreamEndpointBuilderFactory {
          * lines and therefore only spit out an Exchange with 10 lines, instead
          * of 1 Exchange per line.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param groupLines the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder groupLines(String groupLines) {
             doSetProperty("groupLines", groupLines);
@@ -160,9 +186,12 @@ public interface StreamEndpointBuilderFactory {
          * Allows to use a custom GroupStrategy to control how to group lines.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.stream.GroupStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.stream.GroupStrategy&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param groupStrategy the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder groupStrategy(Object groupStrategy) {
             doSetProperty("groupStrategy", groupStrategy);
@@ -172,9 +201,12 @@ public interface StreamEndpointBuilderFactory {
          * Allows to use a custom GroupStrategy to control how to group lines.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.stream.GroupStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.stream.GroupStrategy&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param groupStrategy the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder groupStrategy(String groupStrategy) {
             doSetProperty("groupStrategy", groupStrategy);
@@ -186,10 +218,13 @@ public interface StreamEndpointBuilderFactory {
          * message prompts being written while other logging is done to the
          * system out.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: consumer
+         * 
+         * @param initialPromptDelay the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder initialPromptDelay(
                 long initialPromptDelay) {
@@ -202,10 +237,13 @@ public interface StreamEndpointBuilderFactory {
          * message prompts being written while other logging is done to the
          * system out.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: consumer
+         * 
+         * @param initialPromptDelay the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder initialPromptDelay(
                 String initialPromptDelay) {
@@ -215,9 +253,12 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Optional delay in milliseconds before showing the message prompt.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param promptDelay the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder promptDelay(long promptDelay) {
             doSetProperty("promptDelay", promptDelay);
@@ -226,9 +267,12 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Optional delay in milliseconds before showing the message prompt.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param promptDelay the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder promptDelay(String promptDelay) {
             doSetProperty("promptDelay", promptDelay);
@@ -238,9 +282,12 @@ public interface StreamEndpointBuilderFactory {
          * Message prompt to use when reading from stream:in; for example, you
          * could set this to Enter a command:.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param promptMessage the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder promptMessage(String promptMessage) {
             doSetProperty("promptMessage", promptMessage);
@@ -251,10 +298,13 @@ public interface StreamEndpointBuilderFactory {
          * --retry If reading from files then you should also enable the
          * fileWatcher option, to make it work reliable.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param retry the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder retry(boolean retry) {
             doSetProperty("retry", retry);
@@ -265,10 +315,14 @@ public interface StreamEndpointBuilderFactory {
          * --retry If reading from files then you should also enable the
          * fileWatcher option, to make it work reliable.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param retry the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder retry(String retry) {
             doSetProperty("retry", retry);
@@ -278,10 +332,13 @@ public interface StreamEndpointBuilderFactory {
          * To be used for continuously reading a stream such as the unix tail
          * command.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param scanStream the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder scanStream(boolean scanStream) {
             doSetProperty("scanStream", scanStream);
@@ -291,10 +348,14 @@ public interface StreamEndpointBuilderFactory {
          * To be used for continuously reading a stream such as the unix tail
          * command.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param scanStream the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder scanStream(String scanStream) {
             doSetProperty("scanStream", scanStream);
@@ -303,9 +364,12 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Delay in milliseconds between read attempts when using scanStream.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param scanStreamDelay the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder scanStreamDelay(
                 long scanStreamDelay) {
@@ -315,9 +379,12 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Delay in milliseconds between read attempts when using scanStream.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param scanStreamDelay the value to set
+         * @return the dsl builder
          */
         default StreamEndpointConsumerBuilder scanStreamDelay(
                 String scanStreamDelay) {
@@ -341,10 +408,13 @@ public interface StreamEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -358,9 +428,12 @@ public interface StreamEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -370,9 +443,13 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -383,9 +460,12 @@ public interface StreamEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -400,9 +480,12 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointConsumerBuilder readTimeout(
                 int readTimeout) {
@@ -417,9 +500,12 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointConsumerBuilder readTimeout(
                 String readTimeout) {
@@ -430,10 +516,13 @@ public interface StreamEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -444,10 +533,14 @@ public interface StreamEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -470,9 +563,12 @@ public interface StreamEndpointBuilderFactory {
          * streams (for example, message body is a String object). If not
          * provided, Camel uses the JVM default Charset.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default StreamEndpointProducerBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -482,9 +578,12 @@ public interface StreamEndpointBuilderFactory {
          * When using the stream:file URI format, this option specifies the
          * filename to stream to/from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default StreamEndpointProducerBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
@@ -496,9 +595,12 @@ public interface StreamEndpointBuilderFactory {
          * more messages are sent, the stream is reopened for another
          * autoCloseCount batch.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param autoCloseCount the value to set
+         * @return the dsl builder
          */
         default StreamEndpointProducerBuilder autoCloseCount(int autoCloseCount) {
             doSetProperty("autoCloseCount", autoCloseCount);
@@ -510,9 +612,12 @@ public interface StreamEndpointBuilderFactory {
          * more messages are sent, the stream is reopened for another
          * autoCloseCount batch.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param autoCloseCount the value to set
+         * @return the dsl builder
          */
         default StreamEndpointProducerBuilder autoCloseCount(
                 String autoCloseCount) {
@@ -525,10 +630,13 @@ public interface StreamEndpointBuilderFactory {
          * the Splitter is done, to improve performance. Mind this requires that
          * you only stream to the same file, and not 2 or more files.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param closeOnDone the value to set
+         * @return the dsl builder
          */
         default StreamEndpointProducerBuilder closeOnDone(boolean closeOnDone) {
             doSetProperty("closeOnDone", closeOnDone);
@@ -540,10 +648,14 @@ public interface StreamEndpointBuilderFactory {
          * the Splitter is done, to improve performance. Mind this requires that
          * you only stream to the same file, and not 2 or more files.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param closeOnDone the value to set
+         * @return the dsl builder
          */
         default StreamEndpointProducerBuilder closeOnDone(String closeOnDone) {
             doSetProperty("closeOnDone", closeOnDone);
@@ -552,9 +664,12 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Initial delay in milliseconds before producing the stream.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default StreamEndpointProducerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -563,9 +678,12 @@ public interface StreamEndpointBuilderFactory {
         /**
          * Initial delay in milliseconds before producing the stream.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default StreamEndpointProducerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -582,10 +700,13 @@ public interface StreamEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default StreamEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -603,10 +724,14 @@ public interface StreamEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default StreamEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -632,9 +757,12 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointProducerBuilder readTimeout(
                 int readTimeout) {
@@ -649,9 +777,12 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointProducerBuilder readTimeout(
                 String readTimeout) {
@@ -662,10 +793,13 @@ public interface StreamEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -676,10 +810,14 @@ public interface StreamEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -703,9 +841,12 @@ public interface StreamEndpointBuilderFactory {
          * streams (for example, message body is a String object). If not
          * provided, Camel uses the JVM default Charset.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default StreamEndpointBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -715,9 +856,12 @@ public interface StreamEndpointBuilderFactory {
          * When using the stream:file URI format, this option specifies the
          * filename to stream to/from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default StreamEndpointBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
@@ -743,9 +887,12 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointBuilder readTimeout(int readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -759,9 +906,12 @@ public interface StreamEndpointBuilderFactory {
          * java.net.SocketTimeoutException is raised. A timeout of zero is
          * interpreted as an infinite timeout.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointBuilder readTimeout(String readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -771,10 +921,13 @@ public interface StreamEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -784,10 +937,14 @@ public interface StreamEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStreamEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

@@ -47,9 +47,12 @@ public interface ServerEndpointBuilderFactory {
          * Data module options.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataModuleOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder dataModuleOptions(
                 Object dataModuleOptions) {
@@ -60,9 +63,12 @@ public interface ServerEndpointBuilderFactory {
          * Data module options.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataModuleOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder dataModuleOptions(
                 String dataModuleOptions) {
@@ -72,10 +78,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Filter out all requests which don't have the execute bit set.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param filterNonExecute the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder filterNonExecute(
                 boolean filterNonExecute) {
@@ -85,10 +94,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Filter out all requests which don't have the execute bit set.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param filterNonExecute the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder filterNonExecute(
                 String filterNonExecute) {
@@ -99,10 +112,12 @@ public interface ServerEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder protocolOptions(
                 Object protocolOptions) {
@@ -113,10 +128,12 @@ public interface ServerEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder protocolOptions(
                 String protocolOptions) {
@@ -132,10 +149,13 @@ public interface ServerEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -151,10 +171,14 @@ public interface ServerEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -164,10 +188,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option is a: <code>short</code> type.
+         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: connection
+         * 
+         * @param acknowledgeWindow the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder acknowledgeWindow(
                 short acknowledgeWindow) {
@@ -177,10 +204,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option will be converted to a <code>short</code> type.
+         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
+         * type.
          * 
          * Default: 10
          * Group: connection
+         * 
+         * @param acknowledgeWindow the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder acknowledgeWindow(
                 String acknowledgeWindow) {
@@ -191,10 +222,12 @@ public interface ServerEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param adsuAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
@@ -205,10 +238,12 @@ public interface ServerEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param adsuAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder adsuAddressType(
                 String adsuAddressType) {
@@ -219,9 +254,12 @@ public interface ServerEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param causeOfTransmissionType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
@@ -232,9 +270,12 @@ public interface ServerEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param causeOfTransmissionType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
@@ -245,9 +286,12 @@ public interface ServerEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param informationObjectAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
@@ -258,9 +302,12 @@ public interface ServerEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param informationObjectAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
@@ -270,10 +317,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option is a: <code>short</code> type.
+         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
          * 
          * Default: 15
          * Group: connection
+         * 
+         * @param maxUnacknowledged the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder maxUnacknowledged(
                 short maxUnacknowledged) {
@@ -283,10 +333,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option will be converted to a <code>short</code> type.
+         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
+         * type.
          * 
          * Default: 15
          * Group: connection
+         * 
+         * @param maxUnacknowledged the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder maxUnacknowledged(
                 String maxUnacknowledged) {
@@ -296,10 +350,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: connection
+         * 
+         * @param timeout1 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder timeout1(int timeout1) {
             doSetProperty("timeout1", timeout1);
@@ -308,10 +365,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: connection
+         * 
+         * @param timeout1 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder timeout1(String timeout1) {
             doSetProperty("timeout1", timeout1);
@@ -320,10 +380,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: connection
+         * 
+         * @param timeout2 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder timeout2(int timeout2) {
             doSetProperty("timeout2", timeout2);
@@ -332,10 +395,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: connection
+         * 
+         * @param timeout2 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder timeout2(String timeout2) {
             doSetProperty("timeout2", timeout2);
@@ -344,10 +410,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: connection
+         * 
+         * @param timeout3 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder timeout3(int timeout3) {
             doSetProperty("timeout3", timeout3);
@@ -356,10 +425,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: connection
+         * 
+         * @param timeout3 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder timeout3(String timeout3) {
             doSetProperty("timeout3", timeout3);
@@ -368,9 +440,12 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: data
+         * 
+         * @param causeSourceAddress the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder causeSourceAddress(
                 byte causeSourceAddress) {
@@ -380,9 +455,12 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: data
+         * 
+         * @param causeSourceAddress the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder causeSourceAddress(
                 String causeSourceAddress) {
@@ -393,10 +471,13 @@ public interface ServerEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: data
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -407,10 +488,13 @@ public interface ServerEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: data
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -420,10 +504,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: data
+         * 
+         * @param ignoreBackgroundScan the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
@@ -433,10 +520,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: data
+         * 
+         * @param ignoreBackgroundScan the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
@@ -446,10 +537,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: data
+         * 
+         * @param ignoreDaylightSavingTime the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
@@ -459,10 +553,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: data
+         * 
+         * @param ignoreDaylightSavingTime the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
@@ -472,10 +570,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option is a: <code>java.util.TimeZone</code> type.
+         * The option is a: &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
          * 
          * Default: UTC
          * Group: data
+         * 
+         * @param timeZone the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder timeZone(TimeZone timeZone) {
             doSetProperty("timeZone", timeZone);
@@ -484,11 +585,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option will be converted to a <code>java.util.TimeZone</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
          * 
          * Default: UTC
          * Group: data
+         * 
+         * @param timeZone the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder timeZone(String timeZone) {
             doSetProperty("timeZone", timeZone);
@@ -497,9 +601,12 @@ public interface ServerEndpointBuilderFactory {
         /**
          * An identifier grouping connection instances.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: id
+         * 
+         * @param connectionId the value to set
+         * @return the dsl builder
          */
         default ServerEndpointConsumerBuilder connectionId(String connectionId) {
             doSetProperty("connectionId", connectionId);
@@ -523,10 +630,13 @@ public interface ServerEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedServerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -540,9 +650,12 @@ public interface ServerEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedServerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -552,9 +665,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedServerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -565,9 +682,12 @@ public interface ServerEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedServerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -578,10 +698,13 @@ public interface ServerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedServerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -592,10 +715,14 @@ public interface ServerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedServerEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -617,9 +744,12 @@ public interface ServerEndpointBuilderFactory {
          * Data module options.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataModuleOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder dataModuleOptions(
                 Object dataModuleOptions) {
@@ -630,9 +760,12 @@ public interface ServerEndpointBuilderFactory {
          * Data module options.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataModuleOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder dataModuleOptions(
                 String dataModuleOptions) {
@@ -642,10 +775,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Filter out all requests which don't have the execute bit set.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param filterNonExecute the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder filterNonExecute(
                 boolean filterNonExecute) {
@@ -655,10 +791,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Filter out all requests which don't have the execute bit set.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param filterNonExecute the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder filterNonExecute(
                 String filterNonExecute) {
@@ -669,10 +809,12 @@ public interface ServerEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder protocolOptions(
                 Object protocolOptions) {
@@ -683,10 +825,12 @@ public interface ServerEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder protocolOptions(
                 String protocolOptions) {
@@ -704,10 +848,13 @@ public interface ServerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -725,10 +872,14 @@ public interface ServerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -738,10 +889,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option is a: <code>short</code> type.
+         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: connection
+         * 
+         * @param acknowledgeWindow the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder acknowledgeWindow(
                 short acknowledgeWindow) {
@@ -751,10 +905,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option will be converted to a <code>short</code> type.
+         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
+         * type.
          * 
          * Default: 10
          * Group: connection
+         * 
+         * @param acknowledgeWindow the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder acknowledgeWindow(
                 String acknowledgeWindow) {
@@ -765,10 +923,12 @@ public interface ServerEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param adsuAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
@@ -779,10 +939,12 @@ public interface ServerEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param adsuAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder adsuAddressType(
                 String adsuAddressType) {
@@ -793,9 +955,12 @@ public interface ServerEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param causeOfTransmissionType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
@@ -806,9 +971,12 @@ public interface ServerEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param causeOfTransmissionType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
@@ -819,9 +987,12 @@ public interface ServerEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param informationObjectAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
@@ -832,9 +1003,12 @@ public interface ServerEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param informationObjectAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
@@ -844,10 +1018,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option is a: <code>short</code> type.
+         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
          * 
          * Default: 15
          * Group: connection
+         * 
+         * @param maxUnacknowledged the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder maxUnacknowledged(
                 short maxUnacknowledged) {
@@ -857,10 +1034,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option will be converted to a <code>short</code> type.
+         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
+         * type.
          * 
          * Default: 15
          * Group: connection
+         * 
+         * @param maxUnacknowledged the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder maxUnacknowledged(
                 String maxUnacknowledged) {
@@ -870,10 +1051,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: connection
+         * 
+         * @param timeout1 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder timeout1(int timeout1) {
             doSetProperty("timeout1", timeout1);
@@ -882,10 +1066,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: connection
+         * 
+         * @param timeout1 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder timeout1(String timeout1) {
             doSetProperty("timeout1", timeout1);
@@ -894,10 +1081,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: connection
+         * 
+         * @param timeout2 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder timeout2(int timeout2) {
             doSetProperty("timeout2", timeout2);
@@ -906,10 +1096,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: connection
+         * 
+         * @param timeout2 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder timeout2(String timeout2) {
             doSetProperty("timeout2", timeout2);
@@ -918,10 +1111,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: connection
+         * 
+         * @param timeout3 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder timeout3(int timeout3) {
             doSetProperty("timeout3", timeout3);
@@ -930,10 +1126,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: connection
+         * 
+         * @param timeout3 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder timeout3(String timeout3) {
             doSetProperty("timeout3", timeout3);
@@ -942,9 +1141,12 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: data
+         * 
+         * @param causeSourceAddress the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder causeSourceAddress(
                 byte causeSourceAddress) {
@@ -954,9 +1156,12 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: data
+         * 
+         * @param causeSourceAddress the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder causeSourceAddress(
                 String causeSourceAddress) {
@@ -967,10 +1172,13 @@ public interface ServerEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: data
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -981,10 +1189,13 @@ public interface ServerEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: data
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -994,10 +1205,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: data
+         * 
+         * @param ignoreBackgroundScan the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
@@ -1007,10 +1221,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: data
+         * 
+         * @param ignoreBackgroundScan the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
@@ -1020,10 +1238,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: data
+         * 
+         * @param ignoreDaylightSavingTime the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
@@ -1033,10 +1254,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: data
+         * 
+         * @param ignoreDaylightSavingTime the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
@@ -1046,10 +1271,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option is a: <code>java.util.TimeZone</code> type.
+         * The option is a: &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
          * 
          * Default: UTC
          * Group: data
+         * 
+         * @param timeZone the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder timeZone(TimeZone timeZone) {
             doSetProperty("timeZone", timeZone);
@@ -1058,11 +1286,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option will be converted to a <code>java.util.TimeZone</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
          * 
          * Default: UTC
          * Group: data
+         * 
+         * @param timeZone the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder timeZone(String timeZone) {
             doSetProperty("timeZone", timeZone);
@@ -1071,9 +1302,12 @@ public interface ServerEndpointBuilderFactory {
         /**
          * An identifier grouping connection instances.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: id
+         * 
+         * @param connectionId the value to set
+         * @return the dsl builder
          */
         default ServerEndpointProducerBuilder connectionId(String connectionId) {
             doSetProperty("connectionId", connectionId);
@@ -1095,10 +1329,13 @@ public interface ServerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedServerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1109,10 +1346,14 @@ public interface ServerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedServerEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1135,9 +1376,12 @@ public interface ServerEndpointBuilderFactory {
          * Data module options.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataModuleOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder dataModuleOptions(Object dataModuleOptions) {
             doSetProperty("dataModuleOptions", dataModuleOptions);
@@ -1147,9 +1391,12 @@ public interface ServerEndpointBuilderFactory {
          * Data module options.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.client.data.DataModuleOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataModuleOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder dataModuleOptions(String dataModuleOptions) {
             doSetProperty("dataModuleOptions", dataModuleOptions);
@@ -1158,10 +1405,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Filter out all requests which don't have the execute bit set.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param filterNonExecute the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder filterNonExecute(boolean filterNonExecute) {
             doSetProperty("filterNonExecute", filterNonExecute);
@@ -1170,10 +1420,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Filter out all requests which don't have the execute bit set.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param filterNonExecute the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder filterNonExecute(String filterNonExecute) {
             doSetProperty("filterNonExecute", filterNonExecute);
@@ -1183,10 +1437,12 @@ public interface ServerEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder protocolOptions(Object protocolOptions) {
             doSetProperty("protocolOptions", protocolOptions);
@@ -1196,10 +1452,12 @@ public interface ServerEndpointBuilderFactory {
          * Protocol options.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.ProtocolOptions</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ProtocolOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolOptions the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder protocolOptions(String protocolOptions) {
             doSetProperty("protocolOptions", protocolOptions);
@@ -1208,10 +1466,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option is a: <code>short</code> type.
+         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: connection
+         * 
+         * @param acknowledgeWindow the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder acknowledgeWindow(short acknowledgeWindow) {
             doSetProperty("acknowledgeWindow", acknowledgeWindow);
@@ -1220,10 +1481,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter W - Acknowledgment window.
          * 
-         * The option will be converted to a <code>short</code> type.
+         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
+         * type.
          * 
          * Default: 10
          * Group: connection
+         * 
+         * @param acknowledgeWindow the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder acknowledgeWindow(String acknowledgeWindow) {
             doSetProperty("acknowledgeWindow", acknowledgeWindow);
@@ -1233,10 +1498,12 @@ public interface ServerEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param adsuAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder adsuAddressType(
                 ASDUAddressType adsuAddressType) {
@@ -1247,10 +1514,12 @@ public interface ServerEndpointBuilderFactory {
          * The common ASDU address size. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.ASDUAddressType</code>
-         * type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.ASDUAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param adsuAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder adsuAddressType(String adsuAddressType) {
             doSetProperty("adsuAddressType", adsuAddressType);
@@ -1260,9 +1529,12 @@ public interface ServerEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param causeOfTransmissionType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder causeOfTransmissionType(
                 CauseOfTransmissionType causeOfTransmissionType) {
@@ -1273,9 +1545,12 @@ public interface ServerEndpointBuilderFactory {
          * The cause of transmission type. May be either SIZE_1 or SIZE_2.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.CauseOfTransmissionType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param causeOfTransmissionType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder causeOfTransmissionType(
                 String causeOfTransmissionType) {
@@ -1286,9 +1561,12 @@ public interface ServerEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option is a:
-         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param informationObjectAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder informationObjectAddressType(
                 InformationObjectAddressType informationObjectAddressType) {
@@ -1299,9 +1577,12 @@ public interface ServerEndpointBuilderFactory {
          * The information address size. May be either SIZE_1, SIZE_2 or SIZE_3.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType</code> type.
+         * &lt;code&gt;org.eclipse.neoscada.protocol.iec60870.InformationObjectAddressType&lt;/code&gt; type.
          * 
          * Group: connection
+         * 
+         * @param informationObjectAddressType the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder informationObjectAddressType(
                 String informationObjectAddressType) {
@@ -1311,10 +1592,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option is a: <code>short</code> type.
+         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
          * 
          * Default: 15
          * Group: connection
+         * 
+         * @param maxUnacknowledged the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder maxUnacknowledged(short maxUnacknowledged) {
             doSetProperty("maxUnacknowledged", maxUnacknowledged);
@@ -1323,10 +1607,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Parameter K - Maximum number of un-acknowledged messages.
          * 
-         * The option will be converted to a <code>short</code> type.
+         * The option will be converted to a &lt;code&gt;short&lt;/code&gt;
+         * type.
          * 
          * Default: 15
          * Group: connection
+         * 
+         * @param maxUnacknowledged the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder maxUnacknowledged(String maxUnacknowledged) {
             doSetProperty("maxUnacknowledged", maxUnacknowledged);
@@ -1335,10 +1623,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: connection
+         * 
+         * @param timeout1 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder timeout1(int timeout1) {
             doSetProperty("timeout1", timeout1);
@@ -1347,10 +1638,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T1 in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 15000
          * Group: connection
+         * 
+         * @param timeout1 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder timeout1(String timeout1) {
             doSetProperty("timeout1", timeout1);
@@ -1359,10 +1653,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: connection
+         * 
+         * @param timeout2 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder timeout2(int timeout2) {
             doSetProperty("timeout2", timeout2);
@@ -1371,10 +1668,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T2 in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: connection
+         * 
+         * @param timeout2 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder timeout2(String timeout2) {
             doSetProperty("timeout2", timeout2);
@@ -1383,10 +1683,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: connection
+         * 
+         * @param timeout3 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder timeout3(int timeout3) {
             doSetProperty("timeout3", timeout3);
@@ -1395,10 +1698,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Timeout T3 in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: connection
+         * 
+         * @param timeout3 the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder timeout3(String timeout3) {
             doSetProperty("timeout3", timeout3);
@@ -1407,9 +1713,12 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: data
+         * 
+         * @param causeSourceAddress the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder causeSourceAddress(byte causeSourceAddress) {
             doSetProperty("causeSourceAddress", causeSourceAddress);
@@ -1418,9 +1727,12 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to include the source address.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: data
+         * 
+         * @param causeSourceAddress the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder causeSourceAddress(
                 String causeSourceAddress) {
@@ -1431,10 +1743,13 @@ public interface ServerEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: data
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder connectionTimeout(int connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -1444,10 +1759,13 @@ public interface ServerEndpointBuilderFactory {
          * Timeout in millis to wait for client to establish a connected
          * connection.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: data
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder connectionTimeout(String connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -1456,10 +1774,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: data
+         * 
+         * @param ignoreBackgroundScan the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder ignoreBackgroundScan(
                 boolean ignoreBackgroundScan) {
@@ -1469,10 +1790,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether background scan transmissions should be ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: data
+         * 
+         * @param ignoreBackgroundScan the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder ignoreBackgroundScan(
                 String ignoreBackgroundScan) {
@@ -1482,10 +1807,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: data
+         * 
+         * @param ignoreDaylightSavingTime the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder ignoreDaylightSavingTime(
                 boolean ignoreDaylightSavingTime) {
@@ -1495,10 +1823,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * Whether to ignore or respect DST.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: data
+         * 
+         * @param ignoreDaylightSavingTime the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder ignoreDaylightSavingTime(
                 String ignoreDaylightSavingTime) {
@@ -1508,10 +1840,13 @@ public interface ServerEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option is a: <code>java.util.TimeZone</code> type.
+         * The option is a: &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
          * 
          * Default: UTC
          * Group: data
+         * 
+         * @param timeZone the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder timeZone(TimeZone timeZone) {
             doSetProperty("timeZone", timeZone);
@@ -1520,11 +1855,14 @@ public interface ServerEndpointBuilderFactory {
         /**
          * The timezone to use. May be any Java time zone string.
          * 
-         * The option will be converted to a <code>java.util.TimeZone</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.TimeZone&lt;/code&gt; type.
          * 
          * Default: UTC
          * Group: data
+         * 
+         * @param timeZone the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder timeZone(String timeZone) {
             doSetProperty("timeZone", timeZone);
@@ -1533,9 +1871,12 @@ public interface ServerEndpointBuilderFactory {
         /**
          * An identifier grouping connection instances.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: id
+         * 
+         * @param connectionId the value to set
+         * @return the dsl builder
          */
         default ServerEndpointBuilder connectionId(String connectionId) {
             doSetProperty("connectionId", connectionId);
@@ -1557,10 +1898,13 @@ public interface ServerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedServerEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1570,10 +1914,14 @@ public interface ServerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedServerEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

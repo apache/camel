@@ -50,9 +50,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies a lower bound for datestamp-based selective harvesting. UTC
          * DateTime value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param from the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder from(String from) {
             doSetProperty("from", from);
@@ -62,9 +65,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Identifier of the requested resources. Applicable only with certain
          * verbs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param identifier the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder identifier(String identifier) {
             doSetProperty("identifier", identifier);
@@ -74,10 +80,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies the metadataPrefix of the format that should be included in
          * the metadata part of the returned records.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: oai_dc
          * Group: common
+         * 
+         * @param metadataPrefix the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder metadataPrefix(
                 String metadataPrefix) {
@@ -88,9 +97,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies membership as a criteria for set-based selective
          * harvesting.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param set the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder set(String set) {
             doSetProperty("set", set);
@@ -100,9 +112,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies an upper bound for datestamp-based selective harvesting.
          * UTC DateTime value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param until the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder until(String until) {
             doSetProperty("until", until);
@@ -111,10 +126,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Request name supported by OAI-PMh protocol.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ListRecords
          * Group: common
+         * 
+         * @param verb the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder verb(String verb) {
             doSetProperty("verb", verb);
@@ -129,10 +147,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -148,10 +169,14 @@ public interface OAIPMHEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -162,10 +187,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -176,10 +204,14 @@ public interface OAIPMHEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -190,9 +222,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -203,9 +238,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -216,9 +254,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -229,9 +270,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -246,9 +290,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -263,9 +310,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -275,10 +325,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -287,10 +340,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -300,10 +356,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -313,10 +372,14 @@ public interface OAIPMHEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -325,10 +388,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -337,10 +403,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -351,10 +420,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -365,10 +437,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -378,10 +453,14 @@ public interface OAIPMHEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -393,10 +472,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -409,9 +491,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -424,9 +509,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -437,10 +525,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -450,10 +541,14 @@ public interface OAIPMHEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -463,13 +558,17 @@ public interface OAIPMHEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -481,13 +580,16 @@ public interface OAIPMHEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -496,10 +598,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -509,10 +614,14 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -522,10 +631,14 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -535,10 +648,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -548,10 +664,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -562,10 +681,14 @@ public interface OAIPMHEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -574,10 +697,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Ignore SSL certificate warnings.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ignoreSSLWarnings the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder ignoreSSLWarnings(
                 boolean ignoreSSLWarnings) {
@@ -587,10 +713,14 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Ignore SSL certificate warnings.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ignoreSSLWarnings the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder ignoreSSLWarnings(
                 String ignoreSSLWarnings) {
@@ -600,10 +730,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Causes the defined url to make an https request.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder ssl(boolean ssl) {
             doSetProperty("ssl", ssl);
@@ -612,10 +745,14 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Causes the defined url to make an https request.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointConsumerBuilder ssl(String ssl) {
             doSetProperty("ssl", ssl);
@@ -638,10 +775,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -655,9 +795,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -667,9 +810,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -680,9 +827,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -696,9 +846,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -712,9 +865,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -725,10 +881,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -739,10 +898,14 @@ public interface OAIPMHEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -764,9 +927,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies a lower bound for datestamp-based selective harvesting. UTC
          * DateTime value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param from the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder from(String from) {
             doSetProperty("from", from);
@@ -776,9 +942,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Identifier of the requested resources. Applicable only with certain
          * verbs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param identifier the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder identifier(String identifier) {
             doSetProperty("identifier", identifier);
@@ -788,10 +957,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies the metadataPrefix of the format that should be included in
          * the metadata part of the returned records.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: oai_dc
          * Group: common
+         * 
+         * @param metadataPrefix the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder metadataPrefix(
                 String metadataPrefix) {
@@ -802,9 +974,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies membership as a criteria for set-based selective
          * harvesting.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param set the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder set(String set) {
             doSetProperty("set", set);
@@ -814,9 +989,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies an upper bound for datestamp-based selective harvesting.
          * UTC DateTime value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param until the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder until(String until) {
             doSetProperty("until", until);
@@ -825,10 +1003,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Request name supported by OAI-PMh protocol.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ListRecords
          * Group: common
+         * 
+         * @param verb the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder verb(String verb) {
             doSetProperty("verb", verb);
@@ -845,10 +1026,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -866,10 +1050,14 @@ public interface OAIPMHEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -880,10 +1068,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * Returns the response of a single request. Otherwise it will make
          * requests until there is no more data to return.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param onlyFirst the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder onlyFirst(boolean onlyFirst) {
             doSetProperty("onlyFirst", onlyFirst);
@@ -893,10 +1084,14 @@ public interface OAIPMHEndpointBuilderFactory {
          * Returns the response of a single request. Otherwise it will make
          * requests until there is no more data to return.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param onlyFirst the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder onlyFirst(String onlyFirst) {
             doSetProperty("onlyFirst", onlyFirst);
@@ -905,10 +1100,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Ignore SSL certificate warnings.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ignoreSSLWarnings the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder ignoreSSLWarnings(
                 boolean ignoreSSLWarnings) {
@@ -918,10 +1116,14 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Ignore SSL certificate warnings.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ignoreSSLWarnings the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder ignoreSSLWarnings(
                 String ignoreSSLWarnings) {
@@ -931,10 +1133,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Causes the defined url to make an https request.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder ssl(boolean ssl) {
             doSetProperty("ssl", ssl);
@@ -943,10 +1148,14 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Causes the defined url to make an https request.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointProducerBuilder ssl(String ssl) {
             doSetProperty("ssl", ssl);
@@ -967,10 +1176,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -981,10 +1193,14 @@ public interface OAIPMHEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1007,9 +1223,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies a lower bound for datestamp-based selective harvesting. UTC
          * DateTime value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param from the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder from(String from) {
             doSetProperty("from", from);
@@ -1019,9 +1238,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Identifier of the requested resources. Applicable only with certain
          * verbs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param identifier the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder identifier(String identifier) {
             doSetProperty("identifier", identifier);
@@ -1031,10 +1253,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies the metadataPrefix of the format that should be included in
          * the metadata part of the returned records.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: oai_dc
          * Group: common
+         * 
+         * @param metadataPrefix the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder metadataPrefix(String metadataPrefix) {
             doSetProperty("metadataPrefix", metadataPrefix);
@@ -1044,9 +1269,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies membership as a criteria for set-based selective
          * harvesting.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param set the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder set(String set) {
             doSetProperty("set", set);
@@ -1056,9 +1284,12 @@ public interface OAIPMHEndpointBuilderFactory {
          * Specifies an upper bound for datestamp-based selective harvesting.
          * UTC DateTime value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param until the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder until(String until) {
             doSetProperty("until", until);
@@ -1067,10 +1298,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Request name supported by OAI-PMh protocol.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ListRecords
          * Group: common
+         * 
+         * @param verb the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder verb(String verb) {
             doSetProperty("verb", verb);
@@ -1079,10 +1313,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Ignore SSL certificate warnings.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ignoreSSLWarnings the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder ignoreSSLWarnings(
                 boolean ignoreSSLWarnings) {
@@ -1092,10 +1329,14 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Ignore SSL certificate warnings.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ignoreSSLWarnings the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder ignoreSSLWarnings(String ignoreSSLWarnings) {
             doSetProperty("ignoreSSLWarnings", ignoreSSLWarnings);
@@ -1104,10 +1345,13 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Causes the defined url to make an https request.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder ssl(boolean ssl) {
             doSetProperty("ssl", ssl);
@@ -1116,10 +1360,14 @@ public interface OAIPMHEndpointBuilderFactory {
         /**
          * Causes the defined url to make an https request.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder ssl(String ssl) {
             doSetProperty("ssl", ssl);
@@ -1141,10 +1389,13 @@ public interface OAIPMHEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1154,10 +1405,14 @@ public interface OAIPMHEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedOAIPMHEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

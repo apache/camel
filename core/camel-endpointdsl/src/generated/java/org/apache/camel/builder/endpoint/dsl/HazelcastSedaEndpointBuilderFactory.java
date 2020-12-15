@@ -47,10 +47,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -62,10 +64,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
@@ -76,10 +80,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -91,9 +98,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.hazelcast.core.HazelcastInstance</code> type.
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -105,9 +115,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstanceName the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -123,10 +136,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -142,10 +158,14 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -155,10 +175,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: seda
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -168,10 +191,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: seda
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -182,10 +208,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param onErrorDelay the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder onErrorDelay(
                 int onErrorDelay) {
@@ -196,10 +225,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param onErrorDelay the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder onErrorDelay(
                 String onErrorDelay) {
@@ -212,10 +244,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param pollTimeout the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder pollTimeout(int pollTimeout) {
             doSetProperty("pollTimeout", pollTimeout);
@@ -227,10 +262,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param pollTimeout the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder pollTimeout(
                 String pollTimeout) {
@@ -242,10 +280,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder transacted(
                 boolean transacted) {
@@ -257,10 +298,14 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder transacted(
                 String transacted) {
@@ -271,10 +316,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
@@ -285,10 +333,14 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
@@ -312,10 +364,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -329,9 +384,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -341,9 +399,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -354,9 +416,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -367,10 +432,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -381,10 +449,14 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -407,10 +479,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -422,10 +496,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
@@ -436,10 +512,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -451,9 +530,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.hazelcast.core.HazelcastInstance</code> type.
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -465,9 +547,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstanceName the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -485,10 +570,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -506,10 +594,14 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -519,10 +611,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: seda
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -532,10 +627,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: seda
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -546,10 +644,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param onErrorDelay the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder onErrorDelay(
                 int onErrorDelay) {
@@ -560,10 +661,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param onErrorDelay the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder onErrorDelay(
                 String onErrorDelay) {
@@ -576,10 +680,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param pollTimeout the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder pollTimeout(int pollTimeout) {
             doSetProperty("pollTimeout", pollTimeout);
@@ -591,10 +698,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param pollTimeout the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder pollTimeout(
                 String pollTimeout) {
@@ -606,10 +716,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder transacted(
                 boolean transacted) {
@@ -621,10 +734,14 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder transacted(
                 String transacted) {
@@ -635,10 +752,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
@@ -649,10 +769,14 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointProducerBuilder transferExchange(
                 String transferExchange) {
@@ -674,10 +798,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastSedaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -688,10 +815,14 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastSedaEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -715,10 +846,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -730,10 +863,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder defaultOperation(
                 String defaultOperation) {
@@ -744,10 +879,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -759,9 +897,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.hazelcast.core.HazelcastInstance</code> type.
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -773,9 +914,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstanceName the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -785,10 +929,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: seda
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -798,10 +945,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
         /**
          * To use concurrent consumers polling from the SEDA queue.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: seda
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -812,10 +962,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param onErrorDelay the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder onErrorDelay(int onErrorDelay) {
             doSetProperty("onErrorDelay", onErrorDelay);
@@ -825,10 +978,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Milliseconds before consumer continues polling after an error has
          * occurred.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param onErrorDelay the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder onErrorDelay(String onErrorDelay) {
             doSetProperty("onErrorDelay", onErrorDelay);
@@ -840,10 +996,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param pollTimeout the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder pollTimeout(int pollTimeout) {
             doSetProperty("pollTimeout", pollTimeout);
@@ -855,10 +1014,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * running. Setting a lower value allows the consumer to react more
          * quickly upon shutdown.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: seda
+         * 
+         * @param pollTimeout the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder pollTimeout(String pollTimeout) {
             doSetProperty("pollTimeout", pollTimeout);
@@ -869,10 +1031,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder transacted(boolean transacted) {
             doSetProperty("transacted", transacted);
@@ -883,10 +1048,14 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * messages in the seda queue will only be removed if the transaction
          * commits, which happens when the processing is complete.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder transacted(String transacted) {
             doSetProperty("transacted", transacted);
@@ -896,10 +1065,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder transferExchange(
                 boolean transferExchange) {
@@ -910,10 +1082,14 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * If set to true the whole Exchange will be transfered. If header or
          * body contains not serializable objects, they will be skipped.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: seda
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder transferExchange(
                 String transferExchange) {
@@ -936,10 +1112,13 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastSedaEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -950,10 +1129,14 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastSedaEndpointBuilder synchronous(
                 String synchronous) {

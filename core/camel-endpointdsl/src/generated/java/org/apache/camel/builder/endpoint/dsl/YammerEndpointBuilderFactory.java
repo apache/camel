@@ -50,10 +50,13 @@ public interface YammerEndpointBuilderFactory {
          * Set to true if you want to use raw JSON rather than converting to
          * POJOs.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param useJson the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder useJson(boolean useJson) {
             doSetProperty("useJson", useJson);
@@ -63,10 +66,14 @@ public interface YammerEndpointBuilderFactory {
          * Set to true if you want to use raw JSON rather than converting to
          * POJOs.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param useJson the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder useJson(String useJson) {
             doSetProperty("useJson", useJson);
@@ -81,10 +88,13 @@ public interface YammerEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -100,10 +110,14 @@ public interface YammerEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -113,10 +127,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * Delay between polling in millis.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: consumer
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -125,10 +142,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * Delay between polling in millis.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: consumer
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -138,10 +158,13 @@ public interface YammerEndpointBuilderFactory {
          * Return only the specified number of messages. Works for threaded set
          * to true and threaded set to extended.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder limit(int limit) {
             doSetProperty("limit", limit);
@@ -151,10 +174,13 @@ public interface YammerEndpointBuilderFactory {
          * Return only the specified number of messages. Works for threaded set
          * to true and threaded set to extended.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder limit(String limit) {
             doSetProperty("limit", limit);
@@ -168,10 +194,13 @@ public interface YammerEndpointBuilderFactory {
          * ensure that you do not get duplicate copies of messages already on
          * your page.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param newerThan the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder newerThan(long newerThan) {
             doSetProperty("newerThan", newerThan);
@@ -185,10 +214,13 @@ public interface YammerEndpointBuilderFactory {
          * ensure that you do not get duplicate copies of messages already on
          * your page.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param newerThan the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder newerThan(String newerThan) {
             doSetProperty("newerThan", newerThan);
@@ -201,10 +233,13 @@ public interface YammerEndpointBuilderFactory {
          * you could append olderThan equals to 2912 to your request to get the
          * 20 messages prior to those you're seeing.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param olderThan the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder olderThan(long olderThan) {
             doSetProperty("olderThan", olderThan);
@@ -217,10 +252,13 @@ public interface YammerEndpointBuilderFactory {
          * you could append olderThan equals to 2912 to your request to get the
          * 20 messages prior to those you're seeing.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param olderThan the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder olderThan(String olderThan) {
             doSetProperty("olderThan", olderThan);
@@ -230,10 +268,13 @@ public interface YammerEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -244,10 +285,14 @@ public interface YammerEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -262,9 +307,12 @@ public interface YammerEndpointBuilderFactory {
          * most recent messages, as they are viewed in the default view on the
          * Yammer web interface.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param threaded the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder threaded(String threaded) {
             doSetProperty("threaded", threaded);
@@ -273,9 +321,12 @@ public interface YammerEndpointBuilderFactory {
         /**
          * The user id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder userId(String userId) {
             doSetProperty("userId", userId);
@@ -285,9 +336,12 @@ public interface YammerEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -298,9 +352,12 @@ public interface YammerEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -311,9 +368,12 @@ public interface YammerEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -324,9 +384,12 @@ public interface YammerEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -341,9 +404,12 @@ public interface YammerEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -358,9 +424,12 @@ public interface YammerEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -371,10 +440,13 @@ public interface YammerEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -384,10 +456,14 @@ public interface YammerEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -396,10 +472,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -408,10 +487,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -422,10 +504,13 @@ public interface YammerEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -436,10 +521,13 @@ public interface YammerEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -449,10 +537,14 @@ public interface YammerEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -464,10 +556,13 @@ public interface YammerEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -480,9 +575,12 @@ public interface YammerEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -495,9 +593,12 @@ public interface YammerEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -508,10 +609,13 @@ public interface YammerEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -521,10 +625,14 @@ public interface YammerEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -534,13 +642,17 @@ public interface YammerEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -552,13 +664,16 @@ public interface YammerEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -567,10 +682,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -580,10 +698,14 @@ public interface YammerEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -593,10 +715,14 @@ public interface YammerEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -606,10 +732,13 @@ public interface YammerEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -619,10 +748,13 @@ public interface YammerEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -633,10 +765,14 @@ public interface YammerEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -645,10 +781,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * The access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -657,10 +796,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * The consumer key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: security
+         * 
+         * @param consumerKey the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder consumerKey(String consumerKey) {
             doSetProperty("consumerKey", consumerKey);
@@ -669,10 +811,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * The consumer secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: security
+         * 
+         * @param consumerSecret the value to set
+         * @return the dsl builder
          */
         default YammerEndpointConsumerBuilder consumerSecret(
                 String consumerSecret) {
@@ -696,10 +841,13 @@ public interface YammerEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -713,9 +861,12 @@ public interface YammerEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -725,9 +876,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -738,9 +893,12 @@ public interface YammerEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -754,9 +912,12 @@ public interface YammerEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -770,9 +931,12 @@ public interface YammerEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -783,9 +947,12 @@ public interface YammerEndpointBuilderFactory {
          * To use a specific requester to communicate with Yammer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * &lt;code&gt;org.apache.camel.component.yammer.ApiRequestor&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param requestor the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointConsumerBuilder requestor(Object requestor) {
             doSetProperty("requestor", requestor);
@@ -795,9 +962,12 @@ public interface YammerEndpointBuilderFactory {
          * To use a specific requester to communicate with Yammer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * &lt;code&gt;org.apache.camel.component.yammer.ApiRequestor&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param requestor the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointConsumerBuilder requestor(String requestor) {
             doSetProperty("requestor", requestor);
@@ -807,10 +977,13 @@ public interface YammerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -821,10 +994,14 @@ public interface YammerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -846,10 +1023,13 @@ public interface YammerEndpointBuilderFactory {
          * Set to true if you want to use raw JSON rather than converting to
          * POJOs.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param useJson the value to set
+         * @return the dsl builder
          */
         default YammerEndpointProducerBuilder useJson(boolean useJson) {
             doSetProperty("useJson", useJson);
@@ -859,10 +1039,14 @@ public interface YammerEndpointBuilderFactory {
          * Set to true if you want to use raw JSON rather than converting to
          * POJOs.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param useJson the value to set
+         * @return the dsl builder
          */
         default YammerEndpointProducerBuilder useJson(String useJson) {
             doSetProperty("useJson", useJson);
@@ -879,10 +1063,13 @@ public interface YammerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default YammerEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -900,10 +1087,14 @@ public interface YammerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default YammerEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -913,10 +1104,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * The access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default YammerEndpointProducerBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -925,10 +1119,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * The consumer key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: security
+         * 
+         * @param consumerKey the value to set
+         * @return the dsl builder
          */
         default YammerEndpointProducerBuilder consumerKey(String consumerKey) {
             doSetProperty("consumerKey", consumerKey);
@@ -937,10 +1134,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * The consumer secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: security
+         * 
+         * @param consumerSecret the value to set
+         * @return the dsl builder
          */
         default YammerEndpointProducerBuilder consumerSecret(
                 String consumerSecret) {
@@ -962,9 +1162,12 @@ public interface YammerEndpointBuilderFactory {
          * To use a specific requester to communicate with Yammer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * &lt;code&gt;org.apache.camel.component.yammer.ApiRequestor&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param requestor the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointProducerBuilder requestor(Object requestor) {
             doSetProperty("requestor", requestor);
@@ -974,9 +1177,12 @@ public interface YammerEndpointBuilderFactory {
          * To use a specific requester to communicate with Yammer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * &lt;code&gt;org.apache.camel.component.yammer.ApiRequestor&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param requestor the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointProducerBuilder requestor(String requestor) {
             doSetProperty("requestor", requestor);
@@ -986,10 +1192,13 @@ public interface YammerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1000,10 +1209,14 @@ public interface YammerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1026,10 +1239,13 @@ public interface YammerEndpointBuilderFactory {
          * Set to true if you want to use raw JSON rather than converting to
          * POJOs.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param useJson the value to set
+         * @return the dsl builder
          */
         default YammerEndpointBuilder useJson(boolean useJson) {
             doSetProperty("useJson", useJson);
@@ -1039,10 +1255,14 @@ public interface YammerEndpointBuilderFactory {
          * Set to true if you want to use raw JSON rather than converting to
          * POJOs.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param useJson the value to set
+         * @return the dsl builder
          */
         default YammerEndpointBuilder useJson(String useJson) {
             doSetProperty("useJson", useJson);
@@ -1051,10 +1271,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * The access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default YammerEndpointBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -1063,10 +1286,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * The consumer key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: security
+         * 
+         * @param consumerKey the value to set
+         * @return the dsl builder
          */
         default YammerEndpointBuilder consumerKey(String consumerKey) {
             doSetProperty("consumerKey", consumerKey);
@@ -1075,10 +1301,13 @@ public interface YammerEndpointBuilderFactory {
         /**
          * The consumer secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: security
+         * 
+         * @param consumerSecret the value to set
+         * @return the dsl builder
          */
         default YammerEndpointBuilder consumerSecret(String consumerSecret) {
             doSetProperty("consumerSecret", consumerSecret);
@@ -1100,9 +1329,12 @@ public interface YammerEndpointBuilderFactory {
          * To use a specific requester to communicate with Yammer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * &lt;code&gt;org.apache.camel.component.yammer.ApiRequestor&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param requestor the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointBuilder requestor(Object requestor) {
             doSetProperty("requestor", requestor);
@@ -1112,9 +1344,12 @@ public interface YammerEndpointBuilderFactory {
          * To use a specific requester to communicate with Yammer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * &lt;code&gt;org.apache.camel.component.yammer.ApiRequestor&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param requestor the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointBuilder requestor(String requestor) {
             doSetProperty("requestor", requestor);
@@ -1124,10 +1359,13 @@ public interface YammerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1137,10 +1375,14 @@ public interface YammerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedYammerEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

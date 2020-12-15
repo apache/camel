@@ -46,10 +46,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
@@ -60,10 +63,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
@@ -74,10 +81,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
@@ -88,10 +98,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
@@ -102,10 +116,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Whether auto unsubscribe is enabled in the Continuous Query Consumer.
          * Default value notice: ContinuousQuery.DFLT_AUTO_UNSUBSCRIBE.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoUnsubscribe the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder autoUnsubscribe(
                 boolean autoUnsubscribe) {
@@ -116,10 +133,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Whether auto unsubscribe is enabled in the Continuous Query Consumer.
          * Default value notice: ContinuousQuery.DFLT_AUTO_UNSUBSCRIBE.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoUnsubscribe the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder autoUnsubscribe(
                 String autoUnsubscribe) {
@@ -135,10 +156,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -154,10 +178,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -168,10 +196,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Whether to process existing results that match the query. Used on
          * initialization of the Continuous Query Consumer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param fireExistingQueryResults the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder fireExistingQueryResults(
                 boolean fireExistingQueryResults) {
@@ -182,10 +213,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Whether to process existing results that match the query. Used on
          * initialization of the Continuous Query Consumer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param fireExistingQueryResults the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder fireExistingQueryResults(
                 String fireExistingQueryResults) {
@@ -197,10 +232,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * multiple updates are received in one batch. Only used by the
          * Continuous Query Consumer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param oneExchangePerUpdate the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder oneExchangePerUpdate(
                 boolean oneExchangePerUpdate) {
@@ -212,10 +250,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * multiple updates are received in one batch. Only used by the
          * Continuous Query Consumer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param oneExchangePerUpdate the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder oneExchangePerUpdate(
                 String oneExchangePerUpdate) {
@@ -226,10 +268,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The page size. Only used by the Continuous Query Consumer. Default
          * value notice: ContinuousQuery.DFLT_PAGE_SIZE.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder pageSize(int pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -239,10 +284,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The page size. Only used by the Continuous Query Consumer. Default
          * value notice: ContinuousQuery.DFLT_PAGE_SIZE.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder pageSize(String pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -252,9 +300,12 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The remote filter, only used by the Continuous Query Consumer.
          * 
          * The option is a:
-         * <code>org.apache.ignite.cache.CacheEntryEventSerializableFilter&lt;java.lang.Object, java.lang.Object&gt;</code> type.
+         * &lt;code&gt;org.apache.ignite.cache.CacheEntryEventSerializableFilter&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param remoteFilter the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder remoteFilter(
                 Object remoteFilter) {
@@ -265,9 +316,12 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The remote filter, only used by the Continuous Query Consumer.
          * 
          * The option will be converted to a
-         * <code>org.apache.ignite.cache.CacheEntryEventSerializableFilter&lt;java.lang.Object, java.lang.Object&gt;</code> type.
+         * &lt;code&gt;org.apache.ignite.cache.CacheEntryEventSerializableFilter&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param remoteFilter the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder remoteFilter(
                 String remoteFilter) {
@@ -278,10 +332,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The time interval for the Continuous Query Consumer. Default value
          * notice: ContinuousQuery.DFLT_TIME_INTERVAL.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer
+         * 
+         * @param timeInterval the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder timeInterval(
                 long timeInterval) {
@@ -292,10 +349,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The time interval for the Continuous Query Consumer. Default value
          * notice: ContinuousQuery.DFLT_TIME_INTERVAL.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer
+         * 
+         * @param timeInterval the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointConsumerBuilder timeInterval(
                 String timeInterval) {
@@ -319,10 +379,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -336,9 +399,12 @@ public interface IgniteCacheEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -348,9 +414,13 @@ public interface IgniteCacheEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -361,9 +431,12 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -374,10 +447,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -388,10 +464,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -413,10 +493,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
@@ -427,10 +510,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
@@ -441,10 +528,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
@@ -455,10 +545,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
@@ -470,9 +564,12 @@ public interface IgniteCacheEndpointBuilderFactory {
          * for the Continuous Query Consumer.
          * 
          * The option is a:
-         * <code>org.apache.ignite.cache.query.Query&lt;javax.cache.Cache$Entry&lt;java.lang.Object, java.lang.Object&gt;&gt;</code> type.
+         * &lt;code&gt;org.apache.ignite.cache.query.Query&amp;lt;javax.cache.Cache$Entry&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder query(Object query) {
             doSetProperty("query", query);
@@ -483,9 +580,12 @@ public interface IgniteCacheEndpointBuilderFactory {
          * for the Continuous Query Consumer.
          * 
          * The option will be converted to a
-         * <code>org.apache.ignite.cache.query.Query&lt;javax.cache.Cache$Entry&lt;java.lang.Object, java.lang.Object&gt;&gt;</code> type.
+         * &lt;code&gt;org.apache.ignite.cache.query.Query&amp;lt;javax.cache.Cache$Entry&amp;lt;java.lang.Object, java.lang.Object&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder query(String query) {
             doSetProperty("query", query);
@@ -495,11 +595,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The CachePeekMode, only needed for operations that require it
          * (IgniteCacheOperation#SIZE).
          * 
-         * The option is a: <code>org.apache.ignite.cache.CachePeekMode</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.ignite.cache.CachePeekMode&lt;/code&gt; type.
          * 
          * Default: ALL
          * Group: producer
+         * 
+         * @param cachePeekMode the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder cachePeekMode(
                 CachePeekMode cachePeekMode) {
@@ -511,10 +614,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * (IgniteCacheOperation#SIZE).
          * 
          * The option will be converted to a
-         * <code>org.apache.ignite.cache.CachePeekMode</code> type.
+         * &lt;code&gt;org.apache.ignite.cache.CachePeekMode&lt;/code&gt; type.
          * 
          * Default: ALL
          * Group: producer
+         * 
+         * @param cachePeekMode the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder cachePeekMode(
                 String cachePeekMode) {
@@ -524,10 +630,13 @@ public interface IgniteCacheEndpointBuilderFactory {
         /**
          * Whether to fail the initialization if the cache doesn't exist.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failIfInexistentCache the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder failIfInexistentCache(
                 boolean failIfInexistentCache) {
@@ -537,10 +646,14 @@ public interface IgniteCacheEndpointBuilderFactory {
         /**
          * Whether to fail the initialization if the cache doesn't exist.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failIfInexistentCache the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder failIfInexistentCache(
                 String failIfInexistentCache) {
@@ -558,10 +671,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -579,10 +695,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -594,9 +714,12 @@ public interface IgniteCacheEndpointBuilderFactory {
          * SIZE, REBALANCE, QUERY, CLEAR.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ignite.cache.IgniteCacheOperation</code> type.
+         * &lt;code&gt;org.apache.camel.component.ignite.cache.IgniteCacheOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder operation(
                 IgniteCacheOperation operation) {
@@ -608,9 +731,12 @@ public interface IgniteCacheEndpointBuilderFactory {
          * SIZE, REBALANCE, QUERY, CLEAR.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ignite.cache.IgniteCacheOperation</code> type.
+         * &lt;code&gt;org.apache.camel.component.ignite.cache.IgniteCacheOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -631,10 +757,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -645,10 +774,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -671,10 +804,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
@@ -685,10 +821,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
@@ -699,10 +839,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
@@ -713,10 +856,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteCacheEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
@@ -739,10 +886,13 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -753,10 +903,14 @@ public interface IgniteCacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteCacheEndpointBuilder synchronous(
                 String synchronous) {

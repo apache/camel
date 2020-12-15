@@ -50,10 +50,13 @@ public interface JMXEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
@@ -68,10 +71,14 @@ public interface JMXEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder bridgeErrorHandler(String bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
@@ -82,10 +89,13 @@ public interface JMXEndpointBuilderFactory {
          * notification is serialized to xml. If raw, then the raw java object
          * is set as the body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: xml
          * Group: consumer
+         * 
+         * @param format the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder format(String format) {
             doSetProperty("format", format);
@@ -95,10 +105,13 @@ public interface JMXEndpointBuilderFactory {
          * The frequency to poll the bean to check the monitor (monitor types
          * only).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: consumer
+         * 
+         * @param granularityPeriod the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder granularityPeriod(long granularityPeriod) {
             doSetProperty("granularityPeriod", granularityPeriod);
@@ -108,10 +121,13 @@ public interface JMXEndpointBuilderFactory {
          * The frequency to poll the bean to check the monitor (monitor types
          * only).
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: consumer
+         * 
+         * @param granularityPeriod the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder granularityPeriod(String granularityPeriod) {
             doSetProperty("granularityPeriod", granularityPeriod);
@@ -121,9 +137,12 @@ public interface JMXEndpointBuilderFactory {
          * The type of monitor to create. One of string, gauge, counter (monitor
          * types only).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param monitorType the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder monitorType(String monitorType) {
             doSetProperty("monitorType", monitorType);
@@ -132,10 +151,13 @@ public interface JMXEndpointBuilderFactory {
         /**
          * The domain for the mbean you're connecting to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: consumer
+         * 
+         * @param objectDomain the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder objectDomain(String objectDomain) {
             doSetProperty("objectDomain", objectDomain);
@@ -145,9 +167,12 @@ public interface JMXEndpointBuilderFactory {
          * The name key for the mbean you're connecting to. This value is
          * mutually exclusive with the object properties that get passed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder objectName(String objectName) {
             doSetProperty("objectName", objectName);
@@ -156,9 +181,12 @@ public interface JMXEndpointBuilderFactory {
         /**
          * The attribute to observe for the monitor bean or consumer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param observedAttribute the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder observedAttribute(String observedAttribute) {
             doSetProperty("observedAttribute", observedAttribute);
@@ -168,9 +196,12 @@ public interface JMXEndpointBuilderFactory {
          * Initial threshold for the monitor. The value must exceed this before
          * notifications are fired (counter monitor only).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: counter
+         * 
+         * @param initThreshold the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder initThreshold(int initThreshold) {
             doSetProperty("initThreshold", initThreshold);
@@ -180,9 +211,12 @@ public interface JMXEndpointBuilderFactory {
          * Initial threshold for the monitor. The value must exceed this before
          * notifications are fired (counter monitor only).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: counter
+         * 
+         * @param initThreshold the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder initThreshold(String initThreshold) {
             doSetProperty("initThreshold", initThreshold);
@@ -192,9 +226,12 @@ public interface JMXEndpointBuilderFactory {
          * The value at which the counter is reset to zero (counter monitor
          * only).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: counter
+         * 
+         * @param modulus the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder modulus(int modulus) {
             doSetProperty("modulus", modulus);
@@ -204,9 +241,12 @@ public interface JMXEndpointBuilderFactory {
          * The value at which the counter is reset to zero (counter monitor
          * only).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: counter
+         * 
+         * @param modulus the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder modulus(String modulus) {
             doSetProperty("modulus", modulus);
@@ -216,9 +256,12 @@ public interface JMXEndpointBuilderFactory {
          * The amount to increment the threshold after it's been exceeded
          * (counter monitor only).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: counter
+         * 
+         * @param offset the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder offset(int offset) {
             doSetProperty("offset", offset);
@@ -228,9 +271,12 @@ public interface JMXEndpointBuilderFactory {
          * The amount to increment the threshold after it's been exceeded
          * (counter monitor only).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: counter
+         * 
+         * @param offset the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder offset(String offset) {
             doSetProperty("offset", offset);
@@ -241,10 +287,13 @@ public interface JMXEndpointBuilderFactory {
          * difference from the threshold as opposed to the value itself (counter
          * and gauge monitor only).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: gauge
+         * 
+         * @param differenceMode the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder differenceMode(boolean differenceMode) {
             doSetProperty("differenceMode", differenceMode);
@@ -255,10 +304,14 @@ public interface JMXEndpointBuilderFactory {
          * difference from the threshold as opposed to the value itself (counter
          * and gauge monitor only).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: gauge
+         * 
+         * @param differenceMode the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder differenceMode(String differenceMode) {
             doSetProperty("differenceMode", differenceMode);
@@ -268,10 +321,13 @@ public interface JMXEndpointBuilderFactory {
          * If true, the gauge will fire a notification when the high threshold
          * is exceeded (gauge monitor only).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: gauge
+         * 
+         * @param notifyHigh the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder notifyHigh(boolean notifyHigh) {
             doSetProperty("notifyHigh", notifyHigh);
@@ -281,10 +337,14 @@ public interface JMXEndpointBuilderFactory {
          * If true, the gauge will fire a notification when the high threshold
          * is exceeded (gauge monitor only).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: gauge
+         * 
+         * @param notifyHigh the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder notifyHigh(String notifyHigh) {
             doSetProperty("notifyHigh", notifyHigh);
@@ -294,10 +354,13 @@ public interface JMXEndpointBuilderFactory {
          * If true, the gauge will fire a notification when the low threshold is
          * exceeded (gauge monitor only).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: gauge
+         * 
+         * @param notifyLow the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder notifyLow(boolean notifyLow) {
             doSetProperty("notifyLow", notifyLow);
@@ -307,10 +370,14 @@ public interface JMXEndpointBuilderFactory {
          * If true, the gauge will fire a notification when the low threshold is
          * exceeded (gauge monitor only).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: gauge
+         * 
+         * @param notifyLow the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder notifyLow(String notifyLow) {
             doSetProperty("notifyLow", notifyLow);
@@ -319,9 +386,12 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Value for the gauge's high threshold (gauge monitor only).
          * 
-         * The option is a: <code>java.lang.Double</code> type.
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: gauge
+         * 
+         * @param thresholdHigh the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder thresholdHigh(Double thresholdHigh) {
             doSetProperty("thresholdHigh", thresholdHigh);
@@ -330,9 +400,13 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Value for the gauge's high threshold (gauge monitor only).
          * 
-         * The option will be converted to a <code>java.lang.Double</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: gauge
+         * 
+         * @param thresholdHigh the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder thresholdHigh(String thresholdHigh) {
             doSetProperty("thresholdHigh", thresholdHigh);
@@ -341,9 +415,12 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Value for the gauge's low threshold (gauge monitor only).
          * 
-         * The option is a: <code>java.lang.Double</code> type.
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: gauge
+         * 
+         * @param thresholdLow the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder thresholdLow(Double thresholdLow) {
             doSetProperty("thresholdLow", thresholdLow);
@@ -352,9 +429,13 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Value for the gauge's low threshold (gauge monitor only).
          * 
-         * The option will be converted to a <code>java.lang.Double</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: gauge
+         * 
+         * @param thresholdLow the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder thresholdLow(String thresholdLow) {
             doSetProperty("thresholdLow", thresholdLow);
@@ -363,9 +444,12 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Credentials for making a remote connection.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -374,9 +458,12 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Credentials for making a remote connection.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder user(String user) {
             doSetProperty("user", user);
@@ -388,10 +475,13 @@ public interface JMXEndpointBuilderFactory {
          * the consumer will notify match if observed attribute and string to
          * compare has been configured.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: string
+         * 
+         * @param notifyDiffer the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder notifyDiffer(boolean notifyDiffer) {
             doSetProperty("notifyDiffer", notifyDiffer);
@@ -403,10 +493,14 @@ public interface JMXEndpointBuilderFactory {
          * the consumer will notify match if observed attribute and string to
          * compare has been configured.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: string
+         * 
+         * @param notifyDiffer the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder notifyDiffer(String notifyDiffer) {
             doSetProperty("notifyDiffer", notifyDiffer);
@@ -418,10 +512,13 @@ public interface JMXEndpointBuilderFactory {
          * consumer will notify match if observed attribute and string to
          * compare has been configured.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: string
+         * 
+         * @param notifyMatch the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder notifyMatch(boolean notifyMatch) {
             doSetProperty("notifyMatch", notifyMatch);
@@ -433,10 +530,14 @@ public interface JMXEndpointBuilderFactory {
          * consumer will notify match if observed attribute and string to
          * compare has been configured.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: string
+         * 
+         * @param notifyMatch the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder notifyMatch(String notifyMatch) {
             doSetProperty("notifyMatch", notifyMatch);
@@ -447,9 +548,12 @@ public interface JMXEndpointBuilderFactory {
          * default the consumer will notify match if observed attribute and
          * string to compare has been configured.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: string
+         * 
+         * @param stringToCompare the value to set
+         * @return the dsl builder
          */
         default JMXEndpointBuilder stringToCompare(String stringToCompare) {
             doSetProperty("stringToCompare", stringToCompare);
@@ -472,10 +576,13 @@ public interface JMXEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -489,9 +596,12 @@ public interface JMXEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -501,9 +611,13 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -514,9 +628,12 @@ public interface JMXEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -527,10 +644,13 @@ public interface JMXEndpointBuilderFactory {
          * To use a custom shared thread pool for the consumers. By default each
          * consume has their own thread-pool to process and route notifications.
          * 
-         * The option is a: <code>java.util.concurrent.ExecutorService</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.ExecutorService&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param executorService the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder executorService(
                 ExecutorService executorService) {
@@ -542,9 +662,12 @@ public interface JMXEndpointBuilderFactory {
          * consume has their own thread-pool to process and route notifications.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ExecutorService&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param executorService the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder executorService(
                 String executorService) {
@@ -556,9 +679,12 @@ public interface JMXEndpointBuilderFactory {
          * This value will be put in the message header with the key
          * jmx.handback.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param handback the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder handback(Object handback) {
             doSetProperty("handback", handback);
@@ -569,9 +695,13 @@ public interface JMXEndpointBuilderFactory {
          * This value will be put in the message header with the key
          * jmx.handback.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param handback the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder handback(String handback) {
             doSetProperty("handback", handback);
@@ -580,10 +710,13 @@ public interface JMXEndpointBuilderFactory {
         /**
          * Reference to a bean that implements the NotificationFilter.
          * 
-         * The option is a: <code>javax.management.NotificationFilter</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.management.NotificationFilter&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param notificationFilter the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder notificationFilter(
                 Object notificationFilter) {
@@ -594,9 +727,12 @@ public interface JMXEndpointBuilderFactory {
          * Reference to a bean that implements the NotificationFilter.
          * 
          * The option will be converted to a
-         * <code>javax.management.NotificationFilter</code> type.
+         * &lt;code&gt;javax.management.NotificationFilter&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param notificationFilter the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder notificationFilter(
                 String notificationFilter) {
@@ -607,13 +743,17 @@ public interface JMXEndpointBuilderFactory {
          * Properties for the object name. These values will be used if the
          * objectName param is not set.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * objectProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder objectProperties(
                 String key,
@@ -625,13 +765,16 @@ public interface JMXEndpointBuilderFactory {
          * Properties for the object name. These values will be used if the
          * objectName param is not set.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * objectProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder objectProperties(Map values) {
             doSetMultiValueProperties("objectProperties", "key.", values);
@@ -642,10 +785,13 @@ public interface JMXEndpointBuilderFactory {
          * establishment of the initial connection or attempt to reconnect a
          * lost connection.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: advanced
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder reconnectDelay(int reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
@@ -656,10 +802,13 @@ public interface JMXEndpointBuilderFactory {
          * establishment of the initial connection or attempt to reconnect a
          * lost connection.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: advanced
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder reconnectDelay(String reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
@@ -671,10 +820,13 @@ public interface JMXEndpointBuilderFactory {
          * re-establish the JMX connection every 'x' seconds until the
          * connection is made-- where 'x' is the configured reconnectionDelay.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param reconnectOnConnectionFailure the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder reconnectOnConnectionFailure(
                 boolean reconnectOnConnectionFailure) {
@@ -687,10 +839,14 @@ public interface JMXEndpointBuilderFactory {
          * re-establish the JMX connection every 'x' seconds until the
          * connection is made-- where 'x' is the configured reconnectionDelay.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param reconnectOnConnectionFailure the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder reconnectOnConnectionFailure(
                 String reconnectOnConnectionFailure) {
@@ -701,10 +857,13 @@ public interface JMXEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -714,10 +873,14 @@ public interface JMXEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -729,10 +892,13 @@ public interface JMXEndpointBuilderFactory {
          * to establish the JMX connection every 'x' seconds until the
          * connection is made -- where 'x' is the configured reconnectionDelay.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
@@ -745,10 +911,14 @@ public interface JMXEndpointBuilderFactory {
          * to establish the JMX connection every 'x' seconds until the
          * connection is made -- where 'x' is the configured reconnectionDelay.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
          */
         default AdvancedJMXEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {

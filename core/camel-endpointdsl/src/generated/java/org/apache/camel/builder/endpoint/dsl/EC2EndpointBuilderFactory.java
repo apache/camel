@@ -42,10 +42,13 @@ public interface EC2EndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder autoDiscoverClient(boolean autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -56,10 +59,14 @@ public interface EC2EndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -68,9 +75,12 @@ public interface EC2EndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -79,10 +89,13 @@ public interface EC2EndpointBuilderFactory {
         /**
          * To use a existing configured AmazonEC2Client as client.
          * 
-         * The option is a: <code>com.amazonaws.services.ec2.AmazonEC2</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.ec2.AmazonEC2&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonEc2Client the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder amazonEc2Client(Object amazonEc2Client) {
             doSetProperty("amazonEc2Client", amazonEc2Client);
@@ -92,9 +105,12 @@ public interface EC2EndpointBuilderFactory {
          * To use a existing configured AmazonEC2Client as client.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.ec2.AmazonEC2</code> type.
+         * &lt;code&gt;com.amazonaws.services.ec2.AmazonEC2&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonEc2Client the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder amazonEc2Client(String amazonEc2Client) {
             doSetProperty("amazonEc2Client", amazonEc2Client);
@@ -111,10 +127,13 @@ public interface EC2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -131,10 +150,14 @@ public interface EC2EndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -147,10 +170,13 @@ public interface EC2EndpointBuilderFactory {
          * unmonitorInstances, createTags or deleteTags.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.ec2.EC2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.ec2.EC2Operations&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder operation(EC2Operations operation) {
             doSetProperty("operation", operation);
@@ -163,10 +189,13 @@ public interface EC2EndpointBuilderFactory {
          * unmonitorInstances, createTags or deleteTags.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.aws.ec2.EC2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.ec2.EC2Operations&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -175,9 +204,12 @@ public interface EC2EndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the EC2 client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -186,9 +218,12 @@ public interface EC2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the EC2 client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -197,10 +232,13 @@ public interface EC2EndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the EC2 client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -209,10 +247,14 @@ public interface EC2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the EC2 client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -221,11 +263,14 @@ public interface EC2EndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the EC2 client.
          * 
-         * The option will be converted to a <code>com.amazonaws.Protocol</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -237,9 +282,12 @@ public interface EC2EndpointBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -248,9 +296,12 @@ public interface EC2EndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default EC2EndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -272,10 +323,13 @@ public interface EC2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEC2EndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -285,10 +339,14 @@ public interface EC2EndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEC2EndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

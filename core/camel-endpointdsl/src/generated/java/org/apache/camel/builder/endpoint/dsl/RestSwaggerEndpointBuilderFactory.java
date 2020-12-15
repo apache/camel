@@ -45,9 +45,12 @@ public interface RestSwaggerEndpointBuilderFactory {
          * value present in Swagger specification and in the component
          * configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param basePath the value to set
+         * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder basePath(String basePath) {
             doSetProperty("basePath", basePath);
@@ -60,9 +63,12 @@ public interface RestSwaggerEndpointBuilderFactory {
          * is searched for single component that implements RestProducerFactory
          * SPI. Overrides component configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param componentName the value to set
+         * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder componentName(String componentName) {
             doSetProperty("componentName", componentName);
@@ -75,9 +81,12 @@ public interface RestSwaggerEndpointBuilderFactory {
          * value of Accept HTTP header. If set overrides any value found in the
          * Swagger specification and. in the component configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param consumes the value to set
+         * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder consumes(String consumes) {
             doSetProperty("consumes", consumes);
@@ -92,9 +101,12 @@ public interface RestSwaggerEndpointBuilderFactory {
          * configuration last. If set overrides any value found in the Swagger
          * specification, RestConfiguration. Overrides all other configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder host(String host) {
             doSetProperty("host", host);
@@ -111,10 +123,13 @@ public interface RestSwaggerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -132,10 +147,14 @@ public interface RestSwaggerEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -148,9 +167,12 @@ public interface RestSwaggerEndpointBuilderFactory {
          * of Content-Type HTTP header. If set overrides any value present in
          * the Swagger specification. Overrides all other configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param produces the value to set
+         * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder produces(String produces) {
             doSetProperty("produces", produces);
@@ -160,9 +182,12 @@ public interface RestSwaggerEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -173,9 +198,12 @@ public interface RestSwaggerEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -197,10 +225,13 @@ public interface RestSwaggerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestSwaggerEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -211,10 +242,14 @@ public interface RestSwaggerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestSwaggerEndpointBuilder synchronous(
                 String synchronous) {

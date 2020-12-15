@@ -44,10 +44,13 @@ public interface JsonataEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -61,10 +64,14 @@ public interface JsonataEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder allowContextMapAll(
                 String allowContextMapAll) {
@@ -74,10 +81,13 @@ public interface JsonataEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -86,10 +96,14 @@ public interface JsonataEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -99,10 +113,13 @@ public interface JsonataEndpointBuilderFactory {
          * Specifies if the output should be Jackson JsonNode or a JSON String.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jsonata.JsonataInputOutputType&lt;/code&gt; type.
          * 
          * Default: Jackson
          * Group: producer
+         * 
+         * @param inputType the value to set
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder inputType(
                 JsonataInputOutputType inputType) {
@@ -113,10 +130,13 @@ public interface JsonataEndpointBuilderFactory {
          * Specifies if the output should be Jackson JsonNode or a JSON String.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jsonata.JsonataInputOutputType&lt;/code&gt; type.
          * 
          * Default: Jackson
          * Group: producer
+         * 
+         * @param inputType the value to set
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder inputType(String inputType) {
             doSetProperty("inputType", inputType);
@@ -133,10 +153,13 @@ public interface JsonataEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -154,10 +177,14 @@ public interface JsonataEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -168,10 +195,13 @@ public interface JsonataEndpointBuilderFactory {
          * Specifies if the output should be Jackson JsonNode or a JSON String.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jsonata.JsonataInputOutputType&lt;/code&gt; type.
          * 
          * Default: Jackson
          * Group: producer
+         * 
+         * @param outputType the value to set
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder outputType(
                 JsonataInputOutputType outputType) {
@@ -182,10 +212,13 @@ public interface JsonataEndpointBuilderFactory {
          * Specifies if the output should be Jackson JsonNode or a JSON String.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.jsonata.JsonataInputOutputType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jsonata.JsonataInputOutputType&lt;/code&gt; type.
          * 
          * Default: Jackson
          * Group: producer
+         * 
+         * @param outputType the value to set
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder outputType(String outputType) {
             doSetProperty("outputType", outputType);
@@ -206,10 +239,13 @@ public interface JsonataEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJsonataEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -219,10 +255,14 @@ public interface JsonataEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJsonataEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

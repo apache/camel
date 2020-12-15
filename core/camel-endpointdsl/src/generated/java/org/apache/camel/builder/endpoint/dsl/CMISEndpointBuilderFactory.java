@@ -44,10 +44,13 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Number of nodes to retrieve per page.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder pageSize(int pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -56,10 +59,13 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Number of nodes to retrieve per page.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder pageSize(String pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -69,10 +75,13 @@ public interface CMISEndpointBuilderFactory {
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param readContent the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder readContent(boolean readContent) {
             doSetProperty("readContent", readContent);
@@ -82,10 +91,14 @@ public interface CMISEndpointBuilderFactory {
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param readContent the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder readContent(String readContent) {
             doSetProperty("readContent", readContent);
@@ -94,9 +107,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Max number of nodes to read.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readCount the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder readCount(int readCount) {
             doSetProperty("readCount", readCount);
@@ -105,9 +121,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Max number of nodes to read.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readCount the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder readCount(String readCount) {
             doSetProperty("readCount", readCount);
@@ -117,9 +136,12 @@ public interface CMISEndpointBuilderFactory {
          * The Id of the repository to use. If not specified the first available
          * repository is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryId the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder repositoryId(String repositoryId) {
             doSetProperty("repositoryId", repositoryId);
@@ -134,10 +156,13 @@ public interface CMISEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -153,10 +178,14 @@ public interface CMISEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -168,9 +197,12 @@ public interface CMISEndpointBuilderFactory {
          * the consumer will retrieve every node from the content repository by
          * iterating the content tree recursively.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder query(String query) {
             doSetProperty("query", query);
@@ -179,9 +211,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Password for the cmis repository.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -190,9 +225,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Username for the cmis repository.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CMISEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -215,10 +253,13 @@ public interface CMISEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -232,9 +273,12 @@ public interface CMISEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -244,9 +288,13 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -257,9 +305,12 @@ public interface CMISEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -271,10 +322,12 @@ public interface CMISEndpointBuilderFactory {
          * CMISSessionFacade instances.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cmis.CMISSessionFacadeFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionFacadeFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
@@ -286,10 +339,12 @@ public interface CMISEndpointBuilderFactory {
          * CMISSessionFacade instances.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cmis.CMISSessionFacadeFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionFacadeFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointConsumerBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
@@ -300,10 +355,13 @@ public interface CMISEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -314,10 +372,14 @@ public interface CMISEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -338,10 +400,13 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Number of nodes to retrieve per page.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder pageSize(int pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -350,10 +415,13 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Number of nodes to retrieve per page.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder pageSize(String pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -363,10 +431,13 @@ public interface CMISEndpointBuilderFactory {
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param readContent the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder readContent(boolean readContent) {
             doSetProperty("readContent", readContent);
@@ -376,10 +447,14 @@ public interface CMISEndpointBuilderFactory {
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param readContent the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder readContent(String readContent) {
             doSetProperty("readContent", readContent);
@@ -388,9 +463,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Max number of nodes to read.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readCount the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder readCount(int readCount) {
             doSetProperty("readCount", readCount);
@@ -399,9 +477,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Max number of nodes to read.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readCount the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder readCount(String readCount) {
             doSetProperty("readCount", readCount);
@@ -411,9 +492,12 @@ public interface CMISEndpointBuilderFactory {
          * The Id of the repository to use. If not specified the first available
          * repository is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryId the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder repositoryId(String repositoryId) {
             doSetProperty("repositoryId", repositoryId);
@@ -430,10 +514,13 @@ public interface CMISEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -451,10 +538,14 @@ public interface CMISEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -465,10 +556,13 @@ public interface CMISEndpointBuilderFactory {
          * If true, will execute the cmis query from the message body and return
          * result, otherwise will create a node in the cmis repository.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param queryMode the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder queryMode(boolean queryMode) {
             doSetProperty("queryMode", queryMode);
@@ -478,10 +572,14 @@ public interface CMISEndpointBuilderFactory {
          * If true, will execute the cmis query from the message body and return
          * result, otherwise will create a node in the cmis repository.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param queryMode the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder queryMode(String queryMode) {
             doSetProperty("queryMode", queryMode);
@@ -490,9 +588,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Password for the cmis repository.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -501,9 +602,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Username for the cmis repository.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CMISEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -525,10 +629,12 @@ public interface CMISEndpointBuilderFactory {
          * CMISSessionFacade instances.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cmis.CMISSessionFacadeFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionFacadeFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
@@ -540,10 +646,12 @@ public interface CMISEndpointBuilderFactory {
          * CMISSessionFacade instances.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cmis.CMISSessionFacadeFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionFacadeFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointProducerBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
@@ -554,10 +662,13 @@ public interface CMISEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -568,10 +679,14 @@ public interface CMISEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -593,10 +708,13 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Number of nodes to retrieve per page.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default CMISEndpointBuilder pageSize(int pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -605,10 +723,13 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Number of nodes to retrieve per page.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: common
+         * 
+         * @param pageSize the value to set
+         * @return the dsl builder
          */
         default CMISEndpointBuilder pageSize(String pageSize) {
             doSetProperty("pageSize", pageSize);
@@ -618,10 +739,13 @@ public interface CMISEndpointBuilderFactory {
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param readContent the value to set
+         * @return the dsl builder
          */
         default CMISEndpointBuilder readContent(boolean readContent) {
             doSetProperty("readContent", readContent);
@@ -631,10 +755,14 @@ public interface CMISEndpointBuilderFactory {
          * If set to true, the content of document node will be retrieved in
          * addition to the properties.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param readContent the value to set
+         * @return the dsl builder
          */
         default CMISEndpointBuilder readContent(String readContent) {
             doSetProperty("readContent", readContent);
@@ -643,9 +771,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Max number of nodes to read.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readCount the value to set
+         * @return the dsl builder
          */
         default CMISEndpointBuilder readCount(int readCount) {
             doSetProperty("readCount", readCount);
@@ -654,9 +785,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Max number of nodes to read.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readCount the value to set
+         * @return the dsl builder
          */
         default CMISEndpointBuilder readCount(String readCount) {
             doSetProperty("readCount", readCount);
@@ -666,9 +800,12 @@ public interface CMISEndpointBuilderFactory {
          * The Id of the repository to use. If not specified the first available
          * repository is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param repositoryId the value to set
+         * @return the dsl builder
          */
         default CMISEndpointBuilder repositoryId(String repositoryId) {
             doSetProperty("repositoryId", repositoryId);
@@ -677,9 +814,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Password for the cmis repository.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CMISEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -688,9 +828,12 @@ public interface CMISEndpointBuilderFactory {
         /**
          * Username for the cmis repository.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CMISEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -713,10 +856,12 @@ public interface CMISEndpointBuilderFactory {
          * CMISSessionFacade instances.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cmis.CMISSessionFacadeFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionFacadeFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointBuilder sessionFacadeFactory(
                 Object sessionFacadeFactory) {
@@ -728,10 +873,12 @@ public interface CMISEndpointBuilderFactory {
          * CMISSessionFacade instances.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cmis.CMISSessionFacadeFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.cmis.CMISSessionFacadeFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionFacadeFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointBuilder sessionFacadeFactory(
                 String sessionFacadeFactory) {
@@ -742,10 +889,13 @@ public interface CMISEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -755,10 +905,14 @@ public interface CMISEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCMISEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

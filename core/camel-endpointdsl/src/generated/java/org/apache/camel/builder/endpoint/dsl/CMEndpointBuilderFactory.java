@@ -40,10 +40,13 @@ public interface CMEndpointBuilderFactory {
         /**
          * This is the sender name. The maximum length is 11 characters.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param defaultFrom the value to set
+         * @return the dsl builder
          */
         default CMEndpointBuilder defaultFrom(String defaultFrom) {
             doSetProperty("defaultFrom", defaultFrom);
@@ -55,10 +58,13 @@ public interface CMEndpointBuilderFactory {
          * larger than 160 characters, if so, the message will be cut into
          * multiple 153 characters parts limited by these parameters.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8
          * Group: producer
+         * 
+         * @param defaultMaxNumberOfParts the value to set
+         * @return the dsl builder
          */
         default CMEndpointBuilder defaultMaxNumberOfParts(
                 int defaultMaxNumberOfParts) {
@@ -71,10 +77,13 @@ public interface CMEndpointBuilderFactory {
          * larger than 160 characters, if so, the message will be cut into
          * multiple 153 characters parts limited by these parameters.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8
          * Group: producer
+         * 
+         * @param defaultMaxNumberOfParts the value to set
+         * @return the dsl builder
          */
         default CMEndpointBuilder defaultMaxNumberOfParts(
                 String defaultMaxNumberOfParts) {
@@ -92,10 +101,13 @@ public interface CMEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CMEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -112,10 +124,14 @@ public interface CMEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CMEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -124,10 +140,13 @@ public interface CMEndpointBuilderFactory {
         /**
          * The unique token to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param productToken the value to set
+         * @return the dsl builder
          */
         default CMEndpointBuilder productToken(String productToken) {
             doSetProperty("productToken", productToken);
@@ -136,10 +155,13 @@ public interface CMEndpointBuilderFactory {
         /**
          * Whether to test the connection to the SMS Gateway on startup.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
          */
         default CMEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
@@ -149,10 +171,14 @@ public interface CMEndpointBuilderFactory {
         /**
          * Whether to test the connection to the SMS Gateway on startup.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
          */
         default CMEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
@@ -174,10 +200,13 @@ public interface CMEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCMEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -187,10 +216,14 @@ public interface CMEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCMEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

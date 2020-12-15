@@ -48,10 +48,13 @@ public interface SipEndpointBuilderFactory {
          * connection creation. This is useful if the connection is used for
          * long running conversations.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param cacheConnections the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder cacheConnections(
                 boolean cacheConnections) {
@@ -63,10 +66,14 @@ public interface SipEndpointBuilderFactory {
          * connection creation. This is useful if the connection is used for
          * long running conversations.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param cacheConnections the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder cacheConnections(
                 String cacheConnections) {
@@ -76,10 +83,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for contentSubType can be set to any valid MimeSubType.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: plain
          * Group: common
+         * 
+         * @param contentSubType the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder contentSubType(String contentSubType) {
             doSetProperty("contentSubType", contentSubType);
@@ -88,10 +98,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for contentType can be set to any valid MimeType.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder contentType(String contentType) {
             doSetProperty("contentType", contentType);
@@ -100,9 +113,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for a String based event type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventHeaderName the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder eventHeaderName(
                 String eventHeaderName) {
@@ -113,9 +129,12 @@ public interface SipEndpointBuilderFactory {
          * Setting for a String based event Id. Mandatory setting unless a
          * registry based FromHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventId the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder eventId(String eventId) {
             doSetProperty("eventId", eventId);
@@ -125,9 +144,12 @@ public interface SipEndpointBuilderFactory {
          * Hostname of the message originator. Mandatory setting unless a
          * registry based FromHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromHost the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder fromHost(String fromHost) {
             doSetProperty("fromHost", fromHost);
@@ -137,9 +159,12 @@ public interface SipEndpointBuilderFactory {
          * Port of the message originator. Mandatory setting unless a registry
          * based FromHeader is specified.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder fromPort(int fromPort) {
             doSetProperty("fromPort", fromPort);
@@ -149,9 +174,12 @@ public interface SipEndpointBuilderFactory {
          * Port of the message originator. Mandatory setting unless a registry
          * based FromHeader is specified.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder fromPort(String fromPort) {
             doSetProperty("fromPort", fromPort);
@@ -161,9 +189,12 @@ public interface SipEndpointBuilderFactory {
          * Username of the message originator. Mandatory setting unless a
          * registry based custom FromHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromUser the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder fromUser(String fromUser) {
             doSetProperty("fromUser", fromUser);
@@ -173,10 +204,13 @@ public interface SipEndpointBuilderFactory {
          * The amount of time a message received at an endpoint is considered
          * valid.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3600
          * Group: common
+         * 
+         * @param msgExpiration the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder msgExpiration(int msgExpiration) {
             doSetProperty("msgExpiration", msgExpiration);
@@ -186,10 +220,13 @@ public interface SipEndpointBuilderFactory {
          * The amount of time a message received at an endpoint is considered
          * valid.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3600
          * Group: common
+         * 
+         * @param msgExpiration the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder msgExpiration(String msgExpiration) {
             doSetProperty("msgExpiration", msgExpiration);
@@ -199,10 +236,13 @@ public interface SipEndpointBuilderFactory {
          * Setting for specifying amount of time to wait for a Response and/or
          * Acknowledgement can be received from another SIP stack.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param receiveTimeoutMillis the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder receiveTimeoutMillis(
                 long receiveTimeoutMillis) {
@@ -213,10 +253,13 @@ public interface SipEndpointBuilderFactory {
          * Setting for specifying amount of time to wait for a Response and/or
          * Acknowledgement can be received from another SIP stack.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param receiveTimeoutMillis the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder receiveTimeoutMillis(
                 String receiveTimeoutMillis) {
@@ -226,10 +269,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Name of the SIP Stack instance associated with an SIP Endpoint.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: NAME_NOT_SET
          * Group: common
+         * 
+         * @param stackName the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder stackName(String stackName) {
             doSetProperty("stackName", stackName);
@@ -239,9 +285,12 @@ public interface SipEndpointBuilderFactory {
          * Hostname of the message receiver. Mandatory setting unless a registry
          * based ToHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toHost the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder toHost(String toHost) {
             doSetProperty("toHost", toHost);
@@ -251,9 +300,12 @@ public interface SipEndpointBuilderFactory {
          * Portname of the message receiver. Mandatory setting unless a registry
          * based ToHeader is specified.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder toPort(int toPort) {
             doSetProperty("toPort", toPort);
@@ -263,9 +315,12 @@ public interface SipEndpointBuilderFactory {
          * Portname of the message receiver. Mandatory setting unless a registry
          * based ToHeader is specified.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder toPort(String toPort) {
             doSetProperty("toPort", toPort);
@@ -275,9 +330,12 @@ public interface SipEndpointBuilderFactory {
          * Username of the message receiver. Mandatory setting unless a registry
          * based custom ToHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUser the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder toUser(String toUser) {
             doSetProperty("toUser", toUser);
@@ -287,10 +345,13 @@ public interface SipEndpointBuilderFactory {
          * Setting for choice of transport protocol. Valid choices are tcp or
          * udp.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: common
+         * 
+         * @param transport the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder transport(String transport) {
             doSetProperty("transport", transport);
@@ -305,10 +366,13 @@ public interface SipEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -324,10 +388,14 @@ public interface SipEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -338,10 +406,13 @@ public interface SipEndpointBuilderFactory {
          * This setting is used to determine whether the kind of header
          * (FromHeader,ToHeader etc) that needs to be created for this endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param consumer the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder consumer(boolean consumer) {
             doSetProperty("consumer", consumer);
@@ -351,10 +422,14 @@ public interface SipEndpointBuilderFactory {
          * This setting is used to determine whether the kind of header
          * (FromHeader,ToHeader etc) that needs to be created for this endpoint.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param consumer the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder consumer(String consumer) {
             doSetProperty("consumer", consumer);
@@ -366,10 +441,13 @@ public interface SipEndpointBuilderFactory {
          * with a basic Presence Agent (for testing purposes only). Consumers
          * have to set this flag to true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param presenceAgent the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder presenceAgent(boolean presenceAgent) {
             doSetProperty("presenceAgent", presenceAgent);
@@ -381,10 +459,14 @@ public interface SipEndpointBuilderFactory {
          * with a basic Presence Agent (for testing purposes only). Consumers
          * have to set this flag to true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param presenceAgent the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder presenceAgent(String presenceAgent) {
             doSetProperty("presenceAgent", presenceAgent);
@@ -393,9 +475,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Name of client debug log file to use for logging.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: logging
+         * 
+         * @param implementationDebugLogFile the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder implementationDebugLogFile(
                 String implementationDebugLogFile) {
@@ -405,9 +490,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Name of server log file to use for logging.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: logging
+         * 
+         * @param implementationServerLogFile the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder implementationServerLogFile(
                 String implementationServerLogFile) {
@@ -417,10 +505,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Logging level for tracing.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: logging
+         * 
+         * @param implementationTraceLevel the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder implementationTraceLevel(
                 String implementationTraceLevel) {
@@ -430,9 +521,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Number of maximum proxy forwards.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param maxForwards the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder maxForwards(int maxForwards) {
             doSetProperty("maxForwards", maxForwards);
@@ -441,9 +535,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Number of maximum proxy forwards.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param maxForwards the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder maxForwards(String maxForwards) {
             doSetProperty("maxForwards", maxForwards);
@@ -453,10 +550,13 @@ public interface SipEndpointBuilderFactory {
          * This setting is used when requests are sent to the Presence Agent via
          * a proxy.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: proxy
+         * 
+         * @param useRouterForAllUris the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder useRouterForAllUris(
                 boolean useRouterForAllUris) {
@@ -467,10 +567,14 @@ public interface SipEndpointBuilderFactory {
          * This setting is used when requests are sent to the Presence Agent via
          * a proxy.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: proxy
+         * 
+         * @param useRouterForAllUris the value to set
+         * @return the dsl builder
          */
         default SipEndpointConsumerBuilder useRouterForAllUris(
                 String useRouterForAllUris) {
@@ -494,10 +598,13 @@ public interface SipEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -511,9 +618,12 @@ public interface SipEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -523,9 +633,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -536,9 +650,12 @@ public interface SipEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -548,9 +665,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom AddressFactory.
          * 
-         * The option is a: <code>javax.sip.address.AddressFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.address.AddressFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param addressFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder addressFactory(
                 Object addressFactory) {
@@ -561,9 +682,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom AddressFactory.
          * 
          * The option will be converted to a
-         * <code>javax.sip.address.AddressFactory</code> type.
+         * &lt;code&gt;javax.sip.address.AddressFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param addressFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder addressFactory(
                 String addressFactory) {
@@ -574,9 +698,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing call details. Must implement the
          * type javax.sip.header.CallIdHeader.
          * 
-         * The option is a: <code>javax.sip.header.CallIdHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.CallIdHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param callIdHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder callIdHeader(
                 Object callIdHeader) {
@@ -588,9 +716,12 @@ public interface SipEndpointBuilderFactory {
          * type javax.sip.header.CallIdHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.CallIdHeader</code> type.
+         * &lt;code&gt;javax.sip.header.CallIdHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param callIdHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder callIdHeader(
                 String callIdHeader) {
@@ -602,9 +733,13 @@ public interface SipEndpointBuilderFactory {
          * (email, phone number etc). Must implement the type
          * javax.sip.header.ContactHeader.
          * 
-         * The option is a: <code>javax.sip.header.ContactHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ContactHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contactHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder contactHeader(
                 Object contactHeader) {
@@ -617,9 +752,12 @@ public interface SipEndpointBuilderFactory {
          * javax.sip.header.ContactHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ContactHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ContactHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contactHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder contactHeader(
                 String contactHeader) {
@@ -630,10 +768,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message content details. Must
          * implement the type javax.sip.header.ContentTypeHeader.
          * 
-         * The option is a: <code>javax.sip.header.ContentTypeHeader</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ContentTypeHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder contentTypeHeader(
                 Object contentTypeHeader) {
@@ -645,9 +786,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.ContentTypeHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ContentTypeHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ContentTypeHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder contentTypeHeader(
                 String contentTypeHeader) {
@@ -658,9 +802,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing event details. Must implement the
          * type javax.sip.header.EventHeader.
          * 
-         * The option is a: <code>javax.sip.header.EventHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.EventHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param eventHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder eventHeader(
                 Object eventHeader) {
@@ -672,9 +820,12 @@ public interface SipEndpointBuilderFactory {
          * type javax.sip.header.EventHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.EventHeader</code> type.
+         * &lt;code&gt;javax.sip.header.EventHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param eventHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder eventHeader(
                 String eventHeader) {
@@ -685,9 +836,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message expiration details. Must
          * implement the type javax.sip.header.ExpiresHeader.
          * 
-         * The option is a: <code>javax.sip.header.ExpiresHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ExpiresHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param expiresHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder expiresHeader(
                 Object expiresHeader) {
@@ -699,9 +854,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.ExpiresHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ExpiresHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ExpiresHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param expiresHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder expiresHeader(
                 String expiresHeader) {
@@ -712,9 +870,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing user/application specific details.
          * Must implement the type javax.sip.header.ExtensionHeader.
          * 
-         * The option is a: <code>javax.sip.header.ExtensionHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ExtensionHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extensionHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder extensionHeader(
                 Object extensionHeader) {
@@ -726,9 +888,12 @@ public interface SipEndpointBuilderFactory {
          * Must implement the type javax.sip.header.ExtensionHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ExtensionHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ExtensionHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extensionHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder extensionHeader(
                 String extensionHeader) {
@@ -739,9 +904,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message originator settings. Must
          * implement the type javax.sip.header.FromHeader.
          * 
-         * The option is a: <code>javax.sip.header.FromHeader</code> type.
+         * The option is a: &lt;code&gt;javax.sip.header.FromHeader&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param fromHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder fromHeader(Object fromHeader) {
             doSetProperty("fromHeader", fromHeader);
@@ -752,9 +921,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.FromHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.FromHeader</code> type.
+         * &lt;code&gt;javax.sip.header.FromHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param fromHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder fromHeader(String fromHeader) {
             doSetProperty("fromHeader", fromHeader);
@@ -763,9 +935,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom HeaderFactory.
          * 
-         * The option is a: <code>javax.sip.header.HeaderFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.HeaderFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param headerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder headerFactory(
                 Object headerFactory) {
@@ -776,9 +952,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom HeaderFactory.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.HeaderFactory</code> type.
+         * &lt;code&gt;javax.sip.header.HeaderFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param headerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder headerFactory(
                 String headerFactory) {
@@ -788,9 +967,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom ListeningPoint implementation.
          * 
-         * The option is a: <code>javax.sip.ListeningPoint</code> type.
+         * The option is a: &lt;code&gt;javax.sip.ListeningPoint&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param listeningPoint the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder listeningPoint(
                 Object listeningPoint) {
@@ -801,9 +984,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom ListeningPoint implementation.
          * 
          * The option will be converted to a
-         * <code>javax.sip.ListeningPoint</code> type.
+         * &lt;code&gt;javax.sip.ListeningPoint&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param listeningPoint the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder listeningPoint(
                 String listeningPoint) {
@@ -815,10 +1001,13 @@ public interface SipEndpointBuilderFactory {
          * This header places a limit on the viaHeaders possible. Must implement
          * the type javax.sip.header.MaxForwardsHeader.
          * 
-         * The option is a: <code>javax.sip.header.MaxForwardsHeader</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.MaxForwardsHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maxForwardsHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder maxForwardsHeader(
                 Object maxForwardsHeader) {
@@ -831,9 +1020,12 @@ public interface SipEndpointBuilderFactory {
          * the type javax.sip.header.MaxForwardsHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.MaxForwardsHeader</code> type.
+         * &lt;code&gt;javax.sip.header.MaxForwardsHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maxForwardsHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder maxForwardsHeader(
                 String maxForwardsHeader) {
@@ -843,10 +1035,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for maximum allowed Message size in bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: advanced
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder maxMessageSize(
                 int maxMessageSize) {
@@ -856,10 +1051,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for maximum allowed Message size in bytes.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: advanced
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder maxMessageSize(
                 String maxMessageSize) {
@@ -869,9 +1067,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom MessageFactory.
          * 
-         * The option is a: <code>javax.sip.message.MessageFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.message.MessageFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder messageFactory(
                 Object messageFactory) {
@@ -882,9 +1084,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom MessageFactory.
          * 
          * The option will be converted to a
-         * <code>javax.sip.message.MessageFactory</code> type.
+         * &lt;code&gt;javax.sip.message.MessageFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder messageFactory(
                 String messageFactory) {
@@ -894,9 +1099,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipFactory to create the SipStack to be used.
          * 
-         * The option is a: <code>javax.sip.SipFactory</code> type.
+         * The option is a: &lt;code&gt;javax.sip.SipFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder sipFactory(Object sipFactory) {
             doSetProperty("sipFactory", sipFactory);
@@ -905,10 +1113,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipFactory to create the SipStack to be used.
          * 
-         * The option will be converted to a <code>javax.sip.SipFactory</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.sip.SipFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder sipFactory(String sipFactory) {
             doSetProperty("sipFactory", sipFactory);
@@ -917,9 +1128,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipStack.
          * 
-         * The option is a: <code>javax.sip.SipStack</code> type.
+         * The option is a: &lt;code&gt;javax.sip.SipStack&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipStack the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder sipStack(Object sipStack) {
             doSetProperty("sipStack", sipStack);
@@ -928,10 +1142,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipStack.
          * 
-         * The option will be converted to a <code>javax.sip.SipStack</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.sip.SipStack&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipStack the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder sipStack(String sipStack) {
             doSetProperty("sipStack", sipStack);
@@ -941,9 +1158,13 @@ public interface SipEndpointBuilderFactory {
          * To use a custom SipURI. If none configured, then the SipUri fallback
          * to use the options toUser toHost:toPort.
          * 
-         * The option is a: <code>javax.sip.address.SipURI</code> type.
+         * The option is a: &lt;code&gt;javax.sip.address.SipURI&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param sipUri the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder sipUri(Object sipUri) {
             doSetProperty("sipUri", sipUri);
@@ -954,9 +1175,12 @@ public interface SipEndpointBuilderFactory {
          * to use the options toUser toHost:toPort.
          * 
          * The option will be converted to a
-         * <code>javax.sip.address.SipURI</code> type.
+         * &lt;code&gt;javax.sip.address.SipURI&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipUri the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder sipUri(String sipUri) {
             doSetProperty("sipUri", sipUri);
@@ -966,10 +1190,13 @@ public interface SipEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -980,10 +1207,14 @@ public interface SipEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -994,9 +1225,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message receiver settings. Must
          * implement the type javax.sip.header.ToHeader.
          * 
-         * The option is a: <code>javax.sip.header.ToHeader</code> type.
+         * The option is a: &lt;code&gt;javax.sip.header.ToHeader&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param toHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder toHeader(Object toHeader) {
             doSetProperty("toHeader", toHeader);
@@ -1007,9 +1242,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.ToHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ToHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ToHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param toHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder toHeader(String toHeader) {
             doSetProperty("toHeader", toHeader);
@@ -1022,9 +1260,12 @@ public interface SipEndpointBuilderFactory {
          * request arrives at its listener).
          * 
          * The option is a:
-         * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.sip.header.ViaHeader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param viaHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder viaHeaders(
                 List<Object> viaHeaders) {
@@ -1038,9 +1279,12 @@ public interface SipEndpointBuilderFactory {
          * request arrives at its listener).
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.sip.header.ViaHeader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param viaHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointConsumerBuilder viaHeaders(String viaHeaders) {
             doSetProperty("viaHeaders", viaHeaders);
@@ -1062,10 +1306,13 @@ public interface SipEndpointBuilderFactory {
          * connection creation. This is useful if the connection is used for
          * long running conversations.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param cacheConnections the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder cacheConnections(
                 boolean cacheConnections) {
@@ -1077,10 +1324,14 @@ public interface SipEndpointBuilderFactory {
          * connection creation. This is useful if the connection is used for
          * long running conversations.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param cacheConnections the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder cacheConnections(
                 String cacheConnections) {
@@ -1090,10 +1341,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for contentSubType can be set to any valid MimeSubType.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: plain
          * Group: common
+         * 
+         * @param contentSubType the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder contentSubType(String contentSubType) {
             doSetProperty("contentSubType", contentSubType);
@@ -1102,10 +1356,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for contentType can be set to any valid MimeType.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder contentType(String contentType) {
             doSetProperty("contentType", contentType);
@@ -1114,9 +1371,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for a String based event type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventHeaderName the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder eventHeaderName(
                 String eventHeaderName) {
@@ -1127,9 +1387,12 @@ public interface SipEndpointBuilderFactory {
          * Setting for a String based event Id. Mandatory setting unless a
          * registry based FromHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventId the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder eventId(String eventId) {
             doSetProperty("eventId", eventId);
@@ -1139,9 +1402,12 @@ public interface SipEndpointBuilderFactory {
          * Hostname of the message originator. Mandatory setting unless a
          * registry based FromHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromHost the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder fromHost(String fromHost) {
             doSetProperty("fromHost", fromHost);
@@ -1151,9 +1417,12 @@ public interface SipEndpointBuilderFactory {
          * Port of the message originator. Mandatory setting unless a registry
          * based FromHeader is specified.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder fromPort(int fromPort) {
             doSetProperty("fromPort", fromPort);
@@ -1163,9 +1432,12 @@ public interface SipEndpointBuilderFactory {
          * Port of the message originator. Mandatory setting unless a registry
          * based FromHeader is specified.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder fromPort(String fromPort) {
             doSetProperty("fromPort", fromPort);
@@ -1175,9 +1447,12 @@ public interface SipEndpointBuilderFactory {
          * Username of the message originator. Mandatory setting unless a
          * registry based custom FromHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromUser the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder fromUser(String fromUser) {
             doSetProperty("fromUser", fromUser);
@@ -1187,10 +1462,13 @@ public interface SipEndpointBuilderFactory {
          * The amount of time a message received at an endpoint is considered
          * valid.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3600
          * Group: common
+         * 
+         * @param msgExpiration the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder msgExpiration(int msgExpiration) {
             doSetProperty("msgExpiration", msgExpiration);
@@ -1200,10 +1478,13 @@ public interface SipEndpointBuilderFactory {
          * The amount of time a message received at an endpoint is considered
          * valid.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3600
          * Group: common
+         * 
+         * @param msgExpiration the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder msgExpiration(String msgExpiration) {
             doSetProperty("msgExpiration", msgExpiration);
@@ -1213,10 +1494,13 @@ public interface SipEndpointBuilderFactory {
          * Setting for specifying amount of time to wait for a Response and/or
          * Acknowledgement can be received from another SIP stack.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param receiveTimeoutMillis the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder receiveTimeoutMillis(
                 long receiveTimeoutMillis) {
@@ -1227,10 +1511,13 @@ public interface SipEndpointBuilderFactory {
          * Setting for specifying amount of time to wait for a Response and/or
          * Acknowledgement can be received from another SIP stack.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param receiveTimeoutMillis the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder receiveTimeoutMillis(
                 String receiveTimeoutMillis) {
@@ -1240,10 +1527,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Name of the SIP Stack instance associated with an SIP Endpoint.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: NAME_NOT_SET
          * Group: common
+         * 
+         * @param stackName the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder stackName(String stackName) {
             doSetProperty("stackName", stackName);
@@ -1253,9 +1543,12 @@ public interface SipEndpointBuilderFactory {
          * Hostname of the message receiver. Mandatory setting unless a registry
          * based ToHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toHost the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder toHost(String toHost) {
             doSetProperty("toHost", toHost);
@@ -1265,9 +1558,12 @@ public interface SipEndpointBuilderFactory {
          * Portname of the message receiver. Mandatory setting unless a registry
          * based ToHeader is specified.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder toPort(int toPort) {
             doSetProperty("toPort", toPort);
@@ -1277,9 +1573,12 @@ public interface SipEndpointBuilderFactory {
          * Portname of the message receiver. Mandatory setting unless a registry
          * based ToHeader is specified.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder toPort(String toPort) {
             doSetProperty("toPort", toPort);
@@ -1289,9 +1588,12 @@ public interface SipEndpointBuilderFactory {
          * Username of the message receiver. Mandatory setting unless a registry
          * based custom ToHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUser the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder toUser(String toUser) {
             doSetProperty("toUser", toUser);
@@ -1301,10 +1603,13 @@ public interface SipEndpointBuilderFactory {
          * Setting for choice of transport protocol. Valid choices are tcp or
          * udp.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: common
+         * 
+         * @param transport the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder transport(String transport) {
             doSetProperty("transport", transport);
@@ -1321,10 +1626,13 @@ public interface SipEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1342,10 +1650,14 @@ public interface SipEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1355,9 +1667,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Name of client debug log file to use for logging.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: logging
+         * 
+         * @param implementationDebugLogFile the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder implementationDebugLogFile(
                 String implementationDebugLogFile) {
@@ -1367,9 +1682,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Name of server log file to use for logging.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: logging
+         * 
+         * @param implementationServerLogFile the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder implementationServerLogFile(
                 String implementationServerLogFile) {
@@ -1379,10 +1697,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Logging level for tracing.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: logging
+         * 
+         * @param implementationTraceLevel the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder implementationTraceLevel(
                 String implementationTraceLevel) {
@@ -1392,9 +1713,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Number of maximum proxy forwards.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param maxForwards the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder maxForwards(int maxForwards) {
             doSetProperty("maxForwards", maxForwards);
@@ -1403,9 +1727,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Number of maximum proxy forwards.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param maxForwards the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder maxForwards(String maxForwards) {
             doSetProperty("maxForwards", maxForwards);
@@ -1415,10 +1742,13 @@ public interface SipEndpointBuilderFactory {
          * This setting is used when requests are sent to the Presence Agent via
          * a proxy.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: proxy
+         * 
+         * @param useRouterForAllUris the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder useRouterForAllUris(
                 boolean useRouterForAllUris) {
@@ -1429,10 +1759,14 @@ public interface SipEndpointBuilderFactory {
          * This setting is used when requests are sent to the Presence Agent via
          * a proxy.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: proxy
+         * 
+         * @param useRouterForAllUris the value to set
+         * @return the dsl builder
          */
         default SipEndpointProducerBuilder useRouterForAllUris(
                 String useRouterForAllUris) {
@@ -1453,9 +1787,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom AddressFactory.
          * 
-         * The option is a: <code>javax.sip.address.AddressFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.address.AddressFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param addressFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder addressFactory(
                 Object addressFactory) {
@@ -1466,9 +1804,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom AddressFactory.
          * 
          * The option will be converted to a
-         * <code>javax.sip.address.AddressFactory</code> type.
+         * &lt;code&gt;javax.sip.address.AddressFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param addressFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder addressFactory(
                 String addressFactory) {
@@ -1479,9 +1820,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing call details. Must implement the
          * type javax.sip.header.CallIdHeader.
          * 
-         * The option is a: <code>javax.sip.header.CallIdHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.CallIdHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param callIdHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder callIdHeader(
                 Object callIdHeader) {
@@ -1493,9 +1838,12 @@ public interface SipEndpointBuilderFactory {
          * type javax.sip.header.CallIdHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.CallIdHeader</code> type.
+         * &lt;code&gt;javax.sip.header.CallIdHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param callIdHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder callIdHeader(
                 String callIdHeader) {
@@ -1507,9 +1855,13 @@ public interface SipEndpointBuilderFactory {
          * (email, phone number etc). Must implement the type
          * javax.sip.header.ContactHeader.
          * 
-         * The option is a: <code>javax.sip.header.ContactHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ContactHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contactHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder contactHeader(
                 Object contactHeader) {
@@ -1522,9 +1874,12 @@ public interface SipEndpointBuilderFactory {
          * javax.sip.header.ContactHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ContactHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ContactHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contactHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder contactHeader(
                 String contactHeader) {
@@ -1535,10 +1890,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message content details. Must
          * implement the type javax.sip.header.ContentTypeHeader.
          * 
-         * The option is a: <code>javax.sip.header.ContentTypeHeader</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ContentTypeHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder contentTypeHeader(
                 Object contentTypeHeader) {
@@ -1550,9 +1908,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.ContentTypeHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ContentTypeHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ContentTypeHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder contentTypeHeader(
                 String contentTypeHeader) {
@@ -1563,9 +1924,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing event details. Must implement the
          * type javax.sip.header.EventHeader.
          * 
-         * The option is a: <code>javax.sip.header.EventHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.EventHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param eventHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder eventHeader(
                 Object eventHeader) {
@@ -1577,9 +1942,12 @@ public interface SipEndpointBuilderFactory {
          * type javax.sip.header.EventHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.EventHeader</code> type.
+         * &lt;code&gt;javax.sip.header.EventHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param eventHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder eventHeader(
                 String eventHeader) {
@@ -1590,9 +1958,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message expiration details. Must
          * implement the type javax.sip.header.ExpiresHeader.
          * 
-         * The option is a: <code>javax.sip.header.ExpiresHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ExpiresHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param expiresHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder expiresHeader(
                 Object expiresHeader) {
@@ -1604,9 +1976,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.ExpiresHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ExpiresHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ExpiresHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param expiresHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder expiresHeader(
                 String expiresHeader) {
@@ -1617,9 +1992,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing user/application specific details.
          * Must implement the type javax.sip.header.ExtensionHeader.
          * 
-         * The option is a: <code>javax.sip.header.ExtensionHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ExtensionHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extensionHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder extensionHeader(
                 Object extensionHeader) {
@@ -1631,9 +2010,12 @@ public interface SipEndpointBuilderFactory {
          * Must implement the type javax.sip.header.ExtensionHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ExtensionHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ExtensionHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extensionHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder extensionHeader(
                 String extensionHeader) {
@@ -1644,9 +2026,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message originator settings. Must
          * implement the type javax.sip.header.FromHeader.
          * 
-         * The option is a: <code>javax.sip.header.FromHeader</code> type.
+         * The option is a: &lt;code&gt;javax.sip.header.FromHeader&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param fromHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder fromHeader(Object fromHeader) {
             doSetProperty("fromHeader", fromHeader);
@@ -1657,9 +2043,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.FromHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.FromHeader</code> type.
+         * &lt;code&gt;javax.sip.header.FromHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param fromHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder fromHeader(String fromHeader) {
             doSetProperty("fromHeader", fromHeader);
@@ -1668,9 +2057,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom HeaderFactory.
          * 
-         * The option is a: <code>javax.sip.header.HeaderFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.HeaderFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param headerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder headerFactory(
                 Object headerFactory) {
@@ -1681,9 +2074,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom HeaderFactory.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.HeaderFactory</code> type.
+         * &lt;code&gt;javax.sip.header.HeaderFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param headerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder headerFactory(
                 String headerFactory) {
@@ -1693,9 +2089,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom ListeningPoint implementation.
          * 
-         * The option is a: <code>javax.sip.ListeningPoint</code> type.
+         * The option is a: &lt;code&gt;javax.sip.ListeningPoint&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param listeningPoint the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder listeningPoint(
                 Object listeningPoint) {
@@ -1706,9 +2106,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom ListeningPoint implementation.
          * 
          * The option will be converted to a
-         * <code>javax.sip.ListeningPoint</code> type.
+         * &lt;code&gt;javax.sip.ListeningPoint&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param listeningPoint the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder listeningPoint(
                 String listeningPoint) {
@@ -1720,10 +2123,13 @@ public interface SipEndpointBuilderFactory {
          * This header places a limit on the viaHeaders possible. Must implement
          * the type javax.sip.header.MaxForwardsHeader.
          * 
-         * The option is a: <code>javax.sip.header.MaxForwardsHeader</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.MaxForwardsHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maxForwardsHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder maxForwardsHeader(
                 Object maxForwardsHeader) {
@@ -1736,9 +2142,12 @@ public interface SipEndpointBuilderFactory {
          * the type javax.sip.header.MaxForwardsHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.MaxForwardsHeader</code> type.
+         * &lt;code&gt;javax.sip.header.MaxForwardsHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maxForwardsHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder maxForwardsHeader(
                 String maxForwardsHeader) {
@@ -1748,10 +2157,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for maximum allowed Message size in bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: advanced
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder maxMessageSize(
                 int maxMessageSize) {
@@ -1761,10 +2173,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for maximum allowed Message size in bytes.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: advanced
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder maxMessageSize(
                 String maxMessageSize) {
@@ -1774,9 +2189,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom MessageFactory.
          * 
-         * The option is a: <code>javax.sip.message.MessageFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.message.MessageFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder messageFactory(
                 Object messageFactory) {
@@ -1787,9 +2206,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom MessageFactory.
          * 
          * The option will be converted to a
-         * <code>javax.sip.message.MessageFactory</code> type.
+         * &lt;code&gt;javax.sip.message.MessageFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder messageFactory(
                 String messageFactory) {
@@ -1799,9 +2221,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipFactory to create the SipStack to be used.
          * 
-         * The option is a: <code>javax.sip.SipFactory</code> type.
+         * The option is a: &lt;code&gt;javax.sip.SipFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder sipFactory(Object sipFactory) {
             doSetProperty("sipFactory", sipFactory);
@@ -1810,10 +2235,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipFactory to create the SipStack to be used.
          * 
-         * The option will be converted to a <code>javax.sip.SipFactory</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.sip.SipFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder sipFactory(String sipFactory) {
             doSetProperty("sipFactory", sipFactory);
@@ -1822,9 +2250,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipStack.
          * 
-         * The option is a: <code>javax.sip.SipStack</code> type.
+         * The option is a: &lt;code&gt;javax.sip.SipStack&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipStack the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder sipStack(Object sipStack) {
             doSetProperty("sipStack", sipStack);
@@ -1833,10 +2264,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipStack.
          * 
-         * The option will be converted to a <code>javax.sip.SipStack</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.sip.SipStack&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipStack the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder sipStack(String sipStack) {
             doSetProperty("sipStack", sipStack);
@@ -1846,9 +2280,13 @@ public interface SipEndpointBuilderFactory {
          * To use a custom SipURI. If none configured, then the SipUri fallback
          * to use the options toUser toHost:toPort.
          * 
-         * The option is a: <code>javax.sip.address.SipURI</code> type.
+         * The option is a: &lt;code&gt;javax.sip.address.SipURI&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param sipUri the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder sipUri(Object sipUri) {
             doSetProperty("sipUri", sipUri);
@@ -1859,9 +2297,12 @@ public interface SipEndpointBuilderFactory {
          * to use the options toUser toHost:toPort.
          * 
          * The option will be converted to a
-         * <code>javax.sip.address.SipURI</code> type.
+         * &lt;code&gt;javax.sip.address.SipURI&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipUri the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder sipUri(String sipUri) {
             doSetProperty("sipUri", sipUri);
@@ -1871,10 +2312,13 @@ public interface SipEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1885,10 +2329,14 @@ public interface SipEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1899,9 +2347,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message receiver settings. Must
          * implement the type javax.sip.header.ToHeader.
          * 
-         * The option is a: <code>javax.sip.header.ToHeader</code> type.
+         * The option is a: &lt;code&gt;javax.sip.header.ToHeader&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param toHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder toHeader(Object toHeader) {
             doSetProperty("toHeader", toHeader);
@@ -1912,9 +2364,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.ToHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ToHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ToHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param toHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder toHeader(String toHeader) {
             doSetProperty("toHeader", toHeader);
@@ -1927,9 +2382,12 @@ public interface SipEndpointBuilderFactory {
          * request arrives at its listener).
          * 
          * The option is a:
-         * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.sip.header.ViaHeader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param viaHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder viaHeaders(
                 List<Object> viaHeaders) {
@@ -1943,9 +2401,12 @@ public interface SipEndpointBuilderFactory {
          * request arrives at its listener).
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.sip.header.ViaHeader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param viaHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointProducerBuilder viaHeaders(String viaHeaders) {
             doSetProperty("viaHeaders", viaHeaders);
@@ -1968,10 +2429,13 @@ public interface SipEndpointBuilderFactory {
          * connection creation. This is useful if the connection is used for
          * long running conversations.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param cacheConnections the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder cacheConnections(boolean cacheConnections) {
             doSetProperty("cacheConnections", cacheConnections);
@@ -1982,10 +2446,14 @@ public interface SipEndpointBuilderFactory {
          * connection creation. This is useful if the connection is used for
          * long running conversations.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param cacheConnections the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder cacheConnections(String cacheConnections) {
             doSetProperty("cacheConnections", cacheConnections);
@@ -1994,10 +2462,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for contentSubType can be set to any valid MimeSubType.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: plain
          * Group: common
+         * 
+         * @param contentSubType the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder contentSubType(String contentSubType) {
             doSetProperty("contentSubType", contentSubType);
@@ -2006,10 +2477,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for contentType can be set to any valid MimeType.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: text
          * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder contentType(String contentType) {
             doSetProperty("contentType", contentType);
@@ -2018,9 +2492,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for a String based event type.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventHeaderName the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder eventHeaderName(String eventHeaderName) {
             doSetProperty("eventHeaderName", eventHeaderName);
@@ -2030,9 +2507,12 @@ public interface SipEndpointBuilderFactory {
          * Setting for a String based event Id. Mandatory setting unless a
          * registry based FromHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventId the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder eventId(String eventId) {
             doSetProperty("eventId", eventId);
@@ -2042,9 +2522,12 @@ public interface SipEndpointBuilderFactory {
          * Hostname of the message originator. Mandatory setting unless a
          * registry based FromHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromHost the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder fromHost(String fromHost) {
             doSetProperty("fromHost", fromHost);
@@ -2054,9 +2537,12 @@ public interface SipEndpointBuilderFactory {
          * Port of the message originator. Mandatory setting unless a registry
          * based FromHeader is specified.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder fromPort(int fromPort) {
             doSetProperty("fromPort", fromPort);
@@ -2066,9 +2552,12 @@ public interface SipEndpointBuilderFactory {
          * Port of the message originator. Mandatory setting unless a registry
          * based FromHeader is specified.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder fromPort(String fromPort) {
             doSetProperty("fromPort", fromPort);
@@ -2078,9 +2567,12 @@ public interface SipEndpointBuilderFactory {
          * Username of the message originator. Mandatory setting unless a
          * registry based custom FromHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fromUser the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder fromUser(String fromUser) {
             doSetProperty("fromUser", fromUser);
@@ -2090,10 +2582,13 @@ public interface SipEndpointBuilderFactory {
          * The amount of time a message received at an endpoint is considered
          * valid.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3600
          * Group: common
+         * 
+         * @param msgExpiration the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder msgExpiration(int msgExpiration) {
             doSetProperty("msgExpiration", msgExpiration);
@@ -2103,10 +2598,13 @@ public interface SipEndpointBuilderFactory {
          * The amount of time a message received at an endpoint is considered
          * valid.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3600
          * Group: common
+         * 
+         * @param msgExpiration the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder msgExpiration(String msgExpiration) {
             doSetProperty("msgExpiration", msgExpiration);
@@ -2116,10 +2614,13 @@ public interface SipEndpointBuilderFactory {
          * Setting for specifying amount of time to wait for a Response and/or
          * Acknowledgement can be received from another SIP stack.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param receiveTimeoutMillis the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder receiveTimeoutMillis(
                 long receiveTimeoutMillis) {
@@ -2130,10 +2631,13 @@ public interface SipEndpointBuilderFactory {
          * Setting for specifying amount of time to wait for a Response and/or
          * Acknowledgement can be received from another SIP stack.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param receiveTimeoutMillis the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder receiveTimeoutMillis(
                 String receiveTimeoutMillis) {
@@ -2143,10 +2647,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Name of the SIP Stack instance associated with an SIP Endpoint.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: NAME_NOT_SET
          * Group: common
+         * 
+         * @param stackName the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder stackName(String stackName) {
             doSetProperty("stackName", stackName);
@@ -2156,9 +2663,12 @@ public interface SipEndpointBuilderFactory {
          * Hostname of the message receiver. Mandatory setting unless a registry
          * based ToHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toHost the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder toHost(String toHost) {
             doSetProperty("toHost", toHost);
@@ -2168,9 +2678,12 @@ public interface SipEndpointBuilderFactory {
          * Portname of the message receiver. Mandatory setting unless a registry
          * based ToHeader is specified.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder toPort(int toPort) {
             doSetProperty("toPort", toPort);
@@ -2180,9 +2693,12 @@ public interface SipEndpointBuilderFactory {
          * Portname of the message receiver. Mandatory setting unless a registry
          * based ToHeader is specified.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toPort the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder toPort(String toPort) {
             doSetProperty("toPort", toPort);
@@ -2192,9 +2708,12 @@ public interface SipEndpointBuilderFactory {
          * Username of the message receiver. Mandatory setting unless a registry
          * based custom ToHeader is specified.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param toUser the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder toUser(String toUser) {
             doSetProperty("toUser", toUser);
@@ -2204,10 +2723,13 @@ public interface SipEndpointBuilderFactory {
          * Setting for choice of transport protocol. Valid choices are tcp or
          * udp.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: common
+         * 
+         * @param transport the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder transport(String transport) {
             doSetProperty("transport", transport);
@@ -2216,9 +2738,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Name of client debug log file to use for logging.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: logging
+         * 
+         * @param implementationDebugLogFile the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder implementationDebugLogFile(
                 String implementationDebugLogFile) {
@@ -2228,9 +2753,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Name of server log file to use for logging.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: logging
+         * 
+         * @param implementationServerLogFile the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder implementationServerLogFile(
                 String implementationServerLogFile) {
@@ -2240,10 +2768,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Logging level for tracing.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: logging
+         * 
+         * @param implementationTraceLevel the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder implementationTraceLevel(
                 String implementationTraceLevel) {
@@ -2253,9 +2784,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Number of maximum proxy forwards.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param maxForwards the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder maxForwards(int maxForwards) {
             doSetProperty("maxForwards", maxForwards);
@@ -2264,9 +2798,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * Number of maximum proxy forwards.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param maxForwards the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder maxForwards(String maxForwards) {
             doSetProperty("maxForwards", maxForwards);
@@ -2276,10 +2813,13 @@ public interface SipEndpointBuilderFactory {
          * This setting is used when requests are sent to the Presence Agent via
          * a proxy.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: proxy
+         * 
+         * @param useRouterForAllUris the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder useRouterForAllUris(
                 boolean useRouterForAllUris) {
@@ -2290,10 +2830,14 @@ public interface SipEndpointBuilderFactory {
          * This setting is used when requests are sent to the Presence Agent via
          * a proxy.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: proxy
+         * 
+         * @param useRouterForAllUris the value to set
+         * @return the dsl builder
          */
         default SipEndpointBuilder useRouterForAllUris(
                 String useRouterForAllUris) {
@@ -2315,9 +2859,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom AddressFactory.
          * 
-         * The option is a: <code>javax.sip.address.AddressFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.address.AddressFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param addressFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder addressFactory(Object addressFactory) {
             doSetProperty("addressFactory", addressFactory);
@@ -2327,9 +2875,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom AddressFactory.
          * 
          * The option will be converted to a
-         * <code>javax.sip.address.AddressFactory</code> type.
+         * &lt;code&gt;javax.sip.address.AddressFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param addressFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder addressFactory(String addressFactory) {
             doSetProperty("addressFactory", addressFactory);
@@ -2339,9 +2890,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing call details. Must implement the
          * type javax.sip.header.CallIdHeader.
          * 
-         * The option is a: <code>javax.sip.header.CallIdHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.CallIdHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param callIdHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder callIdHeader(Object callIdHeader) {
             doSetProperty("callIdHeader", callIdHeader);
@@ -2352,9 +2907,12 @@ public interface SipEndpointBuilderFactory {
          * type javax.sip.header.CallIdHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.CallIdHeader</code> type.
+         * &lt;code&gt;javax.sip.header.CallIdHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param callIdHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder callIdHeader(String callIdHeader) {
             doSetProperty("callIdHeader", callIdHeader);
@@ -2365,9 +2923,13 @@ public interface SipEndpointBuilderFactory {
          * (email, phone number etc). Must implement the type
          * javax.sip.header.ContactHeader.
          * 
-         * The option is a: <code>javax.sip.header.ContactHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ContactHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contactHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder contactHeader(Object contactHeader) {
             doSetProperty("contactHeader", contactHeader);
@@ -2379,9 +2941,12 @@ public interface SipEndpointBuilderFactory {
          * javax.sip.header.ContactHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ContactHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ContactHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contactHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder contactHeader(String contactHeader) {
             doSetProperty("contactHeader", contactHeader);
@@ -2391,10 +2956,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message content details. Must
          * implement the type javax.sip.header.ContentTypeHeader.
          * 
-         * The option is a: <code>javax.sip.header.ContentTypeHeader</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ContentTypeHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder contentTypeHeader(
                 Object contentTypeHeader) {
@@ -2406,9 +2974,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.ContentTypeHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ContentTypeHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ContentTypeHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder contentTypeHeader(
                 String contentTypeHeader) {
@@ -2419,9 +2990,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing event details. Must implement the
          * type javax.sip.header.EventHeader.
          * 
-         * The option is a: <code>javax.sip.header.EventHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.EventHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param eventHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder eventHeader(Object eventHeader) {
             doSetProperty("eventHeader", eventHeader);
@@ -2432,9 +3007,12 @@ public interface SipEndpointBuilderFactory {
          * type javax.sip.header.EventHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.EventHeader</code> type.
+         * &lt;code&gt;javax.sip.header.EventHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param eventHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder eventHeader(String eventHeader) {
             doSetProperty("eventHeader", eventHeader);
@@ -2444,9 +3022,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message expiration details. Must
          * implement the type javax.sip.header.ExpiresHeader.
          * 
-         * The option is a: <code>javax.sip.header.ExpiresHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ExpiresHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param expiresHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder expiresHeader(Object expiresHeader) {
             doSetProperty("expiresHeader", expiresHeader);
@@ -2457,9 +3039,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.ExpiresHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ExpiresHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ExpiresHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param expiresHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder expiresHeader(String expiresHeader) {
             doSetProperty("expiresHeader", expiresHeader);
@@ -2469,9 +3054,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing user/application specific details.
          * Must implement the type javax.sip.header.ExtensionHeader.
          * 
-         * The option is a: <code>javax.sip.header.ExtensionHeader</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.ExtensionHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extensionHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder extensionHeader(
                 Object extensionHeader) {
@@ -2483,9 +3072,12 @@ public interface SipEndpointBuilderFactory {
          * Must implement the type javax.sip.header.ExtensionHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ExtensionHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ExtensionHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param extensionHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder extensionHeader(
                 String extensionHeader) {
@@ -2496,9 +3088,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message originator settings. Must
          * implement the type javax.sip.header.FromHeader.
          * 
-         * The option is a: <code>javax.sip.header.FromHeader</code> type.
+         * The option is a: &lt;code&gt;javax.sip.header.FromHeader&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param fromHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder fromHeader(Object fromHeader) {
             doSetProperty("fromHeader", fromHeader);
@@ -2509,9 +3105,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.FromHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.FromHeader</code> type.
+         * &lt;code&gt;javax.sip.header.FromHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param fromHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder fromHeader(String fromHeader) {
             doSetProperty("fromHeader", fromHeader);
@@ -2520,9 +3119,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom HeaderFactory.
          * 
-         * The option is a: <code>javax.sip.header.HeaderFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.HeaderFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param headerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder headerFactory(Object headerFactory) {
             doSetProperty("headerFactory", headerFactory);
@@ -2532,9 +3135,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom HeaderFactory.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.HeaderFactory</code> type.
+         * &lt;code&gt;javax.sip.header.HeaderFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param headerFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder headerFactory(String headerFactory) {
             doSetProperty("headerFactory", headerFactory);
@@ -2543,9 +3149,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom ListeningPoint implementation.
          * 
-         * The option is a: <code>javax.sip.ListeningPoint</code> type.
+         * The option is a: &lt;code&gt;javax.sip.ListeningPoint&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param listeningPoint the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder listeningPoint(Object listeningPoint) {
             doSetProperty("listeningPoint", listeningPoint);
@@ -2555,9 +3165,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom ListeningPoint implementation.
          * 
          * The option will be converted to a
-         * <code>javax.sip.ListeningPoint</code> type.
+         * &lt;code&gt;javax.sip.ListeningPoint&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param listeningPoint the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder listeningPoint(String listeningPoint) {
             doSetProperty("listeningPoint", listeningPoint);
@@ -2568,10 +3181,13 @@ public interface SipEndpointBuilderFactory {
          * This header places a limit on the viaHeaders possible. Must implement
          * the type javax.sip.header.MaxForwardsHeader.
          * 
-         * The option is a: <code>javax.sip.header.MaxForwardsHeader</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.header.MaxForwardsHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maxForwardsHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder maxForwardsHeader(
                 Object maxForwardsHeader) {
@@ -2584,9 +3200,12 @@ public interface SipEndpointBuilderFactory {
          * the type javax.sip.header.MaxForwardsHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.MaxForwardsHeader</code> type.
+         * &lt;code&gt;javax.sip.header.MaxForwardsHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maxForwardsHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder maxForwardsHeader(
                 String maxForwardsHeader) {
@@ -2596,10 +3215,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for maximum allowed Message size in bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: advanced
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder maxMessageSize(int maxMessageSize) {
             doSetProperty("maxMessageSize", maxMessageSize);
@@ -2608,10 +3230,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * Setting for maximum allowed Message size in bytes.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: advanced
+         * 
+         * @param maxMessageSize the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder maxMessageSize(String maxMessageSize) {
             doSetProperty("maxMessageSize", maxMessageSize);
@@ -2620,9 +3245,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom MessageFactory.
          * 
-         * The option is a: <code>javax.sip.message.MessageFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.sip.message.MessageFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder messageFactory(Object messageFactory) {
             doSetProperty("messageFactory", messageFactory);
@@ -2632,9 +3261,12 @@ public interface SipEndpointBuilderFactory {
          * To use a custom MessageFactory.
          * 
          * The option will be converted to a
-         * <code>javax.sip.message.MessageFactory</code> type.
+         * &lt;code&gt;javax.sip.message.MessageFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder messageFactory(String messageFactory) {
             doSetProperty("messageFactory", messageFactory);
@@ -2643,9 +3275,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipFactory to create the SipStack to be used.
          * 
-         * The option is a: <code>javax.sip.SipFactory</code> type.
+         * The option is a: &lt;code&gt;javax.sip.SipFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder sipFactory(Object sipFactory) {
             doSetProperty("sipFactory", sipFactory);
@@ -2654,10 +3289,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipFactory to create the SipStack to be used.
          * 
-         * The option will be converted to a <code>javax.sip.SipFactory</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.sip.SipFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder sipFactory(String sipFactory) {
             doSetProperty("sipFactory", sipFactory);
@@ -2666,9 +3304,12 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipStack.
          * 
-         * The option is a: <code>javax.sip.SipStack</code> type.
+         * The option is a: &lt;code&gt;javax.sip.SipStack&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipStack the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder sipStack(Object sipStack) {
             doSetProperty("sipStack", sipStack);
@@ -2677,10 +3318,13 @@ public interface SipEndpointBuilderFactory {
         /**
          * To use a custom SipStack.
          * 
-         * The option will be converted to a <code>javax.sip.SipStack</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.sip.SipStack&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipStack the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder sipStack(String sipStack) {
             doSetProperty("sipStack", sipStack);
@@ -2690,9 +3334,13 @@ public interface SipEndpointBuilderFactory {
          * To use a custom SipURI. If none configured, then the SipUri fallback
          * to use the options toUser toHost:toPort.
          * 
-         * The option is a: <code>javax.sip.address.SipURI</code> type.
+         * The option is a: &lt;code&gt;javax.sip.address.SipURI&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param sipUri the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder sipUri(Object sipUri) {
             doSetProperty("sipUri", sipUri);
@@ -2703,9 +3351,12 @@ public interface SipEndpointBuilderFactory {
          * to use the options toUser toHost:toPort.
          * 
          * The option will be converted to a
-         * <code>javax.sip.address.SipURI</code> type.
+         * &lt;code&gt;javax.sip.address.SipURI&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sipUri the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder sipUri(String sipUri) {
             doSetProperty("sipUri", sipUri);
@@ -2715,10 +3366,13 @@ public interface SipEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -2728,10 +3382,14 @@ public interface SipEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -2741,9 +3399,13 @@ public interface SipEndpointBuilderFactory {
          * A custom Header object containing message receiver settings. Must
          * implement the type javax.sip.header.ToHeader.
          * 
-         * The option is a: <code>javax.sip.header.ToHeader</code> type.
+         * The option is a: &lt;code&gt;javax.sip.header.ToHeader&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param toHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder toHeader(Object toHeader) {
             doSetProperty("toHeader", toHeader);
@@ -2754,9 +3416,12 @@ public interface SipEndpointBuilderFactory {
          * implement the type javax.sip.header.ToHeader.
          * 
          * The option will be converted to a
-         * <code>javax.sip.header.ToHeader</code> type.
+         * &lt;code&gt;javax.sip.header.ToHeader&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param toHeader the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder toHeader(String toHeader) {
             doSetProperty("toHeader", toHeader);
@@ -2769,9 +3434,12 @@ public interface SipEndpointBuilderFactory {
          * request arrives at its listener).
          * 
          * The option is a:
-         * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.sip.header.ViaHeader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param viaHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder viaHeaders(List<Object> viaHeaders) {
             doSetProperty("viaHeaders", viaHeaders);
@@ -2784,9 +3452,12 @@ public interface SipEndpointBuilderFactory {
          * request arrives at its listener).
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;javax.sip.header.ViaHeader&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.sip.header.ViaHeader&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param viaHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedSipEndpointBuilder viaHeaders(String viaHeaders) {
             doSetProperty("viaHeaders", viaHeaders);

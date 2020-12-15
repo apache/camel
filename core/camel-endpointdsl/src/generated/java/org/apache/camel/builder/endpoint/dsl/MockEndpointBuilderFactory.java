@@ -47,10 +47,13 @@ public interface MockEndpointBuilderFactory {
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param assertPeriod the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder assertPeriod(long assertPeriod) {
             doSetProperty("assertPeriod", assertPeriod);
@@ -66,10 +69,13 @@ public interface MockEndpointBuilderFactory {
          * ensure no further message arrives. This is what you can use this
          * method for. By default this period is disabled.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param assertPeriod the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder assertPeriod(String assertPeriod) {
             doSetProperty("assertPeriod", assertPeriod);
@@ -89,10 +95,13 @@ public interface MockEndpointBuilderFactory {
          * this mock endpoint, then see also the setAssertPeriod(long) method
          * for further details.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param expectedCount the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder expectedCount(int expectedCount) {
             doSetProperty("expectedCount", expectedCount);
@@ -112,10 +121,13 @@ public interface MockEndpointBuilderFactory {
          * this mock endpoint, then see also the setAssertPeriod(long) method
          * for further details.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param expectedCount the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder expectedCount(String expectedCount) {
             doSetProperty("expectedCount", expectedCount);
@@ -128,10 +140,13 @@ public interface MockEndpointBuilderFactory {
          * verifications. Is by default true. Set to false to use behavior as in
          * Camel 2.x.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failFast the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder failFast(boolean failFast) {
             doSetProperty("failFast", failFast);
@@ -144,10 +159,14 @@ public interface MockEndpointBuilderFactory {
          * verifications. Is by default true. Set to false to use behavior as in
          * Camel 2.x.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param failFast the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder failFast(String failFast) {
             doSetProperty("failFast", failFast);
@@ -164,10 +183,13 @@ public interface MockEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -184,10 +206,14 @@ public interface MockEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -197,9 +223,12 @@ public interface MockEndpointBuilderFactory {
          * A number that is used to turn on throughput logging based on groups
          * of the size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param reportGroup the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder reportGroup(int reportGroup) {
             doSetProperty("reportGroup", reportGroup);
@@ -209,9 +238,12 @@ public interface MockEndpointBuilderFactory {
          * A number that is used to turn on throughput logging based on groups
          * of the size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param reportGroup the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder reportGroup(String reportGroup) {
             doSetProperty("reportGroup", reportGroup);
@@ -221,10 +253,13 @@ public interface MockEndpointBuilderFactory {
          * Sets the minimum expected amount of time (in millis) the
          * assertIsSatisfied() will wait on a latch until it is satisfied.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultMinimumWaitTime the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder resultMinimumWaitTime(
                 long resultMinimumWaitTime) {
@@ -235,10 +270,13 @@ public interface MockEndpointBuilderFactory {
          * Sets the minimum expected amount of time (in millis) the
          * assertIsSatisfied() will wait on a latch until it is satisfied.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultMinimumWaitTime the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder resultMinimumWaitTime(
                 String resultMinimumWaitTime) {
@@ -249,10 +287,13 @@ public interface MockEndpointBuilderFactory {
          * Sets the maximum amount of time (in millis) the assertIsSatisfied()
          * will wait on a latch until it is satisfied.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultWaitTime the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder resultWaitTime(long resultWaitTime) {
             doSetProperty("resultWaitTime", resultWaitTime);
@@ -262,10 +303,13 @@ public interface MockEndpointBuilderFactory {
          * Sets the maximum amount of time (in millis) the assertIsSatisfied()
          * will wait on a latch until it is satisfied.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param resultWaitTime the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder resultWaitTime(String resultWaitTime) {
             doSetProperty("resultWaitTime", resultWaitTime);
@@ -287,10 +331,13 @@ public interface MockEndpointBuilderFactory {
          * both setRetainFirst(int) and setRetainLast(int) methods, to limit
          * both the first and last received.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainFirst the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder retainFirst(int retainFirst) {
             doSetProperty("retainFirst", retainFirst);
@@ -312,10 +359,13 @@ public interface MockEndpointBuilderFactory {
          * both setRetainFirst(int) and setRetainLast(int) methods, to limit
          * both the first and last received.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainFirst the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder retainFirst(String retainFirst) {
             doSetProperty("retainFirst", retainFirst);
@@ -337,10 +387,13 @@ public interface MockEndpointBuilderFactory {
          * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
          * first and last received.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainLast the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder retainLast(int retainLast) {
             doSetProperty("retainLast", retainLast);
@@ -362,10 +415,13 @@ public interface MockEndpointBuilderFactory {
          * setRetainFirst(int) and setRetainLast(int) methods, to limit both the
          * first and last received.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param retainLast the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder retainLast(String retainLast) {
             doSetProperty("retainLast", retainLast);
@@ -375,10 +431,13 @@ public interface MockEndpointBuilderFactory {
          * Allows a sleep to be specified to wait to check that this endpoint
          * really is empty when expectedMessageCount(int) is called with zero.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param sleepForEmptyTest the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder sleepForEmptyTest(long sleepForEmptyTest) {
             doSetProperty("sleepForEmptyTest", sleepForEmptyTest);
@@ -388,10 +447,13 @@ public interface MockEndpointBuilderFactory {
          * Allows a sleep to be specified to wait to check that this endpoint
          * really is empty when expectedMessageCount(int) is called with zero.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param sleepForEmptyTest the value to set
+         * @return the dsl builder
          */
         default MockEndpointBuilder sleepForEmptyTest(String sleepForEmptyTest) {
             doSetProperty("sleepForEmptyTest", sleepForEmptyTest);
@@ -412,10 +474,13 @@ public interface MockEndpointBuilderFactory {
          * Sets whether to make a deep copy of the incoming Exchange when
          * received at this mock endpoint. Is by default true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param copyOnExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedMockEndpointBuilder copyOnExchange(
                 boolean copyOnExchange) {
@@ -426,10 +491,14 @@ public interface MockEndpointBuilderFactory {
          * Sets whether to make a deep copy of the incoming Exchange when
          * received at this mock endpoint. Is by default true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param copyOnExchange the value to set
+         * @return the dsl builder
          */
         default AdvancedMockEndpointBuilder copyOnExchange(String copyOnExchange) {
             doSetProperty("copyOnExchange", copyOnExchange);
@@ -439,10 +508,13 @@ public interface MockEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMockEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -452,10 +524,14 @@ public interface MockEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMockEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

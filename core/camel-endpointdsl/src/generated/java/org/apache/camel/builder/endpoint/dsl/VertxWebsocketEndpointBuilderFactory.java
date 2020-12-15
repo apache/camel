@@ -45,9 +45,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Regex pattern to match the origin header sent by WebSocket clients.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param allowedOriginPattern the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointConsumerBuilder allowedOriginPattern(
                 String allowedOriginPattern) {
@@ -63,10 +66,13 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -82,10 +88,14 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -95,9 +105,13 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * To use an existing vertx router for the HTTP server.
          * 
-         * The option is a: <code>io.vertx.ext.web.Router</code> type.
+         * The option is a: &lt;code&gt;io.vertx.ext.web.Router&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param router the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointConsumerBuilder router(Object router) {
             doSetProperty("router", router);
@@ -107,9 +121,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To use an existing vertx router for the HTTP server.
          * 
          * The option will be converted to a
-         * <code>io.vertx.ext.web.Router</code> type.
+         * &lt;code&gt;io.vertx.ext.web.Router&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param router the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointConsumerBuilder router(String router) {
             doSetProperty("router", router);
@@ -119,10 +136,13 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets customized options for configuring the HTTP server hosting the
          * WebSocket for the consumer.
          * 
-         * The option is a: <code>io.vertx.core.http.HttpServerOptions</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.vertx.core.http.HttpServerOptions&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param serverOptions the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointConsumerBuilder serverOptions(
                 Object serverOptions) {
@@ -134,9 +154,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * WebSocket for the consumer.
          * 
          * The option will be converted to a
-         * <code>io.vertx.core.http.HttpServerOptions</code> type.
+         * &lt;code&gt;io.vertx.core.http.HttpServerOptions&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param serverOptions the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointConsumerBuilder serverOptions(
                 String serverOptions) {
@@ -147,9 +170,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -160,9 +186,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -187,10 +216,13 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -204,9 +236,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -216,9 +251,13 @@ public interface VertxWebsocketEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -229,9 +268,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -242,10 +284,13 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -256,10 +301,14 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -281,10 +330,13 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets customized options for configuring the WebSocket client used in
          * the producer.
          * 
-         * The option is a: <code>io.vertx.core.http.HttpClientOptions</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.vertx.core.http.HttpClientOptions&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param clientOptions the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointProducerBuilder clientOptions(
                 Object clientOptions) {
@@ -296,9 +348,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * the producer.
          * 
          * The option will be converted to a
-         * <code>io.vertx.core.http.HttpClientOptions</code> type.
+         * &lt;code&gt;io.vertx.core.http.HttpClientOptions&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param clientOptions the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointProducerBuilder clientOptions(
                 String clientOptions) {
@@ -309,9 +364,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Comma separated list of WebSocket subprotocols that the client should
          * use for the Sec-WebSocket-Protocol header.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param clientSubProtocols the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointProducerBuilder clientSubProtocols(
                 String clientSubProtocols) {
@@ -329,10 +387,13 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -350,10 +411,14 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -365,10 +430,13 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * endpoint level, instead of having to use the
          * VertxWebsocketConstants.SEND_TO_ALL header on the message.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param sendToAll the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointProducerBuilder sendToAll(
                 boolean sendToAll) {
@@ -380,10 +448,14 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * endpoint level, instead of having to use the
          * VertxWebsocketConstants.SEND_TO_ALL header on the message.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param sendToAll the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointProducerBuilder sendToAll(String sendToAll) {
             doSetProperty("sendToAll", sendToAll);
@@ -393,9 +465,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -406,9 +481,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -431,10 +509,13 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -445,10 +526,14 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -471,9 +556,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -484,9 +572,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -509,10 +600,13 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -523,10 +617,14 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedVertxWebsocketEndpointBuilder synchronous(
                 String synchronous) {

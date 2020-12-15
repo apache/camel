@@ -47,11 +47,14 @@ public interface StompEndpointBuilderFactory {
         /**
          * The URI of the Stomp broker to connect to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Default: tcp://localhost:61613
          * Group: common
+         * 
+         * @param brokerURL the value to set
+         * @return the dsl builder
          */
         default StompEndpointConsumerBuilder brokerURL(String brokerURL) {
             doSetProperty("brokerURL", brokerURL);
@@ -60,9 +63,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHeaders the value to set
+         * @return the dsl builder
          */
         default StompEndpointConsumerBuilder customHeaders(
                 Properties customHeaders) {
@@ -72,10 +78,13 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHeaders the value to set
+         * @return the dsl builder
          */
         default StompEndpointConsumerBuilder customHeaders(String customHeaders) {
             doSetProperty("customHeaders", customHeaders);
@@ -84,9 +93,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The virtual host name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default StompEndpointConsumerBuilder host(String host) {
             doSetProperty("host", host);
@@ -95,9 +107,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The stomp version (1.1, or 1.2).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param version the value to set
+         * @return the dsl builder
          */
         default StompEndpointConsumerBuilder version(String version) {
             doSetProperty("version", version);
@@ -112,10 +127,13 @@ public interface StompEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default StompEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -131,10 +149,14 @@ public interface StompEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default StompEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -144,9 +166,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param login the value to set
+         * @return the dsl builder
          */
         default StompEndpointConsumerBuilder login(String login) {
             doSetProperty("login", login);
@@ -155,9 +180,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param passcode the value to set
+         * @return the dsl builder
          */
         default StompEndpointConsumerBuilder passcode(String passcode) {
             doSetProperty("passcode", passcode);
@@ -167,9 +195,12 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default StompEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -180,9 +211,12 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default StompEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -206,10 +240,13 @@ public interface StompEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -223,9 +260,12 @@ public interface StompEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -235,9 +275,13 @@ public interface StompEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -248,9 +292,12 @@ public interface StompEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -262,9 +309,13 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -276,9 +327,13 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -289,10 +344,13 @@ public interface StompEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -303,10 +361,14 @@ public interface StompEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -327,11 +389,14 @@ public interface StompEndpointBuilderFactory {
         /**
          * The URI of the Stomp broker to connect to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Default: tcp://localhost:61613
          * Group: common
+         * 
+         * @param brokerURL the value to set
+         * @return the dsl builder
          */
         default StompEndpointProducerBuilder brokerURL(String brokerURL) {
             doSetProperty("brokerURL", brokerURL);
@@ -340,9 +405,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHeaders the value to set
+         * @return the dsl builder
          */
         default StompEndpointProducerBuilder customHeaders(
                 Properties customHeaders) {
@@ -352,10 +420,13 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHeaders the value to set
+         * @return the dsl builder
          */
         default StompEndpointProducerBuilder customHeaders(String customHeaders) {
             doSetProperty("customHeaders", customHeaders);
@@ -364,9 +435,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The virtual host name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default StompEndpointProducerBuilder host(String host) {
             doSetProperty("host", host);
@@ -375,9 +449,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The stomp version (1.1, or 1.2).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param version the value to set
+         * @return the dsl builder
          */
         default StompEndpointProducerBuilder version(String version) {
             doSetProperty("version", version);
@@ -394,10 +471,13 @@ public interface StompEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default StompEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -415,10 +495,14 @@ public interface StompEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default StompEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -428,9 +512,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param login the value to set
+         * @return the dsl builder
          */
         default StompEndpointProducerBuilder login(String login) {
             doSetProperty("login", login);
@@ -439,9 +526,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param passcode the value to set
+         * @return the dsl builder
          */
         default StompEndpointProducerBuilder passcode(String passcode) {
             doSetProperty("passcode", passcode);
@@ -451,9 +541,12 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default StompEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -464,9 +557,12 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default StompEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -489,9 +585,13 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -503,9 +603,13 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -516,10 +620,13 @@ public interface StompEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -530,10 +637,14 @@ public interface StompEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -555,11 +666,14 @@ public interface StompEndpointBuilderFactory {
         /**
          * The URI of the Stomp broker to connect to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Default: tcp://localhost:61613
          * Group: common
+         * 
+         * @param brokerURL the value to set
+         * @return the dsl builder
          */
         default StompEndpointBuilder brokerURL(String brokerURL) {
             doSetProperty("brokerURL", brokerURL);
@@ -568,9 +682,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHeaders the value to set
+         * @return the dsl builder
          */
         default StompEndpointBuilder customHeaders(Properties customHeaders) {
             doSetProperty("customHeaders", customHeaders);
@@ -579,10 +696,13 @@ public interface StompEndpointBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHeaders the value to set
+         * @return the dsl builder
          */
         default StompEndpointBuilder customHeaders(String customHeaders) {
             doSetProperty("customHeaders", customHeaders);
@@ -591,9 +711,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The virtual host name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default StompEndpointBuilder host(String host) {
             doSetProperty("host", host);
@@ -602,9 +725,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The stomp version (1.1, or 1.2).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param version the value to set
+         * @return the dsl builder
          */
         default StompEndpointBuilder version(String version) {
             doSetProperty("version", version);
@@ -613,9 +739,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param login the value to set
+         * @return the dsl builder
          */
         default StompEndpointBuilder login(String login) {
             doSetProperty("login", login);
@@ -624,9 +753,12 @@ public interface StompEndpointBuilderFactory {
         /**
          * The password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param passcode the value to set
+         * @return the dsl builder
          */
         default StompEndpointBuilder passcode(String passcode) {
             doSetProperty("passcode", passcode);
@@ -636,9 +768,12 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default StompEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -649,9 +784,12 @@ public interface StompEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default StompEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -675,9 +813,13 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -689,9 +831,13 @@ public interface StompEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -702,10 +848,13 @@ public interface StompEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -715,10 +864,14 @@ public interface StompEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedStompEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

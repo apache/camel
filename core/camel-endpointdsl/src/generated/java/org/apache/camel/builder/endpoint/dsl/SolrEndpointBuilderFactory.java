@@ -40,9 +40,12 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Server side must support gzip or deflate for this to have any effect.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param allowCompression the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder allowCompression(Boolean allowCompression) {
             doSetProperty("allowCompression", allowCompression);
@@ -51,10 +54,13 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Server side must support gzip or deflate for this to have any effect.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param allowCompression the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder allowCompression(String allowCompression) {
             doSetProperty("allowCompression", allowCompression);
@@ -63,9 +69,12 @@ public interface SolrEndpointBuilderFactory {
         /**
          * connectionTimeout on the underlying HttpConnectionManager.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder connectionTimeout(Integer connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -74,10 +83,13 @@ public interface SolrEndpointBuilderFactory {
         /**
          * connectionTimeout on the underlying HttpConnectionManager.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder connectionTimeout(String connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -86,9 +98,12 @@ public interface SolrEndpointBuilderFactory {
         /**
          * maxConnectionsPerHost on the underlying HttpConnectionManager.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param defaultMaxConnectionsPerHost the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder defaultMaxConnectionsPerHost(
                 Integer defaultMaxConnectionsPerHost) {
@@ -98,10 +113,13 @@ public interface SolrEndpointBuilderFactory {
         /**
          * maxConnectionsPerHost on the underlying HttpConnectionManager.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param defaultMaxConnectionsPerHost the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder defaultMaxConnectionsPerHost(
                 String defaultMaxConnectionsPerHost) {
@@ -111,9 +129,12 @@ public interface SolrEndpointBuilderFactory {
         /**
          * indicates whether redirects are used to get to the Solr server.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param followRedirects the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder followRedirects(Boolean followRedirects) {
             doSetProperty("followRedirects", followRedirects);
@@ -122,10 +143,13 @@ public interface SolrEndpointBuilderFactory {
         /**
          * indicates whether redirects are used to get to the Solr server.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param followRedirects the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder followRedirects(String followRedirects) {
             doSetProperty("followRedirects", followRedirects);
@@ -142,10 +166,13 @@ public interface SolrEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -162,10 +189,14 @@ public interface SolrEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -175,9 +206,12 @@ public interface SolrEndpointBuilderFactory {
          * Maximum number of retries to attempt in the event of transient
          * errors.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param maxRetries the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder maxRetries(Integer maxRetries) {
             doSetProperty("maxRetries", maxRetries);
@@ -187,10 +221,13 @@ public interface SolrEndpointBuilderFactory {
          * Maximum number of retries to attempt in the event of transient
          * errors.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param maxRetries the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder maxRetries(String maxRetries) {
             doSetProperty("maxRetries", maxRetries);
@@ -199,9 +236,12 @@ public interface SolrEndpointBuilderFactory {
         /**
          * maxTotalConnection on the underlying HttpConnectionManager.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param maxTotalConnections the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder maxTotalConnections(
                 Integer maxTotalConnections) {
@@ -211,10 +251,13 @@ public interface SolrEndpointBuilderFactory {
         /**
          * maxTotalConnection on the underlying HttpConnectionManager.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param maxTotalConnections the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder maxTotalConnections(
                 String maxTotalConnections) {
@@ -224,9 +267,12 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Set the request handler to be used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param requestHandler the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder requestHandler(String requestHandler) {
             doSetProperty("requestHandler", requestHandler);
@@ -236,9 +282,12 @@ public interface SolrEndpointBuilderFactory {
          * Read timeout on the underlying HttpConnectionManager. This is
          * desirable for queries, but probably not for indexing.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param soTimeout the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder soTimeout(Integer soTimeout) {
             doSetProperty("soTimeout", soTimeout);
@@ -248,10 +297,13 @@ public interface SolrEndpointBuilderFactory {
          * Read timeout on the underlying HttpConnectionManager. This is
          * desirable for queries, but probably not for indexing.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param soTimeout the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder soTimeout(String soTimeout) {
             doSetProperty("soTimeout", soTimeout);
@@ -260,10 +312,13 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Set the queue size for the StreamingUpdateSolrServer.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: producer
+         * 
+         * @param streamingQueueSize the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder streamingQueueSize(int streamingQueueSize) {
             doSetProperty("streamingQueueSize", streamingQueueSize);
@@ -272,10 +327,13 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Set the queue size for the StreamingUpdateSolrServer.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: producer
+         * 
+         * @param streamingQueueSize the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder streamingQueueSize(String streamingQueueSize) {
             doSetProperty("streamingQueueSize", streamingQueueSize);
@@ -284,10 +342,13 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Set the number of threads for the StreamingUpdateSolrServer.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: producer
+         * 
+         * @param streamingThreadCount the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder streamingThreadCount(
                 int streamingThreadCount) {
@@ -297,10 +358,13 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Set the number of threads for the StreamingUpdateSolrServer.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: producer
+         * 
+         * @param streamingThreadCount the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder streamingThreadCount(
                 String streamingThreadCount) {
@@ -310,9 +374,12 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Sets password for basic auth plugin enabled servers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -321,9 +388,12 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Sets username for basic auth plugin enabled servers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -332,9 +402,12 @@ public interface SolrEndpointBuilderFactory {
         /**
          * Set the collection name which the solrCloud server could use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: solrCloud
+         * 
+         * @param collection the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder collection(String collection) {
             doSetProperty("collection", collection);
@@ -344,9 +417,12 @@ public interface SolrEndpointBuilderFactory {
          * Set the ZooKeeper host information which the solrCloud could use,
          * such as zkhost=localhost:8123.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: solrCloud
+         * 
+         * @param zkHost the value to set
+         * @return the dsl builder
          */
         default SolrEndpointBuilder zkHost(String zkHost) {
             doSetProperty("zkHost", zkHost);
@@ -367,10 +443,13 @@ public interface SolrEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSolrEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -380,10 +459,14 @@ public interface SolrEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSolrEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

@@ -49,10 +49,13 @@ public interface QueueEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -64,10 +67,14 @@ public interface QueueEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder autoDiscoverClient(
                 String autoDiscoverClient) {
@@ -85,9 +92,13 @@ public interface QueueEndpointBuilderFactory {
          * the account, and retrieving statistics of the account.
          * 
          * The option is a:
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
+         * &lt;code&gt;com.azure.storage.queue.QueueServiceClient&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serviceClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder serviceClient(Object serviceClient) {
             doSetProperty("serviceClient", serviceClient);
@@ -104,9 +115,13 @@ public interface QueueEndpointBuilderFactory {
          * the account, and retrieving statistics of the account.
          * 
          * The option will be converted to a
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
+         * &lt;code&gt;com.azure.storage.queue.QueueServiceClient&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serviceClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder serviceClient(String serviceClient) {
             doSetProperty("serviceClient", serviceClient);
@@ -121,10 +136,13 @@ public interface QueueEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -140,10 +158,14 @@ public interface QueueEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -156,10 +178,13 @@ public interface QueueEndpointBuilderFactory {
          * left empty only 1 message will be retrieved, the allowed range is 1
          * to 32 messages.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: queue
+         * 
+         * @param maxMessages the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder maxMessages(Integer maxMessages) {
             doSetProperty("maxMessages", maxMessages);
@@ -171,11 +196,14 @@ public interface QueueEndpointBuilderFactory {
          * left empty only 1 message will be retrieved, the allowed range is 1
          * to 32 messages.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: queue
+         * 
+         * @param maxMessages the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder maxMessages(String maxMessages) {
             doSetProperty("maxMessages", maxMessages);
@@ -184,9 +212,12 @@ public interface QueueEndpointBuilderFactory {
         /**
          * The ID of the message to be deleted or updated.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param messageId the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder messageId(String messageId) {
             doSetProperty("messageId", messageId);
@@ -196,9 +227,12 @@ public interface QueueEndpointBuilderFactory {
          * Unique identifier that must match for the message to be deleted or
          * updated.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param popReceipt the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder popReceipt(String popReceipt) {
             doSetProperty("popReceipt", popReceipt);
@@ -209,9 +243,12 @@ public interface QueueEndpointBuilderFactory {
          * returned before the timeout concludes a RuntimeException will be
          * thrown.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder timeout(Duration timeout) {
             doSetProperty("timeout", timeout);
@@ -222,10 +259,13 @@ public interface QueueEndpointBuilderFactory {
          * returned before the timeout concludes a RuntimeException will be
          * thrown.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -240,9 +280,12 @@ public interface QueueEndpointBuilderFactory {
          * EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder timeToLive(Duration timeToLive) {
             doSetProperty("timeToLive", timeToLive);
@@ -257,10 +300,13 @@ public interface QueueEndpointBuilderFactory {
          * EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder timeToLive(String timeToLive) {
             doSetProperty("timeToLive", timeToLive);
@@ -274,9 +320,12 @@ public interface QueueEndpointBuilderFactory {
          * using EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param visibilityTimeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder visibilityTimeout(
                 Duration visibilityTimeout) {
@@ -291,10 +340,13 @@ public interface QueueEndpointBuilderFactory {
          * using EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param visibilityTimeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder visibilityTimeout(
                 String visibilityTimeout) {
@@ -305,9 +357,12 @@ public interface QueueEndpointBuilderFactory {
          * Access key for the associated azure account name to be used for
          * authentication with azure queue services.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -318,10 +373,12 @@ public interface QueueEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option is a:
-         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
-         * type.
+         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder credentials(Object credentials) {
             doSetProperty("credentials", credentials);
@@ -332,10 +389,12 @@ public interface QueueEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option will be converted to a
-         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
-         * type.
+         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueEndpointConsumerBuilder credentials(String credentials) {
             doSetProperty("credentials", credentials);
@@ -359,10 +418,13 @@ public interface QueueEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -376,9 +438,12 @@ public interface QueueEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -388,9 +453,13 @@ public interface QueueEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -401,9 +470,12 @@ public interface QueueEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -414,10 +486,13 @@ public interface QueueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -428,10 +503,14 @@ public interface QueueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -455,10 +534,13 @@ public interface QueueEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -470,10 +552,14 @@ public interface QueueEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder autoDiscoverClient(
                 String autoDiscoverClient) {
@@ -491,9 +577,13 @@ public interface QueueEndpointBuilderFactory {
          * the account, and retrieving statistics of the account.
          * 
          * The option is a:
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
+         * &lt;code&gt;com.azure.storage.queue.QueueServiceClient&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serviceClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder serviceClient(Object serviceClient) {
             doSetProperty("serviceClient", serviceClient);
@@ -510,9 +600,13 @@ public interface QueueEndpointBuilderFactory {
          * the account, and retrieving statistics of the account.
          * 
          * The option will be converted to a
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
+         * &lt;code&gt;com.azure.storage.queue.QueueServiceClient&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serviceClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder serviceClient(String serviceClient) {
             doSetProperty("serviceClient", serviceClient);
@@ -522,10 +616,13 @@ public interface QueueEndpointBuilderFactory {
          * When is set to true, the queue will be automatically created when
          * sending messages to the queue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param createQueue the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder createQueue(boolean createQueue) {
             doSetProperty("createQueue", createQueue);
@@ -535,10 +632,14 @@ public interface QueueEndpointBuilderFactory {
          * When is set to true, the queue will be automatically created when
          * sending messages to the queue.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param createQueue the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder createQueue(String createQueue) {
             doSetProperty("createQueue", createQueue);
@@ -555,10 +656,13 @@ public interface QueueEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -576,10 +680,14 @@ public interface QueueEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -590,9 +698,12 @@ public interface QueueEndpointBuilderFactory {
          * Queue service operation hint to the producer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.queue.QueueOperationDefinition</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.storage.queue.QueueOperationDefinition&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder operation(
                 QueueOperationDefinition operation) {
@@ -603,9 +714,12 @@ public interface QueueEndpointBuilderFactory {
          * Queue service operation hint to the producer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.azure.storage.queue.QueueOperationDefinition</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.storage.queue.QueueOperationDefinition&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -617,10 +731,13 @@ public interface QueueEndpointBuilderFactory {
          * left empty only 1 message will be retrieved, the allowed range is 1
          * to 32 messages.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: queue
+         * 
+         * @param maxMessages the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder maxMessages(Integer maxMessages) {
             doSetProperty("maxMessages", maxMessages);
@@ -632,11 +749,14 @@ public interface QueueEndpointBuilderFactory {
          * left empty only 1 message will be retrieved, the allowed range is 1
          * to 32 messages.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: queue
+         * 
+         * @param maxMessages the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder maxMessages(String maxMessages) {
             doSetProperty("maxMessages", maxMessages);
@@ -645,9 +765,12 @@ public interface QueueEndpointBuilderFactory {
         /**
          * The ID of the message to be deleted or updated.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param messageId the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder messageId(String messageId) {
             doSetProperty("messageId", messageId);
@@ -657,9 +780,12 @@ public interface QueueEndpointBuilderFactory {
          * Unique identifier that must match for the message to be deleted or
          * updated.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param popReceipt the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder popReceipt(String popReceipt) {
             doSetProperty("popReceipt", popReceipt);
@@ -670,9 +796,12 @@ public interface QueueEndpointBuilderFactory {
          * returned before the timeout concludes a RuntimeException will be
          * thrown.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder timeout(Duration timeout) {
             doSetProperty("timeout", timeout);
@@ -683,10 +812,13 @@ public interface QueueEndpointBuilderFactory {
          * returned before the timeout concludes a RuntimeException will be
          * thrown.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -701,9 +833,12 @@ public interface QueueEndpointBuilderFactory {
          * EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder timeToLive(Duration timeToLive) {
             doSetProperty("timeToLive", timeToLive);
@@ -718,10 +853,13 @@ public interface QueueEndpointBuilderFactory {
          * EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder timeToLive(String timeToLive) {
             doSetProperty("timeToLive", timeToLive);
@@ -735,9 +873,12 @@ public interface QueueEndpointBuilderFactory {
          * using EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param visibilityTimeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder visibilityTimeout(
                 Duration visibilityTimeout) {
@@ -752,10 +893,13 @@ public interface QueueEndpointBuilderFactory {
          * using EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param visibilityTimeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder visibilityTimeout(
                 String visibilityTimeout) {
@@ -766,9 +910,12 @@ public interface QueueEndpointBuilderFactory {
          * Access key for the associated azure account name to be used for
          * authentication with azure queue services.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -779,10 +926,12 @@ public interface QueueEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option is a:
-         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
-         * type.
+         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder credentials(Object credentials) {
             doSetProperty("credentials", credentials);
@@ -793,10 +942,12 @@ public interface QueueEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option will be converted to a
-         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
-         * type.
+         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueEndpointProducerBuilder credentials(String credentials) {
             doSetProperty("credentials", credentials);
@@ -818,10 +969,13 @@ public interface QueueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -832,10 +986,14 @@ public interface QueueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -859,10 +1017,13 @@ public interface QueueEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -874,10 +1035,14 @@ public interface QueueEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder autoDiscoverClient(
                 String autoDiscoverClient) {
@@ -895,9 +1060,13 @@ public interface QueueEndpointBuilderFactory {
          * the account, and retrieving statistics of the account.
          * 
          * The option is a:
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
+         * &lt;code&gt;com.azure.storage.queue.QueueServiceClient&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serviceClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder serviceClient(Object serviceClient) {
             doSetProperty("serviceClient", serviceClient);
@@ -914,9 +1083,13 @@ public interface QueueEndpointBuilderFactory {
          * the account, and retrieving statistics of the account.
          * 
          * The option will be converted to a
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
+         * &lt;code&gt;com.azure.storage.queue.QueueServiceClient&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serviceClient the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder serviceClient(String serviceClient) {
             doSetProperty("serviceClient", serviceClient);
@@ -928,10 +1101,13 @@ public interface QueueEndpointBuilderFactory {
          * left empty only 1 message will be retrieved, the allowed range is 1
          * to 32 messages.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: queue
+         * 
+         * @param maxMessages the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder maxMessages(Integer maxMessages) {
             doSetProperty("maxMessages", maxMessages);
@@ -943,11 +1119,14 @@ public interface QueueEndpointBuilderFactory {
          * left empty only 1 message will be retrieved, the allowed range is 1
          * to 32 messages.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: queue
+         * 
+         * @param maxMessages the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder maxMessages(String maxMessages) {
             doSetProperty("maxMessages", maxMessages);
@@ -956,9 +1135,12 @@ public interface QueueEndpointBuilderFactory {
         /**
          * The ID of the message to be deleted or updated.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param messageId the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder messageId(String messageId) {
             doSetProperty("messageId", messageId);
@@ -968,9 +1150,12 @@ public interface QueueEndpointBuilderFactory {
          * Unique identifier that must match for the message to be deleted or
          * updated.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param popReceipt the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder popReceipt(String popReceipt) {
             doSetProperty("popReceipt", popReceipt);
@@ -981,9 +1166,12 @@ public interface QueueEndpointBuilderFactory {
          * returned before the timeout concludes a RuntimeException will be
          * thrown.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder timeout(Duration timeout) {
             doSetProperty("timeout", timeout);
@@ -994,10 +1182,13 @@ public interface QueueEndpointBuilderFactory {
          * returned before the timeout concludes a RuntimeException will be
          * thrown.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -1012,9 +1203,12 @@ public interface QueueEndpointBuilderFactory {
          * EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder timeToLive(Duration timeToLive) {
             doSetProperty("timeToLive", timeToLive);
@@ -1029,10 +1223,13 @@ public interface QueueEndpointBuilderFactory {
          * EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder timeToLive(String timeToLive) {
             doSetProperty("timeToLive", timeToLive);
@@ -1046,9 +1243,12 @@ public interface QueueEndpointBuilderFactory {
          * using EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param visibilityTimeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder visibilityTimeout(
                 Duration visibilityTimeout) {
@@ -1063,10 +1263,13 @@ public interface QueueEndpointBuilderFactory {
          * using EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param visibilityTimeout the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder visibilityTimeout(String visibilityTimeout) {
             doSetProperty("visibilityTimeout", visibilityTimeout);
@@ -1076,9 +1279,12 @@ public interface QueueEndpointBuilderFactory {
          * Access key for the associated azure account name to be used for
          * authentication with azure queue services.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -1089,10 +1295,12 @@ public interface QueueEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option is a:
-         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
-         * type.
+         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder credentials(Object credentials) {
             doSetProperty("credentials", credentials);
@@ -1103,10 +1311,12 @@ public interface QueueEndpointBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option will be converted to a
-         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
-         * type.
+         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default QueueEndpointBuilder credentials(String credentials) {
             doSetProperty("credentials", credentials);
@@ -1129,10 +1339,13 @@ public interface QueueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1142,10 +1355,14 @@ public interface QueueEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQueueEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

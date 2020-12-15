@@ -50,10 +50,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateBucket the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder autoCreateBucket(
                 boolean autoCreateBucket) {
@@ -63,10 +66,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateBucket the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder autoCreateBucket(
                 String autoCreateBucket) {
@@ -76,9 +83,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option is a: <code>okhttp3.OkHttpClient</code> type.
+         * The option is a: &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder customHttpClient(
                 Object customHttpClient) {
@@ -88,10 +98,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder customHttpClient(
                 String customHttpClient) {
@@ -101,9 +114,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param endpoint the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder endpoint(String endpoint) {
             doSetProperty("endpoint", endpoint);
@@ -112,9 +128,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option is a: <code>io.minio.MinioClient</code> type.
+         * The option is a: &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param minioClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder minioClient(Object minioClient) {
             doSetProperty("minioClient", minioClient);
@@ -123,10 +142,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option will be converted to a <code>io.minio.MinioClient</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param minioClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder minioClient(String minioClient) {
             doSetProperty("minioClient", minioClient);
@@ -135,10 +157,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param objectLock the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder objectLock(boolean objectLock) {
             doSetProperty("objectLock", objectLock);
@@ -147,10 +172,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param objectLock the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder objectLock(String objectLock) {
             doSetProperty("objectLock", objectLock);
@@ -159,9 +188,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * The policy for this queue to set in the method.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder policy(String policy) {
             doSetProperty("policy", policy);
@@ -171,9 +203,12 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -183,10 +218,13 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -198,9 +236,12 @@ public interface MinioEndpointBuilderFactory {
          * region (for example ap-east-1). You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder region(String region) {
             doSetProperty("region", region);
@@ -209,10 +250,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -221,10 +265,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -233,9 +281,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Server-side encryption.
          * 
-         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
+         * The option is a:
+         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder serverSideEncryption(
                 Object serverSideEncryption) {
@@ -246,9 +298,12 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption.
          * 
          * The option will be converted to a
-         * <code>io.minio.ServerSideEncryption</code> type.
+         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder serverSideEncryption(
                 String serverSideEncryption) {
@@ -259,9 +314,13 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder serverSideEncryptionCustomerKey(
                 Object serverSideEncryptionCustomerKey) {
@@ -272,9 +331,13 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder serverSideEncryptionCustomerKey(
                 String serverSideEncryptionCustomerKey) {
@@ -289,10 +352,13 @@ public interface MinioEndpointBuilderFactory {
          * to the caller to close the MinioObject stream. Setting autocloseBody
          * to true, will close the MinioObject stream automatically.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoCloseBody the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder autoCloseBody(boolean autoCloseBody) {
             doSetProperty("autoCloseBody", autoCloseBody);
@@ -306,10 +372,14 @@ public interface MinioEndpointBuilderFactory {
          * to the caller to close the MinioObject stream. Setting autocloseBody
          * to true, will close the MinioObject stream automatically.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoCloseBody the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder autoCloseBody(String autoCloseBody) {
             doSetProperty("autoCloseBody", autoCloseBody);
@@ -324,10 +394,13 @@ public interface MinioEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -343,10 +416,14 @@ public interface MinioEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -357,10 +434,13 @@ public interface MinioEndpointBuilderFactory {
          * Set this flag if you want to bypassGovernanceMode when deleting a
          * particular object.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bypassGovernanceMode the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder bypassGovernanceMode(
                 boolean bypassGovernanceMode) {
@@ -371,10 +451,14 @@ public interface MinioEndpointBuilderFactory {
          * Set this flag if you want to bypassGovernanceMode when deleting a
          * particular object.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bypassGovernanceMode the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder bypassGovernanceMode(
                 String bypassGovernanceMode) {
@@ -391,10 +475,13 @@ public interface MinioEndpointBuilderFactory {
          * and MinioConstants#OBJECT_NAME headers, or only the
          * MinioConstants#OBJECT_NAME header.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder deleteAfterRead(
                 boolean deleteAfterRead) {
@@ -411,10 +498,14 @@ public interface MinioEndpointBuilderFactory {
          * and MinioConstants#OBJECT_NAME headers, or only the
          * MinioConstants#OBJECT_NAME header.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder deleteAfterRead(
                 String deleteAfterRead) {
@@ -425,9 +516,12 @@ public interface MinioEndpointBuilderFactory {
          * The delimiter which is used in the ListObjectsRequest to only consume
          * objects we are interested in.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder delimiter(String delimiter) {
             doSetProperty("delimiter", delimiter);
@@ -436,9 +530,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Source bucket name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param destinationBucketName the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder destinationBucketName(
                 String destinationBucketName) {
@@ -448,9 +545,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Source object name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param destinationObjectName the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder destinationObjectName(
                 String destinationObjectName) {
@@ -466,10 +566,13 @@ public interface MinioEndpointBuilderFactory {
          * caller to close the MinioObject stream. Setting autocloseBody to
          * true, will close the MinioObject stream automatically.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param includeBody the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder includeBody(boolean includeBody) {
             doSetProperty("includeBody", includeBody);
@@ -484,10 +587,14 @@ public interface MinioEndpointBuilderFactory {
          * caller to close the MinioObject stream. Setting autocloseBody to
          * true, will close the MinioObject stream automatically.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param includeBody the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder includeBody(String includeBody) {
             doSetProperty("includeBody", includeBody);
@@ -497,10 +604,13 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to set include
          * folders.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeFolders the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder includeFolders(
                 boolean includeFolders) {
@@ -511,10 +621,14 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to set include
          * folders.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeFolders the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder includeFolders(
                 String includeFolders) {
@@ -525,10 +639,13 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to get objects with
          * user meta data.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeUserMetadata the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder includeUserMetadata(
                 boolean includeUserMetadata) {
@@ -539,10 +656,14 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to get objects with
          * user meta data.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeUserMetadata the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder includeUserMetadata(
                 String includeUserMetadata) {
@@ -553,10 +674,13 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to get objects with
          * versioning.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeVersions the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder includeVersions(
                 boolean includeVersions) {
@@ -567,10 +691,14 @@ public interface MinioEndpointBuilderFactory {
          * The flag which is used in the ListObjectsRequest to get objects with
          * versioning.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeVersions the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder includeVersions(
                 String includeVersions) {
@@ -580,9 +708,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Number of bytes of object data from offset.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param length the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder length(long length) {
             doSetProperty("length", length);
@@ -591,9 +722,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Number of bytes of object data from offset.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param length the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder length(String length) {
             doSetProperty("length", length);
@@ -602,9 +736,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set match ETag parameter for get object(s).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param matchETag the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder matchETag(String matchETag) {
             doSetProperty("matchETag", matchETag);
@@ -613,10 +750,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set the maxConnections parameter in the minio client configuration.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: consumer
+         * 
+         * @param maxConnections the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder maxConnections(int maxConnections) {
             doSetProperty("maxConnections", maxConnections);
@@ -625,10 +765,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set the maxConnections parameter in the minio client configuration.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: consumer
+         * 
+         * @param maxConnections the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder maxConnections(
                 String maxConnections) {
@@ -641,10 +784,13 @@ public interface MinioEndpointBuilderFactory {
          * each polling. The default value is 10. Use 0 or a negative number to
          * set it as unlimited.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -657,10 +803,13 @@ public interface MinioEndpointBuilderFactory {
          * each polling. The default value is 10. Use 0 or a negative number to
          * set it as unlimited.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -670,9 +819,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set modified since parameter for get object(s).
          * 
-         * The option is a: <code>java.time.ZonedDateTime</code> type.
+         * The option is a: &lt;code&gt;java.time.ZonedDateTime&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param modifiedSince the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder modifiedSince(
                 ZonedDateTime modifiedSince) {
@@ -683,9 +836,12 @@ public interface MinioEndpointBuilderFactory {
          * Set modified since parameter for get object(s).
          * 
          * The option will be converted to a
-         * <code>java.time.ZonedDateTime</code> type.
+         * &lt;code&gt;java.time.ZonedDateTime&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param modifiedSince the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder modifiedSince(String modifiedSince) {
             doSetProperty("modifiedSince", modifiedSince);
@@ -697,10 +853,13 @@ public interface MinioEndpointBuilderFactory {
          * must be set. The copy bucket operation is only performed if the
          * Exchange is committed. If a rollback occurs, the object is not moved.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param moveAfterRead the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder moveAfterRead(boolean moveAfterRead) {
             doSetProperty("moveAfterRead", moveAfterRead);
@@ -712,10 +871,14 @@ public interface MinioEndpointBuilderFactory {
          * must be set. The copy bucket operation is only performed if the
          * Exchange is committed. If a rollback occurs, the object is not moved.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param moveAfterRead the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder moveAfterRead(String moveAfterRead) {
             doSetProperty("moveAfterRead", moveAfterRead);
@@ -724,9 +887,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set not match ETag parameter for get object(s).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param notMatchETag the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder notMatchETag(String notMatchETag) {
             doSetProperty("notMatchETag", notMatchETag);
@@ -735,9 +901,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * To get the object from the bucket with the given object name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder objectName(String objectName) {
             doSetProperty("objectName", objectName);
@@ -746,9 +915,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Start byte position of object data.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offset the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder offset(long offset) {
             doSetProperty("offset", offset);
@@ -757,9 +929,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Start byte position of object data.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offset the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder offset(String offset) {
             doSetProperty("offset", offset);
@@ -768,9 +943,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Object name starts with prefix.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder prefix(String prefix) {
             doSetProperty("prefix", prefix);
@@ -779,10 +957,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * List recursively than directory structure emulation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -791,10 +972,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * List recursively than directory structure emulation.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
@@ -804,10 +989,13 @@ public interface MinioEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -818,10 +1006,14 @@ public interface MinioEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -831,9 +1023,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * list objects in bucket after this object name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param startAfter the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder startAfter(String startAfter) {
             doSetProperty("startAfter", startAfter);
@@ -842,9 +1037,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set un modified since parameter for get object(s).
          * 
-         * The option is a: <code>java.time.ZonedDateTime</code> type.
+         * The option is a: &lt;code&gt;java.time.ZonedDateTime&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param unModifiedSince the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder unModifiedSince(
                 ZonedDateTime unModifiedSince) {
@@ -855,9 +1054,12 @@ public interface MinioEndpointBuilderFactory {
          * Set un modified since parameter for get object(s).
          * 
          * The option will be converted to a
-         * <code>java.time.ZonedDateTime</code> type.
+         * &lt;code&gt;java.time.ZonedDateTime&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param unModifiedSince the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder unModifiedSince(
                 String unModifiedSince) {
@@ -867,10 +1069,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * when true, version 1 of REST API is used.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param useVersion1 the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder useVersion1(boolean useVersion1) {
             doSetProperty("useVersion1", useVersion1);
@@ -879,10 +1084,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * when true, version 1 of REST API is used.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param useVersion1 the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder useVersion1(String useVersion1) {
             doSetProperty("useVersion1", useVersion1);
@@ -891,9 +1100,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set specific version_ID of a object when deleting the object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param versionId the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder versionId(String versionId) {
             doSetProperty("versionId", versionId);
@@ -903,9 +1115,12 @@ public interface MinioEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -916,9 +1131,12 @@ public interface MinioEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -929,9 +1147,12 @@ public interface MinioEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -942,9 +1163,12 @@ public interface MinioEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -959,9 +1183,12 @@ public interface MinioEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -976,9 +1203,12 @@ public interface MinioEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -988,10 +1218,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -1000,10 +1233,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -1013,10 +1249,13 @@ public interface MinioEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -1026,10 +1265,14 @@ public interface MinioEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -1038,10 +1281,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -1050,10 +1296,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -1064,10 +1313,13 @@ public interface MinioEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -1078,10 +1330,13 @@ public interface MinioEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -1091,10 +1346,14 @@ public interface MinioEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -1106,10 +1365,13 @@ public interface MinioEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -1122,9 +1384,12 @@ public interface MinioEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -1137,9 +1402,12 @@ public interface MinioEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -1150,10 +1418,13 @@ public interface MinioEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -1163,10 +1434,14 @@ public interface MinioEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -1176,13 +1451,17 @@ public interface MinioEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -1194,13 +1473,16 @@ public interface MinioEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -1209,10 +1491,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -1222,10 +1507,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -1235,10 +1524,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -1248,10 +1541,13 @@ public interface MinioEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -1261,10 +1557,13 @@ public interface MinioEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -1274,10 +1573,14 @@ public interface MinioEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -1287,9 +1590,12 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Secret Access Key or Minio Access Key. If not set camel
          * will connect to service for anonymous access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -1299,9 +1605,12 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Access Key Id or Minio Secret Key. If not set camel will
          * connect to service for anonymous access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointConsumerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -1324,10 +1633,13 @@ public interface MinioEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -1341,9 +1653,12 @@ public interface MinioEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -1353,9 +1668,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -1366,9 +1685,12 @@ public interface MinioEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -1382,9 +1704,12 @@ public interface MinioEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -1398,9 +1723,12 @@ public interface MinioEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -1411,10 +1739,13 @@ public interface MinioEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -1425,10 +1756,14 @@ public interface MinioEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -1449,10 +1784,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateBucket the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder autoCreateBucket(
                 boolean autoCreateBucket) {
@@ -1462,10 +1800,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateBucket the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder autoCreateBucket(
                 String autoCreateBucket) {
@@ -1475,9 +1817,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option is a: <code>okhttp3.OkHttpClient</code> type.
+         * The option is a: &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder customHttpClient(
                 Object customHttpClient) {
@@ -1487,10 +1832,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder customHttpClient(
                 String customHttpClient) {
@@ -1500,9 +1848,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param endpoint the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder endpoint(String endpoint) {
             doSetProperty("endpoint", endpoint);
@@ -1511,9 +1862,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option is a: <code>io.minio.MinioClient</code> type.
+         * The option is a: &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param minioClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder minioClient(Object minioClient) {
             doSetProperty("minioClient", minioClient);
@@ -1522,10 +1876,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option will be converted to a <code>io.minio.MinioClient</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param minioClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder minioClient(String minioClient) {
             doSetProperty("minioClient", minioClient);
@@ -1534,10 +1891,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param objectLock the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder objectLock(boolean objectLock) {
             doSetProperty("objectLock", objectLock);
@@ -1546,10 +1906,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param objectLock the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder objectLock(String objectLock) {
             doSetProperty("objectLock", objectLock);
@@ -1558,9 +1922,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * The policy for this queue to set in the method.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder policy(String policy) {
             doSetProperty("policy", policy);
@@ -1570,9 +1937,12 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1582,10 +1952,13 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1597,9 +1970,12 @@ public interface MinioEndpointBuilderFactory {
          * region (for example ap-east-1). You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder region(String region) {
             doSetProperty("region", region);
@@ -1608,10 +1984,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -1620,10 +1999,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -1632,9 +2015,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Server-side encryption.
          * 
-         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
+         * The option is a:
+         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder serverSideEncryption(
                 Object serverSideEncryption) {
@@ -1645,9 +2032,12 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption.
          * 
          * The option will be converted to a
-         * <code>io.minio.ServerSideEncryption</code> type.
+         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder serverSideEncryption(
                 String serverSideEncryption) {
@@ -1658,9 +2048,13 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder serverSideEncryptionCustomerKey(
                 Object serverSideEncryptionCustomerKey) {
@@ -1671,9 +2065,13 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder serverSideEncryptionCustomerKey(
                 String serverSideEncryptionCustomerKey) {
@@ -1683,10 +2081,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Delete file object after the Minio file has been uploaded.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param deleteAfterWrite the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder deleteAfterWrite(
                 boolean deleteAfterWrite) {
@@ -1696,10 +2097,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Delete file object after the Minio file has been uploaded.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param deleteAfterWrite the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder deleteAfterWrite(
                 String deleteAfterWrite) {
@@ -1710,9 +2115,12 @@ public interface MinioEndpointBuilderFactory {
          * Setting the key name for an element in the bucket through endpoint
          * parameter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keyName the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder keyName(String keyName) {
             doSetProperty("keyName", keyName);
@@ -1729,10 +2137,13 @@ public interface MinioEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1750,10 +2161,14 @@ public interface MinioEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1764,9 +2179,12 @@ public interface MinioEndpointBuilderFactory {
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.minio.MinioOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.minio.MinioOperations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder operation(MinioOperations operation) {
             doSetProperty("operation", operation);
@@ -1776,9 +2194,12 @@ public interface MinioEndpointBuilderFactory {
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.minio.MinioOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.minio.MinioOperations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -1787,10 +2208,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder pojoRequest(boolean pojoRequest) {
             doSetProperty("pojoRequest", pojoRequest);
@@ -1799,10 +2223,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder pojoRequest(String pojoRequest) {
             doSetProperty("pojoRequest", pojoRequest);
@@ -1811,9 +2239,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * The storage class to set in the request.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param storageClass the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder storageClass(String storageClass) {
             doSetProperty("storageClass", storageClass);
@@ -1823,9 +2254,12 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Secret Access Key or Minio Access Key. If not set camel
          * will connect to service for anonymous access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -1835,9 +2269,12 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Access Key Id or Minio Secret Key. If not set camel will
          * connect to service for anonymous access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointProducerBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -1858,10 +2295,13 @@ public interface MinioEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1872,10 +2312,14 @@ public interface MinioEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1897,10 +2341,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateBucket the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder autoCreateBucket(boolean autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
@@ -1909,10 +2356,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateBucket the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder autoCreateBucket(String autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
@@ -1921,9 +2372,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option is a: <code>okhttp3.OkHttpClient</code> type.
+         * The option is a: &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder customHttpClient(Object customHttpClient) {
             doSetProperty("customHttpClient", customHttpClient);
@@ -1932,10 +2386,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option will be converted to a <code>okhttp3.OkHttpClient</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder customHttpClient(String customHttpClient) {
             doSetProperty("customHttpClient", customHttpClient);
@@ -1944,9 +2401,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param endpoint the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder endpoint(String endpoint) {
             doSetProperty("endpoint", endpoint);
@@ -1955,9 +2415,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option is a: <code>io.minio.MinioClient</code> type.
+         * The option is a: &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param minioClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder minioClient(Object minioClient) {
             doSetProperty("minioClient", minioClient);
@@ -1966,10 +2429,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option will be converted to a <code>io.minio.MinioClient</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param minioClient the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder minioClient(String minioClient) {
             doSetProperty("minioClient", minioClient);
@@ -1978,10 +2444,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param objectLock the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder objectLock(boolean objectLock) {
             doSetProperty("objectLock", objectLock);
@@ -1990,10 +2459,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param objectLock the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder objectLock(String objectLock) {
             doSetProperty("objectLock", objectLock);
@@ -2002,9 +2475,12 @@ public interface MinioEndpointBuilderFactory {
         /**
          * The policy for this queue to set in the method.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder policy(String policy) {
             doSetProperty("policy", policy);
@@ -2014,9 +2490,12 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -2026,10 +2505,13 @@ public interface MinioEndpointBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -2041,9 +2523,12 @@ public interface MinioEndpointBuilderFactory {
          * region (for example ap-east-1). You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -2052,10 +2537,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -2064,10 +2552,14 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -2076,9 +2568,13 @@ public interface MinioEndpointBuilderFactory {
         /**
          * Server-side encryption.
          * 
-         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
+         * The option is a:
+         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder serverSideEncryption(
                 Object serverSideEncryption) {
@@ -2089,9 +2585,12 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption.
          * 
          * The option will be converted to a
-         * <code>io.minio.ServerSideEncryption</code> type.
+         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder serverSideEncryption(
                 String serverSideEncryption) {
@@ -2102,9 +2601,13 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder serverSideEncryptionCustomerKey(
                 Object serverSideEncryptionCustomerKey) {
@@ -2115,9 +2618,13 @@ public interface MinioEndpointBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option will be converted to a
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder serverSideEncryptionCustomerKey(
                 String serverSideEncryptionCustomerKey) {
@@ -2128,9 +2635,12 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Secret Access Key or Minio Access Key. If not set camel
          * will connect to service for anonymous access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -2140,9 +2650,12 @@ public interface MinioEndpointBuilderFactory {
          * Amazon AWS Access Key Id or Minio Secret Key. If not set camel will
          * connect to service for anonymous access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default MinioEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -2164,10 +2677,13 @@ public interface MinioEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -2177,10 +2693,14 @@ public interface MinioEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMinioEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
