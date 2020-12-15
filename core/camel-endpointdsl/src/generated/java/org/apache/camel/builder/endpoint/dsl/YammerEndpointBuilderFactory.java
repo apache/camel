@@ -1165,6 +1165,7 @@ public interface YammerEndpointBuilderFactory {
          * ALGO, FOLLOWING, SENT, PRIVATE, RECEIVED, USERS, CURRENT
          * 
          * @param path function
+         * @return the dsl builder
          */
         default YammerEndpointBuilder yammer(String path) {
             return YammerEndpointBuilderFactory.endpointBuilder("yammer", path);
@@ -1187,6 +1188,7 @@ public interface YammerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path function
+         * @return the dsl builder
          */
         default YammerEndpointBuilder yammer(String componentName, String path) {
             return YammerEndpointBuilderFactory.endpointBuilder(componentName, path);

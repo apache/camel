@@ -37,6 +37,8 @@ public interface ElsqlComponentBuilderFactory {
      * Category: database,sql
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-elsql
+     * 
+     * @return the dsl builder
      */
     static ElsqlComponentBuilder elsql() {
         return new ElsqlComponentBuilderImpl();
@@ -50,10 +52,12 @@ public interface ElsqlComponentBuilderFactory {
          * To use a vendor specific com.opengamma.elsql.ElSqlConfig.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.elsql.ElSqlDatabaseVendor</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.elsql.ElSqlDatabaseVendor&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param databaseVendor the value to set
+         * @return the dsl builder
          */
         default ElsqlComponentBuilder databaseVendor(
                 org.apache.camel.component.elsql.ElSqlDatabaseVendor databaseVendor) {
@@ -63,9 +67,12 @@ public interface ElsqlComponentBuilderFactory {
         /**
          * Sets the DataSource to use to communicate with the database.
          * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
+         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataSource the value to set
+         * @return the dsl builder
          */
         default ElsqlComponentBuilder dataSource(javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
@@ -78,9 +85,12 @@ public interface ElsqlComponentBuilderFactory {
          * from file system. Notice you can set this option on the component and
          * then you do not have to configure this on the endpoint.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resourceUri the value to set
+         * @return the dsl builder
          */
         default ElsqlComponentBuilder resourceUri(java.lang.String resourceUri) {
             doSetProperty("resourceUri", resourceUri);
@@ -95,10 +105,13 @@ public interface ElsqlComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ElsqlComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -116,10 +129,13 @@ public interface ElsqlComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ElsqlComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -134,10 +150,13 @@ public interface ElsqlComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default ElsqlComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -147,9 +166,13 @@ public interface ElsqlComponentBuilderFactory {
          * To use a specific configured ElSqlConfig. It may be better to use the
          * databaseVendor option instead.
          * 
-         * The option is a: <code>com.opengamma.elsql.ElSqlConfig</code> type.
+         * The option is a:
+         * &lt;code&gt;com.opengamma.elsql.ElSqlConfig&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param elSqlConfig the value to set
+         * @return the dsl builder
          */
         default ElsqlComponentBuilder elSqlConfig(
                 com.opengamma.elsql.ElSqlConfig elSqlConfig) {

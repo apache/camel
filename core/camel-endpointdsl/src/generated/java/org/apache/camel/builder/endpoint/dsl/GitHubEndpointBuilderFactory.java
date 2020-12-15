@@ -959,6 +959,7 @@ public interface GitHubEndpointBuilderFactory {
          * Name of branch
          * 
          * @param path type/branchName
+         * @return the dsl builder
          */
         default GitHubEndpointBuilder github(String path) {
             return GitHubEndpointBuilderFactory.endpointBuilder("github", path);
@@ -985,6 +986,7 @@ public interface GitHubEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path type/branchName
+         * @return the dsl builder
          */
         default GitHubEndpointBuilder github(String componentName, String path) {
             return GitHubEndpointBuilderFactory.endpointBuilder(componentName, path);

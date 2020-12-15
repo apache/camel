@@ -37,6 +37,8 @@ public interface AzureQueueComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-azure
+     * 
+     * @return the dsl builder
      */
     @Deprecated
     static AzureQueueComponentBuilder azureQueue() {
@@ -53,9 +55,13 @@ public interface AzureQueueComponentBuilderFactory {
          * The queue service client.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.queue.CloudQueue</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.queue.CloudQueue&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param azureQueueClient the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder azureQueueClient(
                 com.microsoft.azure.storage.queue.CloudQueue azureQueueClient) {
@@ -66,9 +72,12 @@ public interface AzureQueueComponentBuilderFactory {
          * Set the storage credentials, required in most cases.
          * 
          * The option is a:
-         * <code>com.microsoft.azure.storage.StorageCredentials</code> type.
+         * &lt;code&gt;com.microsoft.azure.storage.StorageCredentials&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder credentials(
                 com.microsoft.azure.storage.StorageCredentials credentials) {
@@ -78,10 +87,13 @@ public interface AzureQueueComponentBuilderFactory {
         /**
          * Whether to validate the Azure client URI.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param validateClientURI the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder validateClientURI(
                 boolean validateClientURI) {
@@ -97,10 +109,13 @@ public interface AzureQueueComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -118,10 +133,13 @@ public interface AzureQueueComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -131,9 +149,12 @@ public interface AzureQueueComponentBuilderFactory {
         /**
          * Message Time To Live in seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageTimeToLive the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder messageTimeToLive(
                 int messageTimeToLive) {
@@ -143,9 +164,12 @@ public interface AzureQueueComponentBuilderFactory {
         /**
          * Message Visibility Delay in seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageVisibilityDelay the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder messageVisibilityDelay(
                 int messageVisibilityDelay) {
@@ -156,10 +180,13 @@ public interface AzureQueueComponentBuilderFactory {
          * Queue service operation hint to the producer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.queue.QueueServiceOperations&lt;/code&gt; type.
          * 
          * Default: listQueues
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder operation(
                 org.apache.camel.component.azure.queue.QueueServiceOperations operation) {
@@ -169,9 +196,12 @@ public interface AzureQueueComponentBuilderFactory {
         /**
          * Set a prefix which can be used for listing the queues.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param queuePrefix the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder queuePrefix(
                 java.lang.String queuePrefix) {
@@ -186,10 +216,13 @@ public interface AzureQueueComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -200,9 +233,12 @@ public interface AzureQueueComponentBuilderFactory {
          * The Queue Service configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.queue.QueueServiceConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.queue.QueueServiceConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder configuration(
                 org.apache.camel.component.azure.queue.QueueServiceConfiguration configuration) {
@@ -212,9 +248,12 @@ public interface AzureQueueComponentBuilderFactory {
         /**
          * Set the storage account key used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountKey the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder credentialsAccountKey(
                 java.lang.String credentialsAccountKey) {
@@ -224,9 +263,12 @@ public interface AzureQueueComponentBuilderFactory {
         /**
          * Set the storage account name used during authentication phase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentialsAccountName the value to set
+         * @return the dsl builder
          */
         default AzureQueueComponentBuilder credentialsAccountName(
                 java.lang.String credentialsAccountName) {

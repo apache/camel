@@ -37,6 +37,8 @@ public interface Aws2StsComponentBuilderFactory {
      * Category: cloud,management
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-aws2-sts
+     * 
+     * @return the dsl builder
      */
     static Aws2StsComponentBuilder aws2Sts() {
         return new Aws2StsComponentBuilderImpl();
@@ -50,10 +52,12 @@ public interface Aws2StsComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.sts.STS2Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.sts.STS2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder configuration(
                 org.apache.camel.component.aws2.sts.STS2Configuration configuration) {
@@ -71,10 +75,13 @@ public interface Aws2StsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -85,10 +92,13 @@ public interface Aws2StsComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.sts.STS2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.sts.STS2Operations&lt;/code&gt; type.
          * 
          * Default: assumeRole
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder operation(
                 org.apache.camel.component.aws2.sts.STS2Operations operation) {
@@ -98,10 +108,13 @@ public interface Aws2StsComponentBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder pojoRequest(boolean pojoRequest) {
             doSetProperty("pojoRequest", pojoRequest);
@@ -110,9 +123,12 @@ public interface Aws2StsComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the STS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -121,9 +137,12 @@ public interface Aws2StsComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the STS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -132,11 +151,14 @@ public interface Aws2StsComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the STS client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -149,10 +171,13 @@ public interface Aws2StsComponentBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: aws-global
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -162,9 +187,12 @@ public interface Aws2StsComponentBuilderFactory {
          * To use a existing configured AWS STS as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.sts.StsClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.sts.StsClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param stsClient the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder stsClient(
                 software.amazon.awssdk.services.sts.StsClient stsClient) {
@@ -175,10 +203,13 @@ public interface Aws2StsComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -193,10 +224,13 @@ public interface Aws2StsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -206,9 +240,12 @@ public interface Aws2StsComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -217,9 +254,12 @@ public interface Aws2StsComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2StsComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);

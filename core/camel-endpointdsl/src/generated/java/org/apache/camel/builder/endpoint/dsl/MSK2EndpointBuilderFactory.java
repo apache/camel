@@ -350,6 +350,7 @@ public interface MSK2EndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default MSK2EndpointBuilder aws2Msk(String path) {
             return MSK2EndpointBuilderFactory.endpointBuilder("aws2-msk", path);
@@ -370,6 +371,7 @@ public interface MSK2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default MSK2EndpointBuilder aws2Msk(String componentName, String path) {
             return MSK2EndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -37,6 +37,8 @@ public interface MinioComponentBuilderFactory {
      * Category: cloud,file
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-minio
+     * 
+     * @return the dsl builder
      */
     static MinioComponentBuilder minio() {
         return new MinioComponentBuilderImpl();
@@ -49,10 +51,13 @@ public interface MinioComponentBuilderFactory {
         /**
          * Setting the autocreation of the bucket if bucket name not exist.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateBucket the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder autoCreateBucket(boolean autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
@@ -62,10 +67,12 @@ public interface MinioComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.minio.MinioConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.minio.MinioConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder configuration(
                 org.apache.camel.component.minio.MinioConfiguration configuration) {
@@ -75,9 +82,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Set custom HTTP client for authenticated access.
          * 
-         * The option is a: <code>okhttp3.OkHttpClient</code> type.
+         * The option is a: &lt;code&gt;okhttp3.OkHttpClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHttpClient the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder customHttpClient(
                 okhttp3.OkHttpClient customHttpClient) {
@@ -87,9 +97,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Endpoint can be an URL, domain name, IPv4 address or IPv6 address.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param endpoint the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder endpoint(java.lang.String endpoint) {
             doSetProperty("endpoint", endpoint);
@@ -98,9 +111,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Reference to a Minio Client object in the registry.
          * 
-         * The option is a: <code>io.minio.MinioClient</code> type.
+         * The option is a: &lt;code&gt;io.minio.MinioClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param minioClient the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder minioClient(
                 io.minio.MinioClient minioClient) {
@@ -110,10 +126,13 @@ public interface MinioComponentBuilderFactory {
         /**
          * Set when creating new bucket.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param objectLock the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder objectLock(boolean objectLock) {
             doSetProperty("objectLock", objectLock);
@@ -122,9 +141,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * The policy for this queue to set in the method.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder policy(java.lang.String policy) {
             doSetProperty("policy", policy);
@@ -134,9 +156,12 @@ public interface MinioComponentBuilderFactory {
          * TCP/IP port number. 80 and 443 are used as defaults for HTTP and
          * HTTPS.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -148,9 +173,12 @@ public interface MinioComponentBuilderFactory {
          * region (for example ap-east-1). You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -159,10 +187,13 @@ public interface MinioComponentBuilderFactory {
         /**
          * Flag to indicate to use secure connection to minio service or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -171,9 +202,13 @@ public interface MinioComponentBuilderFactory {
         /**
          * Server-side encryption.
          * 
-         * The option is a: <code>io.minio.ServerSideEncryption</code> type.
+         * The option is a:
+         * &lt;code&gt;io.minio.ServerSideEncryption&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder serverSideEncryption(
                 io.minio.ServerSideEncryption serverSideEncryption) {
@@ -184,9 +219,13 @@ public interface MinioComponentBuilderFactory {
          * Server-side encryption for source object while copy/move objects.
          * 
          * The option is a:
-         * <code>io.minio.ServerSideEncryptionCustomerKey</code> type.
+         * &lt;code&gt;io.minio.ServerSideEncryptionCustomerKey&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serverSideEncryptionCustomerKey the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder serverSideEncryptionCustomerKey(
                 io.minio.ServerSideEncryptionCustomerKey serverSideEncryptionCustomerKey) {
@@ -201,10 +240,13 @@ public interface MinioComponentBuilderFactory {
          * to the caller to close the MinioObject stream. Setting autocloseBody
          * to true, will close the MinioObject stream automatically.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoCloseBody the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder autoCloseBody(boolean autoCloseBody) {
             doSetProperty("autoCloseBody", autoCloseBody);
@@ -219,10 +261,13 @@ public interface MinioComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -233,10 +278,13 @@ public interface MinioComponentBuilderFactory {
          * Set this flag if you want to bypassGovernanceMode when deleting a
          * particular object.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bypassGovernanceMode the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder bypassGovernanceMode(
                 boolean bypassGovernanceMode) {
@@ -253,10 +301,13 @@ public interface MinioComponentBuilderFactory {
          * and MinioConstants#OBJECT_NAME headers, or only the
          * MinioConstants#OBJECT_NAME header.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder deleteAfterRead(boolean deleteAfterRead) {
             doSetProperty("deleteAfterRead", deleteAfterRead);
@@ -266,9 +317,12 @@ public interface MinioComponentBuilderFactory {
          * The delimiter which is used in the ListObjectsRequest to only consume
          * objects we are interested in.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder delimiter(java.lang.String delimiter) {
             doSetProperty("delimiter", delimiter);
@@ -277,9 +331,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Source bucket name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param destinationBucketName the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder destinationBucketName(
                 java.lang.String destinationBucketName) {
@@ -289,9 +346,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Source object name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param destinationObjectName the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder destinationObjectName(
                 java.lang.String destinationObjectName) {
@@ -307,10 +367,13 @@ public interface MinioComponentBuilderFactory {
          * caller to close the MinioObject stream. Setting autocloseBody to
          * true, will close the MinioObject stream automatically.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param includeBody the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder includeBody(boolean includeBody) {
             doSetProperty("includeBody", includeBody);
@@ -320,10 +383,13 @@ public interface MinioComponentBuilderFactory {
          * The flag which is used in the ListObjectsRequest to set include
          * folders.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeFolders the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder includeFolders(boolean includeFolders) {
             doSetProperty("includeFolders", includeFolders);
@@ -333,10 +399,13 @@ public interface MinioComponentBuilderFactory {
          * The flag which is used in the ListObjectsRequest to get objects with
          * user meta data.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeUserMetadata the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder includeUserMetadata(
                 boolean includeUserMetadata) {
@@ -347,10 +416,13 @@ public interface MinioComponentBuilderFactory {
          * The flag which is used in the ListObjectsRequest to get objects with
          * versioning.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeVersions the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder includeVersions(boolean includeVersions) {
             doSetProperty("includeVersions", includeVersions);
@@ -359,9 +431,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Number of bytes of object data from offset.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param length the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder length(long length) {
             doSetProperty("length", length);
@@ -370,9 +445,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Set match ETag parameter for get object(s).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param matchETag the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder matchETag(java.lang.String matchETag) {
             doSetProperty("matchETag", matchETag);
@@ -381,10 +459,13 @@ public interface MinioComponentBuilderFactory {
         /**
          * Set the maxConnections parameter in the minio client configuration.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: consumer
+         * 
+         * @param maxConnections the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder maxConnections(int maxConnections) {
             doSetProperty("maxConnections", maxConnections);
@@ -396,10 +477,13 @@ public interface MinioComponentBuilderFactory {
          * each polling. The default value is 10. Use 0 or a negative number to
          * set it as unlimited.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder maxMessagesPerPoll(int maxMessagesPerPoll) {
             doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
@@ -408,9 +492,13 @@ public interface MinioComponentBuilderFactory {
         /**
          * Set modified since parameter for get object(s).
          * 
-         * The option is a: <code>java.time.ZonedDateTime</code> type.
+         * The option is a: &lt;code&gt;java.time.ZonedDateTime&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param modifiedSince the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder modifiedSince(
                 java.time.ZonedDateTime modifiedSince) {
@@ -423,10 +511,13 @@ public interface MinioComponentBuilderFactory {
          * must be set. The copy bucket operation is only performed if the
          * Exchange is committed. If a rollback occurs, the object is not moved.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param moveAfterRead the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder moveAfterRead(boolean moveAfterRead) {
             doSetProperty("moveAfterRead", moveAfterRead);
@@ -435,9 +526,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Set not match ETag parameter for get object(s).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param notMatchETag the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder notMatchETag(java.lang.String notMatchETag) {
             doSetProperty("notMatchETag", notMatchETag);
@@ -446,9 +540,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * To get the object from the bucket with the given object name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param objectName the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder objectName(java.lang.String objectName) {
             doSetProperty("objectName", objectName);
@@ -457,9 +554,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Start byte position of object data.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offset the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder offset(long offset) {
             doSetProperty("offset", offset);
@@ -468,9 +568,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Object name starts with prefix.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder prefix(java.lang.String prefix) {
             doSetProperty("prefix", prefix);
@@ -479,10 +582,13 @@ public interface MinioComponentBuilderFactory {
         /**
          * List recursively than directory structure emulation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -491,9 +597,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * list objects in bucket after this object name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param startAfter the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder startAfter(java.lang.String startAfter) {
             doSetProperty("startAfter", startAfter);
@@ -502,9 +611,13 @@ public interface MinioComponentBuilderFactory {
         /**
          * Set un modified since parameter for get object(s).
          * 
-         * The option is a: <code>java.time.ZonedDateTime</code> type.
+         * The option is a: &lt;code&gt;java.time.ZonedDateTime&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param unModifiedSince the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder unModifiedSince(
                 java.time.ZonedDateTime unModifiedSince) {
@@ -514,10 +627,13 @@ public interface MinioComponentBuilderFactory {
         /**
          * when true, version 1 of REST API is used.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param useVersion1 the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder useVersion1(boolean useVersion1) {
             doSetProperty("useVersion1", useVersion1);
@@ -526,9 +642,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * Set specific version_ID of a object when deleting the object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param versionId the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder versionId(java.lang.String versionId) {
             doSetProperty("versionId", versionId);
@@ -537,10 +656,13 @@ public interface MinioComponentBuilderFactory {
         /**
          * Delete file object after the Minio file has been uploaded.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param deleteAfterWrite the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder deleteAfterWrite(boolean deleteAfterWrite) {
             doSetProperty("deleteAfterWrite", deleteAfterWrite);
@@ -550,9 +672,12 @@ public interface MinioComponentBuilderFactory {
          * Setting the key name for an element in the bucket through endpoint
          * parameter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keyName the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder keyName(java.lang.String keyName) {
             doSetProperty("keyName", keyName);
@@ -569,10 +694,13 @@ public interface MinioComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -583,9 +711,12 @@ public interface MinioComponentBuilderFactory {
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.minio.MinioOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.minio.MinioOperations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder operation(
                 org.apache.camel.component.minio.MinioOperations operation) {
@@ -595,10 +726,13 @@ public interface MinioComponentBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder pojoRequest(boolean pojoRequest) {
             doSetProperty("pojoRequest", pojoRequest);
@@ -607,9 +741,12 @@ public interface MinioComponentBuilderFactory {
         /**
          * The storage class to set in the request.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param storageClass the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder storageClass(java.lang.String storageClass) {
             doSetProperty("storageClass", storageClass);
@@ -623,10 +760,13 @@ public interface MinioComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -636,9 +776,12 @@ public interface MinioComponentBuilderFactory {
          * Amazon AWS Secret Access Key or Minio Access Key. If not set camel
          * will connect to service for anonymous access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -648,9 +791,12 @@ public interface MinioComponentBuilderFactory {
          * Amazon AWS Access Key Id or Minio Secret Key. If not set camel will
          * connect to service for anonymous access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default MinioComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);

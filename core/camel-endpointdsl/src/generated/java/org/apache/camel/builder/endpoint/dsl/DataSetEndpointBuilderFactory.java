@@ -867,6 +867,7 @@ public interface DataSetEndpointBuilderFactory {
          * Name of DataSet to lookup in the registry
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DataSetEndpointBuilder dataset(String path) {
             return DataSetEndpointBuilderFactory.endpointBuilder("dataset", path);
@@ -887,6 +888,7 @@ public interface DataSetEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DataSetEndpointBuilder dataset(String componentName, String path) {
             return DataSetEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -37,6 +37,8 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-kinesis
+     * 
+     * @return the dsl builder
      */
     static Aws2KinesisFirehoseComponentBuilder aws2KinesisFirehose() {
         return new Aws2KinesisFirehoseComponentBuilderImpl();
@@ -53,10 +55,12 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
          * endpoint.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.firehose.FirehoseClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.firehose.FirehoseClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonKinesisFirehoseClient the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder amazonKinesisFirehoseClient(
                 software.amazon.awssdk.services.firehose.FirehoseClient amazonKinesisFirehoseClient) {
@@ -66,10 +70,13 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
         /**
          * This option will set the CBOR_ENABLED property during the execution.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cborEnabled the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder cborEnabled(
                 boolean cborEnabled) {
@@ -80,9 +87,12 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder configuration(
                 org.apache.camel.component.aws2.firehose.KinesisFirehose2Configuration configuration) {
@@ -100,10 +110,13 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -115,9 +128,12 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
          * record.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder operation(
                 org.apache.camel.component.aws2.firehose.KinesisFirehose2Operations operation) {
@@ -128,9 +144,12 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
          * To define a proxy host when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder proxyHost(
                 java.lang.String proxyHost) {
@@ -141,9 +160,12 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
          * To define a proxy port when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder proxyPort(
                 java.lang.Integer proxyPort) {
@@ -154,11 +176,14 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
          * To define a proxy protocol when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -171,9 +196,12 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
          * the region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder region(
                 java.lang.String region) {
@@ -184,10 +212,13 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -202,10 +233,13 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -215,9 +249,12 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder accessKey(
                 java.lang.String accessKey) {
@@ -227,9 +264,12 @@ public interface Aws2KinesisFirehoseComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisFirehoseComponentBuilder secretKey(
                 java.lang.String secretKey) {

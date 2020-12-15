@@ -335,6 +335,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * attach, detach, assign, unassign, tag, untag
          * 
          * @param path operation
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder digitalocean(String path) {
             return DigitalOceanEndpointBuilderFactory.endpointBuilder("digitalocean", path);
@@ -362,6 +363,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path operation
+         * @return the dsl builder
          */
         default DigitalOceanEndpointBuilder digitalocean(
                 String componentName,

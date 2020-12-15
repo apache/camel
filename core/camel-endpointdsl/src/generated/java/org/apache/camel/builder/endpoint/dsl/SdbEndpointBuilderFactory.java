@@ -351,6 +351,7 @@ public interface SdbEndpointBuilderFactory {
          * The name of the domain currently worked with.
          * 
          * @param path domainName
+         * @return the dsl builder
          */
         default SdbEndpointBuilder awsSdb(String path) {
             return SdbEndpointBuilderFactory.endpointBuilder("aws-sdb", path);
@@ -371,6 +372,7 @@ public interface SdbEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path domainName
+         * @return the dsl builder
          */
         default SdbEndpointBuilder awsSdb(String componentName, String path) {
             return SdbEndpointBuilderFactory.endpointBuilder(componentName, path);

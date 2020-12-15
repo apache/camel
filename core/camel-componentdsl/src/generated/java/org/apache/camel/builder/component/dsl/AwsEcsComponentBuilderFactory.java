@@ -37,6 +37,8 @@ public interface AwsEcsComponentBuilderFactory {
      * Category: cloud,management
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-aws-ecs
+     * 
+     * @return the dsl builder
      */
     static AwsEcsComponentBuilder awsEcs() {
         return new AwsEcsComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface AwsEcsComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -64,9 +69,12 @@ public interface AwsEcsComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -76,10 +84,12 @@ public interface AwsEcsComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.ecs.ECSConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws.ecs.ECSConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder configuration(
                 org.apache.camel.component.aws.ecs.ECSConfiguration configuration) {
@@ -89,10 +99,13 @@ public interface AwsEcsComponentBuilderFactory {
         /**
          * To use a existing configured AWS ECS as client.
          * 
-         * The option is a: <code>com.amazonaws.services.ecs.AmazonECS</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.ecs.AmazonECS&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param ecsClient the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder ecsClient(
                 com.amazonaws.services.ecs.AmazonECS ecsClient) {
@@ -110,10 +123,13 @@ public interface AwsEcsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -124,9 +140,12 @@ public interface AwsEcsComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.ecs.ECSOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.ecs.ECSOperations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder operation(
                 org.apache.camel.component.aws.ecs.ECSOperations operation) {
@@ -136,9 +155,12 @@ public interface AwsEcsComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the ECS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -147,9 +169,12 @@ public interface AwsEcsComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the ECS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -158,10 +183,14 @@ public interface AwsEcsComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the ECS client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder proxyProtocol(
                 com.amazonaws.Protocol proxyProtocol) {
@@ -174,9 +203,12 @@ public interface AwsEcsComponentBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -185,9 +217,12 @@ public interface AwsEcsComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -201,10 +236,13 @@ public interface AwsEcsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AwsEcsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);

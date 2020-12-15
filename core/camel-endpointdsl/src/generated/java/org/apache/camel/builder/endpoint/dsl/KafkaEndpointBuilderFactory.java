@@ -3653,6 +3653,7 @@ public interface KafkaEndpointBuilderFactory {
          * single topic.
          * 
          * @param path topic
+         * @return the dsl builder
          */
         default KafkaEndpointBuilder kafka(String path) {
             return KafkaEndpointBuilderFactory.endpointBuilder("kafka", path);
@@ -3675,6 +3676,7 @@ public interface KafkaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path topic
+         * @return the dsl builder
          */
         default KafkaEndpointBuilder kafka(String componentName, String path) {
             return KafkaEndpointBuilderFactory.endpointBuilder(componentName, path);

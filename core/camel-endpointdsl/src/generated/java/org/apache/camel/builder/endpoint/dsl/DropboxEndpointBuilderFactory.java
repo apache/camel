@@ -727,6 +727,7 @@ public interface DropboxEndpointBuilderFactory {
          * move
          * 
          * @param path operation
+         * @return the dsl builder
          */
         default DropboxEndpointBuilder dropbox(String path) {
             return DropboxEndpointBuilderFactory.endpointBuilder("dropbox", path);
@@ -751,6 +752,7 @@ public interface DropboxEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path operation
+         * @return the dsl builder
          */
         default DropboxEndpointBuilder dropbox(String componentName, String path) {
             return DropboxEndpointBuilderFactory.endpointBuilder(componentName, path);

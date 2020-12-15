@@ -1189,6 +1189,7 @@ public interface QueueEndpointBuilderFactory {
          * The queue resource name
          * 
          * @param path accountName/queueName
+         * @return the dsl builder
          */
         default QueueEndpointBuilder azureStorageQueue(String path) {
             return QueueEndpointBuilderFactory.endpointBuilder("azure-storage-queue", path);
@@ -1214,6 +1215,7 @@ public interface QueueEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path accountName/queueName
+         * @return the dsl builder
          */
         default QueueEndpointBuilder azureStorageQueue(
                 String componentName,

@@ -756,6 +756,7 @@ public interface LogEndpointBuilderFactory {
          * Name of the logging category to use
          * 
          * @param path loggerName
+         * @return the dsl builder
          */
         default LogEndpointBuilder log(String path) {
             return LogEndpointBuilderFactory.endpointBuilder("log", path);
@@ -776,6 +777,7 @@ public interface LogEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path loggerName
+         * @return the dsl builder
          */
         default LogEndpointBuilder log(String componentName, String path) {
             return LogEndpointBuilderFactory.endpointBuilder(componentName, path);

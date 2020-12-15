@@ -325,6 +325,7 @@ public interface KMSEndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default KMSEndpointBuilder awsKms(String path) {
             return KMSEndpointBuilderFactory.endpointBuilder("aws-kms", path);
@@ -345,6 +346,7 @@ public interface KMSEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default KMSEndpointBuilder awsKms(String componentName, String path) {
             return KMSEndpointBuilderFactory.endpointBuilder(componentName, path);

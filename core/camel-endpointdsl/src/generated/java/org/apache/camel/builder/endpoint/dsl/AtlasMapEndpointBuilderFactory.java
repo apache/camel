@@ -285,6 +285,7 @@ public interface AtlasMapEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder atlasmap(String path) {
             return AtlasMapEndpointBuilderFactory.endpointBuilder("atlasmap", path);
@@ -310,6 +311,7 @@ public interface AtlasMapEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder atlasmap(
                 String componentName,

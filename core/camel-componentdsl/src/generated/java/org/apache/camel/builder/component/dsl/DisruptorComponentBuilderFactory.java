@@ -37,6 +37,8 @@ public interface DisruptorComponentBuilderFactory {
      * Category: endpoint
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-disruptor
+     * 
+     * @return the dsl builder
      */
     static DisruptorComponentBuilder disruptor() {
         return new DisruptorComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface DisruptorComponentBuilderFactory {
         /**
          * To configure the ring buffer size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: common
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default DisruptorComponentBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -69,10 +74,13 @@ public interface DisruptorComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DisruptorComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -82,10 +90,13 @@ public interface DisruptorComponentBuilderFactory {
         /**
          * To configure the default number of concurrent consumers.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param defaultConcurrentConsumers the value to set
+         * @return the dsl builder
          */
         default DisruptorComponentBuilder defaultConcurrentConsumers(
                 int defaultConcurrentConsumers) {
@@ -95,10 +106,13 @@ public interface DisruptorComponentBuilderFactory {
         /**
          * To configure the default value for multiple consumers.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param defaultMultipleConsumers the value to set
+         * @return the dsl builder
          */
         default DisruptorComponentBuilder defaultMultipleConsumers(
                 boolean defaultMultipleConsumers) {
@@ -110,10 +124,13 @@ public interface DisruptorComponentBuilderFactory {
          * value is Blocking.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorWaitStrategy&lt;/code&gt; type.
          * 
          * Default: Blocking
          * Group: consumer
+         * 
+         * @param defaultWaitStrategy the value to set
+         * @return the dsl builder
          */
         default DisruptorComponentBuilder defaultWaitStrategy(
                 org.apache.camel.component.disruptor.DisruptorWaitStrategy defaultWaitStrategy) {
@@ -124,10 +141,13 @@ public interface DisruptorComponentBuilderFactory {
          * To configure the default value for block when full The default value
          * is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param defaultBlockWhenFull the value to set
+         * @return the dsl builder
          */
         default DisruptorComponentBuilder defaultBlockWhenFull(
                 boolean defaultBlockWhenFull) {
@@ -139,10 +159,13 @@ public interface DisruptorComponentBuilderFactory {
          * value is Multi.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
+         * &lt;code&gt;org.apache.camel.component.disruptor.DisruptorProducerType&lt;/code&gt; type.
          * 
          * Default: Multi
          * Group: producer
+         * 
+         * @param defaultProducerType the value to set
+         * @return the dsl builder
          */
         default DisruptorComponentBuilder defaultProducerType(
                 org.apache.camel.component.disruptor.DisruptorProducerType defaultProducerType) {
@@ -160,10 +183,13 @@ public interface DisruptorComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DisruptorComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -178,10 +204,13 @@ public interface DisruptorComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default DisruptorComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

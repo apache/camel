@@ -37,6 +37,8 @@ public interface FacebookComponentBuilderFactory {
      * Category: social
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-facebook
+     * 
+     * @return the dsl builder
      */
     static FacebookComponentBuilder facebook() {
         return new FacebookComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface FacebookComponentBuilderFactory {
         /**
          * Facebook4J API client URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientURL the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder clientURL(java.lang.String clientURL) {
             doSetProperty("clientURL", clientURL);
@@ -62,9 +67,12 @@ public interface FacebookComponentBuilderFactory {
         /**
          * Facebook4J client API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientVersion the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder clientVersion(
                 java.lang.String clientVersion) {
@@ -74,10 +82,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * Enables deubg output. Effective only with the embedded logger.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param debugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder debugEnabled(
                 java.lang.Boolean debugEnabled) {
@@ -87,10 +98,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * Use Facebook GZIP encoding.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param gzipEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder gzipEnabled(
                 java.lang.Boolean gzipEnabled) {
@@ -100,10 +114,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * Http connection timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder httpConnectionTimeout(
                 java.lang.Integer httpConnectionTimeout) {
@@ -113,10 +130,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * HTTP maximum connections per route.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param httpDefaultMaxPerRoute the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder httpDefaultMaxPerRoute(
                 java.lang.Integer httpDefaultMaxPerRoute) {
@@ -126,10 +146,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * HTTP maximum total connections.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 20
          * Group: common
+         * 
+         * @param httpMaxTotalConnections the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder httpMaxTotalConnections(
                 java.lang.Integer httpMaxTotalConnections) {
@@ -139,10 +162,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * Http read timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 120000
          * Group: common
+         * 
+         * @param httpReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder httpReadTimeout(
                 java.lang.Integer httpReadTimeout) {
@@ -152,10 +178,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * Number of HTTP retries.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param httpRetryCount the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder httpRetryCount(
                 java.lang.Integer httpRetryCount) {
@@ -165,10 +194,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * HTTP retry interval in seconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param httpRetryIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder httpRetryIntervalSeconds(
                 java.lang.Integer httpRetryIntervalSeconds) {
@@ -178,10 +210,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * HTTP streaming read timeout in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 40000
          * Group: common
+         * 
+         * @param httpStreamingReadTimeout the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder httpStreamingReadTimeout(
                 java.lang.Integer httpStreamingReadTimeout) {
@@ -191,10 +226,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * If set to true, raw JSON forms will be stored in DataObjectFactory.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param jsonStoreEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder jsonStoreEnabled(
                 java.lang.Boolean jsonStoreEnabled) {
@@ -204,10 +242,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * If set to true, Facebook4J mbean will be registerd.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param mbeanEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder mbeanEnabled(
                 java.lang.Boolean mbeanEnabled) {
@@ -217,10 +258,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * Prettify JSON debug output if set to true.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyDebugEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder prettyDebugEnabled(
                 java.lang.Boolean prettyDebugEnabled) {
@@ -230,10 +274,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * API base URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph.facebook.com/
          * Group: common
+         * 
+         * @param restBaseURL the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder restBaseURL(
                 java.lang.String restBaseURL) {
@@ -243,10 +290,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * Use SSL.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param useSSL the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder useSSL(java.lang.Boolean useSSL) {
             doSetProperty("useSSL", useSSL);
@@ -255,10 +305,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * Video API base URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph-video.facebook.com/
          * Group: common
+         * 
+         * @param videoBaseURL the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder videoBaseURL(
                 java.lang.String videoBaseURL) {
@@ -274,10 +327,13 @@ public interface FacebookComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -295,10 +351,13 @@ public interface FacebookComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -313,10 +372,13 @@ public interface FacebookComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -327,9 +389,12 @@ public interface FacebookComponentBuilderFactory {
          * To use the shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.facebook.config.FacebookConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.facebook.config.FacebookConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder configuration(
                 org.apache.camel.component.facebook.config.FacebookConfiguration configuration) {
@@ -339,9 +404,12 @@ public interface FacebookComponentBuilderFactory {
         /**
          * HTTP proxy server host name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder httpProxyHost(
                 java.lang.String httpProxyHost) {
@@ -351,9 +419,12 @@ public interface FacebookComponentBuilderFactory {
         /**
          * HTTP proxy server password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder httpProxyPassword(
                 java.lang.String httpProxyPassword) {
@@ -363,9 +434,12 @@ public interface FacebookComponentBuilderFactory {
         /**
          * HTTP proxy server port.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder httpProxyPort(
                 java.lang.Integer httpProxyPort) {
@@ -375,9 +449,12 @@ public interface FacebookComponentBuilderFactory {
         /**
          * HTTP proxy server user name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUser the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder httpProxyUser(
                 java.lang.String httpProxyUser) {
@@ -387,9 +464,12 @@ public interface FacebookComponentBuilderFactory {
         /**
          * The user access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAccessToken the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder oAuthAccessToken(
                 java.lang.String oAuthAccessToken) {
@@ -399,10 +479,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * OAuth access token URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://graph.facebook.com/oauth/access_token
          * Group: security
+         * 
+         * @param oAuthAccessTokenURL the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder oAuthAccessTokenURL(
                 java.lang.String oAuthAccessTokenURL) {
@@ -412,9 +495,12 @@ public interface FacebookComponentBuilderFactory {
         /**
          * The application Id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAppId the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder oAuthAppId(java.lang.String oAuthAppId) {
             doSetProperty("oAuthAppId", oAuthAppId);
@@ -423,9 +509,12 @@ public interface FacebookComponentBuilderFactory {
         /**
          * The application Secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthAppSecret the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder oAuthAppSecret(
                 java.lang.String oAuthAppSecret) {
@@ -435,10 +524,13 @@ public interface FacebookComponentBuilderFactory {
         /**
          * OAuth authorization URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://www.facebook.com/dialog/oauth
          * Group: security
+         * 
+         * @param oAuthAuthorizationURL the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder oAuthAuthorizationURL(
                 java.lang.String oAuthAuthorizationURL) {
@@ -450,9 +542,12 @@ public interface FacebookComponentBuilderFactory {
          * https://developers.facebook.com/docs/reference/login/#permissions for
          * the detail.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oAuthPermissions the value to set
+         * @return the dsl builder
          */
         default FacebookComponentBuilder oAuthPermissions(
                 java.lang.String oAuthPermissions) {

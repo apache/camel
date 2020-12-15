@@ -2400,6 +2400,7 @@ public interface SqsEndpointBuilderFactory {
          * Queue name or ARN
          * 
          * @param path queueNameOrArn
+         * @return the dsl builder
          */
         default SqsEndpointBuilder awsSqs(String path) {
             return SqsEndpointBuilderFactory.endpointBuilder("aws-sqs", path);
@@ -2420,6 +2421,7 @@ public interface SqsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path queueNameOrArn
+         * @return the dsl builder
          */
         default SqsEndpointBuilder awsSqs(String componentName, String path) {
             return SqsEndpointBuilderFactory.endpointBuilder(componentName, path);

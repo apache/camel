@@ -464,6 +464,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * the cache name
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default CaffeineCacheEndpointBuilder caffeineCache(String path) {
             return CaffeineCacheEndpointBuilderFactory.endpointBuilder("caffeine-cache", path);
@@ -484,6 +485,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default CaffeineCacheEndpointBuilder caffeineCache(
                 String componentName,

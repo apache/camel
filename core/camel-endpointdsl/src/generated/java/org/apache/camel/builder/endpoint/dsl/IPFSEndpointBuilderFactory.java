@@ -143,6 +143,7 @@ public interface IPFSEndpointBuilderFactory {
          * There are 4 enums and the value can be one of: add, cat, get, version
          * 
          * @param path ipfsCmd
+         * @return the dsl builder
          */
         default IPFSEndpointBuilder ipfs(String path) {
             return IPFSEndpointBuilderFactory.endpointBuilder("ipfs", path);
@@ -164,6 +165,7 @@ public interface IPFSEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path ipfsCmd
+         * @return the dsl builder
          */
         default IPFSEndpointBuilder ipfs(String componentName, String path) {
             return IPFSEndpointBuilderFactory.endpointBuilder(componentName, path);

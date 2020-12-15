@@ -321,6 +321,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder jsonValidator(String path) {
             return JsonValidatorEndpointBuilderFactory.endpointBuilder("json-validator", path);
@@ -346,6 +347,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JsonValidatorEndpointBuilder jsonValidator(
                 String componentName,

@@ -37,6 +37,8 @@ public interface JoltComponentBuilderFactory {
      * Category: transformation
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-jolt
+     * 
+     * @return the dsl builder
      */
     static JoltComponentBuilder jolt() {
         return new JoltComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface JoltComponentBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default JoltComponentBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -74,10 +79,13 @@ public interface JoltComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JoltComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -91,10 +99,13 @@ public interface JoltComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default JoltComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -104,9 +115,13 @@ public interface JoltComponentBuilderFactory {
          * Explicitly sets the Transform to use. If not set a Transform
          * specified by the transformDsl will be created.
          * 
-         * The option is a: <code>com.bazaarvoice.jolt.Transform</code> type.
+         * The option is a:
+         * &lt;code&gt;com.bazaarvoice.jolt.Transform&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transform the value to set
+         * @return the dsl builder
          */
         default JoltComponentBuilder transform(
                 com.bazaarvoice.jolt.Transform transform) {

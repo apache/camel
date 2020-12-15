@@ -736,6 +736,7 @@ public interface PubNubEndpointBuilderFactory {
          * The channel used for subscribing/publishing events
          * 
          * @param path channel
+         * @return the dsl builder
          */
         default PubNubEndpointBuilder pubnub(String path) {
             return PubNubEndpointBuilderFactory.endpointBuilder("pubnub", path);
@@ -757,6 +758,7 @@ public interface PubNubEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path channel
+         * @return the dsl builder
          */
         default PubNubEndpointBuilder pubnub(String componentName, String path) {
             return PubNubEndpointBuilderFactory.endpointBuilder(componentName, path);

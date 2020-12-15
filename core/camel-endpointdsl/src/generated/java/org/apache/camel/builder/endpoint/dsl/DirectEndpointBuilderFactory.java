@@ -414,6 +414,7 @@ public interface DirectEndpointBuilderFactory {
          * Name of direct endpoint
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DirectEndpointBuilder direct(String path) {
             return DirectEndpointBuilderFactory.endpointBuilder("direct", path);
@@ -434,6 +435,7 @@ public interface DirectEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DirectEndpointBuilder direct(String componentName, String path) {
             return DirectEndpointBuilderFactory.endpointBuilder(componentName, path);

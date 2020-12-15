@@ -257,6 +257,7 @@ public interface FlinkEndpointBuilderFactory {
          * There are 2 enums and the value can be one of: dataset, datastream
          * 
          * @param path endpointType
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder flink(String path) {
             return FlinkEndpointBuilderFactory.endpointBuilder("flink", path);
@@ -278,6 +279,7 @@ public interface FlinkEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path endpointType
+         * @return the dsl builder
          */
         default FlinkEndpointBuilder flink(String componentName, String path) {
             return FlinkEndpointBuilderFactory.endpointBuilder(componentName, path);

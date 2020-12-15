@@ -23,6 +23,7 @@ import org.apache.camel.Component;
  * Type-safe component DSL for building Camel components
  */
 public interface ComponentBuilder<C extends Component> {
+
     /**
      * Builds a component using the default {@link CamelContext}.
      *
@@ -48,6 +49,10 @@ public interface ComponentBuilder<C extends Component> {
 
     /**
      * Adds an option to this component. This API is only intended for Camel internally.
+     *
+     * @param name  the name of the option
+     * @param value the value
      */
     void doSetProperty(String name, Object value);
+
 }

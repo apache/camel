@@ -926,6 +926,7 @@ public interface JcrEndpointBuilderFactory {
          * Get the base node when accessing the repository
          * 
          * @param path host/base
+         * @return the dsl builder
          */
         default JcrEndpointBuilder jcr(String path) {
             return JcrEndpointBuilderFactory.endpointBuilder("jcr", path);
@@ -950,6 +951,7 @@ public interface JcrEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host/base
+         * @return the dsl builder
          */
         default JcrEndpointBuilder jcr(String componentName, String path) {
             return JcrEndpointBuilderFactory.endpointBuilder(componentName, path);

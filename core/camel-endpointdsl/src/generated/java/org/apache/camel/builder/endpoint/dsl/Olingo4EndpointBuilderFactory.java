@@ -1598,6 +1598,7 @@ public interface Olingo4EndpointBuilderFactory {
          * What sub operation to use for the selected operation
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder olingo4(String path) {
             return Olingo4EndpointBuilderFactory.endpointBuilder("olingo4", path);
@@ -1622,6 +1623,7 @@ public interface Olingo4EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default Olingo4EndpointBuilder olingo4(String componentName, String path) {
             return Olingo4EndpointBuilderFactory.endpointBuilder(componentName, path);

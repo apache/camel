@@ -962,6 +962,7 @@ public interface CoAPEndpointBuilderFactory {
          * The URI for the CoAP endpoint
          * 
          * @param path uri
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder coap(String path) {
             return CoAPEndpointBuilderFactory.endpointBuilder("coap", path);
@@ -982,6 +983,7 @@ public interface CoAPEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path uri
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder coap(String componentName, String path) {
             return CoAPEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1000,6 +1002,7 @@ public interface CoAPEndpointBuilderFactory {
          * The URI for the CoAP endpoint
          * 
          * @param path uri
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder coapTcp(String path) {
             return CoAPEndpointBuilderFactory.endpointBuilder("coap+tcp", path);
@@ -1018,6 +1021,7 @@ public interface CoAPEndpointBuilderFactory {
          * The URI for the CoAP endpoint
          * 
          * @param path uri
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder coaps(String path) {
             return CoAPEndpointBuilderFactory.endpointBuilder("coaps", path);
@@ -1036,6 +1040,7 @@ public interface CoAPEndpointBuilderFactory {
          * The URI for the CoAP endpoint
          * 
          * @param path uri
+         * @return the dsl builder
          */
         default CoAPEndpointBuilder coapsTcp(String path) {
             return CoAPEndpointBuilderFactory.endpointBuilder("coaps+tcp", path);

@@ -687,6 +687,7 @@ public interface AvroEndpointBuilderFactory {
          * The name of the message to send.
          * 
          * @param path transport:host:port/messageName
+         * @return the dsl builder
          */
         default AvroEndpointBuilder avro(String path) {
             return AvroEndpointBuilderFactory.endpointBuilder("avro", path);
@@ -717,6 +718,7 @@ public interface AvroEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path transport:host:port/messageName
+         * @return the dsl builder
          */
         default AvroEndpointBuilder avro(String componentName, String path) {
             return AvroEndpointBuilderFactory.endpointBuilder(componentName, path);

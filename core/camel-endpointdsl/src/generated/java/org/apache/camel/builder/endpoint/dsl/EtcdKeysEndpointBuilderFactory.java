@@ -274,6 +274,7 @@ public interface EtcdKeysEndpointBuilderFactory {
          * The path the endpoint refers to
          * 
          * @param path path
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder etcdKeys(String path) {
             return EtcdKeysEndpointBuilderFactory.endpointBuilder("etcd-keys", path);
@@ -294,6 +295,7 @@ public interface EtcdKeysEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path
+         * @return the dsl builder
          */
         default EtcdKeysEndpointBuilder etcdKeys(
                 String componentName,

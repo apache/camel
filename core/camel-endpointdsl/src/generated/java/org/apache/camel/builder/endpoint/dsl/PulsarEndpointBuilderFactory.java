@@ -1135,6 +1135,7 @@ public interface PulsarEndpointBuilderFactory {
          * The topic
          * 
          * @param path persistence://tenant/namespace/topic
+         * @return the dsl builder
          */
         default PulsarEndpointBuilder pulsar(String path) {
             return PulsarEndpointBuilderFactory.endpointBuilder("pulsar", path);
@@ -1166,6 +1167,7 @@ public interface PulsarEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path persistence://tenant/namespace/topic
+         * @return the dsl builder
          */
         default PulsarEndpointBuilder pulsar(String componentName, String path) {
             return PulsarEndpointBuilderFactory.endpointBuilder(componentName, path);

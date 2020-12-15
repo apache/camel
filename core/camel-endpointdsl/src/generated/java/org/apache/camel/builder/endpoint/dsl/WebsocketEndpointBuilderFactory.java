@@ -1176,6 +1176,7 @@ public interface WebsocketEndpointBuilderFactory {
          * Name of the websocket channel to use
          * 
          * @param path host:port/resourceUri
+         * @return the dsl builder
          */
         default WebsocketEndpointBuilder websocket(String path) {
             return WebsocketEndpointBuilderFactory.endpointBuilder("websocket", path);
@@ -1206,6 +1207,7 @@ public interface WebsocketEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/resourceUri
+         * @return the dsl builder
          */
         default WebsocketEndpointBuilder websocket(
                 String componentName,

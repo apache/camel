@@ -639,6 +639,7 @@ public interface CordaEndpointBuilderFactory {
          * The url for the corda node
          * 
          * @param path node
+         * @return the dsl builder
          */
         default CordaEndpointBuilder corda(String path) {
             return CordaEndpointBuilderFactory.endpointBuilder("corda", path);
@@ -660,6 +661,7 @@ public interface CordaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path node
+         * @return the dsl builder
          */
         default CordaEndpointBuilder corda(String componentName, String path) {
             return CordaEndpointBuilderFactory.endpointBuilder(componentName, path);

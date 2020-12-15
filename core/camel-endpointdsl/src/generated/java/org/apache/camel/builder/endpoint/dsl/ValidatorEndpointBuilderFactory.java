@@ -354,6 +354,7 @@ public interface ValidatorEndpointBuilderFactory {
          * on the file system which contains the XSD to validate against.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default ValidatorEndpointBuilder validator(String path) {
             return ValidatorEndpointBuilderFactory.endpointBuilder("validator", path);
@@ -376,6 +377,7 @@ public interface ValidatorEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default ValidatorEndpointBuilder validator(
                 String componentName,

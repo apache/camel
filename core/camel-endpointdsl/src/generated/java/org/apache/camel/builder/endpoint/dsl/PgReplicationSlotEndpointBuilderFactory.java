@@ -773,6 +773,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * Output plugin name
          * 
          * @param path host:port/database/slot:outputPlugin
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder pgReplicationSlot(String path) {
             return PgReplicationSlotEndpointBuilderFactory.endpointBuilder("pg-replication-slot", path);
@@ -809,6 +810,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/database/slot:outputPlugin
+         * @return the dsl builder
          */
         default PgReplicationSlotEndpointBuilder pgReplicationSlot(
                 String componentName,

@@ -37,6 +37,8 @@ public interface BeanComponentBuilderFactory {
      * Category: core,java
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-bean
+     * 
+     * @return the dsl builder
      */
     static BeanComponentBuilder bean() {
         return new BeanComponentBuilderImpl();
@@ -49,10 +51,13 @@ public interface BeanComponentBuilderFactory {
         /**
          * Use singleton option instead.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param cache the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default BeanComponentBuilder cache(java.lang.Boolean cache) {
@@ -70,10 +75,13 @@ public interface BeanComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BeanComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -95,10 +103,14 @@ public interface BeanComponentBuilderFactory {
          * configuration can act as either singleton or prototype scope. so when
          * using prototype then this depends on the delegated registry.
          * 
-         * The option is a: <code>org.apache.camel.BeanScope</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.BeanScope&lt;/code&gt;
+         * type.
          * 
          * Default: Singleton
          * Group: producer
+         * 
+         * @param scope the value to set
+         * @return the dsl builder
          */
         default BeanComponentBuilder scope(org.apache.camel.BeanScope scope) {
             doSetProperty("scope", scope);
@@ -112,10 +124,13 @@ public interface BeanComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default BeanComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);

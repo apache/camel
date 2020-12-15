@@ -39,6 +39,8 @@ public interface MicrometerComponentBuilderFactory {
      * Category: monitoring
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-micrometer
+     * 
+     * @return the dsl builder
      */
     static MicrometerComponentBuilder micrometer() {
         return new MicrometerComponentBuilderImpl();
@@ -61,10 +63,13 @@ public interface MicrometerComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MicrometerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -79,10 +84,13 @@ public interface MicrometerComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default MicrometerComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -93,9 +101,13 @@ public interface MicrometerComponentBuilderFactory {
          * To use a custom configured MetricRegistry.
          * 
          * The option is a:
-         * <code>io.micrometer.core.instrument.MeterRegistry</code> type.
+         * &lt;code&gt;io.micrometer.core.instrument.MeterRegistry&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param metricsRegistry the value to set
+         * @return the dsl builder
          */
         default MicrometerComponentBuilder metricsRegistry(
                 io.micrometer.core.instrument.MeterRegistry metricsRegistry) {

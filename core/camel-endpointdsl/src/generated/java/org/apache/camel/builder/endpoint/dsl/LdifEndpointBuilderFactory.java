@@ -133,6 +133,7 @@ public interface LdifEndpointBuilderFactory {
          * threads or using a connection that has timed out.
          * 
          * @param path ldapConnectionName
+         * @return the dsl builder
          */
         default LdifEndpointBuilder ldif(String path) {
             return LdifEndpointBuilderFactory.endpointBuilder("ldif", path);
@@ -155,6 +156,7 @@ public interface LdifEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path ldapConnectionName
+         * @return the dsl builder
          */
         default LdifEndpointBuilder ldif(String componentName, String path) {
             return LdifEndpointBuilderFactory.endpointBuilder(componentName, path);

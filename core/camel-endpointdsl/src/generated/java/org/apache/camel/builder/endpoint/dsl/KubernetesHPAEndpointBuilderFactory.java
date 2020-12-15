@@ -1230,6 +1230,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesHPAEndpointBuilder kubernetesHpa(String path) {
             return KubernetesHPAEndpointBuilderFactory.endpointBuilder("kubernetes-hpa", path);
@@ -1251,6 +1252,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesHPAEndpointBuilder kubernetesHpa(
                 String componentName,

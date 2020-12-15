@@ -1688,6 +1688,7 @@ public interface XQueryEndpointBuilderFactory {
          * The name of the template to load from classpath or file system
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder xquery(String path) {
             return XQueryEndpointBuilderFactory.endpointBuilder("xquery", path);
@@ -1708,6 +1709,7 @@ public interface XQueryEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XQueryEndpointBuilder xquery(String componentName, String path) {
             return XQueryEndpointBuilderFactory.endpointBuilder(componentName, path);

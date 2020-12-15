@@ -225,6 +225,7 @@ public interface TikaEndpointBuilderFactory {
          * There are 2 enums and the value can be one of: parse, detect
          * 
          * @param path operation
+         * @return the dsl builder
          */
         default TikaEndpointBuilder tika(String path) {
             return TikaEndpointBuilderFactory.endpointBuilder("tika", path);
@@ -246,6 +247,7 @@ public interface TikaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path operation
+         * @return the dsl builder
          */
         default TikaEndpointBuilder tika(String componentName, String path) {
             return TikaEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -37,6 +37,8 @@ public interface AtomixMultimapComponentBuilderFactory {
      * Category: clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-atomix
+     * 
+     * @return the dsl builder
      */
     static AtomixMultimapComponentBuilder atomixMultimap() {
         return new AtomixMultimapComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface AtomixMultimapComponentBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: <code>io.atomix.Atomix</code> type.
+         * The option is a: &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param atomix the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder atomix(io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
@@ -63,9 +68,12 @@ public interface AtomixMultimapComponentBuilderFactory {
          * The shared component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder configuration(
                 org.apache.camel.component.atomix.client.multimap.AtomixMultiMapConfiguration configuration) {
@@ -75,9 +83,12 @@ public interface AtomixMultimapComponentBuilderFactory {
         /**
          * The path to the AtomixClient configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
@@ -88,10 +99,13 @@ public interface AtomixMultimapComponentBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action&lt;/code&gt; type.
          * 
          * Default: PUT
          * Group: producer
+         * 
+         * @param defaultAction the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder defaultAction(
                 org.apache.camel.component.atomix.client.multimap.AtomixMultiMap.Action defaultAction) {
@@ -102,9 +116,12 @@ public interface AtomixMultimapComponentBuilderFactory {
          * The key to use if none is set in the header or to listen for events
          * for a specific key.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder key(java.lang.Object key) {
             doSetProperty("key", key);
@@ -121,10 +138,13 @@ public interface AtomixMultimapComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -135,9 +155,12 @@ public interface AtomixMultimapComponentBuilderFactory {
          * The nodes the AtomixClient should connect to.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param nodes the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder nodes(
                 java.util.List<io.atomix.catalyst.transport.Address> nodes) {
@@ -147,9 +170,12 @@ public interface AtomixMultimapComponentBuilderFactory {
         /**
          * The header that wil carry the result.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder resultHeader(
                 java.lang.String resultHeader) {
@@ -159,10 +185,13 @@ public interface AtomixMultimapComponentBuilderFactory {
         /**
          * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: producer
+         * 
+         * @param transportClassName the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder transportClassName(
                 java.lang.String transportClassName) {
@@ -172,9 +201,12 @@ public interface AtomixMultimapComponentBuilderFactory {
         /**
          * The resource ttl.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param ttl the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder ttl(long ttl) {
             doSetProperty("ttl", ttl);
@@ -188,10 +220,13 @@ public interface AtomixMultimapComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -201,9 +236,12 @@ public interface AtomixMultimapComponentBuilderFactory {
         /**
          * The cluster wide default resource configuration.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceConfig the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder defaultResourceConfig(
                 java.util.Properties defaultResourceConfig) {
@@ -213,9 +251,12 @@ public interface AtomixMultimapComponentBuilderFactory {
         /**
          * The local default resource options.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceOptions the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder defaultResourceOptions(
                 java.util.Properties defaultResourceOptions) {
@@ -227,10 +268,13 @@ public interface AtomixMultimapComponentBuilderFactory {
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ephemeral the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder ephemeral(boolean ephemeral) {
             doSetProperty("ephemeral", ephemeral);
@@ -239,10 +283,13 @@ public interface AtomixMultimapComponentBuilderFactory {
         /**
          * The read consistency level.
          * 
-         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.atomix.resource.ReadConsistency&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readConsistency the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder readConsistency(
                 io.atomix.resource.ReadConsistency readConsistency) {
@@ -252,10 +299,13 @@ public interface AtomixMultimapComponentBuilderFactory {
         /**
          * Cluster wide resources configuration.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceConfigs the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder resourceConfigs(
                 java.util.Map<java.lang.String, java.util.Properties> resourceConfigs) {
@@ -265,10 +315,13 @@ public interface AtomixMultimapComponentBuilderFactory {
         /**
          * Local resources configurations.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceOptions the value to set
+         * @return the dsl builder
          */
         default AtomixMultimapComponentBuilder resourceOptions(
                 java.util.Map<java.lang.String, java.util.Properties> resourceOptions) {

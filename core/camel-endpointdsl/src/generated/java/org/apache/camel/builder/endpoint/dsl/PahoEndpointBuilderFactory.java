@@ -2666,6 +2666,7 @@ public interface PahoEndpointBuilderFactory {
          * Name of the topic
          * 
          * @param path topic
+         * @return the dsl builder
          */
         default PahoEndpointBuilder paho(String path) {
             return PahoEndpointBuilderFactory.endpointBuilder("paho", path);
@@ -2686,6 +2687,7 @@ public interface PahoEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path topic
+         * @return the dsl builder
          */
         default PahoEndpointBuilder paho(String componentName, String path) {
             return PahoEndpointBuilderFactory.endpointBuilder(componentName, path);

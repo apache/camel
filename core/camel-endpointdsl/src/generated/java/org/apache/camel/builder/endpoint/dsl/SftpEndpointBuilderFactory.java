@@ -5473,6 +5473,7 @@ public interface SftpEndpointBuilderFactory {
          * The starting directory
          * 
          * @param path host:port/directoryName
+         * @return the dsl builder
          */
         default SftpEndpointBuilder sftp(String path) {
             return SftpEndpointBuilderFactory.endpointBuilder("sftp", path);
@@ -5499,6 +5500,7 @@ public interface SftpEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/directoryName
+         * @return the dsl builder
          */
         default SftpEndpointBuilder sftp(String componentName, String path) {
             return SftpEndpointBuilderFactory.endpointBuilder(componentName, path);

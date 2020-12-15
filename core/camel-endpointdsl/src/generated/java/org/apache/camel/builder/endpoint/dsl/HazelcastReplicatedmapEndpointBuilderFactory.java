@@ -600,6 +600,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * The name of the cache
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
                 String path) {
@@ -621,6 +622,7 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastReplicatedmap(
                 String componentName,

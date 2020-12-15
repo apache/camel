@@ -132,6 +132,7 @@ public interface SagaEndpointBuilderFactory {
          * There are 2 enums and the value can be one of: COMPLETE, COMPENSATE
          * 
          * @param path action
+         * @return the dsl builder
          */
         default SagaEndpointBuilder saga(String path) {
             return SagaEndpointBuilderFactory.endpointBuilder("saga", path);
@@ -153,6 +154,7 @@ public interface SagaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path action
+         * @return the dsl builder
          */
         default SagaEndpointBuilder saga(String componentName, String path) {
             return SagaEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -491,6 +491,7 @@ public interface GitEndpointBuilderFactory {
          * Local repository path
          * 
          * @param path localPath
+         * @return the dsl builder
          */
         default GitEndpointBuilder git(String path) {
             return GitEndpointBuilderFactory.endpointBuilder("git", path);
@@ -511,6 +512,7 @@ public interface GitEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path localPath
+         * @return the dsl builder
          */
         default GitEndpointBuilder git(String componentName, String path) {
             return GitEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -1391,6 +1391,7 @@ public interface GrpcEndpointBuilderFactory {
          * (package dot service definition name)
          * 
          * @param path host:port/service
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder grpc(String path) {
             return GrpcEndpointBuilderFactory.endpointBuilder("grpc", path);
@@ -1419,6 +1420,7 @@ public interface GrpcEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/service
+         * @return the dsl builder
          */
         default GrpcEndpointBuilder grpc(String componentName, String path) {
             return GrpcEndpointBuilderFactory.endpointBuilder(componentName, path);

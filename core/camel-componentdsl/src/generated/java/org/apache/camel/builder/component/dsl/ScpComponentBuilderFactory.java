@@ -37,6 +37,8 @@ public interface ScpComponentBuilderFactory {
      * Category: file
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-jsch
+     * 
+     * @return the dsl builder
      */
     static ScpComponentBuilder scp() {
         return new ScpComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface ScpComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ScpComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -71,10 +76,13 @@ public interface ScpComponentBuilderFactory {
          * down to DEBUG logging by default. But setting this option to true
          * turns on the verbose logging again.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param verboseLogging the value to set
+         * @return the dsl builder
          */
         default ScpComponentBuilder verboseLogging(boolean verboseLogging) {
             doSetProperty("verboseLogging", verboseLogging);
@@ -88,10 +96,13 @@ public interface ScpComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default ScpComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);

@@ -37,6 +37,8 @@ public interface JooqComponentBuilderFactory {
      * Category: database,sql
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-jooq
+     * 
+     * @return the dsl builder
      */
     static JooqComponentBuilder jooq() {
         return new JooqComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface JooqComponentBuilderFactory {
          * etc.).
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jooq.JooqConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.jooq.JooqConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default JooqComponentBuilder configuration(
                 org.apache.camel.component.jooq.JooqConfiguration configuration) {
@@ -63,9 +68,13 @@ public interface JooqComponentBuilderFactory {
         /**
          * To use a specific database configuration.
          * 
-         * The option is a: <code>org.jooq.Configuration</code> type.
+         * The option is a: &lt;code&gt;org.jooq.Configuration&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param databaseConfiguration the value to set
+         * @return the dsl builder
          */
         default JooqComponentBuilder databaseConfiguration(
                 org.jooq.Configuration databaseConfiguration) {
@@ -81,10 +90,13 @@ public interface JooqComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JooqComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -94,10 +106,13 @@ public interface JooqComponentBuilderFactory {
         /**
          * Delete entity after it is consumed.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param consumeDelete the value to set
+         * @return the dsl builder
          */
         default JooqComponentBuilder consumeDelete(boolean consumeDelete) {
             doSetProperty("consumeDelete", consumeDelete);
@@ -114,10 +129,13 @@ public interface JooqComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JooqComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -127,10 +145,13 @@ public interface JooqComponentBuilderFactory {
          * Type of operation to execute on query.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jooq.JooqOperation</code> type.
+         * &lt;code&gt;org.apache.camel.component.jooq.JooqOperation&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default JooqComponentBuilder operation(
                 org.apache.camel.component.jooq.JooqOperation operation) {
@@ -140,9 +161,12 @@ public interface JooqComponentBuilderFactory {
         /**
          * To execute plain SQL query.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default JooqComponentBuilder query(java.lang.String query) {
             doSetProperty("query", query);
@@ -156,10 +180,13 @@ public interface JooqComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default JooqComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);

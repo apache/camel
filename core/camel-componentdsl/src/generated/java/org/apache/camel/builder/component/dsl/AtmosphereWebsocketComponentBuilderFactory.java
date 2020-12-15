@@ -37,6 +37,8 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
      * Category: websocket
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
+     * 
+     * @return the dsl builder
      */
     static AtmosphereWebsocketComponentBuilder atmosphereWebsocket() {
         return new AtmosphereWebsocketComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AtmosphereWebsocketComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -70,10 +75,13 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
         /**
          * Default name of servlet to use. The default name is CamelServlet.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: CamelServlet
          * Group: consumer
+         * 
+         * @param servletName the value to set
+         * @return the dsl builder
          */
         default AtmosphereWebsocketComponentBuilder servletName(
                 java.lang.String servletName) {
@@ -88,10 +96,13 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
          * off by default as this may require servlet specific configuration to
          * enable this when using Servlet's.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param attachmentMultipartBinding the value to set
+         * @return the dsl builder
          */
         default AtmosphereWebsocketComponentBuilder attachmentMultipartBinding(
                 boolean attachmentMultipartBinding) {
@@ -103,9 +114,12 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
          * files. Multiple extensions can be separated by comma, such as
          * txt,xml.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param fileNameExtWhitelist the value to set
+         * @return the dsl builder
          */
         default AtmosphereWebsocketComponentBuilder fileNameExtWhitelist(
                 java.lang.String fileNameExtWhitelist) {
@@ -116,9 +130,13 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
          * To use a custom org.apache.camel.component.servlet.HttpRegistry.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpRegistry</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpRegistry&lt;/code&gt;
+         * type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param httpRegistry the value to set
+         * @return the dsl builder
          */
         default AtmosphereWebsocketComponentBuilder httpRegistry(
                 org.apache.camel.http.common.HttpRegistry httpRegistry) {
@@ -136,10 +154,13 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtmosphereWebsocketComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -153,10 +174,13 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
          * deserialize the incoming data from the request to Java and that can
          * be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
          */
         default AtmosphereWebsocketComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
@@ -171,10 +195,13 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AtmosphereWebsocketComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -186,9 +213,13 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
          * message and HttpClient.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param httpBinding the value to set
+         * @return the dsl builder
          */
         default AtmosphereWebsocketComponentBuilder httpBinding(
                 org.apache.camel.http.common.HttpBinding httpBinding) {
@@ -199,9 +230,12 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
          * To use the shared HttpConfiguration as base configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpConfiguration the value to set
+         * @return the dsl builder
          */
         default AtmosphereWebsocketComponentBuilder httpConfiguration(
                 org.apache.camel.http.common.HttpConfiguration httpConfiguration) {
@@ -213,9 +247,13 @@ public interface AtmosphereWebsocketComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AtmosphereWebsocketComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {

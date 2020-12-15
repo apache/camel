@@ -37,6 +37,8 @@ public interface SqlComponentBuilderFactory {
      * Category: database,sql
      * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-sql
+     * 
+     * @return the dsl builder
      */
     static SqlComponentBuilder sql() {
         return new SqlComponentBuilderImpl();
@@ -49,9 +51,12 @@ public interface SqlComponentBuilderFactory {
         /**
          * Sets the DataSource to use to communicate with the database.
          * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
+         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataSource the value to set
+         * @return the dsl builder
          */
         default SqlComponentBuilder dataSource(javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
@@ -66,10 +71,13 @@ public interface SqlComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SqlComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -87,10 +95,13 @@ public interface SqlComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SqlComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -104,10 +115,13 @@ public interface SqlComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SqlComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -117,10 +131,13 @@ public interface SqlComponentBuilderFactory {
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries. This option is default true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param usePlaceholder the value to set
+         * @return the dsl builder
          */
         default SqlComponentBuilder usePlaceholder(boolean usePlaceholder) {
             doSetProperty("usePlaceholder", usePlaceholder);

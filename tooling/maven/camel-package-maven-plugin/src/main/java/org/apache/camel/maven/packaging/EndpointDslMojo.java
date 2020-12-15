@@ -569,6 +569,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                             "\"" + model.getScheme() + "\", path");
             String javaDoc = desc;
             javaDoc += "\n\n@param path " + pathParameterJavaDoc(model);
+            javaDoc += "\n@return the dsl builder\n";
             method.getJavaDoc().setText(javaDoc);
             if (model.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
@@ -591,6 +592,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
             javaDoc = desc;
             javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
             javaDoc += "\n@param path " + pathParameterJavaDoc(model);
+            javaDoc += "\n@return the dsl builder\n";
             method.getJavaDoc().setText(javaDoc);
             if (model.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
@@ -617,6 +619,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                                 "\"" + componentModel.getScheme() + "\", path");
                 String javaDoc = desc;
                 javaDoc += "\n\n@param path " + pathParameterJavaDoc(componentModel);
+                javaDoc += "\n@return the dsl builder\n";
                 method.getJavaDoc().setText(javaDoc);
                 if (componentModel.isDeprecated()) {
                     method.addAnnotation(Deprecated.class);
@@ -644,6 +647,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     javaDoc = desc;
                     javaDoc += "\n\n@param componentName to use a custom component name for the endpoint instead of the default name";
                     javaDoc += "\n@param path " + pathParameterJavaDoc(componentModel);
+                    javaDoc += "\n@return the dsl builder\n";
                     method.getJavaDoc().setText(javaDoc);
                     if (componentModel.isDeprecated()) {
                         method.addAnnotation(Deprecated.class);

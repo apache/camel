@@ -334,6 +334,7 @@ public interface EventEndpointBuilderFactory {
          * Name of endpoint
          * 
          * @param path name
+         * @return the dsl builder
          */
         default EventEndpointBuilder springEvent(String path) {
             return EventEndpointBuilderFactory.endpointBuilder("spring-event", path);
@@ -354,6 +355,7 @@ public interface EventEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default EventEndpointBuilder springEvent(
                 String componentName,

@@ -778,6 +778,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * between different signer endpoints within the camel context.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default XmlSignerEndpointBuilder xmlsecuritySign(String path) {
             return XmlSignerEndpointBuilderFactory.endpointBuilder("xmlsecurity-sign", path);
@@ -799,6 +800,7 @@ public interface XmlSignerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default XmlSignerEndpointBuilder xmlsecuritySign(
                 String componentName,

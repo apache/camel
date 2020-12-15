@@ -133,6 +133,7 @@ public interface DnsEndpointBuilderFactory {
          * wikipedia
          * 
          * @param path dnsType
+         * @return the dsl builder
          */
         default DnsEndpointBuilder dns(String path) {
             return DnsEndpointBuilderFactory.endpointBuilder("dns", path);
@@ -155,6 +156,7 @@ public interface DnsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path dnsType
+         * @return the dsl builder
          */
         default DnsEndpointBuilder dns(String componentName, String path) {
             return DnsEndpointBuilderFactory.endpointBuilder(componentName, path);

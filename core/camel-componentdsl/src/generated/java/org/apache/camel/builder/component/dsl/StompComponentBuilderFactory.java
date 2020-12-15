@@ -39,6 +39,8 @@ public interface StompComponentBuilderFactory {
      * Category: messaging
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-stomp
+     * 
+     * @return the dsl builder
      */
     static StompComponentBuilder stomp() {
         return new StompComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface StompComponentBuilderFactory {
         /**
          * The URI of the Stomp broker to connect to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp://localhost:61613
          * Group: common
+         * 
+         * @param brokerURL the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder brokerURL(java.lang.String brokerURL) {
             doSetProperty("brokerURL", brokerURL);
@@ -63,9 +68,12 @@ public interface StompComponentBuilderFactory {
         /**
          * To set custom headers.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param customHeaders the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder customHeaders(
                 java.util.Properties customHeaders) {
@@ -75,9 +83,12 @@ public interface StompComponentBuilderFactory {
         /**
          * The virtual host name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
@@ -86,9 +97,12 @@ public interface StompComponentBuilderFactory {
         /**
          * The stomp version (1.1, or 1.2).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param version the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder version(java.lang.String version) {
             doSetProperty("version", version);
@@ -103,10 +117,13 @@ public interface StompComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -124,10 +141,13 @@ public interface StompComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -142,10 +162,13 @@ public interface StompComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -155,10 +178,12 @@ public interface StompComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.stomp.StompConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.stomp.StompConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder configuration(
                 org.apache.camel.component.stomp.StompConfiguration configuration) {
@@ -170,9 +195,13 @@ public interface StompComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -182,9 +211,12 @@ public interface StompComponentBuilderFactory {
         /**
          * The username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param login the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder login(java.lang.String login) {
             doSetProperty("login", login);
@@ -193,9 +225,12 @@ public interface StompComponentBuilderFactory {
         /**
          * The password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param passcode the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder passcode(java.lang.String passcode) {
             doSetProperty("passcode", passcode);
@@ -205,9 +240,12 @@ public interface StompComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -217,10 +255,13 @@ public interface StompComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default StompComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

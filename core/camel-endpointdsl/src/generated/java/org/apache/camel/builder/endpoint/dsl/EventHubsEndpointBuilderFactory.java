@@ -1005,6 +1005,7 @@ public interface EventHubsEndpointBuilderFactory {
          * EventHubs name under a specific namcespace
          * 
          * @param path namespace/eventHubName
+         * @return the dsl builder
          */
         default EventHubsEndpointBuilder azureEventhubs(String path) {
             return EventHubsEndpointBuilderFactory.endpointBuilder("azure-eventhubs", path);
@@ -1031,6 +1032,7 @@ public interface EventHubsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path namespace/eventHubName
+         * @return the dsl builder
          */
         default EventHubsEndpointBuilder azureEventhubs(
                 String componentName,

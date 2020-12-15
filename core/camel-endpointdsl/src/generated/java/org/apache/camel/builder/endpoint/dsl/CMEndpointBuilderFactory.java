@@ -213,6 +213,7 @@ public interface CMEndpointBuilderFactory {
          * SMS Provider HOST with scheme
          * 
          * @param path host
+         * @return the dsl builder
          */
         default CMEndpointBuilder cmSms(String path) {
             return CMEndpointBuilderFactory.endpointBuilder("cm-sms", path);
@@ -233,6 +234,7 @@ public interface CMEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host
+         * @return the dsl builder
          */
         default CMEndpointBuilder cmSms(String componentName, String path) {
             return CMEndpointBuilderFactory.endpointBuilder(componentName, path);

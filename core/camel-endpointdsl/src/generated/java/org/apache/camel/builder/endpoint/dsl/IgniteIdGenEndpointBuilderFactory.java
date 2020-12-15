@@ -284,6 +284,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * The sequence name.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default IgniteIdGenEndpointBuilder igniteIdgen(String path) {
             return IgniteIdGenEndpointBuilderFactory.endpointBuilder("ignite-idgen", path);
@@ -304,6 +305,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default IgniteIdGenEndpointBuilder igniteIdgen(
                 String componentName,

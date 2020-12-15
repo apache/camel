@@ -350,6 +350,7 @@ public interface ECS2EndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default ECS2EndpointBuilder aws2Ecs(String path) {
             return ECS2EndpointBuilderFactory.endpointBuilder("aws2-ecs", path);
@@ -370,6 +371,7 @@ public interface ECS2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default ECS2EndpointBuilder aws2Ecs(String componentName, String path) {
             return ECS2EndpointBuilderFactory.endpointBuilder(componentName, path);

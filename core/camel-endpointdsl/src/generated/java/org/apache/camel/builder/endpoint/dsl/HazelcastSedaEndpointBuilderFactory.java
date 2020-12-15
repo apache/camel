@@ -1022,6 +1022,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * The name of the cache
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder hazelcastSeda(String path) {
             return HazelcastSedaEndpointBuilderFactory.endpointBuilder("hazelcast-seda", path);
@@ -1043,6 +1044,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastSedaEndpointBuilder hazelcastSeda(
                 String componentName,

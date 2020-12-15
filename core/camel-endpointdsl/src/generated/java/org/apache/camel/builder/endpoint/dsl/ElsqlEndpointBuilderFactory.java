@@ -2306,6 +2306,7 @@ public interface ElsqlEndpointBuilderFactory {
          * then you do not have to configure this on the endpoint.
          * 
          * @param path elsqlName:resourceUri
+         * @return the dsl builder
          */
         default ElsqlEndpointBuilder elsql(String path) {
             return ElsqlEndpointBuilderFactory.endpointBuilder("elsql", path);
@@ -2333,6 +2334,7 @@ public interface ElsqlEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path elsqlName:resourceUri
+         * @return the dsl builder
          */
         default ElsqlEndpointBuilder elsql(String componentName, String path) {
             return ElsqlEndpointBuilderFactory.endpointBuilder(componentName, path);

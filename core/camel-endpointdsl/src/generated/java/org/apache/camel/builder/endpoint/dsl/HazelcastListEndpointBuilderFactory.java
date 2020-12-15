@@ -596,6 +596,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * The name of the cache
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastListEndpointBuilder hazelcastList(String path) {
             return HazelcastListEndpointBuilderFactory.endpointBuilder("hazelcast-list", path);
@@ -616,6 +617,7 @@ public interface HazelcastListEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastListEndpointBuilder hazelcastList(
                 String componentName,

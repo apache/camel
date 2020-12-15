@@ -166,6 +166,7 @@ public interface DJLEndpointBuilderFactory {
          * Application name
          * 
          * @param path application
+         * @return the dsl builder
          */
         default DJLEndpointBuilder djl(String path) {
             return DJLEndpointBuilderFactory.endpointBuilder("djl", path);
@@ -187,6 +188,7 @@ public interface DJLEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path application
+         * @return the dsl builder
          */
         default DJLEndpointBuilder djl(String componentName, String path) {
             return DJLEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -377,6 +377,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * Event bus name or ARN
          * 
          * @param path //eventbusNameOrArn
+         * @return the dsl builder
          */
         default EventbridgeEndpointBuilder aws2Eventbridge(String path) {
             return EventbridgeEndpointBuilderFactory.endpointBuilder("aws2-eventbridge", path);
@@ -397,6 +398,7 @@ public interface EventbridgeEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path //eventbusNameOrArn
+         * @return the dsl builder
          */
         default EventbridgeEndpointBuilder aws2Eventbridge(
                 String componentName,

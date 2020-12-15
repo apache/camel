@@ -37,6 +37,8 @@ public interface Aws2IamComponentBuilderFactory {
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-iam
+     * 
+     * @return the dsl builder
      */
     static Aws2IamComponentBuilder aws2Iam() {
         return new Aws2IamComponentBuilderImpl();
@@ -50,10 +52,12 @@ public interface Aws2IamComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.iam.IAM2Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.iam.IAM2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder configuration(
                 org.apache.camel.component.aws2.iam.IAM2Configuration configuration) {
@@ -64,9 +68,12 @@ public interface Aws2IamComponentBuilderFactory {
          * To use a existing configured AWS IAM as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.iam.IamClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.iam.IamClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param iamClient the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder iamClient(
                 software.amazon.awssdk.services.iam.IamClient iamClient) {
@@ -84,10 +91,13 @@ public interface Aws2IamComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -98,9 +108,12 @@ public interface Aws2IamComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.iam.IAM2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.iam.IAM2Operations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder operation(
                 org.apache.camel.component.aws2.iam.IAM2Operations operation) {
@@ -110,10 +123,13 @@ public interface Aws2IamComponentBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder pojoRequest(boolean pojoRequest) {
             doSetProperty("pojoRequest", pojoRequest);
@@ -122,9 +138,12 @@ public interface Aws2IamComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the IAM client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -133,9 +152,12 @@ public interface Aws2IamComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the IAM client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -144,11 +166,14 @@ public interface Aws2IamComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the IAM client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -161,10 +186,13 @@ public interface Aws2IamComponentBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: aws-global
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -174,10 +202,13 @@ public interface Aws2IamComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -192,10 +223,13 @@ public interface Aws2IamComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -205,9 +239,12 @@ public interface Aws2IamComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -216,9 +253,12 @@ public interface Aws2IamComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2IamComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);

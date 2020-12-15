@@ -952,6 +952,7 @@ public interface EhcacheEndpointBuilderFactory {
          * the cache name
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default EhcacheEndpointBuilder ehcache(String path) {
             return EhcacheEndpointBuilderFactory.endpointBuilder("ehcache", path);
@@ -972,6 +973,7 @@ public interface EhcacheEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default EhcacheEndpointBuilder ehcache(String componentName, String path) {
             return EhcacheEndpointBuilderFactory.endpointBuilder(componentName, path);

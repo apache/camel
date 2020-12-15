@@ -451,6 +451,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * Integration provider.
          * 
          * @param path defaultChannel
+         * @return the dsl builder
          */
         default SpringIntegrationEndpointBuilder springIntegration(String path) {
             return SpringIntegrationEndpointBuilderFactory.endpointBuilder("spring-integration", path);
@@ -474,6 +475,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path defaultChannel
+         * @return the dsl builder
          */
         default SpringIntegrationEndpointBuilder springIntegration(
                 String componentName,

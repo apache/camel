@@ -530,6 +530,7 @@ public interface DirectVmEndpointBuilderFactory {
          * Name of direct-vm endpoint
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DirectVmEndpointBuilder directVm(String path) {
             return DirectVmEndpointBuilderFactory.endpointBuilder("direct-vm", path);
@@ -551,6 +552,7 @@ public interface DirectVmEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DirectVmEndpointBuilder directVm(
                 String componentName,

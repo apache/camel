@@ -37,6 +37,8 @@ public interface PahoComponentBuilderFactory {
      * Category: messaging,iot
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-paho
+     * 
+     * @return the dsl builder
      */
     static PahoComponentBuilder paho() {
         return new PahoComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface PahoComponentBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticReconnect the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder automaticReconnect(
                 boolean automaticReconnect) {
@@ -70,10 +75,13 @@ public interface PahoComponentBuilderFactory {
         /**
          * The URL of the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp://localhost:1883
          * Group: common
+         * 
+         * @param brokerUrl the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder brokerUrl(java.lang.String brokerUrl) {
             doSetProperty("brokerUrl", brokerUrl);
@@ -92,10 +100,13 @@ public interface PahoComponentBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cleanSession the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder cleanSession(boolean cleanSession) {
             doSetProperty("cleanSession", cleanSession);
@@ -104,9 +115,12 @@ public interface PahoComponentBuilderFactory {
         /**
          * MQTT client identifier. The identifier must be unique.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
@@ -116,9 +130,12 @@ public interface PahoComponentBuilderFactory {
          * To use the shared Paho configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.paho.PahoConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.paho.PahoConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder configuration(
                 org.apache.camel.component.paho.PahoConfiguration configuration) {
@@ -133,10 +150,13 @@ public interface PahoComponentBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder connectionTimeout(int connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -146,9 +166,12 @@ public interface PahoComponentBuilderFactory {
          * Base directory used by file persistence. Will by default use user
          * directory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param filePersistenceDirectory the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder filePersistenceDirectory(
                 java.lang.String filePersistenceDirectory) {
@@ -166,10 +189,13 @@ public interface PahoComponentBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param keepAliveInterval the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder keepAliveInterval(int keepAliveInterval) {
             doSetProperty("keepAliveInterval", keepAliveInterval);
@@ -179,10 +205,13 @@ public interface PahoComponentBuilderFactory {
          * Sets the max inflight. please increase this value in a high traffic
          * environment. The default value is 10.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: common
+         * 
+         * @param maxInflight the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder maxInflight(int maxInflight) {
             doSetProperty("maxInflight", maxInflight);
@@ -191,10 +220,13 @@ public interface PahoComponentBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 128000
          * Group: common
+         * 
+         * @param maxReconnectDelay the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder maxReconnectDelay(int maxReconnectDelay) {
             doSetProperty("maxReconnectDelay", maxReconnectDelay);
@@ -206,9 +238,12 @@ public interface PahoComponentBuilderFactory {
          * can be selected specifically, with no fall back, by using the
          * MQTT_VERSION_3_1_1 or MQTT_VERSION_3_1 options respectively.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder mqttVersion(int mqttVersion) {
             doSetProperty("mqttVersion", mqttVersion);
@@ -218,10 +253,13 @@ public interface PahoComponentBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
+         * &lt;code&gt;org.apache.camel.component.paho.PahoPersistence&lt;/code&gt; type.
          * 
          * Default: MEMORY
          * Group: common
+         * 
+         * @param persistence the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder persistence(
                 org.apache.camel.component.paho.PahoPersistence persistence) {
@@ -231,10 +269,13 @@ public interface PahoComponentBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param qos the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder qos(int qos) {
             doSetProperty("qos", qos);
@@ -243,10 +284,13 @@ public interface PahoComponentBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param retained the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder retained(boolean retained) {
             doSetProperty("retained", retained);
@@ -279,9 +323,12 @@ public interface PahoComponentBuilderFactory {
          * subscriptions are not valid. The cleansession flag must be set to
          * true if the hunt list mode is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverURIs the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder serverURIs(java.lang.String serverURIs) {
             doSetProperty("serverURIs", serverURIs);
@@ -295,9 +342,12 @@ public interface PahoComponentBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willPayload the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder willPayload(java.lang.String willPayload) {
             doSetProperty("willPayload", willPayload);
@@ -311,9 +361,12 @@ public interface PahoComponentBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willQos the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder willQos(int willQos) {
             doSetProperty("willQos", willQos);
@@ -327,10 +380,13 @@ public interface PahoComponentBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param willRetained the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder willRetained(boolean willRetained) {
             doSetProperty("willRetained", willRetained);
@@ -344,9 +400,12 @@ public interface PahoComponentBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willTopic the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder willTopic(java.lang.String willTopic) {
             doSetProperty("willTopic", willTopic);
@@ -361,10 +420,13 @@ public interface PahoComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -382,10 +444,13 @@ public interface PahoComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -399,10 +464,13 @@ public interface PahoComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -412,9 +480,13 @@ public interface PahoComponentBuilderFactory {
          * To use a shared Paho client.
          * 
          * The option is a:
-         * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
+         * &lt;code&gt;org.eclipse.paho.client.mqttv3.MqttClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder client(
                 org.eclipse.paho.client.mqttv3.MqttClient client) {
@@ -424,9 +496,12 @@ public interface PahoComponentBuilderFactory {
         /**
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param customWebSocketHeaders the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder customWebSocketHeaders(
                 java.util.Properties customWebSocketHeaders) {
@@ -438,10 +513,13 @@ public interface PahoComponentBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: advanced
+         * 
+         * @param executorServiceTimeout the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder executorServiceTimeout(
                 int executorServiceTimeout) {
@@ -452,10 +530,13 @@ public interface PahoComponentBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param httpsHostnameVerificationEnabled the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder httpsHostnameVerificationEnabled(
                 boolean httpsHostnameVerificationEnabled) {
@@ -465,9 +546,12 @@ public interface PahoComponentBuilderFactory {
         /**
          * Password to be used for authentication against the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -479,9 +563,13 @@ public interface PahoComponentBuilderFactory {
          * SSL connection, an SSLSocketFactory can be used to supply
          * application-specific security settings.
          * 
-         * The option is a: <code>javax.net.SocketFactory</code> type.
+         * The option is a: &lt;code&gt;javax.net.SocketFactory&lt;/code&gt;
+         * type.
          * 
          * Group: security
+         * 
+         * @param socketFactory the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder socketFactory(
                 javax.net.SocketFactory socketFactory) {
@@ -529,9 +617,12 @@ public interface PahoComponentBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslClientProps the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder sslClientProps(
                 java.util.Properties sslClientProps) {
@@ -544,9 +635,13 @@ public interface PahoComponentBuilderFactory {
          * yourself when hostname is verified error. There is no default
          * HostnameVerifier.
          * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHostnameVerifier the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder sslHostnameVerifier(
                 javax.net.ssl.HostnameVerifier sslHostnameVerifier) {
@@ -556,9 +651,12 @@ public interface PahoComponentBuilderFactory {
         /**
          * Username to be used for authentication against the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default PahoComponentBuilder userName(java.lang.String userName) {
             doSetProperty("userName", userName);

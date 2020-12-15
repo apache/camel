@@ -37,6 +37,8 @@ public interface ServletComponentBuilderFactory {
      * Category: http
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-servlet
+     * 
+     * @return the dsl builder
      */
     static ServletComponentBuilder servlet() {
         return new ServletComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface ServletComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ServletComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -70,10 +75,13 @@ public interface ServletComponentBuilderFactory {
         /**
          * Default name of servlet to use. The default name is CamelServlet.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: CamelServlet
          * Group: consumer
+         * 
+         * @param servletName the value to set
+         * @return the dsl builder
          */
         default ServletComponentBuilder servletName(java.lang.String servletName) {
             doSetProperty("servletName", servletName);
@@ -87,10 +95,13 @@ public interface ServletComponentBuilderFactory {
          * off by default as this may require servlet specific configuration to
          * enable this when using Servlet's.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param attachmentMultipartBinding the value to set
+         * @return the dsl builder
          */
         default ServletComponentBuilder attachmentMultipartBinding(
                 boolean attachmentMultipartBinding) {
@@ -102,9 +113,12 @@ public interface ServletComponentBuilderFactory {
          * files. Multiple extensions can be separated by comma, such as
          * txt,xml.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param fileNameExtWhitelist the value to set
+         * @return the dsl builder
          */
         default ServletComponentBuilder fileNameExtWhitelist(
                 java.lang.String fileNameExtWhitelist) {
@@ -115,9 +129,13 @@ public interface ServletComponentBuilderFactory {
          * To use a custom org.apache.camel.component.servlet.HttpRegistry.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpRegistry</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpRegistry&lt;/code&gt;
+         * type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param httpRegistry the value to set
+         * @return the dsl builder
          */
         default ServletComponentBuilder httpRegistry(
                 org.apache.camel.http.common.HttpRegistry httpRegistry) {
@@ -131,10 +149,13 @@ public interface ServletComponentBuilderFactory {
          * deserialize the incoming data from the request to Java and that can
          * be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
          */
         default ServletComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
@@ -149,10 +170,13 @@ public interface ServletComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default ServletComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -164,9 +188,13 @@ public interface ServletComponentBuilderFactory {
          * message and HttpClient.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param httpBinding the value to set
+         * @return the dsl builder
          */
         default ServletComponentBuilder httpBinding(
                 org.apache.camel.http.common.HttpBinding httpBinding) {
@@ -177,9 +205,12 @@ public interface ServletComponentBuilderFactory {
          * To use the shared HttpConfiguration as base configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpConfiguration the value to set
+         * @return the dsl builder
          */
         default ServletComponentBuilder httpConfiguration(
                 org.apache.camel.http.common.HttpConfiguration httpConfiguration) {
@@ -191,9 +222,13 @@ public interface ServletComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default ServletComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {

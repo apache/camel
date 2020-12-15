@@ -37,6 +37,8 @@ public interface XsltComponentBuilderFactory {
      * Category: core,transformation
      * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-xslt
+     * 
+     * @return the dsl builder
      */
     static XsltComponentBuilder xslt() {
         return new XsltComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface XsltComponentBuilderFactory {
          * can be forced to reload at runtime via JMX using the
          * clearCachedStylesheet operation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default XsltComponentBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -73,10 +78,13 @@ public interface XsltComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XsltComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -90,10 +98,13 @@ public interface XsltComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default XsltComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -103,9 +114,12 @@ public interface XsltComponentBuilderFactory {
          * To use a custom XSLT transformer factory, specified as a FQN class
          * name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactoryClass the value to set
+         * @return the dsl builder
          */
         default XsltComponentBuilder transformerFactoryClass(
                 java.lang.String transformerFactoryClass) {
@@ -117,9 +131,12 @@ public interface XsltComponentBuilderFactory {
          * TransformerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactoryConfigurationStrategy the value to set
+         * @return the dsl builder
          */
         default XsltComponentBuilder transformerFactoryConfigurationStrategy(
                 org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
@@ -130,9 +147,13 @@ public interface XsltComponentBuilderFactory {
          * To use a custom UriResolver. Should not be used together with the
          * option 'uriResolverFactory'.
          * 
-         * The option is a: <code>javax.xml.transform.URIResolver</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriResolver the value to set
+         * @return the dsl builder
          */
         default XsltComponentBuilder uriResolver(
                 javax.xml.transform.URIResolver uriResolver) {
@@ -145,10 +166,12 @@ public interface XsltComponentBuilderFactory {
          * 'uriResolver'.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xslt.XsltUriResolverFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.xslt.XsltUriResolverFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriResolverFactory the value to set
+         * @return the dsl builder
          */
         default XsltComponentBuilder uriResolverFactory(
                 org.apache.camel.component.xslt.XsltUriResolverFactory uriResolverFactory) {

@@ -141,6 +141,7 @@ public final class ComponentDslBuilderFactoryGenerator {
         String doc = DslHelper.getMainDescriptionWithoutPathOptions(componentModel);
         // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
         doc = JavadocHelper.xmlEncode(doc);
+        doc += "\n\n@return the dsl builder\n";
         method.getJavaDoc().setText(doc);
     }
 }

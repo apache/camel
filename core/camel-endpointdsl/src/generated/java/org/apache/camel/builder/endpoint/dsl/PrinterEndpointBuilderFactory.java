@@ -298,6 +298,7 @@ public interface PrinterEndpointBuilderFactory {
          * Name of the printer
          * 
          * @param path hostname:port/printername
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder lpr(String path) {
             return PrinterEndpointBuilderFactory.endpointBuilder("lpr", path);
@@ -324,6 +325,7 @@ public interface PrinterEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path hostname:port/printername
+         * @return the dsl builder
          */
         default PrinterEndpointBuilder lpr(String componentName, String path) {
             return PrinterEndpointBuilderFactory.endpointBuilder(componentName, path);

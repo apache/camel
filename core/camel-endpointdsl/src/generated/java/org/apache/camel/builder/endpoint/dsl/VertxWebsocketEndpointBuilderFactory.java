@@ -563,6 +563,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Default value: /
          * 
          * @param path host:port/path
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointBuilder vertxWebsocket(String path) {
             return VertxWebsocketEndpointBuilderFactory.endpointBuilder("vertx-websocket", path);
@@ -596,6 +597,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/path
+         * @return the dsl builder
          */
         default VertxWebsocketEndpointBuilder vertxWebsocket(
                 String componentName,

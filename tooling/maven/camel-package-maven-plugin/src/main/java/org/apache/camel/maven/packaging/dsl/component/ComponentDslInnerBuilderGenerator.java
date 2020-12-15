@@ -82,7 +82,11 @@ public final class ComponentDslInnerBuilderGenerator {
             if (componentOptionModel.isDeprecated()) {
                 method.addAnnotation(Deprecated.class);
             }
-            method.getJavaDoc().setText(generateOptionDescription(componentOptionModel));
+            String doc = generateOptionDescription(componentOptionModel);
+            doc = JavadocHelper.xmlEncode(doc);
+            doc += "\n\n@param " + componentOptionModel.getName() + " the value to set";
+            doc += "\n@return the dsl builder\n";
+            method.getJavaDoc().setText(doc);
         });
     }
 

@@ -37,6 +37,8 @@ public interface MsvComponentBuilderFactory {
      * Category: validation
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-msv
+     * 
+     * @return the dsl builder
      */
     static MsvComponentBuilder msv() {
         return new MsvComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface MsvComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MsvComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -74,10 +79,13 @@ public interface MsvComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default MsvComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -88,9 +96,12 @@ public interface MsvComponentBuilderFactory {
          * endpoint resource URI.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.validator.ValidatorResourceResolverFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolverFactory the value to set
+         * @return the dsl builder
          */
         default MsvComponentBuilder resourceResolverFactory(
                 org.apache.camel.component.validator.ValidatorResourceResolverFactory resourceResolverFactory) {
@@ -100,10 +111,13 @@ public interface MsvComponentBuilderFactory {
         /**
          * To use the javax.xml.validation.SchemaFactory.
          * 
-         * The option is a: <code>javax.xml.validation.SchemaFactory</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.validation.SchemaFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param schemaFactory the value to set
+         * @return the dsl builder
          */
         default MsvComponentBuilder schemaFactory(
                 javax.xml.validation.SchemaFactory schemaFactory) {

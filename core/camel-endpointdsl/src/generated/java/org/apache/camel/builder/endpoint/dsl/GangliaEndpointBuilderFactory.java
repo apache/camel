@@ -418,6 +418,7 @@ public interface GangliaEndpointBuilderFactory {
          * Default value: 8649
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default GangliaEndpointBuilder ganglia(String path) {
             return GangliaEndpointBuilderFactory.endpointBuilder("ganglia", path);
@@ -443,6 +444,7 @@ public interface GangliaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port
+         * @return the dsl builder
          */
         default GangliaEndpointBuilder ganglia(String componentName, String path) {
             return GangliaEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -328,6 +328,7 @@ public interface PdfEndpointBuilderFactory {
          * extractText
          * 
          * @param path operation
+         * @return the dsl builder
          */
         default PdfEndpointBuilder pdf(String path) {
             return PdfEndpointBuilderFactory.endpointBuilder("pdf", path);
@@ -350,6 +351,7 @@ public interface PdfEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path operation
+         * @return the dsl builder
          */
         default PdfEndpointBuilder pdf(String componentName, String path) {
             return PdfEndpointBuilderFactory.endpointBuilder(componentName, path);

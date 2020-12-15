@@ -843,6 +843,7 @@ public interface TwilioEndpointBuilderFactory {
          * read, update
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default TwilioEndpointBuilder twilio(String path) {
             return TwilioEndpointBuilderFactory.endpointBuilder("twilio", path);
@@ -889,6 +890,7 @@ public interface TwilioEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default TwilioEndpointBuilder twilio(String componentName, String path) {
             return TwilioEndpointBuilderFactory.endpointBuilder(componentName, path);

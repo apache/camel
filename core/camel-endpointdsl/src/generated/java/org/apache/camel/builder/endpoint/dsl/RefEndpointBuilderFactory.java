@@ -336,6 +336,7 @@ public interface RefEndpointBuilderFactory {
          * Name of endpoint to lookup in the registry.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default RefEndpointBuilder ref(String path) {
             return RefEndpointBuilderFactory.endpointBuilder("ref", path);
@@ -357,6 +358,7 @@ public interface RefEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default RefEndpointBuilder ref(String componentName, String path) {
             return RefEndpointBuilderFactory.endpointBuilder(componentName, path);

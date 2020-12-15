@@ -1512,6 +1512,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * Default value: 8091
          * 
          * @param path protocol:hostname:port
+         * @return the dsl builder
          */
         default CouchbaseEndpointBuilder couchbase(String path) {
             return CouchbaseEndpointBuilderFactory.endpointBuilder("couchbase", path);
@@ -1540,6 +1541,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path protocol:hostname:port
+         * @return the dsl builder
          */
         default CouchbaseEndpointBuilder couchbase(
                 String componentName,

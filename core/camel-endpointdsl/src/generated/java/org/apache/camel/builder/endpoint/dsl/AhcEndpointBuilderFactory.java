@@ -493,6 +493,7 @@ public interface AhcEndpointBuilderFactory {
          * The URI to use such as http://hostname:port/path
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default AhcEndpointBuilder ahc(String path) {
             return AhcEndpointBuilderFactory.endpointBuilder("ahc", path);
@@ -513,6 +514,7 @@ public interface AhcEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path httpUri
+         * @return the dsl builder
          */
         default AhcEndpointBuilder ahc(String componentName, String path) {
             return AhcEndpointBuilderFactory.endpointBuilder(componentName, path);

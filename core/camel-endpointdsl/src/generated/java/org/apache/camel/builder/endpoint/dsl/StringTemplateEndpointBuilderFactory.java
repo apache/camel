@@ -283,6 +283,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder stringTemplate(String path) {
             return StringTemplateEndpointBuilderFactory.endpointBuilder("string-template", path);
@@ -308,6 +309,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default StringTemplateEndpointBuilder stringTemplate(
                 String componentName,

@@ -752,6 +752,7 @@ public interface GridFsEndpointBuilderFactory {
          * Name of com.mongodb.client.MongoClient to use.
          * 
          * @param path connectionBean
+         * @return the dsl builder
          */
         default GridFsEndpointBuilder mongodbGridfs(String path) {
             return GridFsEndpointBuilderFactory.endpointBuilder("mongodb-gridfs", path);
@@ -772,6 +773,7 @@ public interface GridFsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path connectionBean
+         * @return the dsl builder
          */
         default GridFsEndpointBuilder mongodbGridfs(
                 String componentName,

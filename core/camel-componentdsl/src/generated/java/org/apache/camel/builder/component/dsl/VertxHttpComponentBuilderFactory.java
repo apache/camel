@@ -37,6 +37,8 @@ public interface VertxHttpComponentBuilderFactory {
      * Category: http
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-vertx-http
+     * 
+     * @return the dsl builder
      */
     static VertxHttpComponentBuilder vertxHttp() {
         return new VertxHttpComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface VertxHttpComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -76,10 +81,13 @@ public interface VertxHttpComponentBuilderFactory {
          * incoming data from the request. This can be a potential security
          * risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
@@ -94,10 +102,13 @@ public interface VertxHttpComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -107,9 +118,12 @@ public interface VertxHttpComponentBuilderFactory {
         /**
          * To use an existing vertx instead of creating a new instance.
          * 
-         * The option is a: <code>io.vertx.core.Vertx</code> type.
+         * The option is a: &lt;code&gt;io.vertx.core.Vertx&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param vertx the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder vertx(io.vertx.core.Vertx vertx) {
             doSetProperty("vertx", vertx);
@@ -120,10 +134,12 @@ public interface VertxHttpComponentBuilderFactory {
          * Vert.x and Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.vertx.http.VertxHttpBinding</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.vertx.http.VertxHttpBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param vertxHttpBinding the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder vertxHttpBinding(
                 org.apache.camel.component.vertx.http.VertxHttpBinding vertxHttpBinding) {
@@ -133,9 +149,13 @@ public interface VertxHttpComponentBuilderFactory {
         /**
          * To provide a custom set of vertx options for configuring vertx.
          * 
-         * The option is a: <code>io.vertx.core.VertxOptions</code> type.
+         * The option is a: &lt;code&gt;io.vertx.core.VertxOptions&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param vertxOptions the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder vertxOptions(
                 io.vertx.core.VertxOptions vertxOptions) {
@@ -147,9 +167,13 @@ public interface VertxHttpComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -159,9 +183,12 @@ public interface VertxHttpComponentBuilderFactory {
         /**
          * The proxy server host address.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -170,9 +197,12 @@ public interface VertxHttpComponentBuilderFactory {
         /**
          * The proxy server password if authentication is required.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder proxyPassword(
                 java.lang.String proxyPassword) {
@@ -182,9 +212,12 @@ public interface VertxHttpComponentBuilderFactory {
         /**
          * The proxy server port.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -193,9 +226,13 @@ public interface VertxHttpComponentBuilderFactory {
         /**
          * The proxy server type.
          * 
-         * The option is a: <code>io.vertx.core.net.ProxyType</code> type.
+         * The option is a: &lt;code&gt;io.vertx.core.net.ProxyType&lt;/code&gt;
+         * type.
          * 
          * Group: proxy
+         * 
+         * @param proxyType the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder proxyType(
                 io.vertx.core.net.ProxyType proxyType) {
@@ -205,9 +242,12 @@ public interface VertxHttpComponentBuilderFactory {
         /**
          * The proxy server username if authentication is required.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyUsername the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder proxyUsername(
                 java.lang.String proxyUsername) {
@@ -217,9 +257,12 @@ public interface VertxHttpComponentBuilderFactory {
         /**
          * The password to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param basicAuthPassword the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder basicAuthPassword(
                 java.lang.String basicAuthPassword) {
@@ -229,9 +272,12 @@ public interface VertxHttpComponentBuilderFactory {
         /**
          * The user name to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param basicAuthUsername the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder basicAuthUsername(
                 java.lang.String basicAuthUsername) {
@@ -241,9 +287,12 @@ public interface VertxHttpComponentBuilderFactory {
         /**
          * The bearer token to use for bearer token authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param bearerToken the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder bearerToken(
                 java.lang.String bearerToken) {
@@ -254,9 +303,12 @@ public interface VertxHttpComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -266,10 +318,13 @@ public interface VertxHttpComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default VertxHttpComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

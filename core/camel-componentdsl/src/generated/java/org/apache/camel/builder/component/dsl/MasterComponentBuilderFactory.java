@@ -39,6 +39,8 @@ public interface MasterComponentBuilderFactory {
      * Category: clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-master
+     * 
+     * @return the dsl builder
      */
     static MasterComponentBuilder master() {
         return new MasterComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface MasterComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MasterComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -77,10 +82,13 @@ public interface MasterComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default MasterComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -90,9 +98,13 @@ public interface MasterComponentBuilderFactory {
          * Inject the service to use.
          * 
          * The option is a:
-         * <code>org.apache.camel.cluster.CamelClusterService</code> type.
+         * &lt;code&gt;org.apache.camel.cluster.CamelClusterService&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param service the value to set
+         * @return the dsl builder
          */
         default MasterComponentBuilder service(
                 org.apache.camel.cluster.CamelClusterService service) {
@@ -104,10 +116,12 @@ public interface MasterComponentBuilderFactory {
          * use.
          * 
          * The option is a:
-         * <code>org.apache.camel.cluster.CamelClusterService.Selector</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.cluster.CamelClusterService.Selector&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param serviceSelector the value to set
+         * @return the dsl builder
          */
         default MasterComponentBuilder serviceSelector(
                 org.apache.camel.cluster.CamelClusterService.Selector serviceSelector) {

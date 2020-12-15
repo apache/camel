@@ -1417,6 +1417,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * same name will fail.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder debeziumSqlserver(String path) {
             return DebeziumSqlserverEndpointBuilderFactory.endpointBuilder("debezium-sqlserver", path);
@@ -1438,6 +1439,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumSqlserverEndpointBuilder debeziumSqlserver(
                 String componentName,

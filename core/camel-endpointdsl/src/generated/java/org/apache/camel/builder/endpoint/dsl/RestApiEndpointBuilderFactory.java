@@ -223,6 +223,7 @@ public interface RestApiEndpointBuilderFactory {
          * services within CamelContext's which name matches the pattern.
          * 
          * @param path path/contextIdPattern
+         * @return the dsl builder
          */
         default RestApiEndpointBuilder restApi(String path) {
             return RestApiEndpointBuilderFactory.endpointBuilder("rest-api", path);
@@ -248,6 +249,7 @@ public interface RestApiEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path/contextIdPattern
+         * @return the dsl builder
          */
         default RestApiEndpointBuilder restApi(String componentName, String path) {
             return RestApiEndpointBuilderFactory.endpointBuilder(componentName, path);

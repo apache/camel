@@ -231,6 +231,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * ID of the operation from the OpenApi specification.
          * 
          * @param path specificationUri#operationId
+         * @return the dsl builder
          */
         default RestOpenApiEndpointBuilder restOpenapi(String path) {
             return RestOpenApiEndpointBuilderFactory.endpointBuilder("rest-openapi", path);
@@ -270,6 +271,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path specificationUri#operationId
+         * @return the dsl builder
          */
         default RestOpenApiEndpointBuilder restOpenapi(
                 String componentName,

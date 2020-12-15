@@ -892,6 +892,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * Name of the dynamodb table
          * 
          * @param path tableName
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder aws2Ddbstream(String path) {
             return Ddb2StreamEndpointBuilderFactory.endpointBuilder("aws2-ddbstream", path);
@@ -913,6 +914,7 @@ public interface Ddb2StreamEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path tableName
+         * @return the dsl builder
          */
         default Ddb2StreamEndpointBuilder aws2Ddbstream(
                 String componentName,

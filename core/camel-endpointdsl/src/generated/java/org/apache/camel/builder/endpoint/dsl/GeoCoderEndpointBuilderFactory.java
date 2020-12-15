@@ -344,6 +344,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * The geo latitude and longitude which should be prefixed with latlng:
          * 
          * @param path address:latlng
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder geocoder(String path) {
             return GeoCoderEndpointBuilderFactory.endpointBuilder("geocoder", path);
@@ -368,6 +369,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path address:latlng
+         * @return the dsl builder
          */
         default GeoCoderEndpointBuilder geocoder(
                 String componentName,

@@ -1893,6 +1893,7 @@ public interface AS2EndpointBuilderFactory {
          * What sub operation to use for the selected operation
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default AS2EndpointBuilder as2(String path) {
             return AS2EndpointBuilderFactory.endpointBuilder("as2", path);
@@ -1917,6 +1918,7 @@ public interface AS2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default AS2EndpointBuilder as2(String componentName, String path) {
             return AS2EndpointBuilderFactory.endpointBuilder(componentName, path);

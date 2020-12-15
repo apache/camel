@@ -1259,6 +1259,7 @@ public interface FlatpackEndpointBuilderFactory {
          * system
          * 
          * @param path type:resourceUri
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder flatpack(String path) {
             return FlatpackEndpointBuilderFactory.endpointBuilder("flatpack", path);
@@ -1285,6 +1286,7 @@ public interface FlatpackEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path type:resourceUri
+         * @return the dsl builder
          */
         default FlatpackEndpointBuilder flatpack(
                 String componentName,

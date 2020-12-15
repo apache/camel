@@ -592,6 +592,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The topic name.
          * 
          * @param path topic
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointBuilder igniteMessaging(String path) {
             return IgniteMessagingEndpointBuilderFactory.endpointBuilder("ignite-messaging", path);
@@ -612,6 +613,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path topic
+         * @return the dsl builder
          */
         default IgniteMessagingEndpointBuilder igniteMessaging(
                 String componentName,

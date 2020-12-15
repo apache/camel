@@ -493,6 +493,7 @@ public interface PgEventEndpointBuilderFactory {
          * The channel name
          * 
          * @param path host:port/database/channel
+         * @return the dsl builder
          */
         default PgEventEndpointBuilder pgevent(String path) {
             return PgEventEndpointBuilderFactory.endpointBuilder("pgevent", path);
@@ -526,6 +527,7 @@ public interface PgEventEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/database/channel
+         * @return the dsl builder
          */
         default PgEventEndpointBuilder pgevent(String componentName, String path) {
             return PgEventEndpointBuilderFactory.endpointBuilder(componentName, path);

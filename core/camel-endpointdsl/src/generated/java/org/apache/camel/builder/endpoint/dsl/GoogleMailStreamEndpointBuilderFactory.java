@@ -773,6 +773,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * Currently not in use
          * 
          * @param path index
+         * @return the dsl builder
          */
         default GoogleMailStreamEndpointBuilder googleMailStream(String path) {
             return GoogleMailStreamEndpointBuilderFactory.endpointBuilder("google-mail-stream", path);
@@ -793,6 +794,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path index
+         * @return the dsl builder
          */
         default GoogleMailStreamEndpointBuilder googleMailStream(
                 String componentName,

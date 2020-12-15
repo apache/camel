@@ -1610,6 +1610,7 @@ public interface ConsulEndpointBuilderFactory {
          * The API endpoint
          * 
          * @param path apiEndpoint
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder consul(String path) {
             return ConsulEndpointBuilderFactory.endpointBuilder("consul", path);
@@ -1630,6 +1631,7 @@ public interface ConsulEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiEndpoint
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder consul(String componentName, String path) {
             return ConsulEndpointBuilderFactory.endpointBuilder(componentName, path);

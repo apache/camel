@@ -3638,6 +3638,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * determines the exchange the queue will be bound to.
          * 
          * @param path exchangeName
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder rabbitmq(String path) {
             return RabbitMQEndpointBuilderFactory.endpointBuilder("rabbitmq", path);
@@ -3660,6 +3661,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path exchangeName
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder rabbitmq(
                 String componentName,

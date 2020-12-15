@@ -37,6 +37,8 @@ public interface WebsocketComponentBuilderFactory {
      * Category: websocket
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-websocket
+     * 
+     * @return the dsl builder
      */
     static WebsocketComponentBuilder websocket() {
         return new WebsocketComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface WebsocketComponentBuilderFactory {
         /**
          * The hostname. The default value is 0.0.0.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 0.0.0.0
          * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
@@ -63,10 +68,13 @@ public interface WebsocketComponentBuilderFactory {
         /**
          * The port number. The default value is 9292.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 9292
          * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder port(java.lang.Integer port) {
             doSetProperty("port", port);
@@ -81,10 +89,13 @@ public interface WebsocketComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -99,9 +110,12 @@ public interface WebsocketComponentBuilderFactory {
          * classpath:., or classpath:WEB-INF/static If not configured (eg null)
          * then no static resource is in use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param staticResources the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder staticResources(
                 java.lang.String staticResources) {
@@ -119,10 +133,13 @@ public interface WebsocketComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -137,10 +154,13 @@ public interface WebsocketComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -151,10 +171,13 @@ public interface WebsocketComponentBuilderFactory {
          * If this option is true, Jetty JMX support will be enabled for this
          * endpoint. See Jetty JMX support for more details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param enableJmx the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder enableJmx(boolean enableJmx) {
             doSetProperty("enableJmx", enableJmx);
@@ -165,9 +188,12 @@ public interface WebsocketComponentBuilderFactory {
          * MaxThreads/minThreads or threadPool fields are required due to switch
          * to Jetty9. The default values for maxThreads is 1 2 noCores.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maxThreads the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder maxThreads(
                 java.lang.Integer maxThreads) {
@@ -179,9 +205,12 @@ public interface WebsocketComponentBuilderFactory {
          * MaxThreads/minThreads or threadPool fields are required due to switch
          * to Jetty9. The default values for minThreads is 1.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param minThreads the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder minThreads(
                 java.lang.Integer minThreads) {
@@ -193,9 +222,13 @@ public interface WebsocketComponentBuilderFactory {
          * threadPool fields are required due to switch to Jetty9.
          * 
          * The option is a:
-         * <code>org.eclipse.jetty.util.thread.ThreadPool</code> type.
+         * &lt;code&gt;org.eclipse.jetty.util.thread.ThreadPool&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param threadPool the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder threadPool(
                 org.eclipse.jetty.util.thread.ThreadPool threadPool) {
@@ -206,9 +239,12 @@ public interface WebsocketComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -218,9 +254,12 @@ public interface WebsocketComponentBuilderFactory {
         /**
          * The password for the keystore when using SSL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslKeyPassword the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder sslKeyPassword(
                 java.lang.String sslKeyPassword) {
@@ -230,9 +269,12 @@ public interface WebsocketComponentBuilderFactory {
         /**
          * The path to the keystore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslKeystore the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder sslKeystore(
                 java.lang.String sslKeystore) {
@@ -242,9 +284,12 @@ public interface WebsocketComponentBuilderFactory {
         /**
          * The password when using SSL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslPassword the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder sslPassword(
                 java.lang.String sslPassword) {
@@ -254,10 +299,13 @@ public interface WebsocketComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default WebsocketComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

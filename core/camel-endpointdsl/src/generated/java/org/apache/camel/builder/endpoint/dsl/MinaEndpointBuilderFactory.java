@@ -1940,6 +1940,7 @@ public interface MinaEndpointBuilderFactory {
          * Port number
          * 
          * @param path protocol:host:port
+         * @return the dsl builder
          */
         default MinaEndpointBuilder mina(String path) {
             return MinaEndpointBuilderFactory.endpointBuilder("mina", path);
@@ -1968,6 +1969,7 @@ public interface MinaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path protocol:host:port
+         * @return the dsl builder
          */
         default MinaEndpointBuilder mina(String componentName, String path) {
             return MinaEndpointBuilderFactory.endpointBuilder(componentName, path);

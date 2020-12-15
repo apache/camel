@@ -37,6 +37,8 @@ public interface XqueryComponentBuilderFactory {
      * Category: transformation
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-saxon
+     * 
+     * @return the dsl builder
      */
     static XqueryComponentBuilder xquery() {
         return new XqueryComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface XqueryComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default XqueryComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface XqueryComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XqueryComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -96,10 +104,13 @@ public interface XqueryComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default XqueryComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -108,9 +119,13 @@ public interface XqueryComponentBuilderFactory {
         /**
          * To use a custom Saxon configuration.
          * 
-         * The option is a: <code>net.sf.saxon.Configuration</code> type.
+         * The option is a: &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default XqueryComponentBuilder configuration(
                 net.sf.saxon.Configuration configuration) {
@@ -120,10 +135,13 @@ public interface XqueryComponentBuilderFactory {
         /**
          * To set custom Saxon configuration properties.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurationProperties the value to set
+         * @return the dsl builder
          */
         default XqueryComponentBuilder configurationProperties(
                 java.util.Map<java.lang.String, java.lang.Object> configurationProperties) {
@@ -133,10 +151,13 @@ public interface XqueryComponentBuilderFactory {
         /**
          * To use the custom ModuleURIResolver.
          * 
-         * The option is a: <code>net.sf.saxon.lib.ModuleURIResolver</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;net.sf.saxon.lib.ModuleURIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param moduleURIResolver the value to set
+         * @return the dsl builder
          */
         default XqueryComponentBuilder moduleURIResolver(
                 net.sf.saxon.lib.ModuleURIResolver moduleURIResolver) {

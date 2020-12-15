@@ -352,6 +352,7 @@ public interface KMS2EndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default KMS2EndpointBuilder aws2Kms(String path) {
             return KMS2EndpointBuilderFactory.endpointBuilder("aws2-kms", path);
@@ -372,6 +373,7 @@ public interface KMS2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default KMS2EndpointBuilder aws2Kms(String componentName, String path) {
             return KMS2EndpointBuilderFactory.endpointBuilder(componentName, path);

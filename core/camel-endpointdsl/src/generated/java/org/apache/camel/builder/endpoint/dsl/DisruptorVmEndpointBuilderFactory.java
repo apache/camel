@@ -685,6 +685,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * Name of queue
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DisruptorVmEndpointBuilder disruptorVm(String path) {
             return DisruptorVmEndpointBuilderFactory.endpointBuilder("disruptor-vm", path);
@@ -705,6 +706,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DisruptorVmEndpointBuilder disruptorVm(
                 String componentName,

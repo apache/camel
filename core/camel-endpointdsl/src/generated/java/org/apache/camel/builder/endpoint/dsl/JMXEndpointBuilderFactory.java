@@ -773,6 +773,7 @@ public interface JMXEndpointBuilderFactory {
          * to local JVM.
          * 
          * @param path serverURL
+         * @return the dsl builder
          */
         default JMXEndpointBuilder jmx(String path) {
             return JMXEndpointBuilderFactory.endpointBuilder("jmx", path);
@@ -794,6 +795,7 @@ public interface JMXEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path serverURL
+         * @return the dsl builder
          */
         default JMXEndpointBuilder jmx(String componentName, String path) {
             return JMXEndpointBuilderFactory.endpointBuilder(componentName, path);

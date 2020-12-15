@@ -742,6 +742,7 @@ public interface StompEndpointBuilderFactory {
          * Name of the queue
          * 
          * @param path destination
+         * @return the dsl builder
          */
         default StompEndpointBuilder stomp(String path) {
             return StompEndpointBuilderFactory.endpointBuilder("stomp", path);
@@ -763,6 +764,7 @@ public interface StompEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path destination
+         * @return the dsl builder
          */
         default StompEndpointBuilder stomp(String componentName, String path) {
             return StompEndpointBuilderFactory.endpointBuilder(componentName, path);

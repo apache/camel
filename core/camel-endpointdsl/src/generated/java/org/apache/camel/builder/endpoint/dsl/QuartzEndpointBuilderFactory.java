@@ -599,6 +599,7 @@ public interface QuartzEndpointBuilderFactory {
          * trigger name should be unique.
          * 
          * @param path groupName/triggerName
+         * @return the dsl builder
          */
         default QuartzEndpointBuilder quartz(String path) {
             return QuartzEndpointBuilderFactory.endpointBuilder("quartz", path);
@@ -625,6 +626,7 @@ public interface QuartzEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path groupName/triggerName
+         * @return the dsl builder
          */
         default QuartzEndpointBuilder quartz(String componentName, String path) {
             return QuartzEndpointBuilderFactory.endpointBuilder(componentName, path);

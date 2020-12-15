@@ -1642,6 +1642,7 @@ public interface MllpEndpointBuilderFactory {
          * Port number for the TCP connection
          * 
          * @param path hostname:port
+         * @return the dsl builder
          */
         default MllpEndpointBuilder mllp(String path) {
             return MllpEndpointBuilderFactory.endpointBuilder("mllp", path);
@@ -1666,6 +1667,7 @@ public interface MllpEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path hostname:port
+         * @return the dsl builder
          */
         default MllpEndpointBuilder mllp(String componentName, String path) {
             return MllpEndpointBuilderFactory.endpointBuilder(componentName, path);

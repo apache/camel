@@ -4411,6 +4411,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Resource path
          * 
          * @param path protocol:host:port/path
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder nettyHttp(String path) {
             return NettyHttpEndpointBuilderFactory.endpointBuilder("netty-http", path);
@@ -4443,6 +4444,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path protocol:host:port/path
+         * @return the dsl builder
          */
         default NettyHttpEndpointBuilder nettyHttp(
                 String componentName,

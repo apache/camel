@@ -847,6 +847,7 @@ public interface RedisEndpointBuilderFactory {
          * Redis server port number
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default RedisEndpointBuilder springRedis(String path) {
             return RedisEndpointBuilderFactory.endpointBuilder("spring-redis", path);
@@ -870,6 +871,7 @@ public interface RedisEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port
+         * @return the dsl builder
          */
         default RedisEndpointBuilder springRedis(
                 String componentName,

@@ -1295,6 +1295,7 @@ public interface TelegramEndpointBuilderFactory {
          * There are 1 enums and the value can be one of: bots
          * 
          * @param path type
+         * @return the dsl builder
          */
         default TelegramEndpointBuilder telegram(String path) {
             return TelegramEndpointBuilderFactory.endpointBuilder("telegram", path);
@@ -1316,6 +1317,7 @@ public interface TelegramEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path type
+         * @return the dsl builder
          */
         default TelegramEndpointBuilder telegram(
                 String componentName,

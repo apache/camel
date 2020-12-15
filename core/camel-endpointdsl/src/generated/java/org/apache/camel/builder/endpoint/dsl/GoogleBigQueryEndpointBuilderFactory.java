@@ -182,6 +182,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * BigQuery table id
          * 
          * @param path projectId:datasetId:tableId
+         * @return the dsl builder
          */
         default GoogleBigQueryEndpointBuilder googleBigquery(String path) {
             return GoogleBigQueryEndpointBuilderFactory.endpointBuilder("google-bigquery", path);
@@ -208,6 +209,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path projectId:datasetId:tableId
+         * @return the dsl builder
          */
         default GoogleBigQueryEndpointBuilder googleBigquery(
                 String componentName,

@@ -37,6 +37,8 @@ public interface ResteasyComponentBuilderFactory {
      * Category: rest
      * Since: 3.4
      * Maven coordinates: org.apache.camel:camel-resteasy
+     * 
+     * @return the dsl builder
      */
     static ResteasyComponentBuilder resteasy() {
         return new ResteasyComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface ResteasyComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ResteasyComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -71,9 +76,12 @@ public interface ResteasyComponentBuilderFactory {
          * Proxy classes for consumer endpoints. Multiple classes can be
          * separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param proxyConsumersClasses the value to set
+         * @return the dsl builder
          */
         default ResteasyComponentBuilder proxyConsumersClasses(
                 java.lang.String proxyConsumersClasses) {
@@ -91,10 +99,13 @@ public interface ResteasyComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ResteasyComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -108,10 +119,13 @@ public interface ResteasyComponentBuilderFactory {
          * deserialize the incoming data from the request to Java and that can
          * be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
          */
         default ResteasyComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
@@ -126,10 +140,13 @@ public interface ResteasyComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default ResteasyComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -141,9 +158,13 @@ public interface ResteasyComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default ResteasyComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {

@@ -38,6 +38,8 @@ public interface DirectVmComponentBuilderFactory {
      * Category: core,endpoint
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-directvm
+     * 
+     * @return the dsl builder
      */
     static DirectVmComponentBuilder directVm() {
         return new DirectVmComponentBuilderImpl();
@@ -58,10 +60,13 @@ public interface DirectVmComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DirectVmComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -73,10 +78,13 @@ public interface DirectVmComponentBuilderFactory {
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param block the value to set
+         * @return the dsl builder
          */
         default DirectVmComponentBuilder block(boolean block) {
             doSetProperty("block", block);
@@ -93,10 +101,13 @@ public interface DirectVmComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DirectVmComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -106,10 +117,13 @@ public interface DirectVmComponentBuilderFactory {
         /**
          * The timeout value to use if block is enabled.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default DirectVmComponentBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -123,10 +137,13 @@ public interface DirectVmComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default DirectVmComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -139,9 +156,13 @@ public interface DirectVmComponentBuilderFactory {
          * none.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default DirectVmComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -152,10 +173,13 @@ public interface DirectVmComponentBuilderFactory {
          * Whether to propagate or not properties from the producer side to the
          * consumer side, and vice versa. Default value: true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param propagateProperties the value to set
+         * @return the dsl builder
          */
         default DirectVmComponentBuilder propagateProperties(
                 boolean propagateProperties) {

@@ -37,6 +37,8 @@ public interface AwsSwfComponentBuilderFactory {
      * Category: cloud,workflow
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-aws-swf
+     * 
+     * @return the dsl builder
      */
     static AwsSwfComponentBuilder awsSwf() {
         return new AwsSwfComponentBuilderImpl();
@@ -50,9 +52,12 @@ public interface AwsSwfComponentBuilderFactory {
          * To use the given AmazonSimpleWorkflowClient as client.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonSWClient the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder amazonSWClient(
                 com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow amazonSWClient) {
@@ -63,10 +68,12 @@ public interface AwsSwfComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.swf.SWFConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws.swf.SWFConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder configuration(
                 org.apache.camel.component.aws.swf.SWFConfiguration configuration) {
@@ -79,10 +86,12 @@ public interface AwsSwfComponentBuilderFactory {
          * serializing/deserializing the data.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.DataConverter</code>
-         * type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.DataConverter&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataConverter the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder dataConverter(
                 com.amazonaws.services.simpleworkflow.flow.DataConverter dataConverter) {
@@ -92,9 +101,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * The workflow domain to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param domainName the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder domainName(java.lang.String domainName) {
             doSetProperty("domainName", domainName);
@@ -103,9 +115,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * The workflow or activity event name to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param eventName the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder eventName(java.lang.String eventName) {
             doSetProperty("eventName", eventName);
@@ -116,9 +131,12 @@ public interface AwsSwfComponentBuilderFactory {
          * expect the capitalized name of the region (for example AP_EAST_1)
          * You'll need to use the name Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -127,9 +145,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * The workflow or activity event version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param version the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder version(java.lang.String version) {
             doSetProperty("version", version);
@@ -144,10 +165,13 @@ public interface AwsSwfComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -165,10 +189,13 @@ public interface AwsSwfComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -178,9 +205,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * The list name to consume activities from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: activity
+         * 
+         * @param activityList the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder activityList(
                 java.lang.String activityList) {
@@ -191,9 +221,12 @@ public interface AwsSwfComponentBuilderFactory {
          * Activity scheduling options.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions&lt;/code&gt; type.
          * 
          * Group: activity
+         * 
+         * @param activitySchedulingOptions the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder activitySchedulingOptions(
                 com.amazonaws.services.simpleworkflow.flow.ActivitySchedulingOptions activitySchedulingOptions) {
@@ -203,10 +236,13 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * Maximum number of threads in work pool for activity.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: activity
+         * 
+         * @param activityThreadPoolSize the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder activityThreadPoolSize(
                 int activityThreadPoolSize) {
@@ -217,9 +253,12 @@ public interface AwsSwfComponentBuilderFactory {
          * Activity execution options.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions&lt;/code&gt; type.
          * 
          * Group: activity
+         * 
+         * @param activityTypeExecutionOptions the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder activityTypeExecutionOptions(
                 com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeExecutionOptions activityTypeExecutionOptions) {
@@ -230,9 +269,12 @@ public interface AwsSwfComponentBuilderFactory {
          * Activity registration options.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions&lt;/code&gt; type.
          * 
          * Group: activity
+         * 
+         * @param activityTypeRegistrationOptions the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder activityTypeRegistrationOptions(
                 com.amazonaws.services.simpleworkflow.flow.worker.ActivityTypeRegistrationOptions activityTypeRegistrationOptions) {
@@ -247,10 +289,13 @@ public interface AwsSwfComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -260,10 +305,13 @@ public interface AwsSwfComponentBuilderFactory {
          * To configure the ClientConfiguration using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientConfigurationParameters the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder clientConfigurationParameters(
                 java.util.Map<java.lang.String, java.lang.Object> clientConfigurationParameters) {
@@ -274,10 +322,13 @@ public interface AwsSwfComponentBuilderFactory {
          * To configure the StartWorkflowOptions using the key/values from the
          * Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param startWorkflowOptionsParameters the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder startWorkflowOptionsParameters(
                 java.util.Map<java.lang.String, java.lang.Object> startWorkflowOptionsParameters) {
@@ -288,10 +339,13 @@ public interface AwsSwfComponentBuilderFactory {
          * To configure the AmazonSimpleWorkflowClient using the key/values from
          * the Map.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sWClientParameters the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder sWClientParameters(
                 java.util.Map<java.lang.String, java.lang.Object> sWClientParameters) {
@@ -301,9 +355,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -312,9 +369,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -323,9 +383,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * The policy to use on child workflows when terminating a workflow.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param childPolicy the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder childPolicy(java.lang.String childPolicy) {
             doSetProperty("childPolicy", childPolicy);
@@ -334,10 +397,13 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * Set the execution start to close timeout.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 3600
          * Group: workflow
+         * 
+         * @param executionStartToCloseTimeout the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder executionStartToCloseTimeout(
                 java.lang.String executionStartToCloseTimeout) {
@@ -347,10 +413,13 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * Workflow operation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: START
          * Group: workflow
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder operation(java.lang.String operation) {
             doSetProperty("operation", operation);
@@ -359,9 +428,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * The name of the signal to send to the workflow.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param signalName the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder signalName(java.lang.String signalName) {
             doSetProperty("signalName", signalName);
@@ -370,9 +442,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * The type of the result when a workflow state is queried.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param stateResultType the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder stateResultType(
                 java.lang.String stateResultType) {
@@ -382,10 +457,13 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * Set the task start to close timeout.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 600
          * Group: workflow
+         * 
+         * @param taskStartToCloseTimeout the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder taskStartToCloseTimeout(
                 java.lang.String taskStartToCloseTimeout) {
@@ -395,9 +473,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * Details for terminating a workflow.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param terminationDetails the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder terminationDetails(
                 java.lang.String terminationDetails) {
@@ -407,9 +488,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * The reason for terminating a workflow.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param terminationReason the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder terminationReason(
                 java.lang.String terminationReason) {
@@ -419,9 +503,12 @@ public interface AwsSwfComponentBuilderFactory {
         /**
          * The list name to consume workflows from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param workflowList the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder workflowList(
                 java.lang.String workflowList) {
@@ -432,9 +519,12 @@ public interface AwsSwfComponentBuilderFactory {
          * Workflow registration options.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions&lt;/code&gt; type.
          * 
          * Group: workflow
+         * 
+         * @param workflowTypeRegistrationOptions the value to set
+         * @return the dsl builder
          */
         default AwsSwfComponentBuilder workflowTypeRegistrationOptions(
                 com.amazonaws.services.simpleworkflow.flow.WorkflowTypeRegistrationOptions workflowTypeRegistrationOptions) {

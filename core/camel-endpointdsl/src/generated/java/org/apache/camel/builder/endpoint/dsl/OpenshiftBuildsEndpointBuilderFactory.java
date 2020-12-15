@@ -396,6 +396,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default OpenshiftBuildsEndpointBuilder openshiftBuilds(String path) {
             return OpenshiftBuildsEndpointBuilderFactory.endpointBuilder("openshift-builds", path);
@@ -416,6 +417,7 @@ public interface OpenshiftBuildsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default OpenshiftBuildsEndpointBuilder openshiftBuilds(
                 String componentName,

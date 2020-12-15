@@ -404,6 +404,7 @@ public interface TimerEndpointBuilderFactory {
          * The name of the timer
          * 
          * @param path timerName
+         * @return the dsl builder
          */
         default TimerEndpointBuilder timer(String path) {
             return TimerEndpointBuilderFactory.endpointBuilder("timer", path);
@@ -424,6 +425,7 @@ public interface TimerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path timerName
+         * @return the dsl builder
          */
         default TimerEndpointBuilder timer(String componentName, String path) {
             return TimerEndpointBuilderFactory.endpointBuilder(componentName, path);

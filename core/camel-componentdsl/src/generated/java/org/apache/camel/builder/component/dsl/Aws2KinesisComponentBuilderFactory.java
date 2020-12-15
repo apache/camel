@@ -39,6 +39,8 @@ public interface Aws2KinesisComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 3.2
      * Maven coordinates: org.apache.camel:camel-aws2-kinesis
+     * 
+     * @return the dsl builder
      */
     static Aws2KinesisComponentBuilder aws2Kinesis() {
         return new Aws2KinesisComponentBuilderImpl();
@@ -54,10 +56,12 @@ public interface Aws2KinesisComponentBuilderFactory {
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.kinesis.KinesisClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.KinesisClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder amazonKinesisClient(
                 software.amazon.awssdk.services.kinesis.KinesisClient amazonKinesisClient) {
@@ -67,10 +71,13 @@ public interface Aws2KinesisComponentBuilderFactory {
         /**
          * This option will set the CBOR_ENABLED property during the execution.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cborEnabled the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder cborEnabled(boolean cborEnabled) {
             doSetProperty("cborEnabled", cborEnabled);
@@ -80,9 +87,12 @@ public interface Aws2KinesisComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.kinesis.Kinesis2Configuration</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.kinesis.Kinesis2Configuration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder configuration(
                 org.apache.camel.component.aws2.kinesis.Kinesis2Configuration configuration) {
@@ -92,9 +102,12 @@ public interface Aws2KinesisComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -103,9 +116,12 @@ public interface Aws2KinesisComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the Kinesis client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder proxyPort(
                 java.lang.Integer proxyPort) {
@@ -115,11 +131,14 @@ public interface Aws2KinesisComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Kinesis client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -132,9 +151,12 @@ public interface Aws2KinesisComponentBuilderFactory {
          * the region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -144,10 +166,13 @@ public interface Aws2KinesisComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -163,10 +188,13 @@ public interface Aws2KinesisComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -177,10 +205,13 @@ public interface Aws2KinesisComponentBuilderFactory {
          * Defines where in the Kinesis stream to start getting records.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.kinesis.model.ShardIteratorType</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.kinesis.model.ShardIteratorType&lt;/code&gt; type.
          * 
          * Default: TRIM_HORIZON
          * Group: consumer
+         * 
+         * @param iteratorType the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder iteratorType(
                 software.amazon.awssdk.services.kinesis.model.ShardIteratorType iteratorType) {
@@ -190,10 +221,13 @@ public interface Aws2KinesisComponentBuilderFactory {
         /**
          * Maximum number of records that will be fetched in each poll.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param maxResultsPerRequest the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder maxResultsPerRequest(
                 int maxResultsPerRequest) {
@@ -204,9 +238,12 @@ public interface Aws2KinesisComponentBuilderFactory {
          * The sequence number to start polling from. Required if iteratorType
          * is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param sequenceNumber the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder sequenceNumber(
                 java.lang.String sequenceNumber) {
@@ -222,10 +259,13 @@ public interface Aws2KinesisComponentBuilderFactory {
          * raised.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum&lt;/code&gt; type.
          * 
          * Default: ignore
          * Group: consumer
+         * 
+         * @param shardClosed the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder shardClosed(
                 org.apache.camel.component.aws2.kinesis.Kinesis2ShardClosedStrategyEnum shardClosed) {
@@ -235,9 +275,12 @@ public interface Aws2KinesisComponentBuilderFactory {
         /**
          * Defines which shardId in the Kinesis stream to get records from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param shardId the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder shardId(java.lang.String shardId) {
             doSetProperty("shardId", shardId);
@@ -254,10 +297,13 @@ public interface Aws2KinesisComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -272,10 +318,13 @@ public interface Aws2KinesisComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -285,9 +334,12 @@ public interface Aws2KinesisComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -296,9 +348,12 @@ public interface Aws2KinesisComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2KinesisComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);

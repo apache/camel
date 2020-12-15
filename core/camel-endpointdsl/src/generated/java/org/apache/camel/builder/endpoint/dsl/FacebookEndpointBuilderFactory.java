@@ -5346,6 +5346,7 @@ public interface FacebookEndpointBuilderFactory {
          * What operation to perform
          * 
          * @param path methodName
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder facebook(String path) {
             return FacebookEndpointBuilderFactory.endpointBuilder("facebook", path);
@@ -5366,6 +5367,7 @@ public interface FacebookEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path methodName
+         * @return the dsl builder
          */
         default FacebookEndpointBuilder facebook(
                 String componentName,

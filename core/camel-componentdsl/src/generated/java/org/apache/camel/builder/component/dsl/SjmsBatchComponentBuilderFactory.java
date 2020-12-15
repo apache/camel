@@ -39,6 +39,8 @@ public interface SjmsBatchComponentBuilderFactory {
      * Category: messaging
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-sjms
+     * 
+     * @return the dsl builder
      */
     static SjmsBatchComponentBuilder sjmsBatch() {
         return new SjmsBatchComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface SjmsBatchComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SjmsBatchComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -81,10 +86,13 @@ public interface SjmsBatchComponentBuilderFactory {
          * logged at WARN level, and the consumer will not be able to receive
          * messages; You can then restart the route to retry.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param asyncStartListener the value to set
+         * @return the dsl builder
          */
         default SjmsBatchComponentBuilder asyncStartListener(
                 boolean asyncStartListener) {
@@ -99,10 +107,13 @@ public interface SjmsBatchComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SjmsBatchComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -112,9 +123,13 @@ public interface SjmsBatchComponentBuilderFactory {
         /**
          * A ConnectionFactory is required to enable the SjmsBatchComponent.
          * 
-         * The option is a: <code>javax.jms.ConnectionFactory</code> type.
+         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default SjmsBatchComponentBuilder connectionFactory(
                 javax.jms.ConnectionFactory connectionFactory) {
@@ -126,10 +141,13 @@ public interface SjmsBatchComponentBuilderFactory {
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param recoveryInterval the value to set
+         * @return the dsl builder
          */
         default SjmsBatchComponentBuilder recoveryInterval(int recoveryInterval) {
             doSetProperty("recoveryInterval", recoveryInterval);
@@ -140,9 +158,13 @@ public interface SjmsBatchComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default SjmsBatchComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {

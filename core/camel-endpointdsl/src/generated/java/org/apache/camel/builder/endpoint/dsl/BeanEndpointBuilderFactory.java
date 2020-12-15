@@ -250,6 +250,7 @@ public interface BeanEndpointBuilderFactory {
          * Sets the name of the bean to invoke
          * 
          * @param path beanName
+         * @return the dsl builder
          */
         default BeanEndpointBuilder bean(String path) {
             return BeanEndpointBuilderFactory.endpointBuilder("bean", path);
@@ -270,6 +271,7 @@ public interface BeanEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path beanName
+         * @return the dsl builder
          */
         default BeanEndpointBuilder bean(String componentName, String path) {
             return BeanEndpointBuilderFactory.endpointBuilder(componentName, path);

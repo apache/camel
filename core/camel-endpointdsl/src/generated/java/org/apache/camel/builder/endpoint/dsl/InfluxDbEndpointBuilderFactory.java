@@ -204,6 +204,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Connection to the influx database, of class InfluxDB.class
          * 
          * @param path connectionBean
+         * @return the dsl builder
          */
         default InfluxDbEndpointBuilder influxdb(String path) {
             return InfluxDbEndpointBuilderFactory.endpointBuilder("influxdb", path);
@@ -224,6 +225,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path connectionBean
+         * @return the dsl builder
          */
         default InfluxDbEndpointBuilder influxdb(
                 String componentName,

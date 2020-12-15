@@ -290,6 +290,7 @@ public interface LanguageEndpointBuilderFactory {
          * to use as the resource
          * 
          * @param path languageName:resourceUri
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder language(String path) {
             return LanguageEndpointBuilderFactory.endpointBuilder("language", path);
@@ -318,6 +319,7 @@ public interface LanguageEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path languageName:resourceUri
+         * @return the dsl builder
          */
         default LanguageEndpointBuilder language(
                 String componentName,

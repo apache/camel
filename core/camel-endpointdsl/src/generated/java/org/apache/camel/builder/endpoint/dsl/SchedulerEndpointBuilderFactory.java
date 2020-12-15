@@ -661,6 +661,7 @@ public interface SchedulerEndpointBuilderFactory {
          * The name of the scheduler
          * 
          * @param path name
+         * @return the dsl builder
          */
         default SchedulerEndpointBuilder scheduler(String path) {
             return SchedulerEndpointBuilderFactory.endpointBuilder("scheduler", path);
@@ -682,6 +683,7 @@ public interface SchedulerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default SchedulerEndpointBuilder scheduler(
                 String componentName,

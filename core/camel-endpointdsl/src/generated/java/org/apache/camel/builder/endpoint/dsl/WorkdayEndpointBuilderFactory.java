@@ -235,6 +235,7 @@ public interface WorkdayEndpointBuilderFactory {
          * The API path to access an entity structure.
          * 
          * @param path entity:path
+         * @return the dsl builder
          */
         default WorkdayEndpointBuilder workday(String path) {
             return WorkdayEndpointBuilderFactory.endpointBuilder("workday", path);
@@ -259,6 +260,7 @@ public interface WorkdayEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path entity:path
+         * @return the dsl builder
          */
         default WorkdayEndpointBuilder workday(String componentName, String path) {
             return WorkdayEndpointBuilderFactory.endpointBuilder(componentName, path);

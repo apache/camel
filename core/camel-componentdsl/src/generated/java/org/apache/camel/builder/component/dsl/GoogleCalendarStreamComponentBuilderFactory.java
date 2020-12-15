@@ -37,6 +37,8 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
      * Category: api,cloud
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-calendar
+     * 
+     * @return the dsl builder
      */
     static GoogleCalendarStreamComponentBuilder googleCalendarStream() {
         return new GoogleCalendarStreamComponentBuilderImpl();
@@ -52,9 +54,12 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
          * Google Calendar application name. Example would be
          * camel-google-calendar/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder applicationName(
                 java.lang.String applicationName) {
@@ -70,10 +75,13 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -83,10 +91,13 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         /**
          * The calendarId to be used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: primary
          * Group: consumer
+         * 
+         * @param calendarId the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder calendarId(
                 java.lang.String calendarId) {
@@ -96,9 +107,12 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         /**
          * Client ID of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder clientId(
                 java.lang.String clientId) {
@@ -109,9 +123,12 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
          * The configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder configuration(
                 org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration configuration) {
@@ -122,10 +139,13 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
          * Take into account the lastUpdate of the last event polled as start
          * date for the next poll.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param considerLastUpdate the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder considerLastUpdate(
                 boolean considerLastUpdate) {
@@ -135,10 +155,13 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         /**
          * Consume events in the selected calendar from now on.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param consumeFromNow the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder consumeFromNow(
                 boolean consumeFromNow) {
@@ -148,10 +171,13 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         /**
          * Max results to be returned.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder maxResults(int maxResults) {
             doSetProperty("maxResults", maxResults);
@@ -160,9 +186,12 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         /**
          * The query to execute on calendar.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder query(
                 java.lang.String query) {
@@ -174,10 +203,13 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
          * have to a user account. See
          * https://developers.google.com/calendar/auth for more info.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder scopes(
                 java.util.List<java.lang.String> scopes) {
@@ -192,10 +224,13 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -206,9 +241,12 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
          * The client Factory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.calendar.GoogleCalendarClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.calendar.GoogleCalendarClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder clientFactory(
                 org.apache.camel.component.google.calendar.GoogleCalendarClientFactory clientFactory) {
@@ -219,9 +257,12 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder accessToken(
                 java.lang.String accessToken) {
@@ -231,9 +272,12 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         /**
          * Client secret of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder clientSecret(
                 java.lang.String clientSecret) {
@@ -245,9 +289,12 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarStreamComponentBuilder refreshToken(
                 java.lang.String refreshToken) {

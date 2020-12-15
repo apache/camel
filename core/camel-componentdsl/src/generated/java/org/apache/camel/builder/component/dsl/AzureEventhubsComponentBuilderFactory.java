@@ -43,6 +43,8 @@ public interface AzureEventhubsComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-azure-eventhubs
+     * 
+     * @return the dsl builder
      */
     static AzureEventhubsComponentBuilder azureEventhubs() {
         return new AzureEventhubsComponentBuilderImpl();
@@ -58,10 +60,13 @@ public interface AzureEventhubsComponentBuilderFactory {
          * Sets the retry policy for EventHubAsyncClient. If not specified, the
          * default retry options are used.
          * 
-         * The option is a: <code>com.azure.core.amqp.AmqpRetryOptions</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.azure.core.amqp.AmqpRetryOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amqpRetryOptions the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder amqpRetryOptions(
                 com.azure.core.amqp.AmqpRetryOptions amqpRetryOptions) {
@@ -72,11 +77,14 @@ public interface AzureEventhubsComponentBuilderFactory {
          * Sets the transport type by which all the communication with Azure
          * Event Hubs occurs. Default value is AmqpTransportType#AMQP.
          * 
-         * The option is a: <code>com.azure.core.amqp.AmqpTransportType</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.azure.core.amqp.AmqpTransportType&lt;/code&gt; type.
          * 
          * Default: AMQP
          * Group: common
+         * 
+         * @param amqpTransportType the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder amqpTransportType(
                 com.azure.core.amqp.AmqpTransportType amqpTransportType) {
@@ -88,10 +96,13 @@ public interface AzureEventhubsComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -102,9 +113,12 @@ public interface AzureEventhubsComponentBuilderFactory {
          * The component configurations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.eventhubs.EventHubsConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.eventhubs.EventHubsConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder configuration(
                 org.apache.camel.component.azure.eventhubs.EventHubsConfiguration configuration) {
@@ -116,9 +130,12 @@ public interface AzureEventhubsComponentBuilderFactory {
          * key for the associated azure account name to be used for
          * authentication with azure blob services.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param blobAccessKey the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder blobAccessKey(
                 java.lang.String blobAccessKey) {
@@ -129,9 +146,12 @@ public interface AzureEventhubsComponentBuilderFactory {
          * In case you chose the default BlobCheckpointStore, this sets Azure
          * account name to be used for authentication with azure blob services.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param blobAccountName the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder blobAccountName(
                 java.lang.String blobAccountName) {
@@ -143,9 +163,12 @@ public interface AzureEventhubsComponentBuilderFactory {
          * container that shall be used by the BlobCheckpointStore to store the
          * checkpoint offsets.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param blobContainerName the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder blobContainerName(
                 java.lang.String blobContainerName) {
@@ -158,10 +181,12 @@ public interface AzureEventhubsComponentBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option is a:
-         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
-         * type.
+         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param blobStorageSharedKeyCredential the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder blobStorageSharedKeyCredential(
                 com.azure.storage.common.StorageSharedKeyCredential blobStorageSharedKeyCredential) {
@@ -177,10 +202,13 @@ public interface AzureEventhubsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -196,10 +224,13 @@ public interface AzureEventhubsComponentBuilderFactory {
          * com.azure.messaging.eventhubs.checkpointstore.blob.BlobCheckpointStore which stores all checkpoint offsets into Azure Blob Storage.
          * 
          * The option is a:
-         * <code>com.azure.messaging.eventhubs.CheckpointStore</code> type.
+         * &lt;code&gt;com.azure.messaging.eventhubs.CheckpointStore&lt;/code&gt; type.
          * 
          * Default: BlobCheckpointStore
          * Group: consumer
+         * 
+         * @param checkpointStore the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder checkpointStore(
                 com.azure.messaging.eventhubs.CheckpointStore checkpointStore) {
@@ -212,10 +243,13 @@ public interface AzureEventhubsComponentBuilderFactory {
          * consumer group that is created by default is {link
          * #DEFAULT_CONSUMER_GROUP_NAME $Default}.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: $Default
          * Group: consumer
+         * 
+         * @param consumerGroupName the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder consumerGroupName(
                 java.lang.String consumerGroupName) {
@@ -230,10 +264,13 @@ public interface AzureEventhubsComponentBuilderFactory {
          * of the partition will start from {link EventPosition#latest() latest}
          * position.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * com.azure.messaging.eventhubs.models.EventPosition&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * com.azure.messaging.eventhubs.models.EventPosition&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param eventPosition the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder eventPosition(
                 java.util.Map<java.lang.String, com.azure.messaging.eventhubs.models.EventPosition> eventPosition) {
@@ -245,10 +282,13 @@ public interface AzureEventhubsComponentBuilderFactory {
          * the Event Hub consumer will actively receive and queue locally
          * without regard to whether a receive operation is currently active.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: consumer
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder prefetchCount(int prefetchCount) {
             doSetProperty("prefetchCount", prefetchCount);
@@ -265,10 +305,13 @@ public interface AzureEventhubsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -281,9 +324,12 @@ public interface AzureEventhubsComponentBuilderFactory {
          * service will be responsible for routing events that are sent to an
          * available partition.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param partitionId the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder partitionId(
                 java.lang.String partitionId) {
@@ -303,9 +349,12 @@ public interface AzureEventhubsComponentBuilderFactory {
          * recommended that the {link #setPartitionId(String) identifier of the
          * position be specified directly} when sending the batch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param partitionKey the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder partitionKey(
                 java.lang.String partitionKey) {
@@ -321,9 +370,12 @@ public interface AzureEventhubsComponentBuilderFactory {
          * this component to produce the data in camel producer.
          * 
          * The option is a:
-         * <code>com.azure.messaging.eventhubs.EventHubProducerAsyncClient</code> type.
+         * &lt;code&gt;com.azure.messaging.eventhubs.EventHubProducerAsyncClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param producerAsyncClient the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder producerAsyncClient(
                 com.azure.messaging.eventhubs.EventHubProducerAsyncClient producerAsyncClient) {
@@ -338,10 +390,13 @@ public interface AzureEventhubsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -356,9 +411,12 @@ public interface AzureEventhubsComponentBuilderFactory {
          * generate the connection string, take a look at this documentation:
          * https://docs.microsoft.com/en-us/azure/event-hubs/event-hubs-get-connection-string.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param connectionString the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder connectionString(
                 java.lang.String connectionString) {
@@ -368,9 +426,12 @@ public interface AzureEventhubsComponentBuilderFactory {
         /**
          * The generated value for the SharedAccessName.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sharedAccessKey the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder sharedAccessKey(
                 java.lang.String sharedAccessKey) {
@@ -380,9 +441,12 @@ public interface AzureEventhubsComponentBuilderFactory {
         /**
          * The name you chose for your EventHubs SAS keys.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sharedAccessName the value to set
+         * @return the dsl builder
          */
         default AzureEventhubsComponentBuilder sharedAccessName(
                 java.lang.String sharedAccessName) {

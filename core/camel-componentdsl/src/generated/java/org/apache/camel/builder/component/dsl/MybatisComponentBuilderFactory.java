@@ -39,6 +39,8 @@ public interface MybatisComponentBuilderFactory {
      * Category: database,sql
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-mybatis
+     * 
+     * @return the dsl builder
      */
     static MybatisComponentBuilder mybatis() {
         return new MybatisComponentBuilderImpl();
@@ -54,10 +56,13 @@ public interface MybatisComponentBuilderFactory {
          * Location of MyBatis xml configuration file. The default value is:
          * SqlMapConfig.xml loaded from the classpath.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: SqlMapConfig.xml
          * Group: common
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default MybatisComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
@@ -73,10 +78,13 @@ public interface MybatisComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MybatisComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -94,10 +102,13 @@ public interface MybatisComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MybatisComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -112,10 +123,13 @@ public interface MybatisComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default MybatisComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -126,9 +140,13 @@ public interface MybatisComponentBuilderFactory {
          * To use the SqlSessionFactory.
          * 
          * The option is a:
-         * <code>org.apache.ibatis.session.SqlSessionFactory</code> type.
+         * &lt;code&gt;org.apache.ibatis.session.SqlSessionFactory&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param sqlSessionFactory the value to set
+         * @return the dsl builder
          */
         default MybatisComponentBuilder sqlSessionFactory(
                 org.apache.ibatis.session.SqlSessionFactory sqlSessionFactory) {

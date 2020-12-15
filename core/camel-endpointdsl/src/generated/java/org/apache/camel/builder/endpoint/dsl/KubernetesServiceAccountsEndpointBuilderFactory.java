@@ -409,6 +409,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
                 String path) {
@@ -430,6 +431,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesServiceAccountsEndpointBuilder kubernetesServiceAccounts(
                 String componentName,

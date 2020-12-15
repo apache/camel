@@ -2825,6 +2825,7 @@ public interface MailEndpointBuilderFactory {
          * The port number of the mail server
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default MailEndpointBuilder imap(String path) {
             return MailEndpointBuilderFactory.endpointBuilder("imap", path);
@@ -2848,6 +2849,7 @@ public interface MailEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port
+         * @return the dsl builder
          */
         default MailEndpointBuilder imap(String componentName, String path) {
             return MailEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -2869,6 +2871,7 @@ public interface MailEndpointBuilderFactory {
          * The port number of the mail server
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default MailEndpointBuilder imaps(String path) {
             return MailEndpointBuilderFactory.endpointBuilder("imaps", path);
@@ -2890,6 +2893,7 @@ public interface MailEndpointBuilderFactory {
          * The port number of the mail server
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default MailEndpointBuilder pop3(String path) {
             return MailEndpointBuilderFactory.endpointBuilder("pop3", path);
@@ -2911,6 +2915,7 @@ public interface MailEndpointBuilderFactory {
          * The port number of the mail server
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default MailEndpointBuilder pop3s(String path) {
             return MailEndpointBuilderFactory.endpointBuilder("pop3s", path);
@@ -2932,6 +2937,7 @@ public interface MailEndpointBuilderFactory {
          * The port number of the mail server
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default MailEndpointBuilder smtp(String path) {
             return MailEndpointBuilderFactory.endpointBuilder("smtp", path);
@@ -2953,6 +2959,7 @@ public interface MailEndpointBuilderFactory {
          * The port number of the mail server
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default MailEndpointBuilder smtps(String path) {
             return MailEndpointBuilderFactory.endpointBuilder("smtps", path);

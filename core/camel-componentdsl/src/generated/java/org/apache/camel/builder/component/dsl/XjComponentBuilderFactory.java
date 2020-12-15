@@ -37,6 +37,8 @@ public interface XjComponentBuilderFactory {
      * Category: transformation
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-xj
+     * 
+     * @return the dsl builder
      */
     static XjComponentBuilder xj() {
         return new XjComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface XjComponentBuilderFactory {
          * can be forced to reload at runtime via JMX using the
          * clearCachedStylesheet operation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default XjComponentBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -73,10 +78,13 @@ public interface XjComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XjComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -90,10 +98,13 @@ public interface XjComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default XjComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -102,9 +113,13 @@ public interface XjComponentBuilderFactory {
         /**
          * To use a custom Saxon configuration.
          * 
-         * The option is a: <code>net.sf.saxon.Configuration</code> type.
+         * The option is a: &lt;code&gt;net.sf.saxon.Configuration&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param saxonConfiguration the value to set
+         * @return the dsl builder
          */
         default XjComponentBuilder saxonConfiguration(
                 net.sf.saxon.Configuration saxonConfiguration) {
@@ -114,10 +129,13 @@ public interface XjComponentBuilderFactory {
         /**
          * To set custom Saxon configuration properties.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param saxonConfigurationProperties the value to set
+         * @return the dsl builder
          */
         default XjComponentBuilder saxonConfigurationProperties(
                 java.util.Map<java.lang.String, java.lang.Object> saxonConfigurationProperties) {
@@ -130,9 +148,12 @@ public interface XjComponentBuilderFactory {
          * camel-saxon to the classpath. The function is looked up in the
          * registry, where you can comma to separate multiple values to lookup.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param saxonExtensionFunctions the value to set
+         * @return the dsl builder
          */
         default XjComponentBuilder saxonExtensionFunctions(
                 java.lang.String saxonExtensionFunctions) {
@@ -143,9 +164,12 @@ public interface XjComponentBuilderFactory {
          * To use a custom XSLT transformer factory, specified as a FQN class
          * name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactoryClass the value to set
+         * @return the dsl builder
          */
         default XjComponentBuilder transformerFactoryClass(
                 java.lang.String transformerFactoryClass) {
@@ -157,9 +181,12 @@ public interface XjComponentBuilderFactory {
          * TransformerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param transformerFactoryConfigurationStrategy the value to set
+         * @return the dsl builder
          */
         default XjComponentBuilder transformerFactoryConfigurationStrategy(
                 org.apache.camel.component.xslt.TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
@@ -170,9 +197,13 @@ public interface XjComponentBuilderFactory {
          * To use a custom UriResolver. Should not be used together with the
          * option 'uriResolverFactory'.
          * 
-         * The option is a: <code>javax.xml.transform.URIResolver</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.transform.URIResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriResolver the value to set
+         * @return the dsl builder
          */
         default XjComponentBuilder uriResolver(
                 javax.xml.transform.URIResolver uriResolver) {
@@ -185,10 +216,12 @@ public interface XjComponentBuilderFactory {
          * 'uriResolver'.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xslt.XsltUriResolverFactory</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.xslt.XsltUriResolverFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriResolverFactory the value to set
+         * @return the dsl builder
          */
         default XjComponentBuilder uriResolverFactory(
                 org.apache.camel.component.xslt.XsltUriResolverFactory uriResolverFactory) {

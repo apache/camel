@@ -2169,6 +2169,7 @@ public interface CxfEndpointBuilderFactory {
          * The service publish address.
          * 
          * @param path beanId:address
+         * @return the dsl builder
          */
         default CxfEndpointBuilder cxf(String path) {
             return CxfEndpointBuilderFactory.endpointBuilder("cxf", path);
@@ -2194,6 +2195,7 @@ public interface CxfEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path beanId:address
+         * @return the dsl builder
          */
         default CxfEndpointBuilder cxf(String componentName, String path) {
             return CxfEndpointBuilderFactory.endpointBuilder(componentName, path);
