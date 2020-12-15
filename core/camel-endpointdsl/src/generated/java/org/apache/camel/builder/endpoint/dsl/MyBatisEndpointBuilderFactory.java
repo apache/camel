@@ -1055,6 +1055,7 @@ public interface MyBatisEndpointBuilderFactory {
          * query, insert, update or delete operation you wish to evaluate.
          * 
          * @param path statement
+         * @return the dsl builder
          */
         default MyBatisEndpointBuilder mybatis(String path) {
             return MyBatisEndpointBuilderFactory.endpointBuilder("mybatis", path);
@@ -1077,6 +1078,7 @@ public interface MyBatisEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path statement
+         * @return the dsl builder
          */
         default MyBatisEndpointBuilder mybatis(String componentName, String path) {
             return MyBatisEndpointBuilderFactory.endpointBuilder(componentName, path);

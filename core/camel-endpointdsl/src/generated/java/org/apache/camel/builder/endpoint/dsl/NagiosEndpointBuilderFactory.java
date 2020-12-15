@@ -260,6 +260,7 @@ public interface NagiosEndpointBuilderFactory {
          * The port number of the host.
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder nagios(String path) {
             return NagiosEndpointBuilderFactory.endpointBuilder("nagios", path);
@@ -283,6 +284,7 @@ public interface NagiosEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port
+         * @return the dsl builder
          */
         default NagiosEndpointBuilder nagios(String componentName, String path) {
             return NagiosEndpointBuilderFactory.endpointBuilder(componentName, path);

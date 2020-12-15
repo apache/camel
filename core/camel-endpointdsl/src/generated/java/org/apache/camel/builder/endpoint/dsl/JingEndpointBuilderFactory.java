@@ -163,6 +163,7 @@ public interface JingEndpointBuilderFactory {
          * validate against.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JingEndpointBuilder jing(String path) {
             return JingEndpointBuilderFactory.endpointBuilder("jing", path);
@@ -186,6 +187,7 @@ public interface JingEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JingEndpointBuilder jing(String componentName, String path) {
             return JingEndpointBuilderFactory.endpointBuilder(componentName, path);

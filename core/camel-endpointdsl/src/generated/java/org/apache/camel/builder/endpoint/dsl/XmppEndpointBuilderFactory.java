@@ -1180,6 +1180,7 @@ public interface XmppEndpointBuilderFactory {
          * precedence over participant.
          * 
          * @param path host:port/participant
+         * @return the dsl builder
          */
         default XmppEndpointBuilder xmpp(String path) {
             return XmppEndpointBuilderFactory.endpointBuilder("xmpp", path);
@@ -1207,6 +1208,7 @@ public interface XmppEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/participant
+         * @return the dsl builder
          */
         default XmppEndpointBuilder xmpp(String componentName, String path) {
             return XmppEndpointBuilderFactory.endpointBuilder(componentName, path);

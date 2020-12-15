@@ -1008,6 +1008,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * send, stop, trash, untrash, update, watch
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default GoogleMailEndpointBuilder googleMail(String path) {
             return GoogleMailEndpointBuilderFactory.endpointBuilder("google-mail", path);
@@ -1036,6 +1037,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default GoogleMailEndpointBuilder googleMail(
                 String componentName,

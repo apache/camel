@@ -1251,6 +1251,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesServicesEndpointBuilder kubernetesServices(String path) {
             return KubernetesServicesEndpointBuilderFactory.endpointBuilder("kubernetes-services", path);
@@ -1272,6 +1273,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesServicesEndpointBuilder kubernetesServices(
                 String componentName,

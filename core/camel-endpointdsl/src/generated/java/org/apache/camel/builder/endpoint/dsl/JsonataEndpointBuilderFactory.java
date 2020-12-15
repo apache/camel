@@ -260,6 +260,7 @@ public interface JsonataEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder jsonata(String path) {
             return JsonataEndpointBuilderFactory.endpointBuilder("jsonata", path);
@@ -285,6 +286,7 @@ public interface JsonataEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JsonataEndpointBuilder jsonata(String componentName, String path) {
             return JsonataEndpointBuilderFactory.endpointBuilder(componentName, path);

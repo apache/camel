@@ -37,6 +37,8 @@ public interface HbaseComponentBuilderFactory {
      * Category: bigdata,database,hadoop
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-hbase
+     * 
+     * @return the dsl builder
      */
     static HbaseComponentBuilder hbase() {
         return new HbaseComponentBuilderImpl();
@@ -50,10 +52,13 @@ public interface HbaseComponentBuilderFactory {
          * Maximum number of references to keep for each table in the HTable
          * pool. The default value is 10.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: common
+         * 
+         * @param poolMaxSize the value to set
+         * @return the dsl builder
          */
         default HbaseComponentBuilder poolMaxSize(int poolMaxSize) {
             doSetProperty("poolMaxSize", poolMaxSize);
@@ -68,10 +73,13 @@ public interface HbaseComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HbaseComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -89,10 +97,13 @@ public interface HbaseComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HbaseComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -107,10 +118,13 @@ public interface HbaseComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default HbaseComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -119,10 +133,13 @@ public interface HbaseComponentBuilderFactory {
         /**
          * To use the shared configuration.
          * 
-         * The option is a: <code>org.apache.hadoop.conf.Configuration</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.hadoop.conf.Configuration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default HbaseComponentBuilder configuration(
                 org.apache.hadoop.conf.Configuration configuration) {

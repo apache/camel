@@ -37,6 +37,8 @@ public interface PulsarComponentBuilderFactory {
      * Category: messaging
      * Since: 2.24
      * Maven coordinates: org.apache.camel:camel-pulsar
+     * 
+     * @return the dsl builder
      */
     static PulsarComponentBuilder pulsar() {
         return new PulsarComponentBuilderImpl();
@@ -53,10 +55,12 @@ public interface PulsarComponentBuilderFactory {
          * the endpoints will reuse.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.pulsar.PulsarConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.pulsar.PulsarConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder configuration(
                 org.apache.camel.component.pulsar.PulsarConfiguration configuration) {
@@ -67,10 +71,13 @@ public interface PulsarComponentBuilderFactory {
          * Group the consumer acknowledgments for the specified time in
          * milliseconds - defaults to 100.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: consumer
+         * 
+         * @param ackGroupTimeMillis the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder ackGroupTimeMillis(
                 long ackGroupTimeMillis) {
@@ -81,10 +88,13 @@ public interface PulsarComponentBuilderFactory {
          * Timeout for unacknowledged messages in milliseconds - defaults to
          * 10000.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: consumer
+         * 
+         * @param ackTimeoutMillis the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder ackTimeoutMillis(long ackTimeoutMillis) {
             doSetProperty("ackTimeoutMillis", ackTimeoutMillis);
@@ -98,10 +108,13 @@ public interface PulsarComponentBuilderFactory {
          * org.apache.camel.Exchange. Messages can then be acknowledged using
          * PulsarMessageReceipt at any time before the ackTimeout occurs.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param allowManualAcknowledgement the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder allowManualAcknowledgement(
                 boolean allowManualAcknowledgement) {
@@ -117,10 +130,13 @@ public interface PulsarComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -130,10 +146,13 @@ public interface PulsarComponentBuilderFactory {
         /**
          * Name of the consumer when subscription is EXCLUSIVE.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: sole-consumer
          * Group: consumer
+         * 
+         * @param consumerName the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder consumerName(
                 java.lang.String consumerName) {
@@ -144,10 +163,13 @@ public interface PulsarComponentBuilderFactory {
          * Prefix to add to consumer names when a SHARED or FAILOVER
          * subscription is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: cons
          * Group: consumer
+         * 
+         * @param consumerNamePrefix the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder consumerNamePrefix(
                 java.lang.String consumerNamePrefix) {
@@ -157,10 +179,13 @@ public interface PulsarComponentBuilderFactory {
         /**
          * Size of the consumer queue - defaults to 10.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param consumerQueueSize the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder consumerQueueSize(int consumerQueueSize) {
             doSetProperty("consumerQueueSize", consumerQueueSize);
@@ -171,9 +196,12 @@ public interface PulsarComponentBuilderFactory {
          * times will be sent. Note: if not set, default topic name will be
          * topicName-subscriptionName-DLQ.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param deadLetterTopic the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder deadLetterTopic(
                 java.lang.String deadLetterTopic) {
@@ -185,9 +213,12 @@ public interface PulsarComponentBuilderFactory {
          * being sent to the dead letter queue. If this value is not set, no
          * Dead Letter Policy will be created.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxRedeliverCount the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder maxRedeliverCount(
                 java.lang.Integer maxRedeliverCount) {
@@ -197,10 +228,13 @@ public interface PulsarComponentBuilderFactory {
         /**
          * Set the negative acknowledgement delay.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000000
          * Group: consumer
+         * 
+         * @param negativeAckRedeliveryDelayMicros the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder negativeAckRedeliveryDelayMicros(
                 long negativeAckRedeliveryDelayMicros) {
@@ -210,10 +244,13 @@ public interface PulsarComponentBuilderFactory {
         /**
          * Number of consumers - defaults to 1.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param numberOfConsumers the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder numberOfConsumers(int numberOfConsumers) {
             doSetProperty("numberOfConsumers", numberOfConsumers);
@@ -222,10 +259,13 @@ public interface PulsarComponentBuilderFactory {
         /**
          * Enable compacted topic reading.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param readCompacted the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder readCompacted(boolean readCompacted) {
             doSetProperty("readCompacted", readCompacted);
@@ -236,10 +276,13 @@ public interface PulsarComponentBuilderFactory {
          * subscription. Default is latest message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> type.
+         * &lt;code&gt;org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition&lt;/code&gt; type.
          * 
          * Default: LATEST
          * Group: consumer
+         * 
+         * @param subscriptionInitialPosition the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder subscriptionInitialPosition(
                 org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition subscriptionInitialPosition) {
@@ -249,10 +292,13 @@ public interface PulsarComponentBuilderFactory {
         /**
          * Name of the subscription to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: subs
          * Group: consumer
+         * 
+         * @param subscriptionName the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder subscriptionName(
                 java.lang.String subscriptionName) {
@@ -265,10 +311,13 @@ public interface PulsarComponentBuilderFactory {
          * subscriptions.
          * 
          * The option is a:
-         * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.RegexSubscriptionMode&lt;/code&gt; type.
          * 
          * Default: PersistentOnly
          * Group: consumer
+         * 
+         * @param subscriptionTopicsMode the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder subscriptionTopicsMode(
                 org.apache.pulsar.client.api.RegexSubscriptionMode subscriptionTopicsMode) {
@@ -280,10 +329,13 @@ public interface PulsarComponentBuilderFactory {
          * to EXCLUSIVE.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.pulsar.utils.consumers.SubscriptionType&lt;/code&gt; type.
          * 
          * Default: EXCLUSIVE
          * Group: consumer
+         * 
+         * @param subscriptionType the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder subscriptionType(
                 org.apache.camel.component.pulsar.utils.consumers.SubscriptionType subscriptionType) {
@@ -294,10 +346,13 @@ public interface PulsarComponentBuilderFactory {
          * Whether the topic is a pattern (regular expression) that allows the
          * consumer to subscribe to all matching topics in the namespace.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param topicsPattern the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder topicsPattern(boolean topicsPattern) {
             doSetProperty("topicsPattern", topicsPattern);
@@ -308,9 +363,12 @@ public interface PulsarComponentBuilderFactory {
          * PulsarMessageReceipt.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.pulsar.PulsarMessageReceiptFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.pulsar.PulsarMessageReceiptFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pulsarMessageReceiptFactory the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder pulsarMessageReceiptFactory(
                 org.apache.camel.component.pulsar.PulsarMessageReceiptFactory pulsarMessageReceiptFactory) {
@@ -321,10 +379,14 @@ public interface PulsarComponentBuilderFactory {
          * Control batching method used by the producer.
          * 
          * The option is a:
-         * <code>org.apache.pulsar.client.api.BatcherBuilder</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.BatcherBuilder&lt;/code&gt;
+         * type.
          * 
          * Default: DEFAULT
          * Group: producer
+         * 
+         * @param batcherBuilder the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder batcherBuilder(
                 org.apache.pulsar.client.api.BatcherBuilder batcherBuilder) {
@@ -335,10 +397,13 @@ public interface PulsarComponentBuilderFactory {
          * Control whether automatic batching of messages is enabled for the
          * producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param batchingEnabled the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder batchingEnabled(boolean batchingEnabled) {
             doSetProperty("batchingEnabled", batchingEnabled);
@@ -347,10 +412,13 @@ public interface PulsarComponentBuilderFactory {
         /**
          * The maximum size to batch messages.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param batchingMaxMessages the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder batchingMaxMessages(
                 int batchingMaxMessages) {
@@ -361,10 +429,13 @@ public interface PulsarComponentBuilderFactory {
          * The maximum time period within which the messages sent will be
          * batched if batchingEnabled is true.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param batchingMaxPublishDelayMicros the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder batchingMaxPublishDelayMicros(
                 long batchingMaxPublishDelayMicros) {
@@ -375,10 +446,13 @@ public interface PulsarComponentBuilderFactory {
          * Whether to block the producing thread if pending messages queue is
          * full or to throw a ProducerQueueIsFullError.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param blockIfQueueFull the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder blockIfQueueFull(boolean blockIfQueueFull) {
             doSetProperty("blockIfQueueFull", blockIfQueueFull);
@@ -388,10 +462,14 @@ public interface PulsarComponentBuilderFactory {
          * Compression type to use.
          * 
          * The option is a:
-         * <code>org.apache.pulsar.client.api.CompressionType</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.CompressionType&lt;/code&gt;
+         * type.
          * 
          * Default: NONE
          * Group: producer
+         * 
+         * @param compressionType the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder compressionType(
                 org.apache.pulsar.client.api.CompressionType compressionType) {
@@ -402,10 +480,13 @@ public interface PulsarComponentBuilderFactory {
          * The first message published will have a sequence Id of
          * initialSequenceId 1.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param initialSequenceId the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder initialSequenceId(long initialSequenceId) {
             doSetProperty("initialSequenceId", initialSequenceId);
@@ -422,10 +503,13 @@ public interface PulsarComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -436,10 +520,13 @@ public interface PulsarComponentBuilderFactory {
          * Size of the pending massages queue. When the queue is full, by
          * default, any further sends will fail unless blockIfQueueFull=true.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param maxPendingMessages the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder maxPendingMessages(int maxPendingMessages) {
             doSetProperty("maxPendingMessages", maxPendingMessages);
@@ -451,10 +538,13 @@ public interface PulsarComponentBuilderFactory {
          * maxPendingMessages) exceeds this value. Partitioned topics have a
          * pending message queue for each partition.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 50000
          * Group: producer
+         * 
+         * @param maxPendingMessagesAcrossPartitions the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder maxPendingMessagesAcrossPartitions(
                 int maxPendingMessagesAcrossPartitions) {
@@ -465,9 +555,13 @@ public interface PulsarComponentBuilderFactory {
          * Custom Message Router to use.
          * 
          * The option is a:
-         * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.MessageRouter&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param messageRouter the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder messageRouter(
                 org.apache.pulsar.client.api.MessageRouter messageRouter) {
@@ -478,10 +572,13 @@ public interface PulsarComponentBuilderFactory {
          * Message Routing Mode to use.
          * 
          * The option is a:
-         * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.MessageRoutingMode&lt;/code&gt; type.
          * 
          * Default: RoundRobinPartition
          * Group: producer
+         * 
+         * @param messageRoutingMode the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder messageRoutingMode(
                 org.apache.pulsar.client.api.MessageRoutingMode messageRoutingMode) {
@@ -492,9 +589,12 @@ public interface PulsarComponentBuilderFactory {
          * Name of the producer. If unset, lets Pulsar select a unique
          * identifier.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param producerName the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder producerName(
                 java.lang.String producerName) {
@@ -504,10 +604,13 @@ public interface PulsarComponentBuilderFactory {
         /**
          * Send timeout in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param sendTimeoutMs the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder sendTimeoutMs(int sendTimeoutMs) {
             doSetProperty("sendTimeoutMs", sendTimeoutMs);
@@ -517,9 +620,12 @@ public interface PulsarComponentBuilderFactory {
          * The pulsar auto configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.pulsar.utils.AutoConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.pulsar.utils.AutoConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param autoConfiguration the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder autoConfiguration(
                 org.apache.camel.component.pulsar.utils.AutoConfiguration autoConfiguration) {
@@ -534,10 +640,13 @@ public interface PulsarComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -547,9 +656,13 @@ public interface PulsarComponentBuilderFactory {
          * The pulsar client.
          * 
          * The option is a:
-         * <code>org.apache.pulsar.client.api.PulsarClient</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.PulsarClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param pulsarClient the value to set
+         * @return the dsl builder
          */
         default PulsarComponentBuilder pulsarClient(
                 org.apache.pulsar.client.api.PulsarClient pulsarClient) {

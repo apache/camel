@@ -478,6 +478,7 @@ public interface AsteriskEndpointBuilderFactory {
          * Name of component
          * 
          * @param path name
+         * @return the dsl builder
          */
         default AsteriskEndpointBuilder asterisk(String path) {
             return AsteriskEndpointBuilderFactory.endpointBuilder("asterisk", path);
@@ -498,6 +499,7 @@ public interface AsteriskEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default AsteriskEndpointBuilder asterisk(
                 String componentName,

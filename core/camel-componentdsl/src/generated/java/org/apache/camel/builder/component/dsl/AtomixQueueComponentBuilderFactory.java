@@ -37,6 +37,8 @@ public interface AtomixQueueComponentBuilderFactory {
      * Category: clustering
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-atomix
+     * 
+     * @return the dsl builder
      */
     static AtomixQueueComponentBuilder atomixQueue() {
         return new AtomixQueueComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface AtomixQueueComponentBuilderFactory {
         /**
          * The Atomix instance to use.
          * 
-         * The option is a: <code>io.atomix.Atomix</code> type.
+         * The option is a: &lt;code&gt;io.atomix.Atomix&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param atomix the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder atomix(io.atomix.Atomix atomix) {
             doSetProperty("atomix", atomix);
@@ -63,9 +68,12 @@ public interface AtomixQueueComponentBuilderFactory {
          * The shared component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.atomix.client.queue.AtomixQueueConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.queue.AtomixQueueConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder configuration(
                 org.apache.camel.component.atomix.client.queue.AtomixQueueConfiguration configuration) {
@@ -75,9 +83,12 @@ public interface AtomixQueueComponentBuilderFactory {
         /**
          * The path to the AtomixClient configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
@@ -88,10 +99,13 @@ public interface AtomixQueueComponentBuilderFactory {
          * The default action.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.atomix.client.queue.AtomixQueue.Action</code> type.
+         * &lt;code&gt;org.apache.camel.component.atomix.client.queue.AtomixQueue.Action&lt;/code&gt; type.
          * 
          * Default: ADD
          * Group: common
+         * 
+         * @param defaultAction the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder defaultAction(
                 org.apache.camel.component.atomix.client.queue.AtomixQueue.Action defaultAction) {
@@ -102,9 +116,12 @@ public interface AtomixQueueComponentBuilderFactory {
          * The nodes the AtomixClient should connect to.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.atomix.catalyst.transport.Address&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;io.atomix.catalyst.transport.Address&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nodes the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder nodes(
                 java.util.List<io.atomix.catalyst.transport.Address> nodes) {
@@ -114,9 +131,12 @@ public interface AtomixQueueComponentBuilderFactory {
         /**
          * The header that wil carry the result.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultHeader the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder resultHeader(
                 java.lang.String resultHeader) {
@@ -126,10 +146,13 @@ public interface AtomixQueueComponentBuilderFactory {
         /**
          * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
+         * 
+         * @param transportClassName the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder transportClassName(
                 java.lang.String transportClassName) {
@@ -145,10 +168,13 @@ public interface AtomixQueueComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -166,10 +192,13 @@ public interface AtomixQueueComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -184,10 +213,13 @@ public interface AtomixQueueComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -197,9 +229,12 @@ public interface AtomixQueueComponentBuilderFactory {
         /**
          * The cluster wide default resource configuration.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceConfig the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder defaultResourceConfig(
                 java.util.Properties defaultResourceConfig) {
@@ -209,9 +244,12 @@ public interface AtomixQueueComponentBuilderFactory {
         /**
          * The local default resource options.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultResourceOptions the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder defaultResourceOptions(
                 java.util.Properties defaultResourceOptions) {
@@ -223,10 +261,13 @@ public interface AtomixQueueComponentBuilderFactory {
          * not. If set to ephemeral the local member will receive an auto
          * generated ID thus the local one is ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ephemeral the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder ephemeral(boolean ephemeral) {
             doSetProperty("ephemeral", ephemeral);
@@ -235,10 +276,13 @@ public interface AtomixQueueComponentBuilderFactory {
         /**
          * The read consistency level.
          * 
-         * The option is a: <code>io.atomix.resource.ReadConsistency</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.atomix.resource.ReadConsistency&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param readConsistency the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder readConsistency(
                 io.atomix.resource.ReadConsistency readConsistency) {
@@ -248,10 +292,13 @@ public interface AtomixQueueComponentBuilderFactory {
         /**
          * Cluster wide resources configuration.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceConfigs the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder resourceConfigs(
                 java.util.Map<java.lang.String, java.util.Properties> resourceConfigs) {
@@ -261,10 +308,13 @@ public interface AtomixQueueComponentBuilderFactory {
         /**
          * Local resources configurations.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.util.Properties&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.util.Properties&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceOptions the value to set
+         * @return the dsl builder
          */
         default AtomixQueueComponentBuilder resourceOptions(
                 java.util.Map<java.lang.String, java.util.Properties> resourceOptions) {

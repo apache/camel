@@ -2084,6 +2084,7 @@ public interface SjmsEndpointBuilderFactory {
          * destinationName is interpreted as a queue name.
          * 
          * @param path destinationType:destinationName
+         * @return the dsl builder
          */
         default SjmsEndpointBuilder sjms(String path) {
             return SjmsEndpointBuilderFactory.endpointBuilder("sjms", path);
@@ -2111,6 +2112,7 @@ public interface SjmsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path destinationType:destinationName
+         * @return the dsl builder
          */
         default SjmsEndpointBuilder sjms(String componentName, String path) {
             return SjmsEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -37,6 +37,8 @@ public interface DebeziumMysqlComponentBuilderFactory {
      * Category: database,sql
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mysql
+     * 
+     * @return the dsl builder
      */
     static DebeziumMysqlComponentBuilder debeziumMysql() {
         return new DebeziumMysqlComponentBuilderImpl();
@@ -54,12 +56,15 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param additionalProperties the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder additionalProperties(
                 java.util.Map<java.lang.String, java.lang.Object> additionalProperties) {
@@ -75,10 +80,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -89,9 +97,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Allow pre-configured Configurations to be set.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder configuration(
                 org.apache.camel.component.debezium.configuration.MySqlConnectorEmbeddedDebeziumConfiguration configuration) {
@@ -102,10 +113,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * key data for offsets. The default is JSON converter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
+         * 
+         * @param internalKeyConverter the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder internalKeyConverter(
                 java.lang.String internalKeyConverter) {
@@ -116,10 +130,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * value data for offsets. The default is JSON converter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
+         * 
+         * @param internalValueConverter the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder internalValueConverter(
                 java.lang.String internalValueConverter) {
@@ -133,11 +150,14 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * implement the interface 'OffsetCommitPolicy'. The default is a
          * periodic commit policy based upon time intervals.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
          * io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy
          * Group: consumer
+         * 
+         * @param offsetCommitPolicy the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder offsetCommitPolicy(
                 java.lang.String offsetCommitPolicy) {
@@ -150,10 +170,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5s
          * Group: consumer
+         * 
+         * @param offsetCommitTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder offsetCommitTimeoutMs(
                 long offsetCommitTimeoutMs) {
@@ -163,10 +186,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60s
          * Group: consumer
+         * 
+         * @param offsetFlushIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder offsetFlushIntervalMs(
                 long offsetFlushIntervalMs) {
@@ -177,10 +203,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The name of the Java class that is responsible for persistence of
          * connector offsets.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
          * Group: consumer
+         * 
+         * @param offsetStorage the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder offsetStorage(
                 java.lang.String offsetStorage) {
@@ -191,9 +220,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Path to file where offsets are to be stored. Required when
          * offset.storage is set to the FileOffsetBackingStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageFileName the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder offsetStorageFileName(
                 java.lang.String offsetStorageFileName) {
@@ -204,9 +236,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStoragePartitions the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder offsetStoragePartitions(
                 int offsetStoragePartitions) {
@@ -217,9 +252,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageReplicationFactor the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder offsetStorageReplicationFactor(
                 int offsetStorageReplicationFactor) {
@@ -230,9 +268,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The name of the Kafka topic where offsets are to be stored. Required
          * when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageTopic the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder offsetStorageTopic(
                 java.lang.String offsetStorageTopic) {
@@ -247,10 +288,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -266,10 +310,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * represents values using Java's 'long', which may not offer the
          * precision but will be far easier to use in consumers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: long
          * Group: mysql
+         * 
+         * @param bigintUnsignedHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder bigintUnsignedHandlingMode(
                 java.lang.String bigintUnsignedHandlingMode) {
@@ -282,10 +329,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * array (default)'base64' represents binary data as base64-encoded
          * string'hex' represents binary data as hex-encoded (base16) string.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: bytes
          * Group: mysql
+         * 
+         * @param binaryHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder binaryHandlingMode(
                 java.lang.String binaryHandlingMode) {
@@ -298,10 +348,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * rolled back. Use 0 to disable look-ahead buffering. Defaults to 0
          * (i.e. buffering is disabled).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: mysql
+         * 
+         * @param binlogBufferSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder binlogBufferSize(
                 int binlogBufferSize) {
@@ -312,9 +365,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Regular expressions matching columns to exclude from change events
          * (deprecated, use column.exclude.list instead).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param columnBlacklist the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder columnBlacklist(
                 java.lang.String columnBlacklist) {
@@ -324,9 +380,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * Regular expressions matching columns to exclude from change events.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param columnExcludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder columnExcludeList(
                 java.lang.String columnExcludeList) {
@@ -336,9 +395,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * Regular expressions matching columns to include in change events.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param columnIncludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder columnIncludeList(
                 java.lang.String columnIncludeList) {
@@ -349,10 +411,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Whether a separate thread should be used to ensure the connection is
          * kept alive.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: mysql
+         * 
+         * @param connectKeepAlive the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder connectKeepAlive(
                 boolean connectKeepAlive) {
@@ -363,10 +428,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Interval in milliseconds to wait for connection checking if keep
          * alive thread is used.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1m
          * Group: mysql
+         * 
+         * @param connectKeepAliveIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder connectKeepAliveIntervalMs(
                 long connectKeepAliveIntervalMs) {
@@ -377,10 +445,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Maximum time in milliseconds to wait after trying to connect to the
          * database before timing out.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: mysql
+         * 
+         * @param connectTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder connectTimeoutMs(
                 int connectTimeoutMs) {
@@ -391,9 +462,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * A comma-separated list of regular expressions that match database
          * names to be excluded from monitoring.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseExcludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseExcludeList(
                 java.lang.String databaseExcludeList) {
@@ -405,10 +479,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * and recover database schema changes. The configuration properties for
          * the history are prefixed with the 'database.history.' string.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: io.debezium.relational.history.FileDatabaseHistory
          * Group: mysql
+         * 
+         * @param databaseHistory the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseHistory(
                 java.lang.String databaseHistory) {
@@ -419,9 +496,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The path to the file that will be used to record the database
          * history.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseHistoryFileFilename the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseHistoryFileFilename(
                 java.lang.String databaseHistoryFileFilename) {
@@ -435,9 +515,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * connector. This should point to the same Kafka cluster used by the
          * Kafka Connect process.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseHistoryKafkaBootstrapServers the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseHistoryKafkaBootstrapServers(
                 java.lang.String databaseHistoryKafkaBootstrapServers) {
@@ -450,10 +533,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * receiving no data is (recovery.attempts) x
          * (recovery.poll.interval.ms).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: mysql
+         * 
+         * @param databaseHistoryKafkaRecoveryAttempts the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseHistoryKafkaRecoveryAttempts(
                 int databaseHistoryKafkaRecoveryAttempts) {
@@ -464,10 +550,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The number of milliseconds to wait while polling for persisted data
          * during recovery.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100ms
          * Group: mysql
+         * 
+         * @param databaseHistoryKafkaRecoveryPollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
                 int databaseHistoryKafkaRecoveryPollIntervalMs) {
@@ -477,9 +566,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * The name of the topic for the database schema history.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseHistoryKafkaTopic the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseHistoryKafkaTopic(
                 java.lang.String databaseHistoryKafkaTopic) {
@@ -493,10 +585,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * which it cannot parse. If skipping is enabled then Debezium can miss
          * metadata changes.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mysql
+         * 
+         * @param databaseHistorySkipUnparseableDdl the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseHistorySkipUnparseableDdl(
                 boolean databaseHistorySkipUnparseableDdl) {
@@ -508,10 +603,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * (false) Debezium will store all incoming DDL statements. If set to
          * truethen only DDL that manipulates a monitored table will be stored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mysql
+         * 
+         * @param databaseHistoryStoreOnlyMonitoredTablesDdl the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseHistoryStoreOnlyMonitoredTablesDdl(
                 boolean databaseHistoryStoreOnlyMonitoredTablesDdl) {
@@ -521,9 +619,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * Resolvable hostname or IP address of the MySQL database server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseHostname the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseHostname(
                 java.lang.String databaseHostname) {
@@ -533,9 +634,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * The databases for which changes are to be captured.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseIncludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseIncludeList(
                 java.lang.String databaseIncludeList) {
@@ -551,9 +655,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * statements. Use doubled semicolon (';;') to use a semicolon as a
          * character and not as a delimiter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseInitialStatements the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseInitialStatements(
                 java.lang.String databaseInitialStatements) {
@@ -563,10 +670,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * JDBC Driver class name used to connect to the MySQL database server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: class com.mysql.cj.jdbc.Driver
          * Group: mysql
+         * 
+         * @param databaseJdbcDriver the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseJdbcDriver(
                 java.lang.String databaseJdbcDriver) {
@@ -577,9 +687,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Password of the MySQL database user to be used when connecting to the
          * database.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databasePassword the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databasePassword(
                 java.lang.String databasePassword) {
@@ -589,10 +702,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * Port of the MySQL database server.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3306
          * Group: mysql
+         * 
+         * @param databasePort the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databasePort(int databasePort) {
             doSetProperty("databasePort", databasePort);
@@ -605,9 +721,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * ID) so it can read the binlog. By default, a random number is
          * generated between 5400 and 6400.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseServerId the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseServerId(
                 long databaseServerId) {
@@ -620,10 +739,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * and they each need their own unique connection ID. This offset is
          * used to generate those IDs from the base configured cluster ID.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: mysql
+         * 
+         * @param databaseServerIdOffset the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseServerIdOffset(
                 long databaseServerIdOffset) {
@@ -636,9 +758,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Each distinct installation should have a separate namespace and be
          * monitored by at most one Debezium connector.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseServerName the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseServerName(
                 java.lang.String databaseServerName) {
@@ -649,9 +774,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Location of the Java keystore file containing an application
          * process's own certificate and private key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseSslKeystore the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseSslKeystore(
                 java.lang.String databaseSslKeystore) {
@@ -665,9 +793,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * used to unlock the keystore file (store password), and to decrypt the
          * private key stored in the keystore (key password).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseSslKeystorePassword the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseSslKeystorePassword(
                 java.lang.String databaseSslKeystorePassword) {
@@ -687,10 +818,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 'verify_ca' but additionally verify that the server certificate
          * matches the host to which the connection is attempted.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: disabled
          * Group: mysql
+         * 
+         * @param databaseSslMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseSslMode(
                 java.lang.String databaseSslMode) {
@@ -701,9 +835,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Location of the Java truststore file containing the collection of CA
          * certificates trusted by this application process (trust store).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseSslTruststore the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseSslTruststore(
                 java.lang.String databaseSslTruststore) {
@@ -715,9 +852,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 'ssl.trustore' configuration property or the
          * 'javax.net.ssl.trustStore' system or JVM property.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseSslTruststorePassword the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseSslTruststorePassword(
                 java.lang.String databaseSslTruststorePassword) {
@@ -728,9 +868,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Name of the MySQL database user to be used when connecting to the
          * database.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param databaseUser the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder databaseUser(
                 java.lang.String databaseUser) {
@@ -747,10 +890,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * which may not offer the precision but will be far easier to use in
          * consumers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: precise
          * Group: mysql
+         * 
+         * @param decimalHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder decimalHandlingMode(
                 java.lang.String decimalHandlingMode) {
@@ -763,10 +909,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * 2069.false - delegates the implicit conversion to the databasetrue -
          * (the default) Debezium makes the conversion.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: mysql
+         * 
+         * @param enableTimeAdjuster the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder enableTimeAdjuster(
                 boolean enableTimeAdjuster) {
@@ -782,10 +931,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * position will be logged and the event will be skipped;'ignore' the
          * problematic event will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: fail
          * Group: mysql
+         * 
+         * @param eventDeserializationFailureHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder eventDeserializationFailureHandlingMode(
                 java.lang.String eventDeserializationFailureHandlingMode) {
@@ -800,10 +952,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * problematic event and its position will be logged and the event will
          * be skipped;'ignore' the problematic event will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: fail
          * Group: mysql
+         * 
+         * @param eventProcessingFailureHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder eventProcessingFailureHandlingMode(
                 java.lang.String eventProcessingFailureHandlingMode) {
@@ -816,10 +971,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * If 'earliest' (the default) connector starts reading channel from
          * first available (not purged) gtid position on the server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: earliest
          * Group: mysql
+         * 
+         * @param gtidNewChannelPosition the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder gtidNewChannelPosition(
                 java.lang.String gtidNewChannelPosition) {
@@ -830,9 +988,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The source UUIDs used to exclude GTID ranges when determine the
          * starting position in the MySQL server's binlog.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param gtidSourceExcludes the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder gtidSourceExcludes(
                 java.lang.String gtidSourceExcludes) {
@@ -845,10 +1006,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * the filters defined by the gtid.source.includes or
          * gtid.source.excludes configuration options, if they are specified.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: mysql
+         * 
+         * @param gtidSourceFilterDmlEvents the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder gtidSourceFilterDmlEvents(
                 boolean gtidSourceFilterDmlEvents) {
@@ -859,9 +1023,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The source UUIDs used to include GTID ranges when determine the
          * starting position in the MySQL server's binlog.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param gtidSourceIncludes the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder gtidSourceIncludes(
                 java.lang.String gtidSourceIncludes) {
@@ -873,10 +1040,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: mysql
+         * 
+         * @param heartbeatIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder heartbeatIntervalMs(
                 int heartbeatIntervalMs) {
@@ -887,10 +1057,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The prefix that is used to name heartbeat topics.Defaults to
          * __debezium-heartbeat.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: __debezium-heartbeat
          * Group: mysql
+         * 
+         * @param heartbeatTopicsPrefix the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder heartbeatTopicsPrefix(
                 java.lang.String heartbeatTopicsPrefix) {
@@ -906,10 +1079,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * blacklisted or masked by including the original SQL statement in the
          * change event. For this reason the default value is 'false'.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mysql
+         * 
+         * @param includeQuery the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder includeQuery(boolean includeQuery) {
             doSetProperty("includeQuery", includeQuery);
@@ -923,10 +1099,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * and optionally the DDL statement(s).The default is 'true'. This is
          * independent of how the connector internally records database history.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: mysql
+         * 
+         * @param includeSchemaChanges the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder includeSchemaChanges(
                 boolean includeSchemaChanges) {
@@ -942,10 +1121,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * problematic event and its binlog position will be logged and the
          * event will be skipped;'skip' the problematic event will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: fail
          * Group: mysql
+         * 
+         * @param inconsistentSchemaHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder inconsistentSchemaHandlingMode(
                 java.lang.String inconsistentSchemaHandlingMode) {
@@ -955,10 +1137,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2048
          * Group: mysql
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder maxBatchSize(int maxBatchSize) {
             doSetProperty("maxBatchSize", maxBatchSize);
@@ -969,10 +1154,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: mysql
+         * 
+         * @param maxQueueSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder maxQueueSize(int maxQueueSize) {
             doSetProperty("maxQueueSize", maxQueueSize);
@@ -989,9 +1177,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * used as message key.Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param messageKeyColumns the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder messageKeyColumns(
                 java.lang.String messageKeyColumns) {
@@ -1002,10 +1193,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * Frequency in milliseconds to wait for new change events to appear
          * after receiving no events. Defaults to 500ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500ms
          * Group: mysql
+         * 
+         * @param pollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder pollIntervalMs(long pollIntervalMs) {
             doSetProperty("pollIntervalMs", pollIntervalMs);
@@ -1016,9 +1210,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
          * default, no operations will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param skippedOperations the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder skippedOperations(
                 java.lang.String skippedOperations) {
@@ -1028,10 +1225,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: mysql
+         * 
+         * @param snapshotDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder snapshotDelayMs(
                 long snapshotDelayMs) {
@@ -1042,9 +1242,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param snapshotFetchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder snapshotFetchSize(
                 int snapshotFetchSize) {
@@ -1069,10 +1272,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * is only safe to use if no schema changes are happening while the
          * snapshot is taken.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: minimal
          * Group: mysql
+         * 
+         * @param snapshotLockingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder snapshotLockingMode(
                 java.lang.String snapshotLockingMode) {
@@ -1093,10 +1299,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * the beginning of the binlog. The 'never' mode should be used with
          * care, and only when the binlog is known to contain all history.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: initial
          * Group: mysql
+         * 
+         * @param snapshotMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder snapshotMode(
                 java.lang.String snapshotMode) {
@@ -1117,10 +1326,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * have a configured server id of 10000 the primary binlog reader's
          * server id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: off
          * Group: mysql
+         * 
+         * @param snapshotNewTables the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder snapshotNewTables(
                 java.lang.String snapshotNewTables) {
@@ -1141,9 +1353,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * setting a specific point where to start (resume) snapshotting, in
          * case a previous snapshotting was interrupted.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param snapshotSelectStatementOverrides the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder snapshotSelectStatementOverrides(
                 java.lang.String snapshotSelectStatementOverrides) {
@@ -1154,10 +1369,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * A version of the format of the publicly visible source part in the
          * message.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: v2
          * Group: mysql
+         * 
+         * @param sourceStructVersion the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder sourceStructVersion(
                 java.lang.String sourceStructVersion) {
@@ -1169,9 +1387,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * fully-qualified names of tables to be excluded from monitoring
          * (deprecated, use table.exclude.list instead).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param tableBlacklist the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder tableBlacklist(
                 java.lang.String tableBlacklist) {
@@ -1182,9 +1403,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * A comma-separated list of regular expressions that match the
          * fully-qualified names of tables to be excluded from monitoring.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param tableExcludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder tableExcludeList(
                 java.lang.String tableExcludeList) {
@@ -1194,10 +1418,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * Flag specifying whether built-in tables should be ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: mysql
+         * 
+         * @param tableIgnoreBuiltin the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder tableIgnoreBuiltin(
                 boolean tableIgnoreBuiltin) {
@@ -1207,9 +1434,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
         /**
          * The tables for which changes are to be captured.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param tableIncludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder tableIncludeList(
                 java.lang.String tableIncludeList) {
@@ -1220,9 +1450,12 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * The tables for which changes are to be captured (deprecated, use
          * table.include.list instead).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mysql
+         * 
+         * @param tableWhitelist the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder tableWhitelist(
                 java.lang.String tableWhitelist) {
@@ -1238,10 +1471,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * built-in representations for Time, Date, and Timestamp, which uses
          * millisecond precision regardless of the database columns' precision.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: adaptive_time_microseconds
          * Group: mysql
+         * 
+         * @param timePrecisionMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder timePrecisionMode(
                 java.lang.String timePrecisionMode) {
@@ -1255,10 +1491,13 @@ public interface DebeziumMysqlComponentBuilderFactory {
          * completely delete all events pertaining to the given key once the
          * source record got deleted.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mysql
+         * 
+         * @param tombstonesOnDelete the value to set
+         * @return the dsl builder
          */
         default DebeziumMysqlComponentBuilder tombstonesOnDelete(
                 boolean tombstonesOnDelete) {

@@ -230,6 +230,7 @@ public interface KeystoneEndpointBuilderFactory {
          * OpenStack host url
          * 
          * @param path host
+         * @return the dsl builder
          */
         default KeystoneEndpointBuilder openstackKeystone(String path) {
             return KeystoneEndpointBuilderFactory.endpointBuilder("openstack-keystone", path);
@@ -251,6 +252,7 @@ public interface KeystoneEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host
+         * @return the dsl builder
          */
         default KeystoneEndpointBuilder openstackKeystone(
                 String componentName,

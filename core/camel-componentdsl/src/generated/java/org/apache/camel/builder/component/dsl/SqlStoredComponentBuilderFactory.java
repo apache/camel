@@ -37,6 +37,8 @@ public interface SqlStoredComponentBuilderFactory {
      * Category: database,sql
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-sql
+     * 
+     * @return the dsl builder
      */
     static SqlStoredComponentBuilder sqlStored() {
         return new SqlStoredComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface SqlStoredComponentBuilderFactory {
         /**
          * Sets the DataSource to use to communicate with the database.
          * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
+         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataSource the value to set
+         * @return the dsl builder
          */
         default SqlStoredComponentBuilder dataSource(
                 javax.sql.DataSource dataSource) {
@@ -71,10 +76,13 @@ public interface SqlStoredComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SqlStoredComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -89,10 +97,13 @@ public interface SqlStoredComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SqlStoredComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

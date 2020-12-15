@@ -201,6 +201,7 @@ public interface CronEndpointBuilderFactory {
          * The name of the cron trigger
          * 
          * @param path name
+         * @return the dsl builder
          */
         default CronEndpointBuilder cron(String path) {
             return CronEndpointBuilderFactory.endpointBuilder("cron", path);
@@ -222,6 +223,7 @@ public interface CronEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default CronEndpointBuilder cron(String componentName, String path) {
             return CronEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -335,6 +335,7 @@ public interface BrowseEndpointBuilderFactory {
          * A name which can be any string to uniquely identify the endpoint
          * 
          * @param path name
+         * @return the dsl builder
          */
         default BrowseEndpointBuilder browse(String path) {
             return BrowseEndpointBuilderFactory.endpointBuilder("browse", path);
@@ -356,6 +357,7 @@ public interface BrowseEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default BrowseEndpointBuilder browse(String componentName, String path) {
             return BrowseEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -254,6 +254,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * The name of the cache
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
                 String path) {
@@ -276,6 +277,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastAtomicnumberEndpointBuilder hazelcastAtomicvalue(
                 String componentName,

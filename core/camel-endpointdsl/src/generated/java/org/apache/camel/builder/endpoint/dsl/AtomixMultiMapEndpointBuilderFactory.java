@@ -479,6 +479,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The distributed resource name
          * 
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixMultiMapEndpointBuilder atomixMultimap(String path) {
             return AtomixMultiMapEndpointBuilderFactory.endpointBuilder("atomix-multimap", path);
@@ -499,6 +500,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixMultiMapEndpointBuilder atomixMultimap(
                 String componentName,

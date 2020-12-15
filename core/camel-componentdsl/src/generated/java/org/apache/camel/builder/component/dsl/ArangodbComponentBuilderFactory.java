@@ -39,6 +39,8 @@ public interface ArangodbComponentBuilderFactory {
      * Category: database,nosql
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-arangodb
+     * 
+     * @return the dsl builder
      */
     static ArangodbComponentBuilder arangodb() {
         return new ArangodbComponentBuilderImpl();
@@ -54,9 +56,12 @@ public interface ArangodbComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.arangodb.ArangoDbConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.arangodb.ArangoDbConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder configuration(
                 org.apache.camel.component.arangodb.ArangoDbConfiguration configuration) {
@@ -69,9 +74,12 @@ public interface ArangodbComponentBuilderFactory {
          * database collections (SAVE_DOCUMENT , FIND_DOCUMENT_BY_KEY,
          * UPDATE_DOCUMENT, DELETE_DOCUMENT).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param documentCollection the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder documentCollection(
                 java.lang.String documentCollection) {
@@ -84,9 +92,12 @@ public interface ArangodbComponentBuilderFactory {
          * these operations : SAVE_VERTEX, FIND_VERTEX_BY_KEY, UPDATE_VERTEX,
          * DELETE_VERTEX. The graph attribute is mandatory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param edgeCollection the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder edgeCollection(
                 java.lang.String edgeCollection) {
@@ -98,9 +109,12 @@ public interface ArangodbComponentBuilderFactory {
          * attribute with one of the two attributes vertexCollection and
          * edgeCollection.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param graph the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder graph(java.lang.String graph) {
             doSetProperty("graph", graph);
@@ -109,9 +123,12 @@ public interface ArangodbComponentBuilderFactory {
         /**
          * ArangoDB host. If host and port are default, this field is Optional.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
@@ -128,10 +145,13 @@ public interface ArangodbComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -143,10 +163,12 @@ public interface ArangodbComponentBuilderFactory {
          * need to specify a collection or graph.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.arangodb.ArangoDbOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.arangodb.ArangoDbOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder operation(
                 org.apache.camel.component.arangodb.ArangoDbOperation operation) {
@@ -157,9 +179,12 @@ public interface ArangodbComponentBuilderFactory {
          * ArangoDB exposed port. If host and port are default, this field is
          * Optional.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder port(int port) {
             doSetProperty("port", port);
@@ -171,9 +196,12 @@ public interface ArangodbComponentBuilderFactory {
          * using these operations : SAVE_EDGE, FIND_EDGE_BY_KEY, UPDATE_EDGE,
          * DELETE_EDGE. The graph attribute is mandatory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param vertexCollection the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder vertexCollection(
                 java.lang.String vertexCollection) {
@@ -188,10 +216,13 @@ public interface ArangodbComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -202,9 +233,12 @@ public interface ArangodbComponentBuilderFactory {
          * ArangoDB password. If user and password are default, this field is
          * Optional.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -214,9 +248,12 @@ public interface ArangodbComponentBuilderFactory {
          * ArangoDB user. If user and password are default, this field is
          * Optional.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default ArangodbComponentBuilder user(java.lang.String user) {
             doSetProperty("user", user);

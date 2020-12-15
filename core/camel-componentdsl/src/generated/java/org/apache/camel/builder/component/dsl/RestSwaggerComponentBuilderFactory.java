@@ -40,6 +40,8 @@ public interface RestSwaggerComponentBuilderFactory {
      * Category: rest,swagger,http
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-rest-swagger
+     * 
+     * @return the dsl builder
      */
     static RestSwaggerComponentBuilder restSwagger() {
         return new RestSwaggerComponentBuilderImpl();
@@ -55,9 +57,12 @@ public interface RestSwaggerComponentBuilderFactory {
          * API basePath, for example /v2. Default is unset, if set overrides the
          * value present in Swagger specification.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param basePath the value to set
+         * @return the dsl builder
          */
         default RestSwaggerComponentBuilder basePath(java.lang.String basePath) {
             doSetProperty("basePath", basePath);
@@ -70,9 +75,12 @@ public interface RestSwaggerComponentBuilderFactory {
          * is searched for single component that implements RestProducerFactory
          * SPI. Can be overridden in endpoint configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param componentName the value to set
+         * @return the dsl builder
          */
         default RestSwaggerComponentBuilder componentName(
                 java.lang.String componentName) {
@@ -86,9 +94,12 @@ public interface RestSwaggerComponentBuilderFactory {
          * value of Accept HTTP header. If set overrides any value found in the
          * Swagger specification. Can be overridden in endpoint configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param consumes the value to set
+         * @return the dsl builder
          */
         default RestSwaggerComponentBuilder consumes(java.lang.String consumes) {
             doSetProperty("consumes", consumes);
@@ -104,9 +115,12 @@ public interface RestSwaggerComponentBuilderFactory {
          * specification, RestConfiguration. Can be overridden in endpoint
          * configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default RestSwaggerComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
@@ -123,10 +137,13 @@ public interface RestSwaggerComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RestSwaggerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -140,9 +157,12 @@ public interface RestSwaggerComponentBuilderFactory {
          * the Swagger specification. Can be overridden in endpoint
          * configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param produces the value to set
+         * @return the dsl builder
          */
         default RestSwaggerComponentBuilder produces(java.lang.String produces) {
             doSetProperty("produces", produces);
@@ -158,10 +178,13 @@ public interface RestSwaggerComponentBuilderFactory {
          * syntax (i.e. https://api.example.com:8080). Can be overridden in
          * endpoint configuration.
          * 
-         * The option is a: <code>java.net.URI</code> type.
+         * The option is a: &lt;code&gt;java.net.URI&lt;/code&gt; type.
          * 
          * Default: swagger.json
          * Group: producer
+         * 
+         * @param specificationUri the value to set
+         * @return the dsl builder
          */
         default RestSwaggerComponentBuilder specificationUri(
                 java.net.URI specificationUri) {
@@ -176,10 +199,13 @@ public interface RestSwaggerComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default RestSwaggerComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -191,9 +217,12 @@ public interface RestSwaggerComponentBuilderFactory {
          * to the TLS parameters set in the Camel context.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default RestSwaggerComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -203,10 +232,13 @@ public interface RestSwaggerComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default RestSwaggerComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

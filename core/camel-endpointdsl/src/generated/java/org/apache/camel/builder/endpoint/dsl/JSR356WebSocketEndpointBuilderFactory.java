@@ -422,6 +422,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * then a connection is established to the corresponding server
          * 
          * @param path uri
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointBuilder websocketJsr356(String path) {
             return JSR356WebSocketEndpointBuilderFactory.endpointBuilder("websocket-jsr356", path);
@@ -444,6 +445,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path uri
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointBuilder websocketJsr356(
                 String componentName,

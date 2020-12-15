@@ -37,6 +37,8 @@ public interface AzureStorageBlobComponentBuilderFactory {
      * Category: cloud,file
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-blob
+     * 
+     * @return the dsl builder
      */
     static AzureStorageBlobComponentBuilder azureStorageBlob() {
         return new AzureStorageBlobComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -67,9 +72,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * The blob name, to consume specific blob from a container. However on
          * producer, is only required for the operations on the blob level.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param blobName the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder blobName(
                 java.lang.String blobName) {
@@ -80,10 +88,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * Set the blob offset for the upload or download operations, default is
          * 0.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param blobOffset the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder blobOffset(long blobOffset) {
             doSetProperty("blobOffset", blobOffset);
@@ -94,11 +105,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * blob type.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.blob.BlobType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.BlobType&lt;/code&gt; type.
          * 
          * Default: blockblob
          * Group: common
+         * 
+         * @param blobType the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder blobType(
                 org.apache.camel.component.azure.storage.blob.BlobType blobType) {
@@ -108,10 +121,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
         /**
          * Close the stream after read or keep it open, default is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param closeStreamAfterRead the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder closeStreamAfterRead(
                 boolean closeStreamAfterRead) {
@@ -122,9 +138,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * The component configurations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.blob.BlobConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.BlobConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder configuration(
                 org.apache.camel.component.azure.storage.blob.BlobConfiguration configuration) {
@@ -136,10 +155,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option is a:
-         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
-         * type.
+         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder credentials(
                 com.azure.storage.common.StorageSharedKeyCredential credentials) {
@@ -150,9 +171,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * How many bytes to include in the range. Must be greater than or equal
          * to 0 if specified.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dataCount the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder dataCount(
                 java.lang.Long dataCount) {
@@ -163,9 +187,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * The file directory where the downloaded blobs will be saved to, this
          * can be used in both, producer and consumer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileDir the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder fileDir(
                 java.lang.String fileDir) {
@@ -178,9 +205,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * maxResultsPerPage or specifies a value greater than 5,000, the server
          * will return up to 5,000 items.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param maxResultsPerPage the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder maxResultsPerPage(
                 java.lang.Integer maxResultsPerPage) {
@@ -191,10 +221,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * Specifies the maximum number of additional HTTP Get requests that
          * will be made while reading the data from a response body.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: common
+         * 
+         * @param maxRetryRequests the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder maxRetryRequests(
                 int maxRetryRequests) {
@@ -205,9 +238,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * Filters the results to return only blobs whose names begin with the
          * specified prefix. May be null to return all blobs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder prefix(java.lang.String prefix) {
             doSetProperty("prefix", prefix);
@@ -219,9 +255,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * prefix and regex are set, regex takes the priority and prefix is
          * ignored.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param regex the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder regex(java.lang.String regex) {
             doSetProperty("regex", regex);
@@ -239,9 +278,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * BlobContainerClient#getBlobClient(String).
          * 
          * The option is a:
-         * <code>com.azure.storage.blob.BlobServiceClient</code> type.
+         * &lt;code&gt;com.azure.storage.blob.BlobServiceClient&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serviceClient the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder serviceClient(
                 com.azure.storage.blob.BlobServiceClient serviceClient) {
@@ -252,9 +295,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * An optional timeout value beyond which a RuntimeException will be
          * raised.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder timeout(
                 java.time.Duration timeout) {
@@ -270,10 +316,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -285,10 +334,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * of the sequence number must be between 0 and 263 - 1.The default
          * value is 0.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param blobSequenceNumber the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder blobSequenceNumber(
                 java.lang.Long blobSequenceNumber) {
@@ -299,10 +351,14 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * Specifies which type of blocks to return.
          * 
          * The option is a:
-         * <code>com.azure.storage.blob.models.BlockListType</code> type.
+         * &lt;code&gt;com.azure.storage.blob.models.BlockListType&lt;/code&gt;
+         * type.
          * 
          * Default: COMMITTED
          * Group: producer
+         * 
+         * @param blockListType the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder blockListType(
                 com.azure.storage.blob.models.BlockListType blockListType) {
@@ -312,10 +368,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
         /**
          * Close the stream after write or keep it open, default is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param closeStreamAfterWrite the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder closeStreamAfterWrite(
                 boolean closeStreamAfterWrite) {
@@ -326,10 +385,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * When is set to true, the staged blocks will not be committed
          * directly.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param commitBlockListLater the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder commitBlockListLater(
                 boolean commitBlockListLater) {
@@ -340,10 +402,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * When is set to true, the append blocks will be created when
          * committing append blocks.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param createAppendBlob the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder createAppendBlob(
                 boolean createAppendBlob) {
@@ -354,10 +419,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * When is set to true, the page blob will be created when uploading
          * page blob.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param createPageBlob the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder createPageBlob(
                 boolean createPageBlob) {
@@ -367,9 +435,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
         /**
          * Override the default expiration (millis) of URL download link.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param downloadLinkExpiration the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder downloadLinkExpiration(
                 java.lang.Long downloadLinkExpiration) {
@@ -387,10 +458,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -402,10 +476,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * producer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition&lt;/code&gt; type.
          * 
          * Default: listBlobContainers
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder operation(
                 org.apache.camel.component.azure.storage.blob.BlobOperationsDefinition operation) {
@@ -416,10 +493,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * Specifies the maximum size for the page blob, up to 8 TB. The page
          * blob size must be aligned to a 512-byte boundary.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 512
          * Group: producer
+         * 
+         * @param pageBlobSize the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder pageBlobSize(
                 java.lang.Long pageBlobSize) {
@@ -434,10 +514,13 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -448,9 +531,12 @@ public interface AzureStorageBlobComponentBuilderFactory {
          * Access key for the associated azure account name to be used for
          * authentication with azure blob services.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AzureStorageBlobComponentBuilder accessKey(
                 java.lang.String accessKey) {

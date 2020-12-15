@@ -583,6 +583,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * Quarkus or Spring.
          * 
          * @param path configFile
+         * @return the dsl builder
          */
         default OptaPlannerEndpointBuilder optaplanner(String path) {
             return OptaPlannerEndpointBuilderFactory.endpointBuilder("optaplanner", path);
@@ -608,6 +609,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path configFile
+         * @return the dsl builder
          */
         default OptaPlannerEndpointBuilder optaplanner(
                 String componentName,

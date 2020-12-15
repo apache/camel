@@ -3357,6 +3357,7 @@ public interface FileEndpointBuilderFactory {
          * The starting directory
          * 
          * @param path directoryName
+         * @return the dsl builder
          */
         default FileEndpointBuilder file(String path) {
             return FileEndpointBuilderFactory.endpointBuilder("file", path);
@@ -3377,6 +3378,7 @@ public interface FileEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path directoryName
+         * @return the dsl builder
          */
         default FileEndpointBuilder file(String componentName, String path) {
             return FileEndpointBuilderFactory.endpointBuilder(componentName, path);

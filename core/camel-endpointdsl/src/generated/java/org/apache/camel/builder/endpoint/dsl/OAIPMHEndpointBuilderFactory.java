@@ -1181,6 +1181,7 @@ public interface OAIPMHEndpointBuilderFactory {
          * OAI-PMH protocol
          * 
          * @param path baseUrl
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder oaipmh(String path) {
             return OAIPMHEndpointBuilderFactory.endpointBuilder("oaipmh", path);
@@ -1202,6 +1203,7 @@ public interface OAIPMHEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path baseUrl
+         * @return the dsl builder
          */
         default OAIPMHEndpointBuilder oaipmh(String componentName, String path) {
             return OAIPMHEndpointBuilderFactory.endpointBuilder(componentName, path);

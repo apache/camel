@@ -435,6 +435,7 @@ public interface FileWatchEndpointBuilderFactory {
          * Path of directory to consume events from.
          * 
          * @param path path
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder fileWatch(String path) {
             return FileWatchEndpointBuilderFactory.endpointBuilder("file-watch", path);
@@ -456,6 +457,7 @@ public interface FileWatchEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path
+         * @return the dsl builder
          */
         default FileWatchEndpointBuilder fileWatch(
                 String componentName,

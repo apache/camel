@@ -37,6 +37,8 @@ public interface CryptoCmsComponentBuilderFactory {
      * Category: security,transformation
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-crypto-cms
+     * 
+     * @return the dsl builder
      */
     @Deprecated
     static CryptoCmsComponentBuilder cryptoCms() {
@@ -60,10 +62,13 @@ public interface CryptoCmsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CryptoCmsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -78,10 +83,13 @@ public interface CryptoCmsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default CryptoCmsComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -93,9 +101,12 @@ public interface CryptoCmsComponentBuilderFactory {
          * determines the uri parameters for the decrypt operation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param envelopedDataDecryptorConfiguration the value to set
+         * @return the dsl builder
          */
         default CryptoCmsComponentBuilder envelopedDataDecryptorConfiguration(
                 org.apache.camel.component.crypto.cms.crypt.EnvelopedDataDecryptorConfiguration envelopedDataDecryptorConfiguration) {
@@ -107,9 +118,12 @@ public interface CryptoCmsComponentBuilderFactory {
          * determines the uri parameters for the verify operation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param signedDataVerifierConfiguration the value to set
+         * @return the dsl builder
          */
         default CryptoCmsComponentBuilder signedDataVerifierConfiguration(
                 org.apache.camel.component.crypto.cms.sig.SignedDataVerifierConfiguration signedDataVerifierConfiguration) {

@@ -37,6 +37,8 @@ public interface BraintreeComponentBuilderFactory {
      * Category: cloud,payment
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
+     * 
+     * @return the dsl builder
      */
     static BraintreeComponentBuilder braintree() {
         return new BraintreeComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface BraintreeComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BraintreeComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -77,10 +82,13 @@ public interface BraintreeComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default BraintreeComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -91,9 +99,12 @@ public interface BraintreeComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.braintree.BraintreeConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.braintree.BraintreeConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default BraintreeComponentBuilder configuration(
                 org.apache.camel.component.braintree.BraintreeConfiguration configuration) {

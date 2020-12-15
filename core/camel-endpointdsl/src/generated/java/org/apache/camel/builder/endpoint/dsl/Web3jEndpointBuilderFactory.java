@@ -1349,6 +1349,7 @@ public interface Web3jEndpointBuilderFactory {
          * Sets the node address used to communicate
          * 
          * @param path nodeAddress
+         * @return the dsl builder
          */
         default Web3jEndpointBuilder web3j(String path) {
             return Web3jEndpointBuilderFactory.endpointBuilder("web3j", path);
@@ -1369,6 +1370,7 @@ public interface Web3jEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path nodeAddress
+         * @return the dsl builder
          */
         default Web3jEndpointBuilder web3j(String componentName, String path) {
             return Web3jEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -702,6 +702,7 @@ public interface Athena2EndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default Athena2EndpointBuilder aws2Athena(String path) {
             return Athena2EndpointBuilderFactory.endpointBuilder("aws2-athena", path);
@@ -722,6 +723,7 @@ public interface Athena2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default Athena2EndpointBuilder aws2Athena(
                 String componentName,

@@ -227,6 +227,7 @@ public interface GlanceEndpointBuilderFactory {
          * OpenStack host url
          * 
          * @param path host
+         * @return the dsl builder
          */
         default GlanceEndpointBuilder openstackGlance(String path) {
             return GlanceEndpointBuilderFactory.endpointBuilder("openstack-glance", path);
@@ -247,6 +248,7 @@ public interface GlanceEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host
+         * @return the dsl builder
          */
         default GlanceEndpointBuilder openstackGlance(
                 String componentName,

@@ -37,6 +37,8 @@ public interface AtmosComponentBuilderFactory {
      * Category: cloud,file
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-atmos
+     * 
+     * @return the dsl builder
      */
     static AtmosComponentBuilder atmos() {
         return new AtmosComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface AtmosComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AtmosComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -76,10 +81,13 @@ public interface AtmosComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtmosComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -94,10 +102,13 @@ public interface AtmosComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AtmosComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -106,9 +117,12 @@ public interface AtmosComponentBuilderFactory {
         /**
          * The URI of the server for the Atmos client to connect to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uri the value to set
+         * @return the dsl builder
          */
         default AtmosComponentBuilder uri(java.lang.String uri) {
             doSetProperty("uri", uri);
@@ -117,9 +131,12 @@ public interface AtmosComponentBuilderFactory {
         /**
          * The token id to pass to the Atmos client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param fullTokenId the value to set
+         * @return the dsl builder
          */
         default AtmosComponentBuilder fullTokenId(java.lang.String fullTokenId) {
             doSetProperty("fullTokenId", fullTokenId);
@@ -129,9 +146,12 @@ public interface AtmosComponentBuilderFactory {
          * The secret key to pass to the Atmos client (should be base64
          * encoded).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AtmosComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -140,10 +160,13 @@ public interface AtmosComponentBuilderFactory {
         /**
          * Whether the Atmos client should perform SSL validation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslValidation the value to set
+         * @return the dsl builder
          */
         default AtmosComponentBuilder sslValidation(boolean sslValidation) {
             doSetProperty("sslValidation", sslValidation);

@@ -190,6 +190,7 @@ public interface ServiceEndpointBuilderFactory {
          * The endpoint uri to expose as service
          * 
          * @param path delegateUri
+         * @return the dsl builder
          */
         default ServiceEndpointBuilder service(String path) {
             return ServiceEndpointBuilderFactory.endpointBuilder("service", path);
@@ -211,6 +212,7 @@ public interface ServiceEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path delegateUri
+         * @return the dsl builder
          */
         default ServiceEndpointBuilder service(String componentName, String path) {
             return ServiceEndpointBuilderFactory.endpointBuilder(componentName, path);

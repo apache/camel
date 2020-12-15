@@ -216,6 +216,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * Name of the method on the bean that has the SQL query to be executed.
          * 
          * @param path beanName:methodName
+         * @return the dsl builder
          */
         default MyBatisBeanEndpointBuilder mybatisBean(String path) {
             return MyBatisBeanEndpointBuilderFactory.endpointBuilder("mybatis-bean", path);
@@ -241,6 +242,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path beanName:methodName
+         * @return the dsl builder
          */
         default MyBatisBeanEndpointBuilder mybatisBean(
                 String componentName,

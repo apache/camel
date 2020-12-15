@@ -748,6 +748,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * Container Queue compact Uri
          * 
          * @param path containerAndQueueUri
+         * @return the dsl builder
          */
         @Deprecated
         default QueueServiceEndpointBuilder azureQueue(String path) {
@@ -769,6 +770,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path containerAndQueueUri
+         * @return the dsl builder
          */
         @Deprecated
         default QueueServiceEndpointBuilder azureQueue(

@@ -530,6 +530,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * can specify the method name after dot, eg bean:myBean.myMethod
          * 
          * @param path configurationName
+         * @return the dsl builder
          */
         default QuickfixjEndpointBuilder quickfix(String path) {
             return QuickfixjEndpointBuilderFactory.endpointBuilder("quickfix", path);
@@ -556,6 +557,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path configurationName
+         * @return the dsl builder
          */
         default QuickfixjEndpointBuilder quickfix(
                 String componentName,

@@ -39,6 +39,8 @@ public interface CxfrsComponentBuilderFactory {
      * Category: rest
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cxf
+     * 
+     * @return the dsl builder
      */
     static CxfrsComponentBuilder cxfrs() {
         return new CxfrsComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface CxfrsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CxfrsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface CxfrsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CxfrsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -96,10 +104,13 @@ public interface CxfrsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default CxfrsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -110,9 +121,13 @@ public interface CxfrsComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default CxfrsComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -122,10 +137,13 @@ public interface CxfrsComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default CxfrsComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

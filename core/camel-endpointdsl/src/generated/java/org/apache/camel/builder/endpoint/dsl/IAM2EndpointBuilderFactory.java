@@ -360,6 +360,7 @@ public interface IAM2EndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default IAM2EndpointBuilder aws2Iam(String path) {
             return IAM2EndpointBuilderFactory.endpointBuilder("aws2-iam", path);
@@ -380,6 +381,7 @@ public interface IAM2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default IAM2EndpointBuilder aws2Iam(String componentName, String path) {
             return IAM2EndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -1972,6 +1972,7 @@ public interface WeatherEndpointBuilderFactory {
          * The name value is not used.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default WeatherEndpointBuilder weather(String path) {
             return WeatherEndpointBuilderFactory.endpointBuilder("weather", path);
@@ -1992,6 +1993,7 @@ public interface WeatherEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default WeatherEndpointBuilder weather(String componentName, String path) {
             return WeatherEndpointBuilderFactory.endpointBuilder(componentName, path);

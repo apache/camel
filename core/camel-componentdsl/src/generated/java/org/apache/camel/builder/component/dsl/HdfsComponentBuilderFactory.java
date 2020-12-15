@@ -37,6 +37,8 @@ public interface HdfsComponentBuilderFactory {
      * Category: bigdata,hadoop,file
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-hdfs
+     * 
+     * @return the dsl builder
      */
     static HdfsComponentBuilder hdfs() {
         return new HdfsComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface HdfsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HdfsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -76,10 +81,13 @@ public interface HdfsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HdfsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -93,10 +101,13 @@ public interface HdfsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default HdfsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -105,10 +116,14 @@ public interface HdfsComponentBuilderFactory {
         /**
          * To use the given configuration for security with JAAS.
          * 
-         * The option is a: <code>javax.security.auth.login.Configuration</code>
+         * The option is a:
+         * &lt;code&gt;javax.security.auth.login.Configuration&lt;/code&gt;
          * type.
          * 
          * Group: security
+         * 
+         * @param jAASConfiguration the value to set
+         * @return the dsl builder
          */
         default HdfsComponentBuilder jAASConfiguration(
                 javax.security.auth.login.Configuration jAASConfiguration) {
@@ -121,9 +136,12 @@ public interface HdfsComponentBuilderFactory {
          * If the environment variable is already set, warn if different than
          * the specified parameter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param kerberosConfigFile the value to set
+         * @return the dsl builder
          */
         default HdfsComponentBuilder kerberosConfigFile(
                 java.lang.String kerberosConfigFile) {

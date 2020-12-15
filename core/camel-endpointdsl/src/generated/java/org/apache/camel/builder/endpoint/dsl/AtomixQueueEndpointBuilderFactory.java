@@ -1176,6 +1176,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * The distributed resource name
          * 
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixQueueEndpointBuilder atomixQueue(String path) {
             return AtomixQueueEndpointBuilderFactory.endpointBuilder("atomix-queue", path);
@@ -1196,6 +1197,7 @@ public interface AtomixQueueEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixQueueEndpointBuilder atomixQueue(
                 String componentName,

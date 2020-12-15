@@ -345,6 +345,7 @@ public interface MsvEndpointBuilderFactory {
          * on the file system which contains the XSD to validate against.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default MsvEndpointBuilder msv(String path) {
             return MsvEndpointBuilderFactory.endpointBuilder("msv", path);
@@ -367,6 +368,7 @@ public interface MsvEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default MsvEndpointBuilder msv(String componentName, String path) {
             return MsvEndpointBuilderFactory.endpointBuilder(componentName, path);

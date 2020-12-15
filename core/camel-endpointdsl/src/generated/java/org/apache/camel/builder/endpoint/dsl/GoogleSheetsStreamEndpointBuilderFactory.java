@@ -871,6 +871,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * Sets the apiName.
          * 
          * @param path apiName
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder googleSheetsStream(String path) {
             return GoogleSheetsStreamEndpointBuilderFactory.endpointBuilder("google-sheets-stream", path);
@@ -891,6 +892,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName
+         * @return the dsl builder
          */
         default GoogleSheetsStreamEndpointBuilder googleSheetsStream(
                 String componentName,

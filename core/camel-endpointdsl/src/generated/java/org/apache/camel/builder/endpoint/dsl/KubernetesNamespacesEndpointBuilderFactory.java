@@ -1254,6 +1254,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
                 String path) {
@@ -1276,6 +1277,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(
                 String componentName,

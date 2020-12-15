@@ -233,6 +233,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * Splunk authorization token
          * 
          * @param path splunkURL/token
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder splunkHec(String path) {
             return SplunkHECEndpointBuilderFactory.endpointBuilder("splunk-hec", path);
@@ -257,6 +258,7 @@ public interface SplunkHECEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path splunkURL/token
+         * @return the dsl builder
          */
         default SplunkHECEndpointBuilder splunkHec(
                 String componentName,

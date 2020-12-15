@@ -1040,6 +1040,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * option is required to be configured.
          * 
          * @param path type:lookupKey:webServiceEndpointUri
+         * @return the dsl builder
          */
         default SpringWebserviceEndpointBuilder springWs(String path) {
             return SpringWebserviceEndpointBuilderFactory.endpointBuilder("spring-ws", path);
@@ -1084,6 +1085,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path type:lookupKey:webServiceEndpointUri
+         * @return the dsl builder
          */
         default SpringWebserviceEndpointBuilder springWs(
                 String componentName,

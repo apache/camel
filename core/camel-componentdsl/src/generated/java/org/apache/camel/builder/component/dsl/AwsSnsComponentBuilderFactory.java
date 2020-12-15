@@ -37,6 +37,8 @@ public interface AwsSnsComponentBuilderFactory {
      * Category: cloud,messaging,mobile
      * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-aws-sns
+     * 
+     * @return the dsl builder
      */
     static AwsSnsComponentBuilder awsSns() {
         return new AwsSnsComponentBuilderImpl();
@@ -49,10 +51,13 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * To use the AmazonSNS as the client.
          * 
-         * The option is a: <code>com.amazonaws.services.sns.AmazonSNS</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.sns.AmazonSNS&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSNSClient the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder amazonSNSClient(
                 com.amazonaws.services.sns.AmazonSNS amazonSNSClient) {
@@ -62,10 +67,13 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * An SQS Client to use as bridge between SNS and SQS.
          * 
-         * The option is a: <code>com.amazonaws.services.sqs.AmazonSQS</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.sqs.AmazonSQS&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSQSClient the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder amazonSQSClient(
                 com.amazonaws.services.sqs.AmazonSQS amazonSQSClient) {
@@ -75,10 +83,13 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * Setting the autocreation of the topic.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param autoCreateTopic the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder autoCreateTopic(boolean autoCreateTopic) {
             doSetProperty("autoCreateTopic", autoCreateTopic);
@@ -89,10 +100,13 @@ public interface AwsSnsComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -103,10 +117,12 @@ public interface AwsSnsComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.sns.SnsConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws.sns.SnsConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder configuration(
                 org.apache.camel.component.aws.sns.SnsConfiguration configuration) {
@@ -117,9 +133,12 @@ public interface AwsSnsComponentBuilderFactory {
          * The ID of an AWS-managed customer master key (CMK) for Amazon SNS or
          * a custom CMK.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param kmsMasterKeyId the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder kmsMasterKeyId(
                 java.lang.String kmsMasterKeyId) {
@@ -137,10 +156,13 @@ public interface AwsSnsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -150,9 +172,12 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * The message structure to use such as json.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param messageStructure the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder messageStructure(
                 java.lang.String messageStructure) {
@@ -162,9 +187,12 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * The policy for this queue.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder policy(java.lang.String policy) {
             doSetProperty("policy", policy);
@@ -173,9 +201,12 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the SNS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -184,9 +215,12 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the SNS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -195,10 +229,14 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SNS client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder proxyProtocol(
                 com.amazonaws.Protocol proxyProtocol) {
@@ -208,9 +246,12 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * The queueUrl to subscribe to.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param queueUrl the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder queueUrl(java.lang.String queueUrl) {
             doSetProperty("queueUrl", queueUrl);
@@ -222,9 +263,12 @@ public interface AwsSnsComponentBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -233,10 +277,13 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * Define if Server Side Encryption is enabled or not on the topic.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param serverSideEncryptionEnabled the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder serverSideEncryptionEnabled(
                 boolean serverSideEncryptionEnabled) {
@@ -247,9 +294,12 @@ public interface AwsSnsComponentBuilderFactory {
          * The subject which is used if the message header 'CamelAwsSnsSubject'
          * is not present.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder subject(java.lang.String subject) {
             doSetProperty("subject", subject);
@@ -259,10 +309,13 @@ public interface AwsSnsComponentBuilderFactory {
          * Define if the subscription between SNS Topic and SQS must be done or
          * not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param subscribeSNStoSQS the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder subscribeSNStoSQS(
                 boolean subscribeSNStoSQS) {
@@ -277,10 +330,13 @@ public interface AwsSnsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -289,9 +345,12 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -300,9 +359,12 @@ public interface AwsSnsComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsSnsComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);

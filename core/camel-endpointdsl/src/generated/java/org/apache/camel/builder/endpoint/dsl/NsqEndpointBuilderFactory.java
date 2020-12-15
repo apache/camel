@@ -768,6 +768,7 @@ public interface NsqEndpointBuilderFactory {
          * The NSQ topic
          * 
          * @param path topic
+         * @return the dsl builder
          */
         default NsqEndpointBuilder nsq(String path) {
             return NsqEndpointBuilderFactory.endpointBuilder("nsq", path);
@@ -789,6 +790,7 @@ public interface NsqEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path topic
+         * @return the dsl builder
          */
         default NsqEndpointBuilder nsq(String componentName, String path) {
             return NsqEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -39,6 +39,8 @@ public interface CxfComponentBuilderFactory {
      * Category: soap,webservice
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-cxf
+     * 
+     * @return the dsl builder
      */
     static CxfComponentBuilder cxf() {
         return new CxfComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface CxfComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CxfComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface CxfComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CxfComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -93,9 +101,12 @@ public interface CxfComponentBuilderFactory {
          * or keep the payload as a javax.xml.transform.Source object that would
          * allow streaming in some cases.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param allowStreaming the value to set
+         * @return the dsl builder
          */
         default CxfComponentBuilder allowStreaming(
                 java.lang.Boolean allowStreaming) {
@@ -110,10 +121,13 @@ public interface CxfComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default CxfComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -124,9 +138,13 @@ public interface CxfComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default CxfComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -136,10 +154,13 @@ public interface CxfComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default CxfComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

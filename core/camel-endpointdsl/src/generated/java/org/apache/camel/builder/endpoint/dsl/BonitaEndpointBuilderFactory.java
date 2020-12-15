@@ -190,6 +190,7 @@ public interface BonitaEndpointBuilderFactory {
          * There are 1 enums and the value can be one of: startCase
          * 
          * @param path operation
+         * @return the dsl builder
          */
         default BonitaEndpointBuilder bonita(String path) {
             return BonitaEndpointBuilderFactory.endpointBuilder("bonita", path);
@@ -211,6 +212,7 @@ public interface BonitaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path operation
+         * @return the dsl builder
          */
         default BonitaEndpointBuilder bonita(String componentName, String path) {
             return BonitaEndpointBuilderFactory.endpointBuilder(componentName, path);

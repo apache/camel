@@ -1781,6 +1781,7 @@ public interface IrcEndpointBuilderFactory {
          * default port of either 6667, 6668 or 6669 is used.
          * 
          * @param path hostname:port
+         * @return the dsl builder
          */
         default IrcEndpointBuilder irc(String path) {
             return IrcEndpointBuilderFactory.endpointBuilder("irc", path);
@@ -1805,6 +1806,7 @@ public interface IrcEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path hostname:port
+         * @return the dsl builder
          */
         default IrcEndpointBuilder irc(String componentName, String path) {
             return IrcEndpointBuilderFactory.endpointBuilder(componentName, path);

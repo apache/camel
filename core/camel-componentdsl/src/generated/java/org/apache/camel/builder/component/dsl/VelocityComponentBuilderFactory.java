@@ -37,6 +37,8 @@ public interface VelocityComponentBuilderFactory {
      * Category: transformation
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-velocity
+     * 
+     * @return the dsl builder
      */
     static VelocityComponentBuilder velocity() {
         return new VelocityComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface VelocityComponentBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default VelocityComponentBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -72,10 +77,13 @@ public interface VelocityComponentBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default VelocityComponentBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -93,10 +101,13 @@ public interface VelocityComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default VelocityComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -111,10 +122,13 @@ public interface VelocityComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default VelocityComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -124,10 +138,13 @@ public interface VelocityComponentBuilderFactory {
         /**
          * To use the VelocityEngine otherwise a new engine is created.
          * 
-         * The option is a: <code>org.apache.velocity.app.VelocityEngine</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.velocity.app.VelocityEngine&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param velocityEngine the value to set
+         * @return the dsl builder
          */
         default VelocityComponentBuilder velocityEngine(
                 org.apache.velocity.app.VelocityEngine velocityEngine) {

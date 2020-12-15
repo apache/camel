@@ -1566,6 +1566,7 @@ public interface MongoDbEndpointBuilderFactory {
          * connecting to a database.
          * 
          * @param path connectionBean
+         * @return the dsl builder
          */
         default MongoDbEndpointBuilder mongodb(String path) {
             return MongoDbEndpointBuilderFactory.endpointBuilder("mongodb", path);
@@ -1587,6 +1588,7 @@ public interface MongoDbEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path connectionBean
+         * @return the dsl builder
          */
         default MongoDbEndpointBuilder mongodb(String componentName, String path) {
             return MongoDbEndpointBuilderFactory.endpointBuilder(componentName, path);

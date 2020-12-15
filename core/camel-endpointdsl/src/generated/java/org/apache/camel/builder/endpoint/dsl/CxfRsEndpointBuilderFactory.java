@@ -1945,6 +1945,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The service publish address.
          * 
          * @param path beanId:address
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder cxfrs(String path) {
             return CxfRsEndpointBuilderFactory.endpointBuilder("cxfrs", path);
@@ -1970,6 +1971,7 @@ public interface CxfRsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path beanId:address
+         * @return the dsl builder
          */
         default CxfRsEndpointBuilder cxfrs(String componentName, String path) {
             return CxfRsEndpointBuilderFactory.endpointBuilder(componentName, path);

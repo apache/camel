@@ -37,6 +37,8 @@ public interface InfluxdbComponentBuilderFactory {
      * Category: database
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-influxdb
+     * 
+     * @return the dsl builder
      */
     static InfluxdbComponentBuilder influxdb() {
         return new InfluxdbComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface InfluxdbComponentBuilderFactory {
         /**
          * The shared Influx DB to use for all endpoints.
          * 
-         * The option is a: <code>org.influxdb.InfluxDB</code> type.
+         * The option is a: &lt;code&gt;org.influxdb.InfluxDB&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param influxDB the value to set
+         * @return the dsl builder
          */
         default InfluxdbComponentBuilder influxDB(org.influxdb.InfluxDB influxDB) {
             doSetProperty("influxDB", influxDB);
@@ -70,10 +75,13 @@ public interface InfluxdbComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default InfluxdbComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -88,10 +96,13 @@ public interface InfluxdbComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default InfluxdbComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

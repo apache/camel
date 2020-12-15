@@ -1559,6 +1559,7 @@ public interface InfinispanEndpointBuilderFactory {
          * the default cache manager name.
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default InfinispanEndpointBuilder infinispan(String path) {
             return InfinispanEndpointBuilderFactory.endpointBuilder("infinispan", path);
@@ -1582,6 +1583,7 @@ public interface InfinispanEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default InfinispanEndpointBuilder infinispan(
                 String componentName,

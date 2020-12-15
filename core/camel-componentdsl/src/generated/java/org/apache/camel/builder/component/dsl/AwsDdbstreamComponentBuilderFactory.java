@@ -37,6 +37,8 @@ public interface AwsDdbstreamComponentBuilderFactory {
      * Category: cloud,messaging,streams
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-aws-ddb
+     * 
+     * @return the dsl builder
      */
     static AwsDdbstreamComponentBuilder awsDdbstream() {
         return new AwsDdbstreamComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface AwsDdbstreamComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -67,10 +72,12 @@ public interface AwsDdbstreamComponentBuilderFactory {
          * Amazon DynamoDB client to use for all requests for this endpoint.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams</code>
-         * type.
+         * &lt;code&gt;com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param amazonDynamoDbStreamsClient the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder amazonDynamoDbStreamsClient(
                 com.amazonaws.services.dynamodbv2.AmazonDynamoDBStreams amazonDynamoDbStreamsClient) {
@@ -86,10 +93,13 @@ public interface AwsDdbstreamComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -100,9 +110,12 @@ public interface AwsDdbstreamComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder configuration(
                 org.apache.camel.component.aws.ddbstream.DdbStreamConfiguration configuration) {
@@ -116,10 +129,13 @@ public interface AwsDdbstreamComponentBuilderFactory {
          * used, then a sequenceNumberProvider MUST be supplied.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.dynamodbv2.model.ShardIteratorType</code> type.
+         * &lt;code&gt;com.amazonaws.services.dynamodbv2.model.ShardIteratorType&lt;/code&gt; type.
          * 
          * Default: LATEST
          * Group: consumer
+         * 
+         * @param iteratorType the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder iteratorType(
                 com.amazonaws.services.dynamodbv2.model.ShardIteratorType iteratorType) {
@@ -129,9 +145,12 @@ public interface AwsDdbstreamComponentBuilderFactory {
         /**
          * Maximum number of records that will be fetched in each poll.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxResultsPerRequest the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder maxResultsPerRequest(
                 int maxResultsPerRequest) {
@@ -141,9 +160,12 @@ public interface AwsDdbstreamComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the DDBStreams client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder proxyHost(
                 java.lang.String proxyHost) {
@@ -153,9 +175,12 @@ public interface AwsDdbstreamComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the DDBStreams client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder proxyPort(
                 java.lang.Integer proxyPort) {
@@ -165,10 +190,14 @@ public interface AwsDdbstreamComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the DDBStreams client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: consumer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder proxyProtocol(
                 com.amazonaws.Protocol proxyProtocol) {
@@ -178,9 +207,12 @@ public interface AwsDdbstreamComponentBuilderFactory {
         /**
          * The region in which DDBStreams client needs to work.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -192,9 +224,12 @@ public interface AwsDdbstreamComponentBuilderFactory {
          * registry reference or a literal sequence number.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.ddbstream.SequenceNumberProvider</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.ddbstream.SequenceNumberProvider&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param sequenceNumberProvider the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder sequenceNumberProvider(
                 org.apache.camel.component.aws.ddbstream.SequenceNumberProvider sequenceNumberProvider) {
@@ -209,10 +244,13 @@ public interface AwsDdbstreamComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -222,9 +260,12 @@ public interface AwsDdbstreamComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder accessKey(
                 java.lang.String accessKey) {
@@ -234,9 +275,12 @@ public interface AwsDdbstreamComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsDdbstreamComponentBuilder secretKey(
                 java.lang.String secretKey) {

@@ -1266,6 +1266,7 @@ public interface KubernetesCustomResourcesEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesCustomResourcesEndpointBuilder kubernetesCustomResources(
                 String path) {
@@ -1288,6 +1289,7 @@ public interface KubernetesCustomResourcesEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesCustomResourcesEndpointBuilder kubernetesCustomResources(
                 String componentName,

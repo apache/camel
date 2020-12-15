@@ -37,6 +37,8 @@ public interface JcloudsComponentBuilderFactory {
      * Category: api,cloud,compute
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-jclouds
+     * 
+     * @return the dsl builder
      */
     static JcloudsComponentBuilder jclouds() {
         return new JcloudsComponentBuilderImpl();
@@ -53,10 +55,12 @@ public interface JcloudsComponentBuilderFactory {
          * blobstore.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.jclouds.blobstore.BlobStore&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;org.jclouds.blobstore.BlobStore&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param blobStores the value to set
+         * @return the dsl builder
          */
         default JcloudsComponentBuilder blobStores(
                 java.util.List<org.jclouds.blobstore.BlobStore> blobStores) {
@@ -68,10 +72,12 @@ public interface JcloudsComponentBuilderFactory {
          * compute.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.jclouds.compute.ComputeService&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;org.jclouds.compute.ComputeService&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param computeServices the value to set
+         * @return the dsl builder
          */
         default JcloudsComponentBuilder computeServices(
                 java.util.List<org.jclouds.compute.ComputeService> computeServices) {
@@ -87,10 +93,13 @@ public interface JcloudsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JcloudsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -108,10 +117,13 @@ public interface JcloudsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JcloudsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -126,10 +138,13 @@ public interface JcloudsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default JcloudsComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

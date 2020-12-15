@@ -782,6 +782,7 @@ public interface CMISEndpointBuilderFactory {
          * URL to the cmis repository
          * 
          * @param path cmsUrl
+         * @return the dsl builder
          */
         default CMISEndpointBuilder cmis(String path) {
             return CMISEndpointBuilderFactory.endpointBuilder("cmis", path);
@@ -803,6 +804,7 @@ public interface CMISEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cmsUrl
+         * @return the dsl builder
          */
         default CMISEndpointBuilder cmis(String componentName, String path) {
             return CMISEndpointBuilderFactory.endpointBuilder(componentName, path);

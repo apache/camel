@@ -563,6 +563,7 @@ public interface NitriteEndpointBuilderFactory {
          * Path to database file. Will be created if not exists.
          * 
          * @param path database
+         * @return the dsl builder
          */
         default NitriteEndpointBuilder nitrite(String path) {
             return NitriteEndpointBuilderFactory.endpointBuilder("nitrite", path);
@@ -583,6 +584,7 @@ public interface NitriteEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path database
+         * @return the dsl builder
          */
         default NitriteEndpointBuilder nitrite(String componentName, String path) {
             return NitriteEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -285,6 +285,7 @@ public interface MetricsEndpointBuilderFactory {
          * Name of metrics
          * 
          * @param path metricsType:metricsName
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder metrics(String path) {
             return MetricsEndpointBuilderFactory.endpointBuilder("metrics", path);
@@ -311,6 +312,7 @@ public interface MetricsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path metricsType:metricsName
+         * @return the dsl builder
          */
         default MetricsEndpointBuilder metrics(String componentName, String path) {
             return MetricsEndpointBuilderFactory.endpointBuilder(componentName, path);

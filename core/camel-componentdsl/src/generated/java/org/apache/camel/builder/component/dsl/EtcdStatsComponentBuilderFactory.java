@@ -37,6 +37,8 @@ public interface EtcdStatsComponentBuilderFactory {
      * Category: clustering,database
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-etcd
+     * 
+     * @return the dsl builder
      */
     static EtcdStatsComponentBuilder etcdStats() {
         return new EtcdStatsComponentBuilderImpl();
@@ -52,9 +54,12 @@ public interface EtcdStatsComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.etcd.EtcdConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.etcd.EtcdConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder configuration(
                 org.apache.camel.component.etcd.EtcdConfiguration configuration) {
@@ -64,10 +69,13 @@ public interface EtcdStatsComponentBuilderFactory {
         /**
          * To apply an action recursively.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -76,10 +84,13 @@ public interface EtcdStatsComponentBuilderFactory {
         /**
          * The path to look for for service discovery.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /services/
          * Group: common
+         * 
+         * @param servicePath the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder servicePath(
                 java.lang.String servicePath) {
@@ -89,9 +100,12 @@ public interface EtcdStatsComponentBuilderFactory {
         /**
          * To set the maximum time an action could take to complete.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder timeout(java.lang.Long timeout) {
             doSetProperty("timeout", timeout);
@@ -100,10 +114,13 @@ public interface EtcdStatsComponentBuilderFactory {
         /**
          * To set the URIs the client connects.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://localhost:2379,http://localhost:4001
          * Group: common
+         * 
+         * @param uris the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder uris(java.lang.String uris) {
             doSetProperty("uris", uris);
@@ -118,10 +135,13 @@ public interface EtcdStatsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -131,10 +151,13 @@ public interface EtcdStatsComponentBuilderFactory {
         /**
          * To send an empty message in case of timeout watching for a key.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyExchangeOnTimeout the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder sendEmptyExchangeOnTimeout(
                 boolean sendEmptyExchangeOnTimeout) {
@@ -144,10 +167,13 @@ public interface EtcdStatsComponentBuilderFactory {
         /**
          * The index to watch from.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer (advanced)
+         * 
+         * @param fromIndex the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder fromIndex(long fromIndex) {
             doSetProperty("fromIndex", fromIndex);
@@ -164,10 +190,13 @@ public interface EtcdStatsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -177,9 +206,12 @@ public interface EtcdStatsComponentBuilderFactory {
         /**
          * To set the lifespan of a key in milliseconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder timeToLive(
                 java.lang.Integer timeToLive) {
@@ -194,10 +226,13 @@ public interface EtcdStatsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -207,9 +242,12 @@ public interface EtcdStatsComponentBuilderFactory {
         /**
          * The password to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -219,9 +257,12 @@ public interface EtcdStatsComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -231,10 +272,13 @@ public interface EtcdStatsComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -244,9 +288,12 @@ public interface EtcdStatsComponentBuilderFactory {
         /**
          * The user name to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default EtcdStatsComponentBuilder userName(java.lang.String userName) {
             doSetProperty("userName", userName);

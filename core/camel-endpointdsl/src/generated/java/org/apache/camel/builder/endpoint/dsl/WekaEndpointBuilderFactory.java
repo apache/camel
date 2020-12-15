@@ -271,6 +271,7 @@ public interface WekaEndpointBuilderFactory {
          * write, push, pop, version
          * 
          * @param path command
+         * @return the dsl builder
          */
         default WekaEndpointBuilder weka(String path) {
             return WekaEndpointBuilderFactory.endpointBuilder("weka", path);
@@ -293,6 +294,7 @@ public interface WekaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path command
+         * @return the dsl builder
          */
         default WekaEndpointBuilder weka(String componentName, String path) {
             return WekaEndpointBuilderFactory.endpointBuilder(componentName, path);

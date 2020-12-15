@@ -39,6 +39,8 @@ public interface ServiceComponentBuilderFactory {
      * Category: cloud
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-service
+     * 
+     * @return the dsl builder
      */
     static ServiceComponentBuilder service() {
         return new ServiceComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface ServiceComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ServiceComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -77,10 +82,13 @@ public interface ServiceComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default ServiceComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -90,10 +98,13 @@ public interface ServiceComponentBuilderFactory {
         /**
          * Inject the service to use.
          * 
-         * The option is a: <code>org.apache.camel.cloud.ServiceRegistry</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.cloud.ServiceRegistry&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param service the value to set
+         * @return the dsl builder
          */
         default ServiceComponentBuilder service(
                 org.apache.camel.cloud.ServiceRegistry service) {
@@ -105,9 +116,12 @@ public interface ServiceComponentBuilderFactory {
          * use.
          * 
          * The option is a:
-         * <code>org.apache.camel.cloud.ServiceRegistry.Selector</code> type.
+         * &lt;code&gt;org.apache.camel.cloud.ServiceRegistry.Selector&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param serviceSelector the value to set
+         * @return the dsl builder
          */
         default ServiceComponentBuilder serviceSelector(
                 org.apache.camel.cloud.ServiceRegistry.Selector serviceSelector) {

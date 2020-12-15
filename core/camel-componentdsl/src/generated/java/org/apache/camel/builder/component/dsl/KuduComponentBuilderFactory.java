@@ -39,6 +39,8 @@ public interface KuduComponentBuilderFactory {
      * Category: database,iot,cloud
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-kudu
+     * 
+     * @return the dsl builder
      */
     static KuduComponentBuilder kudu() {
         return new KuduComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface KuduComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KuduComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -76,10 +81,13 @@ public interface KuduComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default KuduComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);

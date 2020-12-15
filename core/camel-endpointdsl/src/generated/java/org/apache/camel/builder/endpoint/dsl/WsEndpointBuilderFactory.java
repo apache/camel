@@ -1383,6 +1383,7 @@ public interface WsEndpointBuilderFactory {
          * The URI to use such as http://hostname:port/path
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default WsEndpointBuilder ahcWs(String path) {
             return WsEndpointBuilderFactory.endpointBuilder("ahc-ws", path);
@@ -1404,6 +1405,7 @@ public interface WsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path httpUri
+         * @return the dsl builder
          */
         default WsEndpointBuilder ahcWs(String componentName, String path) {
             return WsEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1423,6 +1425,7 @@ public interface WsEndpointBuilderFactory {
          * The URI to use such as http://hostname:port/path
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default WsEndpointBuilder ahcWss(String path) {
             return WsEndpointBuilderFactory.endpointBuilder("ahc-wss", path);

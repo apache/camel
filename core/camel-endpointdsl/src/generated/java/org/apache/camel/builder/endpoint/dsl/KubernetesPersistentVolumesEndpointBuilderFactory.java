@@ -411,6 +411,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
                 String path) {
@@ -433,6 +434,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder kubernetesPersistentVolumes(
                 String componentName,

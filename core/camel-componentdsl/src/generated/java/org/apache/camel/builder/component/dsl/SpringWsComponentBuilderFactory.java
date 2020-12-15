@@ -37,6 +37,8 @@ public interface SpringWsComponentBuilderFactory {
      * Category: spring,soap,webservice
      * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-spring-ws
+     * 
+     * @return the dsl builder
      */
     static SpringWsComponentBuilder springWs() {
         return new SpringWsComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface SpringWsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SpringWsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface SpringWsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SpringWsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -96,10 +104,13 @@ public interface SpringWsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SpringWsComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -109,10 +120,13 @@ public interface SpringWsComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default SpringWsComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

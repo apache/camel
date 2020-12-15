@@ -531,6 +531,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * Name of the stream channel used by the endpoint to exchange messages.
          * 
          * @param path stream
+         * @return the dsl builder
          */
         default ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
             return ReactiveStreamsEndpointBuilderFactory.endpointBuilder("reactive-streams", path);
@@ -552,6 +553,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path stream
+         * @return the dsl builder
          */
         default ReactiveStreamsEndpointBuilder reactiveStreams(
                 String componentName,

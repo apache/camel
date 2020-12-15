@@ -37,6 +37,8 @@ public interface TimerComponentBuilderFactory {
      * Category: core,scheduling
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-timer
+     * 
+     * @return the dsl builder
      */
     static TimerComponentBuilder timer() {
         return new TimerComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface TimerComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default TimerComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -73,10 +78,13 @@ public interface TimerComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default TimerComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);

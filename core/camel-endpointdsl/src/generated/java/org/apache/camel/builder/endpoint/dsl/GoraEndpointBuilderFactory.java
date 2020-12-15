@@ -806,6 +806,7 @@ public interface GoraEndpointBuilderFactory {
          * Instance name
          * 
          * @param path name
+         * @return the dsl builder
          */
         default GoraEndpointBuilder gora(String path) {
             return GoraEndpointBuilderFactory.endpointBuilder("gora", path);
@@ -826,6 +827,7 @@ public interface GoraEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default GoraEndpointBuilder gora(String componentName, String path) {
             return GoraEndpointBuilderFactory.endpointBuilder(componentName, path);

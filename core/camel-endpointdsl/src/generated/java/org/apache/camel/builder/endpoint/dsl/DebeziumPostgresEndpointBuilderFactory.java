@@ -1772,6 +1772,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * same name will fail.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder debeziumPostgres(String path) {
             return DebeziumPostgresEndpointBuilderFactory.endpointBuilder("debezium-postgres", path);
@@ -1793,6 +1794,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumPostgresEndpointBuilder debeziumPostgres(
                 String componentName,

@@ -37,6 +37,8 @@ public interface MicroprofileMetricsComponentBuilderFactory {
      * Category: monitoring
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-microprofile-metrics
+     * 
+     * @return the dsl builder
      */
     static MicroprofileMetricsComponentBuilder microprofileMetrics() {
         return new MicroprofileMetricsComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface MicroprofileMetricsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MicroprofileMetricsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -77,10 +82,13 @@ public interface MicroprofileMetricsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default MicroprofileMetricsComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -91,9 +99,12 @@ public interface MicroprofileMetricsComponentBuilderFactory {
          * Use a custom MetricRegistry.
          * 
          * The option is a:
-         * <code>org.eclipse.microprofile.metrics.MetricRegistry</code> type.
+         * &lt;code&gt;org.eclipse.microprofile.metrics.MetricRegistry&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param metricRegistry the value to set
+         * @return the dsl builder
          */
         default MicroprofileMetricsComponentBuilder metricRegistry(
                 org.eclipse.microprofile.metrics.MetricRegistry metricRegistry) {

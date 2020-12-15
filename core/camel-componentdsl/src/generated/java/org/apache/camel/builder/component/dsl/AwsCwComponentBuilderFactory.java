@@ -37,6 +37,8 @@ public interface AwsCwComponentBuilderFactory {
      * Category: cloud,monitoring
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-aws-cw
+     * 
+     * @return the dsl builder
      */
     static AwsCwComponentBuilder awsCw() {
         return new AwsCwComponentBuilderImpl();
@@ -50,9 +52,12 @@ public interface AwsCwComponentBuilderFactory {
          * To use the AmazonCloudWatch as the client.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.cloudwatch.AmazonCloudWatch</code> type.
+         * &lt;code&gt;com.amazonaws.services.cloudwatch.AmazonCloudWatch&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonCwClient the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder amazonCwClient(
                 com.amazonaws.services.cloudwatch.AmazonCloudWatch amazonCwClient) {
@@ -64,10 +69,13 @@ public interface AwsCwComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -78,9 +86,12 @@ public interface AwsCwComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.cw.CwConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.cw.CwConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder configuration(
                 org.apache.camel.component.aws.cw.CwConfiguration configuration) {
@@ -98,10 +109,13 @@ public interface AwsCwComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -111,9 +125,12 @@ public interface AwsCwComponentBuilderFactory {
         /**
          * The metric name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param name the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder name(java.lang.String name) {
             doSetProperty("name", name);
@@ -122,9 +139,12 @@ public interface AwsCwComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the CW client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -133,9 +153,12 @@ public interface AwsCwComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the CW client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -144,10 +167,14 @@ public interface AwsCwComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the CW client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder proxyProtocol(
                 com.amazonaws.Protocol proxyProtocol) {
@@ -160,9 +187,12 @@ public interface AwsCwComponentBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -171,9 +201,12 @@ public interface AwsCwComponentBuilderFactory {
         /**
          * The metric timestamp.
          * 
-         * The option is a: <code>java.util.Date</code> type.
+         * The option is a: &lt;code&gt;java.util.Date&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timestamp the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder timestamp(java.util.Date timestamp) {
             doSetProperty("timestamp", timestamp);
@@ -182,9 +215,12 @@ public interface AwsCwComponentBuilderFactory {
         /**
          * The metric unit.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param unit the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder unit(java.lang.String unit) {
             doSetProperty("unit", unit);
@@ -193,9 +229,12 @@ public interface AwsCwComponentBuilderFactory {
         /**
          * The metric value.
          * 
-         * The option is a: <code>java.lang.Double</code> type.
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder value(java.lang.Double value) {
             doSetProperty("value", value);
@@ -209,10 +248,13 @@ public interface AwsCwComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -221,9 +263,12 @@ public interface AwsCwComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -232,9 +277,12 @@ public interface AwsCwComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsCwComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);

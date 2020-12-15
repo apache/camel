@@ -1805,6 +1805,7 @@ public interface BlobEndpointBuilderFactory {
          * The blob container name
          * 
          * @param path accountName/containerName
+         * @return the dsl builder
          */
         default BlobEndpointBuilder azureStorageBlob(String path) {
             return BlobEndpointBuilderFactory.endpointBuilder("azure-storage-blob", path);
@@ -1830,6 +1831,7 @@ public interface BlobEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path accountName/containerName
+         * @return the dsl builder
          */
         default BlobEndpointBuilder azureStorageBlob(
                 String componentName,

@@ -1464,6 +1464,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * Name of the stream
          * 
          * @param path streamName
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder aws2Kinesis(String path) {
             return Kinesis2EndpointBuilderFactory.endpointBuilder("aws2-kinesis", path);
@@ -1485,6 +1486,7 @@ public interface Kinesis2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path streamName
+         * @return the dsl builder
          */
         default Kinesis2EndpointBuilder aws2Kinesis(
                 String componentName,

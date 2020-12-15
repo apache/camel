@@ -238,6 +238,7 @@ public interface NovaEndpointBuilderFactory {
          * OpenStack host url
          * 
          * @param path host
+         * @return the dsl builder
          */
         default NovaEndpointBuilder openstackNova(String path) {
             return NovaEndpointBuilderFactory.endpointBuilder("openstack-nova", path);
@@ -258,6 +259,7 @@ public interface NovaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host
+         * @return the dsl builder
          */
         default NovaEndpointBuilder openstackNova(
                 String componentName,

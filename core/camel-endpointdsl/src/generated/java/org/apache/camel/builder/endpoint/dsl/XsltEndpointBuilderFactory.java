@@ -478,6 +478,7 @@ public interface XsltEndpointBuilderFactory {
          * bean:myBean.myMethod
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XsltEndpointBuilder xslt(String path) {
             return XsltEndpointBuilderFactory.endpointBuilder("xslt", path);
@@ -504,6 +505,7 @@ public interface XsltEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XsltEndpointBuilder xslt(String componentName, String path) {
             return XsltEndpointBuilderFactory.endpointBuilder(componentName, path);

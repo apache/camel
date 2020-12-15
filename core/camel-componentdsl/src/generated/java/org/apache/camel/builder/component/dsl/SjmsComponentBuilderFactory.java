@@ -39,6 +39,8 @@ public interface SjmsComponentBuilderFactory {
      * Category: messaging
      * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-sjms
+     * 
+     * @return the dsl builder
      */
     static SjmsComponentBuilder sjms() {
         return new SjmsComponentBuilderImpl();
@@ -52,10 +54,13 @@ public interface SjmsComponentBuilderFactory {
          * The maximum number of connections available to endpoints started
          * under this component.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param connectionCount the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder connectionCount(
                 java.lang.Integer connectionCount) {
@@ -66,9 +71,13 @@ public interface SjmsComponentBuilderFactory {
          * A ConnectionFactory is required to enable the SjmsComponent. It can
          * be set directly or set set as part of a ConnectionResource.
          * 
-         * The option is a: <code>javax.jms.ConnectionFactory</code> type.
+         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder connectionFactory(
                 javax.jms.ConnectionFactory connectionFactory) {
@@ -84,10 +93,13 @@ public interface SjmsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -97,10 +109,13 @@ public interface SjmsComponentBuilderFactory {
         /**
          * Backoff in millis on consumer pool reconnection attempts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: consumer
+         * 
+         * @param reconnectBackOff the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder reconnectBackOff(long reconnectBackOff) {
             doSetProperty("reconnectBackOff", reconnectBackOff);
@@ -109,10 +124,13 @@ public interface SjmsComponentBuilderFactory {
         /**
          * Try to apply reconnection logic on consumer pool.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param reconnectOnError the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder reconnectOnError(boolean reconnectOnError) {
             doSetProperty("reconnectOnError", reconnectOnError);
@@ -129,10 +147,13 @@ public interface SjmsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -146,10 +167,13 @@ public interface SjmsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -160,9 +184,12 @@ public interface SjmsComponentBuilderFactory {
          * the default
          * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionClientId the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder connectionClientId(
                 java.lang.String connectionClientId) {
@@ -174,10 +201,13 @@ public interface SjmsComponentBuilderFactory {
          * the pool is exhausted when using the default
          * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param connectionMaxWait the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder connectionMaxWait(long connectionMaxWait) {
             doSetProperty("connectionMaxWait", connectionMaxWait);
@@ -189,10 +219,12 @@ public interface SjmsComponentBuilderFactory {
          * Connection Resource Management for further details.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.sjms.jms.ConnectionResource</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionResource the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder connectionResource(
                 org.apache.camel.component.sjms.jms.ConnectionResource connectionResource) {
@@ -205,10 +237,13 @@ public interface SjmsComponentBuilderFactory {
          * should each javax.jms.Connection be tested (calling start) before
          * returned from the pool.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param connectionTestOnBorrow the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder connectionTestOnBorrow(
                 boolean connectionTestOnBorrow) {
@@ -219,9 +254,12 @@ public interface SjmsComponentBuilderFactory {
          * To use a custom DestinationCreationStrategy.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.sjms.jms.DestinationCreationStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.sjms.jms.DestinationCreationStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param destinationCreationStrategy the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder destinationCreationStrategy(
                 org.apache.camel.component.sjms.jms.DestinationCreationStrategy destinationCreationStrategy) {
@@ -239,10 +277,12 @@ public interface SjmsComponentBuilderFactory {
          * using the # notation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param jmsKeyFormatStrategy the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder jmsKeyFormatStrategy(
                 org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
@@ -255,9 +295,12 @@ public interface SjmsComponentBuilderFactory {
          * sending a JMS message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.sjms.jms.MessageCreatedStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.sjms.jms.MessageCreatedStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageCreatedStrategy the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder messageCreatedStrategy(
                 org.apache.camel.component.sjms.jms.MessageCreatedStrategy messageCreatedStrategy) {
@@ -268,9 +311,12 @@ public interface SjmsComponentBuilderFactory {
          * To use a custom TimedTaskManager.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.sjms.taskmanager.TimedTaskManager</code> type.
+         * &lt;code&gt;org.apache.camel.component.sjms.taskmanager.TimedTaskManager&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param timedTaskManager the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder timedTaskManager(
                 org.apache.camel.component.sjms.taskmanager.TimedTaskManager timedTaskManager) {
@@ -282,9 +328,13 @@ public interface SjmsComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -296,9 +346,12 @@ public interface SjmsComponentBuilderFactory {
          * default
          * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param connectionPassword the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder connectionPassword(
                 java.lang.String connectionPassword) {
@@ -310,9 +363,12 @@ public interface SjmsComponentBuilderFactory {
          * default
          * org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param connectionUsername the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder connectionUsername(
                 java.lang.String connectionUsername) {
@@ -324,9 +380,12 @@ public interface SjmsComponentBuilderFactory {
          * implementations out of the box, default and batch.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.sjms.TransactionCommitStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
          * 
          * Group: transaction
+         * 
+         * @param transactionCommitStrategy the value to set
+         * @return the dsl builder
          */
         default SjmsComponentBuilder transactionCommitStrategy(
                 org.apache.camel.component.sjms.TransactionCommitStrategy transactionCommitStrategy) {

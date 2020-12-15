@@ -37,6 +37,8 @@ public interface SplunkComponentBuilderFactory {
      * Category: iot,monitoring
      * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-splunk
+     * 
+     * @return the dsl builder
      */
     static SplunkComponentBuilder splunk() {
         return new SplunkComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface SplunkComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SplunkComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface SplunkComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SplunkComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -96,10 +104,13 @@ public interface SplunkComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SplunkComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -109,9 +120,12 @@ public interface SplunkComponentBuilderFactory {
          * To use the SplunkConfigurationFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.splunk.SplunkConfigurationFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.splunk.SplunkConfigurationFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param splunkConfigurationFactory the value to set
+         * @return the dsl builder
          */
         default SplunkComponentBuilder splunkConfigurationFactory(
                 org.apache.camel.component.splunk.SplunkConfigurationFactory splunkConfigurationFactory) {

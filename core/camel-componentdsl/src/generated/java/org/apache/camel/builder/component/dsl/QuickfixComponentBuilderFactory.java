@@ -39,6 +39,8 @@ public interface QuickfixComponentBuilderFactory {
      * Category: messaging
      * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-quickfix
+     * 
+     * @return the dsl builder
      */
     static QuickfixComponentBuilder quickfix() {
         return new QuickfixComponentBuilderImpl();
@@ -54,10 +56,13 @@ public interface QuickfixComponentBuilderFactory {
          * If set to true, the engines will be created and started when needed
          * (when first message is send).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param lazyCreateEngines the value to set
+         * @return the dsl builder
          */
         default QuickfixComponentBuilder lazyCreateEngines(
                 boolean lazyCreateEngines) {
@@ -73,10 +78,13 @@ public interface QuickfixComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default QuickfixComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -94,10 +102,13 @@ public interface QuickfixComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default QuickfixComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -112,10 +123,13 @@ public interface QuickfixComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default QuickfixComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -125,9 +139,12 @@ public interface QuickfixComponentBuilderFactory {
         /**
          * To use the given LogFactory.
          * 
-         * The option is a: <code>quickfix.LogFactory</code> type.
+         * The option is a: &lt;code&gt;quickfix.LogFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param logFactory the value to set
+         * @return the dsl builder
          */
         default QuickfixComponentBuilder logFactory(
                 quickfix.LogFactory logFactory) {
@@ -137,9 +154,13 @@ public interface QuickfixComponentBuilderFactory {
         /**
          * To use the given MessageFactory.
          * 
-         * The option is a: <code>quickfix.MessageFactory</code> type.
+         * The option is a: &lt;code&gt;quickfix.MessageFactory&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param messageFactory the value to set
+         * @return the dsl builder
          */
         default QuickfixComponentBuilder messageFactory(
                 quickfix.MessageFactory messageFactory) {
@@ -149,9 +170,13 @@ public interface QuickfixComponentBuilderFactory {
         /**
          * To use the given MessageStoreFactory.
          * 
-         * The option is a: <code>quickfix.MessageStoreFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;quickfix.MessageStoreFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageStoreFactory the value to set
+         * @return the dsl builder
          */
         default QuickfixComponentBuilder messageStoreFactory(
                 quickfix.MessageStoreFactory messageStoreFactory) {

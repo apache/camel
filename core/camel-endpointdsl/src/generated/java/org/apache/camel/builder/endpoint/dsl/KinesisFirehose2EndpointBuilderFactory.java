@@ -370,6 +370,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * Name of the stream
          * 
          * @param path streamName
+         * @return the dsl builder
          */
         default KinesisFirehose2EndpointBuilder aws2KinesisFirehose(String path) {
             return KinesisFirehose2EndpointBuilderFactory.endpointBuilder("aws2-kinesis-firehose", path);
@@ -391,6 +392,7 @@ public interface KinesisFirehose2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path streamName
+         * @return the dsl builder
          */
         default KinesisFirehose2EndpointBuilder aws2KinesisFirehose(
                 String componentName,

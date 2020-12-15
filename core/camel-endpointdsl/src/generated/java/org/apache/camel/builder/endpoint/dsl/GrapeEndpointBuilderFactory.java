@@ -134,6 +134,7 @@ public interface GrapeEndpointBuilderFactory {
          * empty.
          * 
          * @param path defaultCoordinates
+         * @return the dsl builder
          */
         default GrapeEndpointBuilder grape(String path) {
             return GrapeEndpointBuilderFactory.endpointBuilder("grape", path);
@@ -156,6 +157,7 @@ public interface GrapeEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path defaultCoordinates
+         * @return the dsl builder
          */
         default GrapeEndpointBuilder grape(String componentName, String path) {
             return GrapeEndpointBuilderFactory.endpointBuilder(componentName, path);

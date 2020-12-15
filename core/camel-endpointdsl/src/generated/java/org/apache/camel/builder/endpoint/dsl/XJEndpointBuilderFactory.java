@@ -601,6 +601,7 @@ public interface XJEndpointBuilderFactory {
          * bean:myBean.myMethod
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XJEndpointBuilder xj(String path) {
             return XJEndpointBuilderFactory.endpointBuilder("xj", path);
@@ -627,6 +628,7 @@ public interface XJEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XJEndpointBuilder xj(String componentName, String path) {
             return XJEndpointBuilderFactory.endpointBuilder(componentName, path);

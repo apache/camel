@@ -366,6 +366,7 @@ public interface Ses2EndpointBuilderFactory {
          * The sender's email address.
          * 
          * @param path from
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder aws2Ses(String path) {
             return Ses2EndpointBuilderFactory.endpointBuilder("aws2-ses", path);
@@ -386,6 +387,7 @@ public interface Ses2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path from
+         * @return the dsl builder
          */
         default Ses2EndpointBuilder aws2Ses(String componentName, String path) {
             return Ses2EndpointBuilderFactory.endpointBuilder(componentName, path);

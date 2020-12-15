@@ -37,6 +37,8 @@ public interface RestEndpointComponentBuilderFactory {
      * Category: core,rest
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-rest
+     * 
+     * @return the dsl builder
      */
     static RestEndpointComponentBuilder restEndpoint() {
         return new RestEndpointComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface RestEndpointComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RestEndpointComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -75,9 +80,12 @@ public interface RestEndpointComponentBuilderFactory {
          * org.apache.camel.spi.RestConsumerFactory is registered in the
          * registry. If either one is found, then that is being used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param consumerComponentName the value to set
+         * @return the dsl builder
          */
         default RestEndpointComponentBuilder consumerComponentName(
                 java.lang.String consumerComponentName) {
@@ -88,9 +96,12 @@ public interface RestEndpointComponentBuilderFactory {
          * The swagger api doc resource to use. The resource is loaded from
          * classpath by default and must be in JSON format.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param apiDoc the value to set
+         * @return the dsl builder
          */
         default RestEndpointComponentBuilder apiDoc(java.lang.String apiDoc) {
             doSetProperty("apiDoc", apiDoc);
@@ -104,9 +115,12 @@ public interface RestEndpointComponentBuilderFactory {
          * is registered in the registry. If either one is found, then that is
          * being used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param componentName the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default RestEndpointComponentBuilder componentName(
@@ -118,9 +132,12 @@ public interface RestEndpointComponentBuilderFactory {
          * Host and port of HTTP service to use (override host in swagger
          * schema).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default RestEndpointComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
@@ -137,10 +154,13 @@ public interface RestEndpointComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RestEndpointComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -155,9 +175,12 @@ public interface RestEndpointComponentBuilderFactory {
          * is registered in the registry. If either one is found, then that is
          * being used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param producerComponentName the value to set
+         * @return the dsl builder
          */
         default RestEndpointComponentBuilder producerComponentName(
                 java.lang.String producerComponentName) {
@@ -172,10 +195,13 @@ public interface RestEndpointComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default RestEndpointComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

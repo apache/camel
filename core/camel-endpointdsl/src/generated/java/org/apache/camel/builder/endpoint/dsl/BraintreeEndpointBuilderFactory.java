@@ -331,6 +331,7 @@ public interface BraintreeEndpointBuilderFactory {
          * verify, voidTransaction
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder braintree(String path) {
             return BraintreeEndpointBuilderFactory.endpointBuilder("braintree", path);
@@ -367,6 +368,7 @@ public interface BraintreeEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder braintree(
                 String componentName,

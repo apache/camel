@@ -1342,6 +1342,7 @@ public interface CassandraEndpointBuilderFactory {
          * Keyspace to use
          * 
          * @param path beanRef:hosts:port/keyspace
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder cql(String path) {
             return CassandraEndpointBuilderFactory.endpointBuilder("cql", path);
@@ -1373,6 +1374,7 @@ public interface CassandraEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path beanRef:hosts:port/keyspace
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder cql(String componentName, String path) {
             return CassandraEndpointBuilderFactory.endpointBuilder(componentName, path);

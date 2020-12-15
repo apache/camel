@@ -5597,6 +5597,7 @@ public interface JmsEndpointBuilderFactory {
          * Name of the queue or topic to use as destination
          * 
          * @param path destinationType:destinationName
+         * @return the dsl builder
          */
         default JmsEndpointBuilder jms(String path) {
             return JmsEndpointBuilderFactory.endpointBuilder("jms", path);
@@ -5623,6 +5624,7 @@ public interface JmsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path destinationType:destinationName
+         * @return the dsl builder
          */
         default JmsEndpointBuilder jms(String componentName, String path) {
             return JmsEndpointBuilderFactory.endpointBuilder(componentName, path);

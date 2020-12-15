@@ -197,6 +197,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * The consumer endpoint to use in master/slave mode
          * 
          * @param path groupName:consumerEndpointUri
+         * @return the dsl builder
          */
         default ZooKeeperMasterEndpointBuilder zookeeperMaster(String path) {
             return ZooKeeperMasterEndpointBuilderFactory.endpointBuilder("zookeeper-master", path);
@@ -221,6 +222,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path groupName:consumerEndpointUri
+         * @return the dsl builder
          */
         default ZooKeeperMasterEndpointBuilder zookeeperMaster(
                 String componentName,

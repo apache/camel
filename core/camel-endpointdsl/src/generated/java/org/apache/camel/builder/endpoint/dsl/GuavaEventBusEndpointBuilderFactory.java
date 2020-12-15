@@ -544,6 +544,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * To lookup the Guava EventBus from the registry with the given name
          * 
          * @param path eventBusRef
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointBuilder guavaEventbus(String path) {
             return GuavaEventBusEndpointBuilderFactory.endpointBuilder("guava-eventbus", path);
@@ -564,6 +565,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path eventBusRef
+         * @return the dsl builder
          */
         default GuavaEventBusEndpointBuilder guavaEventbus(
                 String componentName,

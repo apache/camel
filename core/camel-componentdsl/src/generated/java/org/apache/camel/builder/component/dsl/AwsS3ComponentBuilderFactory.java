@@ -37,6 +37,8 @@ public interface AwsS3ComponentBuilderFactory {
      * Category: cloud,file
      * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-aws-s3
+     * 
+     * @return the dsl builder
      */
     static AwsS3ComponentBuilder awsS3() {
         return new AwsS3ComponentBuilderImpl();
@@ -49,10 +51,13 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Reference to a com.amazonaws.services.s3.AmazonS3 in the registry.
          * 
-         * The option is a: <code>com.amazonaws.services.s3.AmazonS3</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.s3.AmazonS3&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param amazonS3Client the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder amazonS3Client(
                 com.amazonaws.services.s3.AmazonS3 amazonS3Client) {
@@ -62,10 +67,13 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Setting the autocreation of the bucket.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoCreateBucket the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder autoCreateBucket(boolean autoCreateBucket) {
             doSetProperty("autoCreateBucket", autoCreateBucket);
@@ -76,10 +84,13 @@ public interface AwsS3ComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -90,9 +101,12 @@ public interface AwsS3ComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.s3.S3Configuration</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.s3.S3Configuration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder configuration(
                 org.apache.camel.component.aws.s3.S3Configuration configuration) {
@@ -103,9 +117,12 @@ public interface AwsS3ComponentBuilderFactory {
          * Amazon AWS Endpoint Configuration.
          * 
          * The option is a:
-         * <code>com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration</code> type.
+         * &lt;code&gt;com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param endpointConfiguration the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder endpointConfiguration(
                 com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration endpointConfiguration) {
@@ -115,10 +132,13 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Whether or not the S3 client should use path style access.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param pathStyleAccess the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder pathStyleAccess(boolean pathStyleAccess) {
             doSetProperty("pathStyleAccess", pathStyleAccess);
@@ -128,9 +148,12 @@ public interface AwsS3ComponentBuilderFactory {
          * The policy for this queue to set in the
          * com.amazonaws.services.s3.AmazonS3#setBucketPolicy() method.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param policy the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder policy(java.lang.String policy) {
             doSetProperty("policy", policy);
@@ -139,9 +162,12 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the S3 client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -150,9 +176,12 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Specify a proxy port to be used inside the client definition.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -161,10 +190,14 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the S3 client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder proxyProtocol(
                 com.amazonaws.Protocol proxyProtocol) {
@@ -177,9 +210,12 @@ public interface AwsS3ComponentBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -189,10 +225,13 @@ public interface AwsS3ComponentBuilderFactory {
          * Set whether the S3 client should expect to load credentials on an EC2
          * instance or to expect static credentials to be passed in.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param useIAMCredentials the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder useIAMCredentials(
                 boolean useIAMCredentials) {
@@ -204,10 +243,12 @@ public interface AwsS3ComponentBuilderFactory {
          * client usage.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.s3.model.EncryptionMaterials</code>
-         * type.
+         * &lt;code&gt;com.amazonaws.services.s3.model.EncryptionMaterials&lt;/code&gt; type.
          * 
          * Group: common (advanced)
+         * 
+         * @param encryptionMaterials the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder encryptionMaterials(
                 com.amazonaws.services.s3.model.EncryptionMaterials encryptionMaterials) {
@@ -217,10 +258,13 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Define if encryption must be used or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param useEncryption the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder useEncryption(boolean useEncryption) {
             doSetProperty("useEncryption", useEncryption);
@@ -235,10 +279,13 @@ public interface AwsS3ComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -254,10 +301,13 @@ public interface AwsS3ComponentBuilderFactory {
          * out duplicates. You can filter using the S3Constants#BUCKET_NAME and
          * S3Constants#KEY headers, or only the S3Constants#KEY header.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param deleteAfterRead the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder deleteAfterRead(boolean deleteAfterRead) {
             doSetProperty("deleteAfterRead", deleteAfterRead);
@@ -268,9 +318,12 @@ public interface AwsS3ComponentBuilderFactory {
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder delimiter(java.lang.String delimiter) {
             doSetProperty("delimiter", delimiter);
@@ -279,9 +332,12 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * To get the object from the bucket with the given file name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder fileName(java.lang.String fileName) {
             doSetProperty("fileName", fileName);
@@ -296,10 +352,13 @@ public interface AwsS3ComponentBuilderFactory {
          * the S3Object stream. Setting autocloseBody to true, will close the
          * S3Object stream automatically.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param includeBody the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder includeBody(boolean includeBody) {
             doSetProperty("includeBody", includeBody);
@@ -310,9 +369,12 @@ public interface AwsS3ComponentBuilderFactory {
          * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
          * objects we are interested in.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder prefix(java.lang.String prefix) {
             doSetProperty("prefix", prefix);
@@ -326,10 +388,13 @@ public interface AwsS3ComponentBuilderFactory {
          * caller to close the S3Object stream. Setting autocloseBody to true,
          * will close the S3Object stream automatically.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param autocloseBody the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder autocloseBody(boolean autocloseBody) {
             doSetProperty("autocloseBody", autocloseBody);
@@ -338,10 +403,13 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Delete file object after the S3 file has been uploaded.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param deleteAfterWrite the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder deleteAfterWrite(boolean deleteAfterWrite) {
             doSetProperty("deleteAfterWrite", deleteAfterWrite);
@@ -351,9 +419,12 @@ public interface AwsS3ComponentBuilderFactory {
          * Setting the key name for an element in the bucket through endpoint
          * parameter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keyName the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder keyName(java.lang.String keyName) {
             doSetProperty("keyName", keyName);
@@ -370,10 +441,13 @@ public interface AwsS3ComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -384,10 +458,13 @@ public interface AwsS3ComponentBuilderFactory {
          * If it is true, camel will upload the file with multi part format, the
          * part size is decided by the option of partSize.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param multiPartUpload the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder multiPartUpload(boolean multiPartUpload) {
             doSetProperty("multiPartUpload", multiPartUpload);
@@ -397,9 +474,12 @@ public interface AwsS3ComponentBuilderFactory {
          * The operation to do in case the user don't want to do only an upload.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.s3.S3Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.s3.S3Operations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder operation(
                 org.apache.camel.component.aws.s3.S3Operations operation) {
@@ -410,10 +490,13 @@ public interface AwsS3ComponentBuilderFactory {
          * Setup the partSize which is used in multi part upload, the default
          * size is 25M.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 26214400
          * Group: producer
+         * 
+         * @param partSize the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder partSize(long partSize) {
             doSetProperty("partSize", partSize);
@@ -423,9 +506,12 @@ public interface AwsS3ComponentBuilderFactory {
          * Sets the server-side encryption algorithm when encrypting the object
          * using AWS-managed keys. For example use AES256.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param serverSideEncryption the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder serverSideEncryption(
                 java.lang.String serverSideEncryption) {
@@ -436,9 +522,12 @@ public interface AwsS3ComponentBuilderFactory {
          * The storage class to set in the
          * com.amazonaws.services.s3.model.PutObjectRequest request.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param storageClass the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder storageClass(java.lang.String storageClass) {
             doSetProperty("storageClass", storageClass);
@@ -447,9 +536,12 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Define the id of KMS key to use in case KMS is enabled.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param awsKMSKeyId the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder awsKMSKeyId(java.lang.String awsKMSKeyId) {
             doSetProperty("awsKMSKeyId", awsKMSKeyId);
@@ -458,10 +550,13 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Define if KMS must be used or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param useAwsKMS the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder useAwsKMS(boolean useAwsKMS) {
             doSetProperty("useAwsKMS", useAwsKMS);
@@ -470,10 +565,13 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Define if Accelerate Mode enabled is true or false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group:  advanced
+         * 
+         * @param accelerateModeEnabled the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder accelerateModeEnabled(
                 boolean accelerateModeEnabled) {
@@ -483,10 +581,13 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Define if disabled Chunked Encoding is true or false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group:  advanced
+         * 
+         * @param chunkedEncodingDisabled the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder chunkedEncodingDisabled(
                 boolean chunkedEncodingDisabled) {
@@ -496,10 +597,13 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Define if Dualstack enabled is true or false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group:  advanced
+         * 
+         * @param dualstackEnabled the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder dualstackEnabled(boolean dualstackEnabled) {
             doSetProperty("dualstackEnabled", dualstackEnabled);
@@ -508,10 +612,13 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Define if Force Global Bucket Access enabled is true or false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group:  advanced
+         * 
+         * @param forceGlobalBucketAccessEnabled the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder forceGlobalBucketAccessEnabled(
                 boolean forceGlobalBucketAccessEnabled) {
@@ -521,10 +628,13 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Define if Payload Signing enabled is true or false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group:  advanced
+         * 
+         * @param payloadSigningEnabled the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder payloadSigningEnabled(
                 boolean payloadSigningEnabled) {
@@ -539,10 +649,13 @@ public interface AwsS3ComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -551,9 +664,12 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -562,9 +678,12 @@ public interface AwsS3ComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsS3ComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);

@@ -1114,6 +1114,7 @@ public interface ZendeskEndpointBuilderFactory {
          * VERIFY_USER_IDENTITY, VERIFY_USER_IDENTITY_1, VERIFY_USER_IDENTITY_2
          * 
          * @param path methodName
+         * @return the dsl builder
          */
         default ZendeskEndpointBuilder zendesk(String path) {
             return ZendeskEndpointBuilderFactory.endpointBuilder("zendesk", path);
@@ -1265,6 +1266,7 @@ public interface ZendeskEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path methodName
+         * @return the dsl builder
          */
         default ZendeskEndpointBuilder zendesk(String componentName, String path) {
             return ZendeskEndpointBuilderFactory.endpointBuilder(componentName, path);

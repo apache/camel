@@ -5599,6 +5599,7 @@ public interface AMQPEndpointBuilderFactory {
          * Name of the queue or topic to use as destination
          * 
          * @param path destinationType:destinationName
+         * @return the dsl builder
          */
         default AMQPEndpointBuilder amqp(String path) {
             return AMQPEndpointBuilderFactory.endpointBuilder("amqp", path);
@@ -5625,6 +5626,7 @@ public interface AMQPEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path destinationType:destinationName
+         * @return the dsl builder
          */
         default AMQPEndpointBuilder amqp(String componentName, String path) {
             return AMQPEndpointBuilderFactory.endpointBuilder(componentName, path);

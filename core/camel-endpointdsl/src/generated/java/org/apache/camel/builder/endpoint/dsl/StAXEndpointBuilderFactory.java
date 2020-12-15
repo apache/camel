@@ -131,6 +131,7 @@ public interface StAXEndpointBuilderFactory {
          * The FQN class name for the ContentHandler implementation to use.
          * 
          * @param path contentHandlerClass
+         * @return the dsl builder
          */
         default StAXEndpointBuilder stax(String path) {
             return StAXEndpointBuilderFactory.endpointBuilder("stax", path);
@@ -151,6 +152,7 @@ public interface StAXEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path contentHandlerClass
+         * @return the dsl builder
          */
         default StAXEndpointBuilder stax(String componentName, String path) {
             return StAXEndpointBuilderFactory.endpointBuilder(componentName, path);

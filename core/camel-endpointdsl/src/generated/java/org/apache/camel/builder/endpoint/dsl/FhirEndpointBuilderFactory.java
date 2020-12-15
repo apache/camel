@@ -2277,6 +2277,7 @@ public interface FhirEndpointBuilderFactory {
          * What sub operation to use for the selected operation
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default FhirEndpointBuilder fhir(String path) {
             return FhirEndpointBuilderFactory.endpointBuilder("fhir", path);
@@ -2304,6 +2305,7 @@ public interface FhirEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default FhirEndpointBuilder fhir(String componentName, String path) {
             return FhirEndpointBuilderFactory.endpointBuilder(componentName, path);

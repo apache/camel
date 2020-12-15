@@ -598,6 +598,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * The node in the ZooKeeper server (aka znode)
          * 
          * @param path serverUrls/path
+         * @return the dsl builder
          */
         default ZooKeeperEndpointBuilder zookeeper(String path) {
             return ZooKeeperEndpointBuilderFactory.endpointBuilder("zookeeper", path);
@@ -622,6 +623,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path serverUrls/path
+         * @return the dsl builder
          */
         default ZooKeeperEndpointBuilder zookeeper(
                 String componentName,

@@ -37,6 +37,8 @@ public interface NatsComponentBuilderFactory {
      * Category: messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-nats
+     * 
+     * @return the dsl builder
      */
     static NatsComponentBuilder nats() {
         return new NatsComponentBuilderImpl();
@@ -50,9 +52,12 @@ public interface NatsComponentBuilderFactory {
          * URLs to one or more NAT servers. Use comma to separate URLs when
          * specifying multiple servers.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param servers the value to set
+         * @return the dsl builder
          */
         default NatsComponentBuilder servers(java.lang.String servers) {
             doSetProperty("servers", servers);
@@ -61,10 +66,13 @@ public interface NatsComponentBuilderFactory {
         /**
          * Whether or not running in verbose mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param verbose the value to set
+         * @return the dsl builder
          */
         default NatsComponentBuilder verbose(boolean verbose) {
             doSetProperty("verbose", verbose);
@@ -79,10 +87,13 @@ public interface NatsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default NatsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -100,10 +111,13 @@ public interface NatsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NatsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -117,10 +131,13 @@ public interface NatsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default NatsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -129,10 +146,13 @@ public interface NatsComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default NatsComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

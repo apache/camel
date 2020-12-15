@@ -37,6 +37,8 @@ public interface ElasticsearchRestComponentBuilderFactory {
      * Category: search,monitoring
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
+     * 
+     * @return the dsl builder
      */
     static ElasticsearchRestComponentBuilder elasticsearchRest() {
         return new ElasticsearchRestComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface ElasticsearchRestComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -77,10 +82,13 @@ public interface ElasticsearchRestComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -92,10 +100,13 @@ public interface ElasticsearchRestComponentBuilderFactory {
          * creating a client per endpoint. This allow to customize the client
          * with specific settings.
          * 
-         * The option is a: <code>org.elasticsearch.client.RestClient</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.elasticsearch.client.RestClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder client(
                 org.elasticsearch.client.RestClient client) {
@@ -105,10 +116,13 @@ public interface ElasticsearchRestComponentBuilderFactory {
         /**
          * The time in ms to wait before connection will timeout.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -119,10 +133,13 @@ public interface ElasticsearchRestComponentBuilderFactory {
          * Enable automatically discover nodes from a running Elasticsearch
          * cluster.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param enableSniffer the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder enableSniffer(
                 java.lang.Boolean enableSniffer) {
@@ -134,9 +151,12 @@ public interface ElasticsearchRestComponentBuilderFactory {
          * addresses to use. The ip and port options must be left blank for
          * hostAddresses to be considered instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param hostAddresses the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder hostAddresses(
                 java.lang.String hostAddresses) {
@@ -146,10 +166,13 @@ public interface ElasticsearchRestComponentBuilderFactory {
         /**
          * The time in ms before retry.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param maxRetryTimeout the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder maxRetryTimeout(
                 int maxRetryTimeout) {
@@ -160,10 +183,13 @@ public interface ElasticsearchRestComponentBuilderFactory {
          * The delay of a sniff execution scheduled after a failure (in
          * milliseconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: advanced
+         * 
+         * @param sniffAfterFailureDelay the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder sniffAfterFailureDelay(
                 int sniffAfterFailureDelay) {
@@ -175,10 +201,13 @@ public interface ElasticsearchRestComponentBuilderFactory {
          * milliseconds. Will be honoured when sniffOnFailure is disabled or
          * when there are no failures between consecutive sniff executions.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 300000
          * Group: advanced
+         * 
+         * @param snifferInterval the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder snifferInterval(
                 int snifferInterval) {
@@ -188,10 +217,13 @@ public interface ElasticsearchRestComponentBuilderFactory {
         /**
          * The timeout in ms to wait before the socket will timeout.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder socketTimeout(
                 int socketTimeout) {
@@ -201,10 +233,13 @@ public interface ElasticsearchRestComponentBuilderFactory {
         /**
          * Enable SSL.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param enableSSL the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder enableSSL(
                 java.lang.Boolean enableSSL) {
@@ -214,9 +249,12 @@ public interface ElasticsearchRestComponentBuilderFactory {
         /**
          * Password for authenticate.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder password(
                 java.lang.String password) {
@@ -226,9 +264,12 @@ public interface ElasticsearchRestComponentBuilderFactory {
         /**
          * Basic authenticate user.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default ElasticsearchRestComponentBuilder user(java.lang.String user) {
             doSetProperty("user", user);

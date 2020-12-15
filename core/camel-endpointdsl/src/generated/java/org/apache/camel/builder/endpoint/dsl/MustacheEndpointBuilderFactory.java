@@ -265,6 +265,7 @@ public interface MustacheEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder mustache(String path) {
             return MustacheEndpointBuilderFactory.endpointBuilder("mustache", path);
@@ -290,6 +291,7 @@ public interface MustacheEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default MustacheEndpointBuilder mustache(
                 String componentName,

@@ -4829,6 +4829,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * single topic.
          * 
          * @param path topic
+         * @return the dsl builder
          */
         default VertxKafkaEndpointBuilder vertxKafka(String path) {
             return VertxKafkaEndpointBuilderFactory.endpointBuilder("vertx-kafka", path);
@@ -4852,6 +4853,7 @@ public interface VertxKafkaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path topic
+         * @return the dsl builder
          */
         default VertxKafkaEndpointBuilder vertxKafka(
                 String componentName,

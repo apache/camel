@@ -544,6 +544,7 @@ public interface Sns2EndpointBuilderFactory {
          * Topic name or ARN
          * 
          * @param path topicNameOrArn
+         * @return the dsl builder
          */
         default Sns2EndpointBuilder aws2Sns(String path) {
             return Sns2EndpointBuilderFactory.endpointBuilder("aws2-sns", path);
@@ -565,6 +566,7 @@ public interface Sns2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path topicNameOrArn
+         * @return the dsl builder
          */
         default Sns2EndpointBuilder aws2Sns(String componentName, String path) {
             return Sns2EndpointBuilderFactory.endpointBuilder(componentName, path);

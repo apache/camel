@@ -39,6 +39,8 @@ public interface PlatformHttpComponentBuilderFactory {
      * Category: http
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-platform-http
+     * 
+     * @return the dsl builder
      */
     static PlatformHttpComponentBuilder platformHttp() {
         return new PlatformHttpComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface PlatformHttpComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PlatformHttpComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -77,10 +82,13 @@ public interface PlatformHttpComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default PlatformHttpComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -91,9 +99,12 @@ public interface PlatformHttpComponentBuilderFactory {
          * An HTTP Server engine implementation to serve the requests.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.platform.http.spi.PlatformHttpEngine</code> type.
+         * &lt;code&gt;org.apache.camel.component.platform.http.spi.PlatformHttpEngine&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param engine the value to set
+         * @return the dsl builder
          */
         default PlatformHttpComponentBuilder engine(
                 org.apache.camel.component.platform.http.spi.PlatformHttpEngine engine) {

@@ -1360,6 +1360,7 @@ public interface JCacheEndpointBuilderFactory {
          * The name of the cache
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default JCacheEndpointBuilder jcache(String path) {
             return JCacheEndpointBuilderFactory.endpointBuilder("jcache", path);
@@ -1380,6 +1381,7 @@ public interface JCacheEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default JCacheEndpointBuilder jcache(String componentName, String path) {
             return JCacheEndpointBuilderFactory.endpointBuilder(componentName, path);

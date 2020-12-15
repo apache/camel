@@ -400,6 +400,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
                 String path) {
@@ -422,6 +423,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(
                 String componentName,

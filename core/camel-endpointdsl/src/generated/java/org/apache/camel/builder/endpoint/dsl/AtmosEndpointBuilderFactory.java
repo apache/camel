@@ -646,6 +646,7 @@ public interface AtmosEndpointBuilderFactory {
          * move
          * 
          * @param path name/operation
+         * @return the dsl builder
          */
         default AtmosEndpointBuilder atmos(String path) {
             return AtmosEndpointBuilderFactory.endpointBuilder("atmos", path);
@@ -672,6 +673,7 @@ public interface AtmosEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name/operation
+         * @return the dsl builder
          */
         default AtmosEndpointBuilder atmos(String componentName, String path) {
             return AtmosEndpointBuilderFactory.endpointBuilder(componentName, path);

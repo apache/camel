@@ -257,6 +257,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * ID of the operation from the Swagger specification.
          * 
          * @param path specificationUri#operationId
+         * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder restSwagger(String path) {
             return RestSwaggerEndpointBuilderFactory.endpointBuilder("rest-swagger", path);
@@ -296,6 +297,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path specificationUri#operationId
+         * @return the dsl builder
          */
         default RestSwaggerEndpointBuilder restSwagger(
                 String componentName,

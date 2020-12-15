@@ -617,6 +617,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * between different verify endpoints within the camel context.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder xmlsecurityVerify(String path) {
             return XmlVerifierEndpointBuilderFactory.endpointBuilder("xmlsecurity-verify", path);
@@ -638,6 +639,7 @@ public interface XmlVerifierEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default XmlVerifierEndpointBuilder xmlsecurityVerify(
                 String componentName,

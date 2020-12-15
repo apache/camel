@@ -39,6 +39,8 @@ public interface GeocoderComponentBuilderFactory {
      * Category: api,location
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-geocoder
+     * 
+     * @return the dsl builder
      */
     static GeocoderComponentBuilder geocoder() {
         return new GeocoderComponentBuilderImpl();
@@ -61,10 +63,13 @@ public interface GeocoderComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GeocoderComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -79,10 +84,13 @@ public interface GeocoderComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default GeocoderComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -92,9 +100,13 @@ public interface GeocoderComponentBuilderFactory {
         /**
          * Configuration for Google maps API.
          * 
-         * The option is a: <code>com.google.maps.GeoApiContext</code> type.
+         * The option is a:
+         * &lt;code&gt;com.google.maps.GeoApiContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param geoApiContext the value to set
+         * @return the dsl builder
          */
         default GeocoderComponentBuilder geoApiContext(
                 com.google.maps.GeoApiContext geoApiContext) {

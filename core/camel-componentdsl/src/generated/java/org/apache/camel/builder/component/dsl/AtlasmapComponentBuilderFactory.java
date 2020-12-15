@@ -37,6 +37,8 @@ public interface AtlasmapComponentBuilderFactory {
      * Category: transformation
      * Since: 3.7
      * Maven coordinates: org.apache.camel:camel-atlasmap
+     * 
+     * @return the dsl builder
      */
     static AtlasmapComponentBuilder atlasmap() {
         return new AtlasmapComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface AtlasmapComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtlasmapComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -72,10 +77,13 @@ public interface AtlasmapComponentBuilderFactory {
         /**
          * To use the AtlasContextFactory otherwise a new engine is created.
          * 
-         * The option is a: <code>io.atlasmap.api.AtlasContextFactory</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.atlasmap.api.AtlasContextFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param atlasContextFactory the value to set
+         * @return the dsl builder
          */
         default AtlasmapComponentBuilder atlasContextFactory(
                 io.atlasmap.api.AtlasContextFactory atlasContextFactory) {
@@ -90,10 +98,13 @@ public interface AtlasmapComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AtlasmapComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

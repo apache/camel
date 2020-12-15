@@ -331,6 +331,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * The path under which this endpoint serves the HTTP requests
          * 
          * @param path path
+         * @return the dsl builder
          */
         default PlatformHttpEndpointBuilder platformHttp(String path) {
             return PlatformHttpEndpointBuilderFactory.endpointBuilder("platform-http", path);
@@ -352,6 +353,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path
+         * @return the dsl builder
          */
         default PlatformHttpEndpointBuilder platformHttp(
                 String componentName,

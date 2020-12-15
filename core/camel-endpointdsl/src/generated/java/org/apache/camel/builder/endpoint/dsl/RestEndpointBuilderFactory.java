@@ -641,6 +641,7 @@ public interface RestEndpointBuilderFactory {
          * The uri template
          * 
          * @param path method:path:uriTemplate
+         * @return the dsl builder
          */
         default RestEndpointBuilder restEndpoint(String path) {
             return RestEndpointBuilderFactory.endpointBuilder("rest", path);
@@ -669,6 +670,7 @@ public interface RestEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path method:path:uriTemplate
+         * @return the dsl builder
          */
         default RestEndpointBuilder restEndpoint(
                 String componentName,

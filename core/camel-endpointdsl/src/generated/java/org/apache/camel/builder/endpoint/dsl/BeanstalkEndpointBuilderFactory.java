@@ -1216,6 +1216,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Connection settings host:port/tube
          * 
          * @param path connectionSettings
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder beanstalk(String path) {
             return BeanstalkEndpointBuilderFactory.endpointBuilder("beanstalk", path);
@@ -1236,6 +1237,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path connectionSettings
+         * @return the dsl builder
          */
         default BeanstalkEndpointBuilder beanstalk(
                 String componentName,

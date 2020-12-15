@@ -984,6 +984,7 @@ public interface HBaseEndpointBuilderFactory {
          * The name of the table
          * 
          * @param path tableName
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder hbase(String path) {
             return HBaseEndpointBuilderFactory.endpointBuilder("hbase", path);
@@ -1004,6 +1005,7 @@ public interface HBaseEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path tableName
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder hbase(String componentName, String path) {
             return HBaseEndpointBuilderFactory.endpointBuilder(componentName, path);

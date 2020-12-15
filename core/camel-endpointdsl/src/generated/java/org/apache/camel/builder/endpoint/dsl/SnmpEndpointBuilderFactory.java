@@ -1690,6 +1690,7 @@ public interface SnmpEndpointBuilderFactory {
          * Port number of the SNMP enabled device
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder snmp(String path) {
             return SnmpEndpointBuilderFactory.endpointBuilder("snmp", path);
@@ -1714,6 +1715,7 @@ public interface SnmpEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port
+         * @return the dsl builder
          */
         default SnmpEndpointBuilder snmp(String componentName, String path) {
             return SnmpEndpointBuilderFactory.endpointBuilder(componentName, path);

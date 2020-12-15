@@ -1048,6 +1048,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * append, batchUpdate, clear
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default GoogleSheetsEndpointBuilder googleSheets(String path) {
             return GoogleSheetsEndpointBuilderFactory.endpointBuilder("google-sheets", path);
@@ -1074,6 +1075,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default GoogleSheetsEndpointBuilder googleSheets(
                 String componentName,

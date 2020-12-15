@@ -279,6 +279,7 @@ public interface VelocityEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default VelocityEndpointBuilder velocity(String path) {
             return VelocityEndpointBuilderFactory.endpointBuilder("velocity", path);
@@ -304,6 +305,7 @@ public interface VelocityEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default VelocityEndpointBuilder velocity(
                 String componentName,

@@ -37,6 +37,8 @@ public interface DirectComponentBuilderFactory {
      * Category: core,endpoint
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-direct
+     * 
+     * @return the dsl builder
      */
     static DirectComponentBuilder direct() {
         return new DirectComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface DirectComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DirectComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -72,10 +77,13 @@ public interface DirectComponentBuilderFactory {
          * consumer, then we can tell the producer to block and wait for the
          * consumer to become active.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param block the value to set
+         * @return the dsl builder
          */
         default DirectComponentBuilder block(boolean block) {
             doSetProperty("block", block);
@@ -92,10 +100,13 @@ public interface DirectComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DirectComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -105,10 +116,13 @@ public interface DirectComponentBuilderFactory {
         /**
          * The timeout value to use if block is enabled.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default DirectComponentBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -122,10 +136,13 @@ public interface DirectComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default DirectComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);

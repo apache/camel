@@ -267,6 +267,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * The set name.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder igniteSet(String path) {
             return IgniteSetEndpointBuilderFactory.endpointBuilder("ignite-set", path);
@@ -287,6 +288,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default IgniteSetEndpointBuilder igniteSet(
                 String componentName,

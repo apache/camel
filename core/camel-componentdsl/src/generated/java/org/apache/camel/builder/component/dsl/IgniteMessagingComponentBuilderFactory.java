@@ -37,6 +37,8 @@ public interface IgniteMessagingComponentBuilderFactory {
      * Category: messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
+     * 
+     * @return the dsl builder
      */
     static IgniteMessagingComponentBuilder igniteMessaging() {
         return new IgniteMessagingComponentBuilderImpl();
@@ -52,9 +54,12 @@ public interface IgniteMessagingComponentBuilderFactory {
          * The resource from where to load the configuration. It can be a: URL,
          * String or InputStream type.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configurationResource the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
@@ -64,9 +69,13 @@ public interface IgniteMessagingComponentBuilderFactory {
         /**
          * To use an existing Ignite instance.
          * 
-         * The option is a: <code>org.apache.ignite.Ignite</code> type.
+         * The option is a: &lt;code&gt;org.apache.ignite.Ignite&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param ignite the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingComponentBuilder ignite(
                 org.apache.ignite.Ignite ignite) {
@@ -77,10 +86,12 @@ public interface IgniteMessagingComponentBuilderFactory {
          * Allows the user to set a programmatic ignite configuration.
          * 
          * The option is a:
-         * <code>org.apache.ignite.configuration.IgniteConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.ignite.configuration.IgniteConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param igniteConfiguration the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingComponentBuilder igniteConfiguration(
                 org.apache.ignite.configuration.IgniteConfiguration igniteConfiguration) {
@@ -96,10 +107,13 @@ public interface IgniteMessagingComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -117,10 +131,13 @@ public interface IgniteMessagingComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -135,10 +152,13 @@ public interface IgniteMessagingComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default IgniteMessagingComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

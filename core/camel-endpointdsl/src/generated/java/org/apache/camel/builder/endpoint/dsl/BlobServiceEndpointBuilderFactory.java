@@ -1305,6 +1305,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * Container or Blob compact Uri
          * 
          * @param path containerOrBlobUri
+         * @return the dsl builder
          */
         @Deprecated
         default BlobServiceEndpointBuilder azureBlob(String path) {
@@ -1326,6 +1327,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path containerOrBlobUri
+         * @return the dsl builder
          */
         @Deprecated
         default BlobServiceEndpointBuilder azureBlob(

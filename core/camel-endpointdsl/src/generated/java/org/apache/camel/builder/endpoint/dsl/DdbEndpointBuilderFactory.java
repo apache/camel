@@ -428,6 +428,7 @@ public interface DdbEndpointBuilderFactory {
          * The name of the table currently worked with.
          * 
          * @param path tableName
+         * @return the dsl builder
          */
         default DdbEndpointBuilder awsDdb(String path) {
             return DdbEndpointBuilderFactory.endpointBuilder("aws-ddb", path);
@@ -448,6 +449,7 @@ public interface DdbEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path tableName
+         * @return the dsl builder
          */
         default DdbEndpointBuilder awsDdb(String componentName, String path) {
             return DdbEndpointBuilderFactory.endpointBuilder(componentName, path);

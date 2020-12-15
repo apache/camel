@@ -798,6 +798,7 @@ public interface ThriftEndpointBuilderFactory {
          * dot service definition name)
          * 
          * @param path host:port/service
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder thrift(String path) {
             return ThriftEndpointBuilderFactory.endpointBuilder("thrift", path);
@@ -828,6 +829,7 @@ public interface ThriftEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/service
+         * @return the dsl builder
          */
         default ThriftEndpointBuilder thrift(String componentName, String path) {
             return ThriftEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -804,6 +804,7 @@ public interface AtomEndpointBuilderFactory {
          * The URI to the feed to poll.
          * 
          * @param path feedUri
+         * @return the dsl builder
          */
         default AtomEndpointBuilder atom(String path) {
             return AtomEndpointBuilderFactory.endpointBuilder("atom", path);
@@ -824,6 +825,7 @@ public interface AtomEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path feedUri
+         * @return the dsl builder
          */
         default AtomEndpointBuilder atom(String componentName, String path) {
             return AtomEndpointBuilderFactory.endpointBuilder(componentName, path);

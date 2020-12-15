@@ -37,6 +37,8 @@ public interface JettyComponentBuilderFactory {
      * Category: http
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jetty
+     * 
+     * @return the dsl builder
      */
     static JettyComponentBuilder jetty() {
         return new JettyComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface JettyComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -75,10 +80,13 @@ public interface JettyComponentBuilderFactory {
          * option is only in use when using Jetty with the Asynchronous Routing
          * Engine.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: consumer
+         * 
+         * @param continuationTimeout the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder continuationTimeout(
                 java.lang.Long continuationTimeout) {
@@ -89,10 +97,13 @@ public interface JettyComponentBuilderFactory {
          * If this option is true, Jetty JMX support will be enabled for this
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param enableJmx the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder enableJmx(boolean enableJmx) {
             doSetProperty("enableJmx", enableJmx);
@@ -102,9 +113,12 @@ public interface JettyComponentBuilderFactory {
          * To set a value for maximum number of threads in server thread pool.
          * Notice that both a min and max size must be configured.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxThreads the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder maxThreads(java.lang.Integer maxThreads) {
             doSetProperty("maxThreads", maxThreads);
@@ -114,9 +128,12 @@ public interface JettyComponentBuilderFactory {
          * To set a value for minimum number of threads in server thread pool.
          * Notice that both a min and max size must be configured.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param minThreads the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder minThreads(java.lang.Integer minThreads) {
             doSetProperty("minThreads", minThreads);
@@ -126,9 +143,12 @@ public interface JettyComponentBuilderFactory {
          * Allows to configure a custom value of the request buffer size on the
          * Jetty connectors.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param requestBufferSize the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder requestBufferSize(
                 java.lang.Integer requestBufferSize) {
@@ -139,9 +159,12 @@ public interface JettyComponentBuilderFactory {
          * Allows to configure a custom value of the request header size on the
          * Jetty connectors.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param requestHeaderSize the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder requestHeaderSize(
                 java.lang.Integer requestHeaderSize) {
@@ -152,9 +175,12 @@ public interface JettyComponentBuilderFactory {
          * Allows to configure a custom value of the response buffer size on the
          * Jetty connectors.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param responseBufferSize the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder responseBufferSize(
                 java.lang.Integer responseBufferSize) {
@@ -165,9 +191,12 @@ public interface JettyComponentBuilderFactory {
          * Allows to configure a custom value of the response header size on the
          * Jetty connectors.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param responseHeaderSize the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder responseHeaderSize(
                 java.lang.Integer responseHeaderSize) {
@@ -180,10 +209,13 @@ public interface JettyComponentBuilderFactory {
          * please make sure there is no any other camel-jetty endpoint is share
          * the same port, otherwise this option may not work as expected.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param sendServerVersion the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder sendServerVersion(
                 boolean sendServerVersion) {
@@ -193,10 +225,13 @@ public interface JettyComponentBuilderFactory {
         /**
          * Whether or not to use Jetty continuations for the Jetty Server.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param useContinuation the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder useContinuation(boolean useContinuation) {
             doSetProperty("useContinuation", useContinuation);
@@ -206,10 +241,13 @@ public interface JettyComponentBuilderFactory {
          * To use the X-Forwarded-For header in
          * HttpServletRequest.getRemoteAddr.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param useXForwardedForHeader the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder useXForwardedForHeader(
                 boolean useXForwardedForHeader) {
@@ -221,9 +259,13 @@ public interface JettyComponentBuilderFactory {
          * be used in special circumstances.
          * 
          * The option is a:
-         * <code>org.eclipse.jetty.util.thread.ThreadPool</code> type.
+         * &lt;code&gt;org.eclipse.jetty.util.thread.ThreadPool&lt;/code&gt;
+         * type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param threadPool the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder threadPool(
                 org.eclipse.jetty.util.thread.ThreadPool threadPool) {
@@ -237,10 +279,13 @@ public interface JettyComponentBuilderFactory {
          * deserialize the incoming data from the request to Java and that can
          * be a potential security risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowJavaSerializedObject the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder allowJavaSerializedObject(
                 boolean allowJavaSerializedObject) {
@@ -255,10 +300,13 @@ public interface JettyComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -268,9 +316,12 @@ public interface JettyComponentBuilderFactory {
          * This option is used to set the ErrorHandler that Jetty server uses.
          * 
          * The option is a:
-         * <code>org.eclipse.jetty.server.handler.ErrorHandler</code> type.
+         * &lt;code&gt;org.eclipse.jetty.server.handler.ErrorHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorHandler the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder errorHandler(
                 org.eclipse.jetty.server.handler.ErrorHandler errorHandler) {
@@ -281,9 +332,13 @@ public interface JettyComponentBuilderFactory {
          * Not to be used - use JettyHttpBinding instead.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param httpBinding the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder httpBinding(
                 org.apache.camel.http.common.HttpBinding httpBinding) {
@@ -294,9 +349,12 @@ public interface JettyComponentBuilderFactory {
          * Jetty component does not use HttpConfiguration.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpConfiguration the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder httpConfiguration(
                 org.apache.camel.http.common.HttpConfiguration httpConfiguration) {
@@ -309,9 +367,12 @@ public interface JettyComponentBuilderFactory {
          * producer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jetty.JettyHttpBinding</code> type.
+         * &lt;code&gt;org.apache.camel.component.jetty.JettyHttpBinding&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param jettyHttpBinding the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder jettyHttpBinding(
                 org.apache.camel.component.jetty.JettyHttpBinding jettyHttpBinding) {
@@ -322,10 +383,13 @@ public interface JettyComponentBuilderFactory {
          * To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if
          * JMX is enabled that Jetty uses for registering mbeans.
          * 
-         * The option is a: <code>org.eclipse.jetty.jmx.MBeanContainer</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.eclipse.jetty.jmx.MBeanContainer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param mbContainer the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder mbContainer(
                 org.eclipse.jetty.jmx.MBeanContainer mbContainer) {
@@ -337,9 +401,13 @@ public interface JettyComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -349,9 +417,12 @@ public interface JettyComponentBuilderFactory {
         /**
          * To use a http proxy to configure the hostname.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -360,9 +431,12 @@ public interface JettyComponentBuilderFactory {
         /**
          * To use a http proxy to configure the port number.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -372,9 +446,12 @@ public interface JettyComponentBuilderFactory {
          * Specifies the location of the Java keystore file, which contains the
          * Jetty server's own X.509 certificate in a key entry.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keystore the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder keystore(java.lang.String keystore) {
             doSetProperty("keystore", keystore);
@@ -384,10 +461,13 @@ public interface JettyComponentBuilderFactory {
          * A map which contains general HTTP connector properties. Uses the same
          * principle as sslSocketConnectorProperties.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param socketConnectorProperties the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder socketConnectorProperties(
                 java.util.Map<java.lang.String, java.lang.Object> socketConnectorProperties) {
@@ -398,10 +478,13 @@ public interface JettyComponentBuilderFactory {
          * A map which contains per port number specific HTTP connectors. Uses
          * the same principle as sslSocketConnectors.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.Integer,
-         * org.eclipse.jetty.server.Connector&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.Integer,
+         * org.eclipse.jetty.server.Connector&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param socketConnectors the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder socketConnectors(
                 java.util.Map<java.lang.Integer, org.eclipse.jetty.server.Connector> socketConnectors) {
@@ -412,9 +495,12 @@ public interface JettyComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -426,9 +512,12 @@ public interface JettyComponentBuilderFactory {
          * in the keystore (this is the same password that is supplied to the
          * keystore command's -keypass option).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslKeyPassword the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder sslKeyPassword(
                 java.lang.String sslKeyPassword) {
@@ -440,9 +529,12 @@ public interface JettyComponentBuilderFactory {
          * is the same password that is supplied to the keystore command's
          * -storepass option).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslPassword the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder sslPassword(java.lang.String sslPassword) {
             doSetProperty("sslPassword", sslPassword);
@@ -451,10 +543,13 @@ public interface JettyComponentBuilderFactory {
         /**
          * A map which contains general SSL connector properties.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslSocketConnectorProperties the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder sslSocketConnectorProperties(
                 java.util.Map<java.lang.String, java.lang.Object> sslSocketConnectorProperties) {
@@ -464,10 +559,13 @@ public interface JettyComponentBuilderFactory {
         /**
          * A map which contains per port number specific SSL connectors.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.Integer,
-         * org.eclipse.jetty.server.Connector&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.Integer,
+         * org.eclipse.jetty.server.Connector&amp;gt;&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslSocketConnectors the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder sslSocketConnectors(
                 java.util.Map<java.lang.Integer, org.eclipse.jetty.server.Connector> sslSocketConnectors) {
@@ -477,10 +575,13 @@ public interface JettyComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default JettyComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

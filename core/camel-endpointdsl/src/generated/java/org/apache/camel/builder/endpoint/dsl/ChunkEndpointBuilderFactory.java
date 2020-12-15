@@ -283,6 +283,7 @@ public interface ChunkEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder chunk(String path) {
             return ChunkEndpointBuilderFactory.endpointBuilder("chunk", path);
@@ -308,6 +309,7 @@ public interface ChunkEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default ChunkEndpointBuilder chunk(String componentName, String path) {
             return ChunkEndpointBuilderFactory.endpointBuilder(componentName, path);

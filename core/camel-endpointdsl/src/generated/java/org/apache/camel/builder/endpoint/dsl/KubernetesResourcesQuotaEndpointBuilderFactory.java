@@ -406,6 +406,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
                 String path) {
@@ -427,6 +428,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
                 String componentName,

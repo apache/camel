@@ -304,6 +304,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * Where label is an arbitrary text value describing the endpoint
          * 
          * @param path label
+         * @return the dsl builder
          */
         default BeanValidatorEndpointBuilder beanValidator(String path) {
             return BeanValidatorEndpointBuilderFactory.endpointBuilder("bean-validator", path);
@@ -324,6 +325,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default BeanValidatorEndpointBuilder beanValidator(
                 String componentName,

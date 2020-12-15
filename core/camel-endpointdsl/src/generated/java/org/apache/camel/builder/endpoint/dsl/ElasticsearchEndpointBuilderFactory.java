@@ -535,6 +535,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Name of the cluster
          * 
          * @param path clusterName
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder elasticsearchRest(String path) {
             return ElasticsearchEndpointBuilderFactory.endpointBuilder("elasticsearch-rest", path);
@@ -555,6 +556,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path clusterName
+         * @return the dsl builder
          */
         default ElasticsearchEndpointBuilder elasticsearchRest(
                 String componentName,

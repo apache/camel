@@ -1215,6 +1215,7 @@ public interface EtcdStatsEndpointBuilderFactory {
          * The path the endpoint refers to
          * 
          * @param path path
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder etcdStats(String path) {
             return EtcdStatsEndpointBuilderFactory.endpointBuilder("etcd-stats", path);
@@ -1235,6 +1236,7 @@ public interface EtcdStatsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path
+         * @return the dsl builder
          */
         default EtcdStatsEndpointBuilder etcdStats(
                 String componentName,

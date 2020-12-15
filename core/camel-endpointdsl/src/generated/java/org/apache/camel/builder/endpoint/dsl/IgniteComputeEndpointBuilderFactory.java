@@ -316,6 +316,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * The endpoint ID (not used).
          * 
          * @param path endpointId
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder igniteCompute(String path) {
             return IgniteComputeEndpointBuilderFactory.endpointBuilder("ignite-compute", path);
@@ -336,6 +337,7 @@ public interface IgniteComputeEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path endpointId
+         * @return the dsl builder
          */
         default IgniteComputeEndpointBuilder igniteCompute(
                 String componentName,

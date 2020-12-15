@@ -37,6 +37,8 @@ public interface OpenstackNovaComponentBuilderFactory {
      * Category: cloud,paas
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
+     * 
+     * @return the dsl builder
      */
     static OpenstackNovaComponentBuilder openstackNova() {
         return new OpenstackNovaComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface OpenstackNovaComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default OpenstackNovaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -77,10 +82,13 @@ public interface OpenstackNovaComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default OpenstackNovaComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

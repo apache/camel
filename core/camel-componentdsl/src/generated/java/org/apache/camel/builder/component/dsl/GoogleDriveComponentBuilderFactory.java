@@ -37,6 +37,8 @@ public interface GoogleDriveComponentBuilderFactory {
      * Category: file,cloud,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-google-drive
+     * 
+     * @return the dsl builder
      */
     static GoogleDriveComponentBuilder googleDrive() {
         return new GoogleDriveComponentBuilderImpl();
@@ -52,9 +54,12 @@ public interface GoogleDriveComponentBuilderFactory {
          * Google drive application name. Example would be
          * camel-google-drive/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleDriveComponentBuilder applicationName(
                 java.lang.String applicationName) {
@@ -64,9 +69,12 @@ public interface GoogleDriveComponentBuilderFactory {
         /**
          * Client ID of the drive application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleDriveComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
@@ -76,9 +84,12 @@ public interface GoogleDriveComponentBuilderFactory {
          * To use the shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.drive.GoogleDriveConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.drive.GoogleDriveConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default GoogleDriveComponentBuilder configuration(
                 org.apache.camel.component.google.drive.GoogleDriveConfiguration configuration) {
@@ -90,10 +101,13 @@ public interface GoogleDriveComponentBuilderFactory {
          * have to a user account. See
          * https://developers.google.com/drive/web/scopes for more info.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleDriveComponentBuilder scopes(
                 java.util.List<java.lang.String> scopes) {
@@ -109,10 +123,13 @@ public interface GoogleDriveComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleDriveComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -130,10 +147,13 @@ public interface GoogleDriveComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleDriveComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -148,10 +168,13 @@ public interface GoogleDriveComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default GoogleDriveComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -163,9 +186,12 @@ public interface GoogleDriveComponentBuilderFactory {
          * client. Will by default use BatchGoogleDriveClientFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.drive.GoogleDriveClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.drive.GoogleDriveClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleDriveComponentBuilder clientFactory(
                 org.apache.camel.component.google.drive.GoogleDriveClientFactory clientFactory) {
@@ -176,9 +202,12 @@ public interface GoogleDriveComponentBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleDriveComponentBuilder accessToken(
                 java.lang.String accessToken) {
@@ -188,9 +217,12 @@ public interface GoogleDriveComponentBuilderFactory {
         /**
          * Client secret of the drive application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleDriveComponentBuilder clientSecret(
                 java.lang.String clientSecret) {
@@ -202,9 +234,12 @@ public interface GoogleDriveComponentBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleDriveComponentBuilder refreshToken(
                 java.lang.String refreshToken) {

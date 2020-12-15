@@ -207,6 +207,7 @@ public interface LdapEndpointBuilderFactory {
          * instead.
          * 
          * @param path dirContextName
+         * @return the dsl builder
          */
         default LdapEndpointBuilder ldap(String path) {
             return LdapEndpointBuilderFactory.endpointBuilder("ldap", path);
@@ -235,6 +236,7 @@ public interface LdapEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path dirContextName
+         * @return the dsl builder
          */
         default LdapEndpointBuilder ldap(String componentName, String path) {
             return LdapEndpointBuilderFactory.endpointBuilder(componentName, path);

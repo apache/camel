@@ -37,6 +37,8 @@ public interface MllpComponentBuilderFactory {
      * Category: networking,rpc,mllp
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-mllp
+     * 
+     * @return the dsl builder
      */
     static MllpComponentBuilder mllp() {
         return new MllpComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface MllpComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MllpComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -76,10 +81,13 @@ public interface MllpComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MllpComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -93,10 +101,13 @@ public interface MllpComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default MllpComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -106,10 +117,14 @@ public interface MllpComponentBuilderFactory {
          * Set the default character set to use for byte to/from String
          * conversions.
          * 
-         * The option is a: <code>java.nio.charset.Charset</code> type.
+         * The option is a: &lt;code&gt;java.nio.charset.Charset&lt;/code&gt;
+         * type.
          * 
          * Default: ISO-8859-1
          * Group: advanced
+         * 
+         * @param defaultCharset the value to set
+         * @return the dsl builder
          */
         default MllpComponentBuilder defaultCharset(
                 java.nio.charset.Charset defaultCharset) {
@@ -119,10 +134,13 @@ public interface MllpComponentBuilderFactory {
         /**
          * Set the component to log PHI data.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param logPhi the value to set
+         * @return the dsl builder
          */
         default MllpComponentBuilder logPhi(java.lang.Boolean logPhi) {
             doSetProperty("logPhi", logPhi);
@@ -132,10 +150,13 @@ public interface MllpComponentBuilderFactory {
          * Set the maximum number of bytes of PHI that will be logged in a log
          * entry.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5120
          * Group: advanced
+         * 
+         * @param logPhiMaxBytes the value to set
+         * @return the dsl builder
          */
         default MllpComponentBuilder logPhiMaxBytes(
                 java.lang.Integer logPhiMaxBytes) {

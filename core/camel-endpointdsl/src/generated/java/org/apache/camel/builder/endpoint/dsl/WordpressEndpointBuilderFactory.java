@@ -799,6 +799,7 @@ public interface WordpressEndpointBuilderFactory {
          * There are 1 enums and the value can be one of: delete
          * 
          * @param path operation
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder wordpress(String path) {
             return WordpressEndpointBuilderFactory.endpointBuilder("wordpress", path);
@@ -825,6 +826,7 @@ public interface WordpressEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path operation
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder wordpress(
                 String componentName,

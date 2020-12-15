@@ -38,6 +38,8 @@ public interface NsqComponentBuilderFactory {
      * Category: messaging
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-nsq
+     * 
+     * @return the dsl builder
      */
     static NsqComponentBuilder nsq() {
         return new NsqComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface NsqComponentBuilderFactory {
          * The hostnames of one or more nsqlookupd servers (consumer) or nsqd
          * servers (producer).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param servers the value to set
+         * @return the dsl builder
          */
         default NsqComponentBuilder servers(java.lang.String servers) {
             doSetProperty("servers", servers);
@@ -68,10 +73,13 @@ public interface NsqComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default NsqComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -89,10 +97,13 @@ public interface NsqComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NsqComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -106,10 +117,13 @@ public interface NsqComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default NsqComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -118,10 +132,13 @@ public interface NsqComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default NsqComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

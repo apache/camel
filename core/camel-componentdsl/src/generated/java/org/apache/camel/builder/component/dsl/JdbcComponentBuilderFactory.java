@@ -37,6 +37,8 @@ public interface JdbcComponentBuilderFactory {
      * Category: database,sql
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jdbc
+     * 
+     * @return the dsl builder
      */
     static JdbcComponentBuilder jdbc() {
         return new JdbcComponentBuilderImpl();
@@ -50,9 +52,12 @@ public interface JdbcComponentBuilderFactory {
          * To use the DataSource instance instead of looking up the data source
          * by name from the registry.
          * 
-         * The option is a: <code>javax.sql.DataSource</code> type.
+         * The option is a: &lt;code&gt;javax.sql.DataSource&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataSource the value to set
+         * @return the dsl builder
          */
         default JdbcComponentBuilder dataSource(javax.sql.DataSource dataSource) {
             doSetProperty("dataSource", dataSource);
@@ -69,10 +74,13 @@ public interface JdbcComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JdbcComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -86,10 +94,13 @@ public interface JdbcComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default JdbcComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);

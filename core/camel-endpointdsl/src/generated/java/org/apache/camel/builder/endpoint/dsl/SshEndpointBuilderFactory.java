@@ -1431,6 +1431,7 @@ public interface SshEndpointBuilderFactory {
          * Default value: 22
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default SshEndpointBuilder ssh(String path) {
             return SshEndpointBuilderFactory.endpointBuilder("ssh", path);
@@ -1455,6 +1456,7 @@ public interface SshEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port
+         * @return the dsl builder
          */
         default SshEndpointBuilder ssh(String componentName, String path) {
             return SshEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -2811,6 +2811,7 @@ public interface SipEndpointBuilderFactory {
          * included such as: john:secretmyserver:9999)
          * 
          * @param path uri
+         * @return the dsl builder
          */
         default SipEndpointBuilder sip(String path) {
             return SipEndpointBuilderFactory.endpointBuilder("sip", path);
@@ -2833,6 +2834,7 @@ public interface SipEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path uri
+         * @return the dsl builder
          */
         default SipEndpointBuilder sip(String componentName, String path) {
             return SipEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -2853,6 +2855,7 @@ public interface SipEndpointBuilderFactory {
          * included such as: john:secretmyserver:9999)
          * 
          * @param path uri
+         * @return the dsl builder
          */
         default SipEndpointBuilder sips(String path) {
             return SipEndpointBuilderFactory.endpointBuilder("sips", path);

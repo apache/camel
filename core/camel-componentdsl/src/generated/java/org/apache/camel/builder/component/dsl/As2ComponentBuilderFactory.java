@@ -37,6 +37,8 @@ public interface As2ComponentBuilderFactory {
      * Category: file
      * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-as2
+     * 
+     * @return the dsl builder
      */
     static As2ComponentBuilder as2() {
         return new As2ComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface As2ComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default As2ComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -76,10 +81,13 @@ public interface As2ComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default As2ComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -93,10 +101,13 @@ public interface As2ComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default As2ComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -106,9 +117,12 @@ public interface As2ComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.as2.AS2Configuration</code> type.
+         * &lt;code&gt;org.apache.camel.component.as2.AS2Configuration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default As2ComponentBuilder configuration(
                 org.apache.camel.component.as2.AS2Configuration configuration) {

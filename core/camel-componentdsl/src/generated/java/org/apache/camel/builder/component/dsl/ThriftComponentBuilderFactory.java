@@ -39,6 +39,8 @@ public interface ThriftComponentBuilderFactory {
      * Category: rpc,transformation
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-thrift
+     * 
+     * @return the dsl builder
      */
     static ThriftComponentBuilder thrift() {
         return new ThriftComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface ThriftComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ThriftComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -80,10 +85,13 @@ public interface ThriftComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ThriftComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -98,10 +106,13 @@ public interface ThriftComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default ThriftComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -111,10 +122,13 @@ public interface ThriftComponentBuilderFactory {
          * Determine if the thrift component is using global SSL context
          * parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default ThriftComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

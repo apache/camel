@@ -484,6 +484,7 @@ public interface JdbcEndpointBuilderFactory {
          * of DataSource found, then this DataSource will be used.
          * 
          * @param path dataSourceName
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder jdbc(String path) {
             return JdbcEndpointBuilderFactory.endpointBuilder("jdbc", path);
@@ -507,6 +508,7 @@ public interface JdbcEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path dataSourceName
+         * @return the dsl builder
          */
         default JdbcEndpointBuilder jdbc(String componentName, String path) {
             return JdbcEndpointBuilderFactory.endpointBuilder(componentName, path);

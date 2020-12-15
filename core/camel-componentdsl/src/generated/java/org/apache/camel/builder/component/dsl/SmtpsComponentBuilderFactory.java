@@ -37,6 +37,8 @@ public interface SmtpsComponentBuilderFactory {
      * Category: mail
      * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * @return the dsl builder
      */
     static SmtpsComponentBuilder smtps() {
         return new SmtpsComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface SmtpsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -70,10 +75,13 @@ public interface SmtpsComponentBuilderFactory {
          * this option to false and having disconnect=false as well, then the
          * consumer keep the folder open between polls.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param closeFolder the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder closeFolder(boolean closeFolder) {
             doSetProperty("closeFolder", closeFolder);
@@ -85,9 +93,12 @@ public interface SmtpsComponentBuilderFactory {
          * a header with the key copyTo, allowing you to copy messages to folder
          * names configured at runtime.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param copyTo the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder copyTo(java.lang.String copyTo) {
             doSetProperty("copyTo", copyTo);
@@ -100,10 +111,13 @@ public interface SmtpsComponentBuilderFactory {
          * option by setting a header with the key delete to determine if the
          * mail should be deleted or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param delete the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder delete(boolean delete) {
             doSetProperty("delete", delete);
@@ -113,10 +127,13 @@ public interface SmtpsComponentBuilderFactory {
          * Whether the consumer should disconnect after polling. If enabled this
          * forces Camel to connect on each poll.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -130,10 +147,13 @@ public interface SmtpsComponentBuilderFactory {
          * default behavior would be the consumer throws an exception and no
          * mails from the batch would be able to be routed by Camel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param handleFailedMessage the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder handleFailedMessage(
                 boolean handleFailedMessage) {
@@ -144,10 +164,13 @@ public interface SmtpsComponentBuilderFactory {
          * This option enables transparent MIME decoding and unfolding for mail
          * headers.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param mimeDecodeHeaders the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder mimeDecodeHeaders(
                 boolean mimeDecodeHeaders) {
@@ -160,9 +183,12 @@ public interface SmtpsComponentBuilderFactory {
          * a header with the key moveTo, allowing you to move messages to folder
          * names configured at runtime.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param moveTo the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder moveTo(java.lang.String moveTo) {
             doSetProperty("moveTo", moveTo);
@@ -175,10 +201,13 @@ public interface SmtpsComponentBuilderFactory {
          * which allows us to rollback the mail message if there is an error
          * processing in Camel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param peek the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder peek(boolean peek) {
             doSetProperty("peek", peek);
@@ -191,10 +220,13 @@ public interface SmtpsComponentBuilderFactory {
          * exception and no mails from the batch would be able to be routed by
          * Camel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param skipFailedMessage the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder skipFailedMessage(
                 boolean skipFailedMessage) {
@@ -204,10 +236,13 @@ public interface SmtpsComponentBuilderFactory {
         /**
          * Whether to limit by unseen mails only.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param unseen the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder unseen(boolean unseen) {
             doSetProperty("unseen", unseen);
@@ -221,10 +256,13 @@ public interface SmtpsComponentBuilderFactory {
          * special corner case, where Camel will not consume any messages at
          * all.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer (advanced)
+         * 
+         * @param fetchSize the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder fetchSize(int fetchSize) {
             doSetProperty("fetchSize", fetchSize);
@@ -233,10 +271,13 @@ public interface SmtpsComponentBuilderFactory {
         /**
          * The folder to poll.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: INBOX
          * Group: consumer (advanced)
+         * 
+         * @param folderName the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder folderName(java.lang.String folderName) {
             doSetProperty("folderName", folderName);
@@ -252,10 +293,13 @@ public interface SmtpsComponentBuilderFactory {
          * message by calling
          * exchange.getIn().getBody(javax.mail.Message.class).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param mapMailMessage the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder mapMailMessage(boolean mapMailMessage) {
             doSetProperty("mapMailMessage", mapMailMessage);
@@ -265,9 +309,12 @@ public interface SmtpsComponentBuilderFactory {
          * Sets the BCC email address. Separate multiple email addresses with
          * comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param bcc the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder bcc(java.lang.String bcc) {
             doSetProperty("bcc", bcc);
@@ -277,9 +324,12 @@ public interface SmtpsComponentBuilderFactory {
          * Sets the CC email address. Separate multiple email addresses with
          * comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cc the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder cc(java.lang.String cc) {
             doSetProperty("cc", cc);
@@ -288,10 +338,13 @@ public interface SmtpsComponentBuilderFactory {
         /**
          * The from email address.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: camel@localhost
          * Group: producer
+         * 
+         * @param from the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder from(java.lang.String from) {
             doSetProperty("from", from);
@@ -308,10 +361,13 @@ public interface SmtpsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -322,9 +378,12 @@ public interface SmtpsComponentBuilderFactory {
          * The Reply-To recipients (the receivers of the response mail).
          * Separate multiple email addresses with a comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param replyTo the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder replyTo(java.lang.String replyTo) {
             doSetProperty("replyTo", replyTo);
@@ -334,9 +393,12 @@ public interface SmtpsComponentBuilderFactory {
          * The Subject of the message being sent. Note: Setting the subject in
          * the header takes precedence over this option.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder subject(java.lang.String subject) {
             doSetProperty("subject", subject);
@@ -346,9 +408,12 @@ public interface SmtpsComponentBuilderFactory {
          * Sets the To email address. Separate multiple email addresses with
          * comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param to the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder to(java.lang.String to) {
             doSetProperty("to", to);
@@ -359,9 +424,12 @@ public interface SmtpsComponentBuilderFactory {
          * sending emails.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.JavaMailSender</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.JavaMailSender&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param javaMailSender the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder javaMailSender(
                 org.apache.camel.component.mail.JavaMailSender javaMailSender) {
@@ -374,9 +442,12 @@ public interface SmtpsComponentBuilderFactory {
          * is useful if you need to add some special options but want to keep
          * the others as is.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param additionalJavaMailProperties the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder additionalJavaMailProperties(
                 java.util.Properties additionalJavaMailProperties) {
@@ -390,10 +461,13 @@ public interface SmtpsComponentBuilderFactory {
          * email clients, set the alternative mail body with this key as a
          * header.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: CamelMailAlternativeBody
          * Group: advanced
+         * 
+         * @param alternativeBodyHeader the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder alternativeBodyHeader(
                 java.lang.String alternativeBodyHeader) {
@@ -405,9 +479,12 @@ public interface SmtpsComponentBuilderFactory {
          * what content-type-encoding to use for attachments.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param attachmentsContentTransferEncodingResolver the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder attachmentsContentTransferEncodingResolver(
                 org.apache.camel.component.mail.AttachmentsContentTransferEncodingResolver attachmentsContentTransferEncodingResolver) {
@@ -420,9 +497,12 @@ public interface SmtpsComponentBuilderFactory {
          * must be read dynamically.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.MailAuthenticator</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailAuthenticator&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param authenticator the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder authenticator(
                 org.apache.camel.component.mail.MailAuthenticator authenticator) {
@@ -437,10 +517,13 @@ public interface SmtpsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -450,9 +533,12 @@ public interface SmtpsComponentBuilderFactory {
          * Sets the Mail configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.MailConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.mail.MailConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder configuration(
                 org.apache.camel.component.mail.MailConfiguration configuration) {
@@ -462,10 +548,13 @@ public interface SmtpsComponentBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder connectionTimeout(int connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -474,10 +563,13 @@ public interface SmtpsComponentBuilderFactory {
         /**
          * The mail message content type. Use text/html for HTML mails.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: text/plain
          * Group: advanced
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder contentType(java.lang.String contentType) {
             doSetProperty("contentType", contentType);
@@ -487,10 +579,12 @@ public interface SmtpsComponentBuilderFactory {
          * Resolver to determine Content-Type for file attachments.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mail.ContentTypeResolver</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.mail.ContentTypeResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param contentTypeResolver the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder contentTypeResolver(
                 org.apache.camel.component.mail.ContentTypeResolver contentTypeResolver) {
@@ -501,10 +595,13 @@ public interface SmtpsComponentBuilderFactory {
          * Enable debug mode on the underlying mail framework. The SUN Mail
          * framework logs the debug messages to System.out by default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param debugMode the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder debugMode(boolean debugMode) {
             doSetProperty("debugMode", debugMode);
@@ -516,10 +613,13 @@ public interface SmtpsComponentBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUnsupportedCharset the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder ignoreUnsupportedCharset(
                 boolean ignoreUnsupportedCharset) {
@@ -532,10 +632,13 @@ public interface SmtpsComponentBuilderFactory {
          * XXX represents the unsupported charset) is removed from the
          * content-type and it relies on the platform default instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param ignoreUriScheme the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder ignoreUriScheme(boolean ignoreUriScheme) {
             doSetProperty("ignoreUriScheme", ignoreUriScheme);
@@ -545,9 +648,12 @@ public interface SmtpsComponentBuilderFactory {
          * Sets the java mail options. Will clear any default properties and
          * only use the properties provided for this method.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param javaMailProperties the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder javaMailProperties(
                 java.util.Properties javaMailProperties) {
@@ -561,9 +667,12 @@ public interface SmtpsComponentBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option is a: <code>javax.mail.Session</code> type.
+         * The option is a: &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder session(javax.mail.Session session) {
             doSetProperty("session", session);
@@ -572,10 +681,13 @@ public interface SmtpsComponentBuilderFactory {
         /**
          * Whether to use disposition inline or attachment.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param useInlineAttachments the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder useInlineAttachments(
                 boolean useInlineAttachments) {
@@ -587,9 +699,13 @@ public interface SmtpsComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -599,9 +715,12 @@ public interface SmtpsComponentBuilderFactory {
         /**
          * The password for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -611,9 +730,12 @@ public interface SmtpsComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -623,10 +745,13 @@ public interface SmtpsComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -636,9 +761,12 @@ public interface SmtpsComponentBuilderFactory {
         /**
          * The username for login. See also setAuthenticator(MailAuthenticator).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default SmtpsComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);

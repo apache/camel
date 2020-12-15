@@ -409,6 +409,7 @@ public interface VertxEndpointBuilderFactory {
          * Sets the event bus address used to communicate
          * 
          * @param path address
+         * @return the dsl builder
          */
         default VertxEndpointBuilder vertx(String path) {
             return VertxEndpointBuilderFactory.endpointBuilder("vertx", path);
@@ -429,6 +430,7 @@ public interface VertxEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path address
+         * @return the dsl builder
          */
         default VertxEndpointBuilder vertx(String componentName, String path) {
             return VertxEndpointBuilderFactory.endpointBuilder(componentName, path);

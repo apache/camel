@@ -37,6 +37,8 @@ public interface JsltComponentBuilderFactory {
      * Category: transformation
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-jslt
+     * 
+     * @return the dsl builder
      */
     static JsltComponentBuilder jslt() {
         return new JsltComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface JsltComponentBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default JsltComponentBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -74,10 +79,13 @@ public interface JsltComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JsltComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -91,10 +99,13 @@ public interface JsltComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default JsltComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -104,9 +115,12 @@ public interface JsltComponentBuilderFactory {
          * JSLT can be extended by plugging in functions written in Java.
          * 
          * The option is a:
-         * <code>java.util.Collection&lt;com.schibsted.spt.data.jslt.Function&gt;</code> type.
+         * &lt;code&gt;java.util.Collection&amp;lt;com.schibsted.spt.data.jslt.Function&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param functions the value to set
+         * @return the dsl builder
          */
         default JsltComponentBuilder functions(
                 java.util.Collection<com.schibsted.spt.data.jslt.Function> functions) {
@@ -117,9 +131,12 @@ public interface JsltComponentBuilderFactory {
          * JSLT can be extended by plugging in a custom jslt object filter.
          * 
          * The option is a:
-         * <code>com.schibsted.spt.data.jslt.filters.JsonFilter</code> type.
+         * &lt;code&gt;com.schibsted.spt.data.jslt.filters.JsonFilter&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param objectFilter the value to set
+         * @return the dsl builder
          */
         default JsltComponentBuilder objectFilter(
                 com.schibsted.spt.data.jslt.filters.JsonFilter objectFilter) {

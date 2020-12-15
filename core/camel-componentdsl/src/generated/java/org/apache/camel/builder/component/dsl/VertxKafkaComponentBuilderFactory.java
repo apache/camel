@@ -39,6 +39,8 @@ public interface VertxKafkaComponentBuilderFactory {
      * Category: messaging
      * Since: 3.7
      * Maven coordinates: org.apache.camel:camel-vertx-kafka
+     * 
+     * @return the dsl builder
      */
     static VertxKafkaComponentBuilder vertxKafka() {
         return new VertxKafkaComponentBuilderImpl();
@@ -56,12 +58,15 @@ public interface VertxKafkaComponentBuilderFactory {
          * configurations (e.g: new Kafka properties that are not reflected yet
          * in Camel configurations), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param additionalProperties the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder additionalProperties(
                 java.util.Map<java.lang.String, java.lang.Object> additionalProperties) {
@@ -72,17 +77,20 @@ public interface VertxKafkaComponentBuilderFactory {
          * A list of host/port pairs to use for establishing the initial
          * connection to the Kafka cluster. The client will make use of all
          * servers irrespective of which servers are specified here for
-         * bootstrapping&amp;mdash;this list only impacts the initial hosts used
-         * to discover the full set of servers. This list should be in the form
-         * host1:port1,host2:port2,.... Since these servers are just used for
-         * the initial connection to discover the full cluster membership (which
-         * may change dynamically), this list need not contain the full set of
-         * servers (you may want more than one, though, in case a server is
-         * down).
+         * bootstrapping&amp;amp;mdash;this list only impacts the initial hosts
+         * used to discover the full set of servers. This list should be in the
+         * form host1:port1,host2:port2,.... Since these servers are just used
+         * for the initial connection to discover the full cluster membership
+         * (which may change dynamically), this list need not contain the full
+         * set of servers (you may want more than one, though, in case a server
+         * is down).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param bootstrapServers the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder bootstrapServers(
                 java.lang.String bootstrapServers) {
@@ -102,10 +110,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * (deprecated), attempt to connect to the first IP address returned by
          * the lookup, even if the lookup returns multiple IP addresses.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: use_all_dns_ips
          * Group: common
+         * 
+         * @param clientDnsLookup the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder clientDnsLookup(
                 java.lang.String clientDnsLookup) {
@@ -118,9 +129,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * ip/port by allowing a logical application name to be included in
          * server-side request logging.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
@@ -130,9 +144,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * The component configurations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder configuration(
                 org.apache.camel.component.vertx.kafka.configuration.VertxKafkaConfiguration configuration) {
@@ -143,10 +160,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * Close idle connections after the number of milliseconds specified by
          * this config.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 9m
          * Group: common
+         * 
+         * @param connectionsMaxIdleMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder connectionsMaxIdleMs(
                 long connectionsMaxIdleMs) {
@@ -158,9 +178,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -174,9 +198,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * the producer before they are published to the Kafka cluster. By
          * default, there are no interceptors.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param interceptorClasses the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder interceptorClasses(
                 java.lang.String interceptorClasses) {
@@ -188,10 +215,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * metadata even if we haven't seen any partition leadership changes to
          * proactively discover any new brokers or partitions.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5m
          * Group: common
+         * 
+         * @param metadataMaxAgeMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder metadataMaxAgeMs(
                 long metadataMaxAgeMs) {
@@ -204,9 +234,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * plugging in classes that will be notified of new metric creation. The
          * JmxReporter is always included to register JMX statistics.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param metricReporters the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder metricReporters(
                 java.lang.String metricReporters) {
@@ -216,10 +249,13 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * The number of samples maintained to compute metrics.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param metricsNumSamples the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder metricsNumSamples(
                 int metricsNumSamples) {
@@ -229,10 +265,13 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * The highest recording level for metrics.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: INFO
          * Group: common
+         * 
+         * @param metricsRecordingLevel the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder metricsRecordingLevel(
                 java.lang.String metricsRecordingLevel) {
@@ -242,10 +281,13 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * The window of time a metrics sample is computed over.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: common
+         * 
+         * @param metricsSampleWindowMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder metricsSampleWindowMs(
                 long metricsSampleWindowMs) {
@@ -258,9 +300,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * Header VertxKafkaConstants#PARTITION_ID If configured, it will take
          * precedence over this config.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param partitionId the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder partitionId(
                 java.lang.Integer partitionId) {
@@ -271,10 +316,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
          * data. If the value is -1, the OS default will be used.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 32768
          * Group: common
+         * 
+         * @param receiveBufferBytes the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder receiveBufferBytes(
                 int receiveBufferBytes) {
@@ -288,10 +336,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * connection failure, up to this maximum. After calculating the backoff
          * increase, 20% random jitter is added to avoid connection storms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1s
          * Group: common
+         * 
+         * @param reconnectBackoffMaxMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder reconnectBackoffMaxMs(
                 long reconnectBackoffMaxMs) {
@@ -304,10 +355,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * loop. This backoff applies to all connection attempts by the client
          * to a broker.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 50ms
          * Group: common
+         * 
+         * @param reconnectBackoffMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder reconnectBackoffMs(
                 long reconnectBackoffMs) {
@@ -323,10 +377,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * reduce the possibility of message duplication due to unnecessary
          * producer retries.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: common
+         * 
+         * @param requestTimeoutMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder requestTimeoutMs(int requestTimeoutMs) {
             doSetProperty("requestTimeoutMs", requestTimeoutMs);
@@ -337,10 +394,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * request to a given topic partition. This avoids repeatedly sending
          * requests in a tight loop under some failure scenarios.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 100ms
          * Group: common
+         * 
+         * @param retryBackoffMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder retryBackoffMs(long retryBackoffMs) {
             doSetProperty("retryBackoffMs", retryBackoffMs);
@@ -350,10 +410,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * The size of the TCP send buffer (SO_SNDBUF) to use when sending data.
          * If the value is -1, the OS default will be used.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: common
+         * 
+         * @param sendBufferBytes the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sendBufferBytes(int sendBufferBytes) {
             doSetProperty("sendBufferBytes", sendBufferBytes);
@@ -366,10 +429,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * auto.create.topics.enable broker configuration. This configuration
          * must be set to false when using brokers older than 0.11.0.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param allowAutoCreateTopics the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder allowAutoCreateTopics(
                 boolean allowAutoCreateTopics) {
@@ -380,10 +446,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * The frequency in milliseconds that the consumer offsets are
          * auto-committed to Kafka if enable.auto.commit is set to true.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5s
          * Group: consumer
+         * 
+         * @param autoCommitIntervalMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder autoCommitIntervalMs(
                 int autoCommitIntervalMs) {
@@ -399,10 +468,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * found for the consumer's groupanything else: throw exception to the
          * consumer.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: latest
          * Group: consumer
+         * 
+         * @param autoOffsetReset the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder autoOffsetReset(
                 java.lang.String autoOffsetReset) {
@@ -418,10 +490,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -434,10 +509,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * check adds some overhead, so it may be disabled in cases seeking
          * extreme performance.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param checkCrcs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder checkCrcs(boolean checkCrcs) {
             doSetProperty("checkCrcs", checkCrcs);
@@ -448,9 +526,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * indicates where this client is physically located. It corresponds
          * with the broker config 'broker.rack'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param clientRack the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder clientRack(
                 java.lang.String clientRack) {
@@ -462,10 +543,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * configuration is used as the default timeout for all client
          * operations that do not specify a timeout parameter.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1m
          * Group: consumer
+         * 
+         * @param defaultApiTimeoutMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder defaultApiTimeoutMs(
                 int defaultApiTimeoutMs) {
@@ -476,10 +560,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * If true the consumer's offset will be periodically committed in the
          * background.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param enableAutoCommit the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder enableAutoCommit(
                 boolean enableAutoCommit) {
@@ -491,10 +578,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * excluded from the subscription. It is always possible to explicitly
          * subscribe to an internal topic.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param excludeInternalTopics the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder excludeInternalTopics(
                 boolean excludeInternalTopics) {
@@ -512,10 +602,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * max.message.bytes (topic config). Note that the consumer performs
          * multiple fetches in parallel.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 52428800
          * Group: consumer
+         * 
+         * @param fetchMaxBytes the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder fetchMaxBytes(int fetchMaxBytes) {
             doSetProperty("fetchMaxBytes", fetchMaxBytes);
@@ -526,10 +619,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * fetch request if there isn't sufficient data to immediately satisfy
          * the requirement given by fetch.min.bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 500ms
          * Group: consumer
+         * 
+         * @param fetchMaxWaitMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder fetchMaxWaitMs(int fetchMaxWaitMs) {
             doSetProperty("fetchMaxWaitMs", fetchMaxWaitMs);
@@ -546,10 +642,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * accumulate which can improve server throughput a bit at the cost of
          * some additional latency.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param fetchMinBytes the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder fetchMinBytes(int fetchMinBytes) {
             doSetProperty("fetchMinBytes", fetchMinBytes);
@@ -561,9 +660,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * group management functionality by using subscribe(topic) or the
          * Kafka-based offset management strategy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param groupId the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder groupId(java.lang.String groupId) {
             doSetProperty("groupId", groupId);
@@ -579,9 +681,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * restarts). If not set, the consumer will join the group as a dynamic
          * member, which is the traditional behavior.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param groupInstanceId the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder groupInstanceId(
                 java.lang.String groupInstanceId) {
@@ -597,10 +702,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * set no higher than 1/3 of that value. It can be adjusted even lower
          * to control the expected time for normal rebalances.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 3s
          * Group: consumer
+         * 
+         * @param heartbeatIntervalMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder heartbeatIntervalMs(
                 int heartbeatIntervalMs) {
@@ -624,10 +732,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * flight transactions. Further, when in read_committed the seekToEnd
          * method will return the LSO.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: read_uncommitted
          * Group: consumer
+         * 
+         * @param isolationLevel the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder isolationLevel(
                 java.lang.String isolationLevel) {
@@ -638,10 +749,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * Deserializer class for key that implements the
          * org.apache.kafka.common.serialization.Deserializer interface.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.common.serialization.StringDeserializer
          * Group: consumer
+         * 
+         * @param keyDeserializer the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder keyDeserializer(
                 java.lang.String keyDeserializer) {
@@ -658,10 +772,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * max.message.bytes (topic config). See fetch.max.bytes for limiting
          * the consumer request size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: consumer
+         * 
+         * @param maxPartitionFetchBytes the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder maxPartitionFetchBytes(
                 int maxPartitionFetchBytes) {
@@ -681,10 +798,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * session.timeout.ms. This mirrors the behavior of a static consumer
          * which has shutdown.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5m
          * Group: consumer
+         * 
+         * @param maxPollIntervalMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder maxPollIntervalMs(
                 int maxPollIntervalMs) {
@@ -694,10 +814,13 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * The maximum number of records returned in a single call to poll().
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: consumer
+         * 
+         * @param maxPollRecords the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder maxPollRecords(int maxPollRecords) {
             doSetProperty("maxPollRecords", maxPollRecords);
@@ -714,10 +837,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * org.apache.kafka.clients.consumer.ConsumerPartitionAssignor interface
          * allows you to plug in a custom assignmentstrategy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.clients.consumer.RangeAssignor
          * Group: consumer
+         * 
+         * @param partitionAssignmentStrategy the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder partitionAssignmentStrategy(
                 java.lang.String partitionAssignmentStrategy) {
@@ -728,9 +854,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * Set if KafkaConsumer will read from a particular offset on startup.
          * This config will take precedence over seekTo config.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param seekToOffset the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder seekToOffset(
                 java.lang.Long seekToOffset) {
@@ -741,9 +870,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * Set if KafkaConsumer will read from beginning or end on startup:
          * beginning : read from beginning end : read from end.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param seekToPosition the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder seekToPosition(
                 java.lang.String seekToPosition) {
@@ -760,10 +892,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * broker configuration by group.min.session.timeout.ms and
          * group.max.session.timeout.ms.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: consumer
+         * 
+         * @param sessionTimeoutMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sessionTimeoutMs(int sessionTimeoutMs) {
             doSetProperty("sessionTimeoutMs", sessionTimeoutMs);
@@ -773,10 +908,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * Deserializer class for value that implements the
          * org.apache.kafka.common.serialization.Deserializer interface.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.common.serialization.StringDeserializer
          * Group: consumer
+         * 
+         * @param valueDeserializer the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder valueDeserializer(
                 java.lang.String valueDeserializer) {
@@ -804,10 +942,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * replica remains alive. This is the strongest available guarantee.
          * This is equivalent to the acks=-1 setting.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: producer
+         * 
+         * @param acks the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder acks(java.lang.String acks) {
             doSetProperty("acks", acks);
@@ -826,10 +967,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * bit more wastefully as we will always allocate a buffer of the
          * specified batch size in anticipation of additional records.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 16384
          * Group: producer
+         * 
+         * @param batchSize the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder batchSize(int batchSize) {
             doSetProperty("batchSize", batchSize);
@@ -846,10 +990,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * compression (if compression is enabled) as well as for maintaining
          * in-flight requests.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 33554432
          * Group: producer
+         * 
+         * @param bufferMemory the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder bufferMemory(long bufferMemory) {
             doSetProperty("bufferMemory", bufferMemory);
@@ -862,10 +1009,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * efficacy of batching will also impact the compression ratio (more
          * batching means better compression).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: none
          * Group: producer
+         * 
+         * @param compressionType the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder compressionType(
                 java.lang.String compressionType) {
@@ -884,10 +1034,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * config should be greater than or equal to the sum of
          * request.timeout.ms and linger.ms.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2m
          * Group: producer
+         * 
+         * @param deliveryTimeoutMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder deliveryTimeoutMs(
                 int deliveryTimeoutMs) {
@@ -904,10 +1057,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * are not explicitly set by the user, suitable values will be chosen.
          * If incompatible values are set, a ConfigException will be thrown.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param enableIdempotence the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder enableIdempotence(
                 boolean enableIdempotence) {
@@ -918,10 +1074,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * Serializer class for key that implements the
          * org.apache.kafka.common.serialization.Serializer interface.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
+         * 
+         * @param keySerializer the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder keySerializer(
                 java.lang.String keySerializer) {
@@ -939,10 +1098,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -956,10 +1118,10 @@ public interface VertxKafkaComponentBuilderFactory {
          * sent out. However in some circumstances the client may want to reduce
          * the number of requests even under moderate load. This setting
          * accomplishes this by adding a small amount of artificial
-         * delay&amp;mdash;that is, rather than immediately sending out a record
-         * the producer will wait for up to the given delay to allow other
-         * records to be sent so that the sends can be batched together. This
-         * can be thought of as analogous to Nagle's algorithm in TCP. This
+         * delay&amp;amp;mdash;that is, rather than immediately sending out a
+         * record the producer will wait for up to the given delay to allow
+         * other records to be sent so that the sends can be batched together.
+         * This can be thought of as analogous to Nagle's algorithm in TCP. This
          * setting gives the upper bound on the delay for batching: once we get
          * batch.size worth of records for a partition it will be sent
          * immediately regardless of this setting, however if we have fewer than
@@ -970,10 +1132,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * would add up to 5ms of latency to records sent in the absence of
          * load.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: producer
+         * 
+         * @param lingerMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder lingerMs(long lingerMs) {
             doSetProperty("lingerMs", lingerMs);
@@ -986,10 +1151,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * the user-supplied serializers or partitioner will not be counted
          * against this timeout.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1m
          * Group: producer
+         * 
+         * @param maxBlockMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder maxBlockMs(long maxBlockMs) {
             doSetProperty("maxBlockMs", maxBlockMs);
@@ -1001,10 +1169,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * to be greater than 1 and there are failed sends, there is a risk of
          * message re-ordering due to retries (i.e., if retries are enabled).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: producer
+         * 
+         * @param maxInFlightRequestsPerConnection the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder maxInFlightRequestsPerConnection(
                 int maxInFlightRequestsPerConnection) {
@@ -1019,10 +1190,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * own cap on the record batch size (after compression if compression is
          * enabled) which may be different from this.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1048576
          * Group: producer
+         * 
+         * @param maxRequestSize the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder maxRequestSize(int maxRequestSize) {
             doSetProperty("maxRequestSize", maxRequestSize);
@@ -1034,10 +1208,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * the metadata idle duration, then the topic's metadata is forgotten
          * and the next access to it will force a metadata fetch request.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5m
          * Group: producer
+         * 
+         * @param metadataMaxIdleMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder metadataMaxIdleMs(
                 long metadataMaxIdleMs) {
@@ -1048,11 +1225,14 @@ public interface VertxKafkaComponentBuilderFactory {
          * Partitioner class that implements the
          * org.apache.kafka.clients.producer.Partitioner interface.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
          * org.apache.kafka.clients.producer.internals.DefaultPartitioner
          * Group: producer
+         * 
+         * @param partitionerClass the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder partitionerClass(
                 java.lang.String partitionerClass) {
@@ -1074,10 +1254,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * Users should generally prefer to leave this config unset and instead
          * use delivery.timeout.ms to control retry behavior.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: producer
+         * 
+         * @param retries the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder retries(int retries) {
             doSetProperty("retries", retries);
@@ -1097,9 +1280,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * can change this, by adjusting broker setting
          * transaction.state.log.replication.factor.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param transactionalId the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder transactionalId(
                 java.lang.String transactionalId) {
@@ -1113,10 +1299,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * than the transaction.max.timeout.ms setting in the broker, the
          * request will fail with a InvalidTransactionTimeout error.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1m
          * Group: producer
+         * 
+         * @param transactionTimeoutMs the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder transactionTimeoutMs(
                 int transactionTimeoutMs) {
@@ -1127,10 +1316,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * Serializer class for value that implements the
          * org.apache.kafka.common.serialization.Serializer interface.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
+         * 
+         * @param valueSerializer the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder valueSerializer(
                 java.lang.String valueSerializer) {
@@ -1145,10 +1337,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -1158,9 +1353,12 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * To use an existing vertx instead of creating a new instance.
          * 
-         * The option is a: <code>io.vertx.core.Vertx</code> type.
+         * The option is a: &lt;code&gt;io.vertx.core.Vertx&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param vertx the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder vertx(io.vertx.core.Vertx vertx) {
             doSetProperty("vertx", vertx);
@@ -1169,9 +1367,13 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * To provide a custom set of vertx options for configuring vertx.
          * 
-         * The option is a: <code>io.vertx.core.VertxOptions</code> type.
+         * The option is a: &lt;code&gt;io.vertx.core.VertxOptions&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param vertxOptions the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder vertxOptions(
                 io.vertx.core.VertxOptions vertxOptions) {
@@ -1182,9 +1384,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * The fully qualified name of a SASL client callback handler class that
          * implements the AuthenticateCallbackHandler interface.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param saslClientCallbackHandlerClass the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslClientCallbackHandlerClass(
                 java.lang.String saslClientCallbackHandlerClass) {
@@ -1200,9 +1405,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * lower-case. For example,
          * listener.name.sasl_ssl.scram-sha-256.sasl.jaas.config=com.example.ScramLoginModule required;.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param saslJaasConfig the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslJaasConfig(
                 java.lang.String saslJaasConfig) {
@@ -1212,10 +1420,13 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * Kerberos kinit command path.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /usr/bin/kinit
          * Group: security
+         * 
+         * @param saslKerberosKinitCmd the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslKerberosKinitCmd(
                 java.lang.String saslKerberosKinitCmd) {
@@ -1225,10 +1436,13 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * Login thread sleep time between refresh attempts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: security
+         * 
+         * @param saslKerberosMinTimeBeforeRelogin the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslKerberosMinTimeBeforeRelogin(
                 long saslKerberosMinTimeBeforeRelogin) {
@@ -1239,9 +1453,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * The Kerberos principal name that Kafka runs as. This can be defined
          * either in Kafka's JAAS config or in Kafka's config.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param saslKerberosServiceName the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslKerberosServiceName(
                 java.lang.String saslKerberosServiceName) {
@@ -1251,10 +1468,13 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * Percentage of random jitter added to the renewal time.
          * 
-         * The option is a: <code>double</code> type.
+         * The option is a: &lt;code&gt;double&lt;/code&gt; type.
          * 
          * Default: 0.05
          * Group: security
+         * 
+         * @param saslKerberosTicketRenewJitter the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslKerberosTicketRenewJitter(
                 double saslKerberosTicketRenewJitter) {
@@ -1266,10 +1486,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * from last refresh to ticket's expiry has been reached, at which time
          * it will try to renew the ticket.
          * 
-         * The option is a: <code>double</code> type.
+         * The option is a: &lt;code&gt;double&lt;/code&gt; type.
          * 
          * Default: 0.8
          * Group: security
+         * 
+         * @param saslKerberosTicketRenewWindowFactor the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslKerberosTicketRenewWindowFactor(
                 double saslKerberosTicketRenewWindowFactor) {
@@ -1283,9 +1506,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * and SASL mechanism name in lower-case. For example,
          * listener.name.sasl_ssl.scram-sha-256.sasl.login.callback.handler.class=com.example.CustomScramLoginCallbackHandler.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param saslLoginCallbackHandlerClass the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslLoginCallbackHandlerClass(
                 java.lang.String saslLoginCallbackHandlerClass) {
@@ -1298,9 +1524,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * prefix and SASL mechanism name in lower-case. For example,
          * listener.name.sasl_ssl.scram-sha-256.sasl.login.class=com.example.CustomScramLogin.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param saslLoginClass the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslLoginClass(
                 java.lang.String saslLoginClass) {
@@ -1318,10 +1547,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * both ignored if their sum exceeds the remaining lifetime of a
          * credential. Currently applies only to OAUTHBEARER.
          * 
-         * The option is a: <code>short</code> type.
+         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
          * 
          * Default: 300
          * Group: security
+         * 
+         * @param saslLoginRefreshBufferSeconds the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslLoginRefreshBufferSeconds(
                 short saslLoginRefreshBufferSeconds) {
@@ -1336,10 +1568,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * are both ignored if their sum exceeds the remaining lifetime of a
          * credential. Currently applies only to OAUTHBEARER.
          * 
-         * The option is a: <code>short</code> type.
+         * The option is a: &lt;code&gt;short&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: security
+         * 
+         * @param saslLoginRefreshMinPeriodSeconds the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslLoginRefreshMinPeriodSeconds(
                 short saslLoginRefreshMinPeriodSeconds) {
@@ -1353,10 +1588,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * (50%) and 1.0 (100%) inclusive; a default value of 0.8 (80%) is used
          * if no value is specified. Currently applies only to OAUTHBEARER.
          * 
-         * The option is a: <code>double</code> type.
+         * The option is a: &lt;code&gt;double&lt;/code&gt; type.
          * 
          * Default: 0.8
          * Group: security
+         * 
+         * @param saslLoginRefreshWindowFactor the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslLoginRefreshWindowFactor(
                 double saslLoginRefreshWindowFactor) {
@@ -1370,10 +1608,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * of 0.05 (5%) is used if no value is specified. Currently applies only
          * to OAUTHBEARER.
          * 
-         * The option is a: <code>double</code> type.
+         * The option is a: &lt;code&gt;double&lt;/code&gt; type.
          * 
          * Default: 0.05
          * Group: security
+         * 
+         * @param saslLoginRefreshWindowJitter the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslLoginRefreshWindowJitter(
                 double saslLoginRefreshWindowJitter) {
@@ -1385,10 +1626,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * for which a security provider is available. GSSAPI is the default
          * mechanism.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: GSSAPI
          * Group: security
+         * 
+         * @param saslMechanism the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder saslMechanism(
                 java.lang.String saslMechanism) {
@@ -1399,10 +1643,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * Protocol used to communicate with brokers. Valid values are:
          * PLAINTEXT, SSL, SASL_PLAINTEXT, SASL_SSL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: PLAINTEXT
          * Group: security
+         * 
+         * @param securityProtocol the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder securityProtocol(
                 java.lang.String securityProtocol) {
@@ -1415,9 +1662,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * org.apache.kafka.common.security.auth.SecurityProviderCreator
          * interface.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityProviders the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder securityProviders(
                 java.lang.String securityProviders) {
@@ -1431,9 +1681,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * SSL network protocol. By default all the available cipher suites are
          * supported.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslCipherSuites the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslCipherSuites(
                 java.lang.String sslCipherSuites) {
@@ -1449,10 +1702,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * should be fine for most cases. Also see the config documentation for
          * ssl.protocol.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: TLSv1.2,TLSv1.3
          * Group: security
+         * 
+         * @param sslEnabledProtocols the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslEnabledProtocols(
                 java.lang.String sslEnabledProtocols) {
@@ -1463,10 +1719,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * The endpoint identification algorithm to validate server hostname
          * using server certificate.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https
          * Group: security
+         * 
+         * @param sslEndpointIdentificationAlgorithm the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslEndpointIdentificationAlgorithm(
                 java.lang.String sslEndpointIdentificationAlgorithm) {
@@ -1479,9 +1738,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * SSLEngine objects. Default value is
          * org.apache.kafka.common.security.ssl.DefaultSslEngineFactory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslEngineFactoryClass the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslEngineFactoryClass(
                 java.lang.String sslEngineFactoryClass) {
@@ -1493,10 +1755,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * Default value is the key manager factory algorithm configured for the
          * Java Virtual Machine.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: SunX509
          * Group: security
+         * 
+         * @param sslKeymanagerAlgorithm the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslKeymanagerAlgorithm(
                 java.lang.String sslKeymanagerAlgorithm) {
@@ -1507,9 +1772,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * The password of the private key in the key store file. This is
          * optional for client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslKeyPassword the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslKeyPassword(
                 java.lang.String sslKeyPassword) {
@@ -1520,9 +1788,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * The location of the key store file. This is optional for client and
          * can be used for two-way authentication for client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslKeystoreLocation the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslKeystoreLocation(
                 java.lang.String sslKeystoreLocation) {
@@ -1533,9 +1804,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * The store password for the key store file. This is optional for
          * client and only needed if ssl.keystore.location is configured.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslKeystorePassword the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslKeystorePassword(
                 java.lang.String sslKeystorePassword) {
@@ -1545,10 +1819,13 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * The file format of the key store file. This is optional for client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: JKS
          * Group: security
+         * 
+         * @param sslKeystoreType the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslKeystoreType(
                 java.lang.String sslKeystoreType) {
@@ -1568,10 +1845,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * even if it is one of the values in ssl.enabled.protocols and the
          * server only supports 'TLSv1.3'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: TLSv1.2
          * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslProtocol(
                 java.lang.String sslProtocol) {
@@ -1582,9 +1862,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * The name of the security provider used for SSL connections. Default
          * value is the default security provider of the JVM.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslProvider the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslProvider(
                 java.lang.String sslProvider) {
@@ -1595,9 +1878,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * The SecureRandom PRNG implementation to use for SSL cryptography
          * operations.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslSecureRandomImplementation the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslSecureRandomImplementation(
                 java.lang.String sslSecureRandomImplementation) {
@@ -1609,10 +1895,13 @@ public interface VertxKafkaComponentBuilderFactory {
          * Default value is the trust manager factory algorithm configured for
          * the Java Virtual Machine.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: PKIX
          * Group: security
+         * 
+         * @param sslTrustmanagerAlgorithm the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslTrustmanagerAlgorithm(
                 java.lang.String sslTrustmanagerAlgorithm) {
@@ -1622,9 +1911,12 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * The location of the trust store file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslTruststoreLocation the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslTruststoreLocation(
                 java.lang.String sslTruststoreLocation) {
@@ -1636,9 +1928,12 @@ public interface VertxKafkaComponentBuilderFactory {
          * access to the truststore is still available, but integrity checking
          * is disabled.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslTruststorePassword the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslTruststorePassword(
                 java.lang.String sslTruststorePassword) {
@@ -1648,10 +1943,13 @@ public interface VertxKafkaComponentBuilderFactory {
         /**
          * The file format of the trust store file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: JKS
          * Group: security
+         * 
+         * @param sslTruststoreType the value to set
+         * @return the dsl builder
          */
         default VertxKafkaComponentBuilder sslTruststoreType(
                 java.lang.String sslTruststoreType) {

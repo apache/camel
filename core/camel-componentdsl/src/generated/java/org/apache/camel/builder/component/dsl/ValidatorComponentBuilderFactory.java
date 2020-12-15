@@ -37,6 +37,8 @@ public interface ValidatorComponentBuilderFactory {
      * Category: core,validation
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-validator
+     * 
+     * @return the dsl builder
      */
     static ValidatorComponentBuilder validator() {
         return new ValidatorComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface ValidatorComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ValidatorComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -77,10 +82,13 @@ public interface ValidatorComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default ValidatorComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -92,9 +100,12 @@ public interface ValidatorComponentBuilderFactory {
          * endpoint resource URI.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.validator.ValidatorResourceResolverFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.validator.ValidatorResourceResolverFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param resourceResolverFactory the value to set
+         * @return the dsl builder
          */
         default ValidatorComponentBuilder resourceResolverFactory(
                 org.apache.camel.component.validator.ValidatorResourceResolverFactory resourceResolverFactory) {

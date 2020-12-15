@@ -321,6 +321,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * The queue name.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder igniteQueue(String path) {
             return IgniteQueueEndpointBuilderFactory.endpointBuilder("ignite-queue", path);
@@ -341,6 +342,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default IgniteQueueEndpointBuilder igniteQueue(
                 String componentName,

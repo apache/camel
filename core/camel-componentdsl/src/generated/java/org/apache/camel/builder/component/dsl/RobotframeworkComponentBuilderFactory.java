@@ -37,6 +37,8 @@ public interface RobotframeworkComponentBuilderFactory {
      * Category: testing
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-robotframework
+     * 
+     * @return the dsl builder
      */
     static RobotframeworkComponentBuilder robotframework() {
         return new RobotframeworkComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface RobotframeworkComponentBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -72,10 +77,13 @@ public interface RobotframeworkComponentBuilderFactory {
          * vulnerability if the header is coming from a malicious user, so use
          * this with care.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param allowTemplateFromHeader the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder allowTemplateFromHeader(
                 boolean allowTemplateFromHeader) {
@@ -85,9 +93,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * A text file to read more arguments from.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param argumentFile the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder argumentFile(
                 java.io.File argumentFile) {
@@ -98,9 +109,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * Creates combined statistics based on tags. Use the format tags:title
          * List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param combinedTagStats the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder combinedTagStats(
                 java.lang.String combinedTagStats) {
@@ -110,9 +124,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Tests that have the given tags are considered critical. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param criticalTags the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder criticalTags(
                 java.lang.String criticalTags) {
@@ -122,9 +139,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * A debug file that is written during execution.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param debugFile the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder debugFile(java.io.File debugFile) {
             doSetProperty("debugFile", debugFile);
@@ -133,9 +153,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets the documentation of the top-level tests suites.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param document the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder document(
                 java.lang.String document) {
@@ -147,10 +170,13 @@ public interface RobotframeworkComponentBuilderFactory {
          * executing keywords originating from test libraries. Useful for
          * validating test data syntax.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param dryrun the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder dryrun(boolean dryrun) {
             doSetProperty("dryrun", dryrun);
@@ -159,9 +185,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Selects the tests cases by tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param excludes the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder excludes(
                 java.lang.String excludes) {
@@ -171,10 +200,13 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets robot to stop execution immediately if a critical test fails.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exitOnFailure the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder exitOnFailure(
                 boolean exitOnFailure) {
@@ -184,9 +216,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Selects the tests cases by tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param includes the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder includes(
                 java.lang.String includes) {
@@ -196,9 +231,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets a single listener for monitoring tests execution.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listener the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder listener(
                 java.lang.String listener) {
@@ -209,9 +247,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * Sets multiple listeners for monitoring tests execution. Use the
          * format ListenerWithArgs:arg1:arg2 or simply ListenerWithoutArgs List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param listeners the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder listeners(
                 java.lang.String listeners) {
@@ -221,9 +262,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets the path to the generated log file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder log(java.io.File log) {
             doSetProperty("log", log);
@@ -232,9 +276,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets the threshold level for logging.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param logLevel the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder logLevel(
                 java.lang.String logLevel) {
@@ -244,9 +291,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets a title for the generated tests log.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param logTitle the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder logTitle(
                 java.lang.String logTitle) {
@@ -257,9 +307,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * Sets free metadata for the top level tests suites. comma seperated
          * list of string resulting as List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param metadata the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder metadata(
                 java.lang.String metadata) {
@@ -272,9 +325,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * Windows 'off' - never use colors 'force' - always use colors (also in
          * Windows).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param monitorColors the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder monitorColors(
                 java.lang.String monitorColors) {
@@ -284,10 +340,13 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Width of the monitor output. Default is 78.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 78
          * Group: common
+         * 
+         * @param monitorWidth the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder monitorWidth(
                 java.lang.String monitorWidth) {
@@ -297,9 +356,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets the name of the top-level tests suites.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param name the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder name(java.lang.String name) {
             doSetProperty("name", name);
@@ -308,9 +370,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Tests that have the given tags are not critical. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param nonCriticalTags the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder nonCriticalTags(
                 java.lang.String nonCriticalTags) {
@@ -321,10 +386,13 @@ public interface RobotframeworkComponentBuilderFactory {
          * If true, sets the return code to zero regardless of failures in test
          * cases. Error codes are returned normally.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param noStatusReturnCode the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder noStatusReturnCode(
                 boolean noStatusReturnCode) {
@@ -334,9 +402,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets the path to the generated output file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param output the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder output(java.io.File output) {
             doSetProperty("output", output);
@@ -345,9 +416,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Configures where generated reports are to be placed.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param outputDirectory the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder outputDirectory(
                 java.io.File outputDirectory) {
@@ -358,9 +432,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * Sets the test execution order to be randomized. Valid values are all,
          * suite, and test.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param randomize the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder randomize(
                 java.lang.String randomize) {
@@ -370,9 +447,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets the path to the generated report file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param report the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder report(java.io.File report) {
             doSetProperty("report", report);
@@ -381,9 +461,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets background colors for the generated report and summary.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reportBackground the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder reportBackground(
                 java.lang.String reportBackground) {
@@ -393,9 +476,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets a title for the generated tests report.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reportTitle the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder reportTitle(
                 java.lang.String reportTitle) {
@@ -407,10 +493,13 @@ public interface RobotframeworkComponentBuilderFactory {
          * with --include/--exclude when it is not an error that no test matches
          * the condition.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param runEmptySuite the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder runEmptySuite(
                 boolean runEmptySuite) {
@@ -420,9 +509,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Re-run failed tests, based on output.xml file.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param runFailed the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder runFailed(java.io.File runFailed) {
             doSetProperty("runFailed", runFailed);
@@ -433,9 +525,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * has been deprecated in Robot Framework 2.8. Use separate dryryn,
          * skipTeardownOnExit, exitOnFailure, and randomize settings instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param runMode the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder runMode(java.lang.String runMode) {
             doSetProperty("runMode", runMode);
@@ -445,10 +540,13 @@ public interface RobotframeworkComponentBuilderFactory {
          * Sets whether the teardowns are skipped if the test execution is
          * prematurely stopped.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipTeardownOnExit the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder skipTeardownOnExit(
                 boolean skipTeardownOnExit) {
@@ -458,9 +556,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Splits output and log files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param splitOutputs the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder splitOutputs(
                 java.lang.String splitOutputs) {
@@ -470,9 +571,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Selects the tests suites by name. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param suites the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder suites(java.lang.String suites) {
             doSetProperty("suites", suites);
@@ -482,9 +586,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * Defines how many levels to show in the Statistics by Suite table in
          * outputs.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param suiteStatLevel the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder suiteStatLevel(
                 java.lang.String suiteStatLevel) {
@@ -494,9 +601,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets a title for the generated summary report.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param summaryTitle the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder summaryTitle(
                 java.lang.String summaryTitle) {
@@ -506,9 +616,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Adds documentation to the specified tags. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagDocs the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder tagDocs(java.lang.String tagDocs) {
             doSetProperty("tagDocs", tagDocs);
@@ -517,9 +630,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets the tags(s) to all executed tests cases. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder tags(java.lang.String tags) {
             doSetProperty("tags", tags);
@@ -529,9 +645,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * Excludes these tags from the Statistics by Tag and Test Details by
          * Tag tables in outputs. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatExcludes the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder tagStatExcludes(
                 java.lang.String tagStatExcludes) {
@@ -542,9 +661,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * Includes only these tags in the Statistics by Tag and Test Details by
          * Tag tables in outputs. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatIncludes the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder tagStatIncludes(
                 java.lang.String tagStatIncludes) {
@@ -555,9 +677,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * Adds external links to the Statistics by Tag table in outputs. Use
          * the format pattern:link:title List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tagStatLinks the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder tagStatLinks(
                 java.lang.String tagStatLinks) {
@@ -567,9 +692,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Selects the tests cases by name. List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tests the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder tests(java.lang.String tests) {
             doSetProperty("tests", tests);
@@ -578,10 +706,13 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Adds a timestamp to all output files.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param timestampOutputs the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder timestampOutputs(
                 boolean timestampOutputs) {
@@ -591,9 +722,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets variables using variables files. Use the format path:args List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param variableFiles the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder variableFiles(
                 java.lang.String variableFiles) {
@@ -603,9 +737,12 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Sets individual variables. Use the format name:value List.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param variables the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder variables(
                 java.lang.String variables) {
@@ -615,10 +752,13 @@ public interface RobotframeworkComponentBuilderFactory {
         /**
          * Show a warning when an invalid file is skipped.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param warnOnSkippedFiles the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder warnOnSkippedFiles(
                 boolean warnOnSkippedFiles) {
@@ -631,9 +771,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * name is derived from the testCasesDirectory parameter, replacing
          * blanks in the directory name by underscores.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param xunitFile the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder xunitFile(java.io.File xunitFile) {
             doSetProperty("xunitFile", xunitFile);
@@ -648,10 +791,13 @@ public interface RobotframeworkComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -669,10 +815,13 @@ public interface RobotframeworkComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -687,10 +836,13 @@ public interface RobotframeworkComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -701,9 +853,12 @@ public interface RobotframeworkComponentBuilderFactory {
          * The configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default RobotframeworkComponentBuilder configuration(
                 org.apache.camel.component.robotframework.RobotFrameworkCamelConfiguration configuration) {

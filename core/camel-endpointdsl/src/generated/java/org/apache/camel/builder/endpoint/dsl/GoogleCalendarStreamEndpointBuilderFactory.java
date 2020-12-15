@@ -840,6 +840,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * Specifies an index for the endpoint
          * 
          * @param path index
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder googleCalendarStream(
                 String path) {
@@ -861,6 +862,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path index
+         * @return the dsl builder
          */
         default GoogleCalendarStreamEndpointBuilder googleCalendarStream(
                 String componentName,

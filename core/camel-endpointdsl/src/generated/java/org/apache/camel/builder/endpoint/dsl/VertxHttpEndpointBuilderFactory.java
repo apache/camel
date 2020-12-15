@@ -636,6 +636,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * The HTTP URI to connect to
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default VertxHttpEndpointBuilder vertxHttp(String path) {
             return VertxHttpEndpointBuilderFactory.endpointBuilder("vertx-http", path);
@@ -656,6 +657,7 @@ public interface VertxHttpEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path httpUri
+         * @return the dsl builder
          */
         default VertxHttpEndpointBuilder vertxHttp(
                 String componentName,

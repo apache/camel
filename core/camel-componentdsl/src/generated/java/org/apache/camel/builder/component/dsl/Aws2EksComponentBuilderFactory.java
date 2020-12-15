@@ -37,6 +37,8 @@ public interface Aws2EksComponentBuilderFactory {
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-eks
+     * 
+     * @return the dsl builder
      */
     static Aws2EksComponentBuilder aws2Eks() {
         return new Aws2EksComponentBuilderImpl();
@@ -50,10 +52,12 @@ public interface Aws2EksComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.eks.EKS2Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.eks.EKS2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder configuration(
                 org.apache.camel.component.aws2.eks.EKS2Configuration configuration) {
@@ -64,9 +68,12 @@ public interface Aws2EksComponentBuilderFactory {
          * To use a existing configured AWS EKS as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.eks.EksClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.eks.EksClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param eksClient the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder eksClient(
                 software.amazon.awssdk.services.eks.EksClient eksClient) {
@@ -84,10 +91,13 @@ public interface Aws2EksComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -98,9 +108,12 @@ public interface Aws2EksComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.eks.EKS2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.eks.EKS2Operations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder operation(
                 org.apache.camel.component.aws2.eks.EKS2Operations operation) {
@@ -110,10 +123,13 @@ public interface Aws2EksComponentBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder pojoRequest(boolean pojoRequest) {
             doSetProperty("pojoRequest", pojoRequest);
@@ -122,9 +138,12 @@ public interface Aws2EksComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the EKS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -133,9 +152,12 @@ public interface Aws2EksComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the EKS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -144,11 +166,14 @@ public interface Aws2EksComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the EKS client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -161,9 +186,12 @@ public interface Aws2EksComponentBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -173,10 +201,13 @@ public interface Aws2EksComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -191,10 +222,13 @@ public interface Aws2EksComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -204,9 +238,12 @@ public interface Aws2EksComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -215,9 +252,12 @@ public interface Aws2EksComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2EksComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
