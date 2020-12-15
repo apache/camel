@@ -50,9 +50,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
          * 
-         * The option is a: <code>io.iron.ironmq.Client</code> type.
+         * The option is a: &lt;code&gt;io.iron.ironmq.Client&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder client(Object client) {
             doSetProperty("client", client);
@@ -61,10 +64,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
          * 
-         * The option will be converted to a <code>io.iron.ironmq.Client</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;io.iron.ironmq.Client&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder client(String client) {
             doSetProperty("client", client);
@@ -75,10 +81,13 @@ public interface IronMQEndpointBuilderFactory {
          * https://mq-aws-us-east-1-1.iron.io (US) and
          * https://mq-aws-eu-west-1-1.iron.io (EU).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://mq-aws-us-east-1-1.iron.io
          * Group: common
+         * 
+         * @param ironMQCloud the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder ironMQCloud(String ironMQCloud) {
             doSetProperty("ironMQCloud", ironMQCloud);
@@ -90,10 +99,13 @@ public interface IronMQEndpointBuilderFactory {
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param preserveHeaders the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder preserveHeaders(
                 boolean preserveHeaders) {
@@ -106,10 +118,14 @@ public interface IronMQEndpointBuilderFactory {
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param preserveHeaders the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder preserveHeaders(
                 String preserveHeaders) {
@@ -119,9 +135,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * IronMQ projectId.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param projectId the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder projectId(String projectId) {
             doSetProperty("projectId", projectId);
@@ -130,9 +149,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * IronMQ token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param token the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder token(String token) {
             doSetProperty("token", token);
@@ -144,10 +166,13 @@ public interface IronMQEndpointBuilderFactory {
          * one pr. exchange. If enabled care should be taken that the consumer
          * is idempotent when processing exchanges.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param batchDelete the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder batchDelete(boolean batchDelete) {
             doSetProperty("batchDelete", batchDelete);
@@ -159,10 +184,14 @@ public interface IronMQEndpointBuilderFactory {
          * one pr. exchange. If enabled care should be taken that the consumer
          * is idempotent when processing exchanges.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param batchDelete the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder batchDelete(String batchDelete) {
             doSetProperty("batchDelete", batchDelete);
@@ -177,10 +206,13 @@ public interface IronMQEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -196,10 +228,14 @@ public interface IronMQEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -209,10 +245,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * The number of concurrent consumers.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -222,10 +261,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * The number of concurrent consumers.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -235,10 +277,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Number of messages to poll pr. call. Maximum is 100.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -248,10 +293,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Number of messages to poll pr. call. Maximum is 100.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -262,10 +310,13 @@ public interface IronMQEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -276,10 +327,14 @@ public interface IronMQEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -289,10 +344,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * After timeout (in seconds), item will be placed back onto the queue.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: consumer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
@@ -301,10 +359,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * After timeout (in seconds), item will be placed back onto the queue.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: consumer
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -314,9 +375,12 @@ public interface IronMQEndpointBuilderFactory {
          * Time in seconds to wait for a message to become available. This
          * enables long polling. Default is 0 (does not wait), maximum is 30.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param wait the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder wait(int wait) {
             doSetProperty("wait", wait);
@@ -326,9 +390,12 @@ public interface IronMQEndpointBuilderFactory {
          * Time in seconds to wait for a message to become available. This
          * enables long polling. Default is 0 (does not wait), maximum is 30.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param wait the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder wait(String wait) {
             doSetProperty("wait", wait);
@@ -338,9 +405,12 @@ public interface IronMQEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -351,9 +421,12 @@ public interface IronMQEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -364,9 +437,12 @@ public interface IronMQEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -377,9 +453,12 @@ public interface IronMQEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -394,9 +473,12 @@ public interface IronMQEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -411,9 +493,12 @@ public interface IronMQEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -423,10 +508,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -435,10 +523,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -448,10 +539,13 @@ public interface IronMQEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -461,10 +555,14 @@ public interface IronMQEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -473,10 +571,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -485,10 +586,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -499,10 +603,13 @@ public interface IronMQEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -513,10 +620,13 @@ public interface IronMQEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -526,10 +636,14 @@ public interface IronMQEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -541,10 +655,13 @@ public interface IronMQEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -557,9 +674,12 @@ public interface IronMQEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -572,9 +692,12 @@ public interface IronMQEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -585,10 +708,13 @@ public interface IronMQEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -598,10 +724,14 @@ public interface IronMQEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -611,13 +741,17 @@ public interface IronMQEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -629,13 +763,16 @@ public interface IronMQEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -644,10 +781,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -657,10 +797,14 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -670,10 +814,14 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -683,10 +831,13 @@ public interface IronMQEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -696,10 +847,13 @@ public interface IronMQEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -710,10 +864,14 @@ public interface IronMQEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -736,10 +894,13 @@ public interface IronMQEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -753,9 +914,12 @@ public interface IronMQEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -765,9 +929,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -778,9 +946,12 @@ public interface IronMQEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -794,9 +965,12 @@ public interface IronMQEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -810,9 +984,12 @@ public interface IronMQEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -823,10 +1000,13 @@ public interface IronMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -837,10 +1017,14 @@ public interface IronMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -861,9 +1045,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
          * 
-         * The option is a: <code>io.iron.ironmq.Client</code> type.
+         * The option is a: &lt;code&gt;io.iron.ironmq.Client&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointProducerBuilder client(Object client) {
             doSetProperty("client", client);
@@ -872,10 +1059,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
          * 
-         * The option will be converted to a <code>io.iron.ironmq.Client</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;io.iron.ironmq.Client&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointProducerBuilder client(String client) {
             doSetProperty("client", client);
@@ -886,10 +1076,13 @@ public interface IronMQEndpointBuilderFactory {
          * https://mq-aws-us-east-1-1.iron.io (US) and
          * https://mq-aws-eu-west-1-1.iron.io (EU).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://mq-aws-us-east-1-1.iron.io
          * Group: common
+         * 
+         * @param ironMQCloud the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointProducerBuilder ironMQCloud(String ironMQCloud) {
             doSetProperty("ironMQCloud", ironMQCloud);
@@ -901,10 +1094,13 @@ public interface IronMQEndpointBuilderFactory {
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param preserveHeaders the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointProducerBuilder preserveHeaders(
                 boolean preserveHeaders) {
@@ -917,10 +1113,14 @@ public interface IronMQEndpointBuilderFactory {
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param preserveHeaders the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointProducerBuilder preserveHeaders(
                 String preserveHeaders) {
@@ -930,9 +1130,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * IronMQ projectId.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param projectId the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointProducerBuilder projectId(String projectId) {
             doSetProperty("projectId", projectId);
@@ -941,9 +1144,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * IronMQ token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param token the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointProducerBuilder token(String token) {
             doSetProperty("token", token);
@@ -960,10 +1166,13 @@ public interface IronMQEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -981,10 +1190,14 @@ public interface IronMQEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -995,9 +1208,12 @@ public interface IronMQEndpointBuilderFactory {
          * The item will not be available on the queue until this many seconds
          * have passed. Default is 0 seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param visibilityDelay the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointProducerBuilder visibilityDelay(
                 int visibilityDelay) {
@@ -1008,9 +1224,12 @@ public interface IronMQEndpointBuilderFactory {
          * The item will not be available on the queue until this many seconds
          * have passed. Default is 0 seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param visibilityDelay the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointProducerBuilder visibilityDelay(
                 String visibilityDelay) {
@@ -1032,10 +1251,13 @@ public interface IronMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1046,10 +1268,14 @@ public interface IronMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1071,9 +1297,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
          * 
-         * The option is a: <code>io.iron.ironmq.Client</code> type.
+         * The option is a: &lt;code&gt;io.iron.ironmq.Client&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointBuilder client(Object client) {
             doSetProperty("client", client);
@@ -1082,10 +1311,13 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * Reference to a io.iron.ironmq.Client in the Registry.
          * 
-         * The option will be converted to a <code>io.iron.ironmq.Client</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;io.iron.ironmq.Client&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointBuilder client(String client) {
             doSetProperty("client", client);
@@ -1096,10 +1328,13 @@ public interface IronMQEndpointBuilderFactory {
          * https://mq-aws-us-east-1-1.iron.io (US) and
          * https://mq-aws-eu-west-1-1.iron.io (EU).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://mq-aws-us-east-1-1.iron.io
          * Group: common
+         * 
+         * @param ironMQCloud the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointBuilder ironMQCloud(String ironMQCloud) {
             doSetProperty("ironMQCloud", ironMQCloud);
@@ -1111,10 +1346,13 @@ public interface IronMQEndpointBuilderFactory {
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param preserveHeaders the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointBuilder preserveHeaders(boolean preserveHeaders) {
             doSetProperty("preserveHeaders", preserveHeaders);
@@ -1126,10 +1364,14 @@ public interface IronMQEndpointBuilderFactory {
          * with a header list, and a message body. Useful when Camel is both
          * consumer and producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param preserveHeaders the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointBuilder preserveHeaders(String preserveHeaders) {
             doSetProperty("preserveHeaders", preserveHeaders);
@@ -1138,9 +1380,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * IronMQ projectId.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param projectId the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointBuilder projectId(String projectId) {
             doSetProperty("projectId", projectId);
@@ -1149,9 +1394,12 @@ public interface IronMQEndpointBuilderFactory {
         /**
          * IronMQ token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param token the value to set
+         * @return the dsl builder
          */
         default IronMQEndpointBuilder token(String token) {
             doSetProperty("token", token);
@@ -1173,10 +1421,13 @@ public interface IronMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1186,10 +1437,14 @@ public interface IronMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIronMQEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

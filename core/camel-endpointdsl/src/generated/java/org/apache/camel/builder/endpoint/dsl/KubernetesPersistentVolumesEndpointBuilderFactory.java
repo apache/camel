@@ -43,9 +43,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Kubernetes API Version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder apiVersion(
                 String apiVersion) {
@@ -55,9 +58,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The dns domain, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dnsDomain the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder dnsDomain(
                 String dnsDomain) {
@@ -68,9 +74,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option is a:
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -81,9 +90,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option will be converted to a
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -101,10 +113,13 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -122,10 +137,14 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -135,9 +154,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * Producer operation to do on Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder operation(
                 String operation) {
@@ -147,9 +169,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The port name, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param portName the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder portName(
                 String portName) {
@@ -159,10 +184,13 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The port protocol, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: producer
+         * 
+         * @param portProtocol the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder portProtocol(
                 String portProtocol) {
@@ -172,9 +200,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The CA Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder caCertData(
                 String caCertData) {
@@ -184,9 +215,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The CA Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder caCertFile(
                 String caCertFile) {
@@ -196,9 +230,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Client Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder clientCertData(
                 String clientCertData) {
@@ -208,9 +245,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Client Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder clientCertFile(
                 String clientCertFile) {
@@ -220,9 +260,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Key Algorithm used by the client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyAlgo the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -232,9 +275,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Client Key data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyData the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder clientKeyData(
                 String clientKeyData) {
@@ -244,9 +290,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Client Key file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -256,9 +305,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Client Key Passphrase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyPassphrase the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -268,9 +320,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * The Auth Token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthToken the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder oauthToken(
                 String oauthToken) {
@@ -280,9 +335,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * Password to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder password(
                 String password) {
@@ -292,9 +350,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder trustCerts(
                 Boolean trustCerts) {
@@ -304,10 +365,13 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder trustCerts(
                 String trustCerts) {
@@ -317,9 +381,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
         /**
          * Username to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default KubernetesPersistentVolumesEndpointBuilder username(
                 String username) {
@@ -342,9 +409,12 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -355,10 +425,13 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -369,10 +442,13 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -383,10 +459,14 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder synchronous(
                 String synchronous) {

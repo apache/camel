@@ -50,10 +50,13 @@ public interface JcloudsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -69,10 +72,14 @@ public interface JcloudsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -82,9 +89,12 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The name of the blob container.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: blobstore
+         * 
+         * @param container the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointConsumerBuilder container(String container) {
             doSetProperty("container", container);
@@ -93,9 +103,12 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * An optional directory name to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: blobstore
+         * 
+         * @param directory the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointConsumerBuilder directory(String directory) {
             doSetProperty("directory", directory);
@@ -118,10 +131,13 @@ public interface JcloudsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -135,9 +151,12 @@ public interface JcloudsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJcloudsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -147,9 +166,13 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -160,9 +183,12 @@ public interface JcloudsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJcloudsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -173,10 +199,13 @@ public interface JcloudsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcloudsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -187,10 +216,14 @@ public interface JcloudsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcloudsEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -219,10 +252,13 @@ public interface JcloudsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -240,10 +276,14 @@ public interface JcloudsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -253,9 +293,12 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The name of the blob.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: blobstore
+         * 
+         * @param blobName the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder blobName(String blobName) {
             doSetProperty("blobName", blobName);
@@ -264,9 +307,12 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The name of the blob container.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: blobstore
+         * 
+         * @param container the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder container(String container) {
             doSetProperty("container", container);
@@ -276,9 +322,12 @@ public interface JcloudsEndpointBuilderFactory {
          * The group that will be assigned to the newly created node. Values
          * depend on the actual cloud provider.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: compute
+         * 
+         * @param group the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder group(String group) {
             doSetProperty("group", group);
@@ -288,9 +337,12 @@ public interface JcloudsEndpointBuilderFactory {
          * The hardware that will be used for creating a node. Values depend on
          * the actual cloud provider.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: compute
+         * 
+         * @param hardwareId the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder hardwareId(String hardwareId) {
             doSetProperty("hardwareId", hardwareId);
@@ -300,9 +352,12 @@ public interface JcloudsEndpointBuilderFactory {
          * The imageId that will be used for creating a node. Values depend on
          * the actual cloud provider.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: compute
+         * 
+         * @param imageId the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder imageId(String imageId) {
             doSetProperty("imageId", imageId);
@@ -312,9 +367,12 @@ public interface JcloudsEndpointBuilderFactory {
          * The location that will be used for creating a node. Values depend on
          * the actual cloud provider.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: compute
+         * 
+         * @param locationId the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder locationId(String locationId) {
             doSetProperty("locationId", locationId);
@@ -323,9 +381,12 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The id of the node that will run the script or destroyed.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: compute
+         * 
+         * @param nodeId the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder nodeId(String nodeId) {
             doSetProperty("nodeId", nodeId);
@@ -334,9 +395,12 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * To filter by node status to only select running nodes etc.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: compute
+         * 
+         * @param nodeState the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder nodeState(String nodeState) {
             doSetProperty("nodeState", nodeState);
@@ -346,9 +410,12 @@ public interface JcloudsEndpointBuilderFactory {
          * Specifies the type of operation that will be performed to the
          * blobstore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: compute
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -357,9 +424,12 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The user on the target node that will run the script.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: compute
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointProducerBuilder user(String user) {
             doSetProperty("user", user);
@@ -380,10 +450,13 @@ public interface JcloudsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcloudsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -394,10 +467,14 @@ public interface JcloudsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcloudsEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -419,9 +496,12 @@ public interface JcloudsEndpointBuilderFactory {
         /**
          * The name of the blob container.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: blobstore
+         * 
+         * @param container the value to set
+         * @return the dsl builder
          */
         default JcloudsEndpointBuilder container(String container) {
             doSetProperty("container", container);
@@ -443,10 +523,13 @@ public interface JcloudsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcloudsEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -456,10 +539,14 @@ public interface JcloudsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJcloudsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

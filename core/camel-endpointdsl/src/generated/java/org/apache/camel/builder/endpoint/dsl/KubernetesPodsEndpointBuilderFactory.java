@@ -44,9 +44,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Kubernetes API Version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
@@ -56,9 +59,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The dns domain, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dnsDomain the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder dnsDomain(String dnsDomain) {
             doSetProperty("dnsDomain", dnsDomain);
@@ -68,9 +74,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option is a:
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -81,9 +90,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option will be converted to a
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -93,9 +105,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The port name, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portName the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder portName(String portName) {
             doSetProperty("portName", portName);
@@ -104,10 +119,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The port protocol, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: common
+         * 
+         * @param portProtocol the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
@@ -123,10 +141,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -142,10 +163,14 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -155,9 +180,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Consumer CRD Resource Group we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param crdGroup the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder crdGroup(String crdGroup) {
             doSetProperty("crdGroup", crdGroup);
@@ -166,9 +194,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Consumer CRD Resource name we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param crdName the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder crdName(String crdName) {
             doSetProperty("crdName", crdName);
@@ -177,9 +208,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Consumer CRD Resource Plural we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param crdPlural the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder crdPlural(String crdPlural) {
             doSetProperty("crdPlural", crdPlural);
@@ -188,9 +222,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Consumer CRD Resource Scope we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param crdScope the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder crdScope(String crdScope) {
             doSetProperty("crdScope", crdScope);
@@ -199,9 +236,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Consumer CRD Resource Version we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param crdVersion the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder crdVersion(
                 String crdVersion) {
@@ -211,9 +251,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Consumer Label key when watching at some resources.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param labelKey the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder labelKey(String labelKey) {
             doSetProperty("labelKey", labelKey);
@@ -222,9 +265,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Consumer Label value when watching at some resources.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param labelValue the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder labelValue(
                 String labelValue) {
@@ -234,9 +280,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The namespace.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param namespace the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder namespace(String namespace) {
             doSetProperty("namespace", namespace);
@@ -245,10 +294,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Consumer pool size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder poolSize(int poolSize) {
             doSetProperty("poolSize", poolSize);
@@ -257,10 +309,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Consumer pool size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder poolSize(String poolSize) {
             doSetProperty("poolSize", poolSize);
@@ -269,9 +324,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Consumer Resource Name we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param resourceName the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder resourceName(
                 String resourceName) {
@@ -281,9 +339,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The CA Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder caCertData(
                 String caCertData) {
@@ -293,9 +354,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The CA Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
@@ -305,9 +369,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
@@ -317,9 +384,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
@@ -329,9 +399,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Key Algorithm used by the client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyAlgo the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -341,9 +414,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Key data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyData the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
@@ -353,9 +429,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Key file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -365,9 +444,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Key Passphrase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyPassphrase the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -377,9 +459,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Auth Token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthToken the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
@@ -389,9 +474,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Password to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -400,9 +488,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
@@ -412,10 +503,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
@@ -425,9 +519,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Username to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -451,10 +548,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -468,9 +568,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -480,9 +583,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -493,9 +600,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -506,9 +616,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -519,10 +632,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -533,10 +649,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -547,10 +666,14 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -571,9 +694,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Kubernetes API Version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder apiVersion(
                 String apiVersion) {
@@ -583,9 +709,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The dns domain, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dnsDomain the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder dnsDomain(String dnsDomain) {
             doSetProperty("dnsDomain", dnsDomain);
@@ -595,9 +724,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option is a:
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -608,9 +740,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option will be converted to a
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -620,9 +755,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The port name, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portName the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder portName(String portName) {
             doSetProperty("portName", portName);
@@ -631,10 +769,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The port protocol, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: common
+         * 
+         * @param portProtocol the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder portProtocol(
                 String portProtocol) {
@@ -652,10 +793,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -673,10 +817,14 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -686,9 +834,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Producer operation to do on Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -697,9 +848,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The CA Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder caCertData(
                 String caCertData) {
@@ -709,9 +863,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The CA Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder caCertFile(
                 String caCertFile) {
@@ -721,9 +878,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder clientCertData(
                 String clientCertData) {
@@ -733,9 +893,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
@@ -745,9 +908,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Key Algorithm used by the client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyAlgo the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -757,9 +923,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Key data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyData the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
@@ -769,9 +938,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Key file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -781,9 +953,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Key Passphrase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyPassphrase the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -793,9 +968,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Auth Token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthToken the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder oauthToken(
                 String oauthToken) {
@@ -805,9 +983,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Password to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -816,9 +997,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
@@ -828,10 +1012,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder trustCerts(
                 String trustCerts) {
@@ -841,9 +1028,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Username to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -865,9 +1055,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -878,10 +1071,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -892,10 +1088,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -906,10 +1105,14 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -931,9 +1134,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Kubernetes API Version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder apiVersion(String apiVersion) {
             doSetProperty("apiVersion", apiVersion);
@@ -942,9 +1148,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The dns domain, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dnsDomain the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder dnsDomain(String dnsDomain) {
             doSetProperty("dnsDomain", dnsDomain);
@@ -954,9 +1163,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option is a:
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -967,9 +1179,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option will be converted to a
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -979,9 +1194,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The port name, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portName the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder portName(String portName) {
             doSetProperty("portName", portName);
@@ -990,10 +1208,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The port protocol, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: common
+         * 
+         * @param portProtocol the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder portProtocol(String portProtocol) {
             doSetProperty("portProtocol", portProtocol);
@@ -1002,9 +1223,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The CA Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder caCertData(String caCertData) {
             doSetProperty("caCertData", caCertData);
@@ -1013,9 +1237,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The CA Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder caCertFile(String caCertFile) {
             doSetProperty("caCertFile", caCertFile);
@@ -1024,9 +1251,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder clientCertData(
                 String clientCertData) {
@@ -1036,9 +1266,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder clientCertFile(
                 String clientCertFile) {
@@ -1048,9 +1281,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Key Algorithm used by the client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyAlgo the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder clientKeyAlgo(String clientKeyAlgo) {
             doSetProperty("clientKeyAlgo", clientKeyAlgo);
@@ -1059,9 +1295,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Key data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyData the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder clientKeyData(String clientKeyData) {
             doSetProperty("clientKeyData", clientKeyData);
@@ -1070,9 +1309,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Key file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyFile the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder clientKeyFile(String clientKeyFile) {
             doSetProperty("clientKeyFile", clientKeyFile);
@@ -1081,9 +1323,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Client Key Passphrase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyPassphrase the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -1093,9 +1338,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * The Auth Token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthToken the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder oauthToken(String oauthToken) {
             doSetProperty("oauthToken", oauthToken);
@@ -1104,9 +1352,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Password to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -1115,9 +1366,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder trustCerts(Boolean trustCerts) {
             doSetProperty("trustCerts", trustCerts);
@@ -1126,10 +1380,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder trustCerts(String trustCerts) {
             doSetProperty("trustCerts", trustCerts);
@@ -1138,9 +1395,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
         /**
          * Username to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -1162,9 +1422,12 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -1175,10 +1438,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -1189,10 +1455,13 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1203,10 +1472,14 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesPodsEndpointBuilder synchronous(
                 String synchronous) {

@@ -48,9 +48,12 @@ public interface HBaseEndpointBuilderFactory {
          * mapping cells.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cellMappingStrategyFactory the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
@@ -62,9 +65,12 @@ public interface HBaseEndpointBuilderFactory {
          * mapping cells.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cellMappingStrategyFactory the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
@@ -75,9 +81,12 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder filters(List<Object> filters) {
             doSetProperty("filters", filters);
@@ -87,9 +96,12 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder filters(String filters) {
             doSetProperty("filters", filters);
@@ -98,9 +110,12 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * The class name of a custom mapping strategy implementation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mappingStrategyClassName the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
@@ -111,9 +126,12 @@ public interface HBaseEndpointBuilderFactory {
          * The strategy to use for mapping Camel messages to HBase columns.
          * Supported values: header, or body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mappingStrategyName the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder mappingStrategyName(
                 String mappingStrategyName) {
@@ -132,13 +150,17 @@ public interface HBaseEndpointBuilderFactory {
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder rowMapping(String key, Object value) {
             doSetMultiValueProperty("rowMapping", "row." + key, value);
@@ -156,13 +178,16 @@ public interface HBaseEndpointBuilderFactory {
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder rowMapping(Map values) {
             doSetMultiValueProperties("rowMapping", "row.", values);
@@ -173,9 +198,12 @@ public interface HBaseEndpointBuilderFactory {
          * describes how each row should be modeled.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.model.HBaseRow&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param rowModel the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder rowModel(Object rowModel) {
             doSetProperty("rowModel", rowModel);
@@ -186,9 +214,12 @@ public interface HBaseEndpointBuilderFactory {
          * describes how each row should be modeled.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.model.HBaseRow&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param rowModel the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder rowModel(String rowModel) {
             doSetProperty("rowModel", rowModel);
@@ -198,9 +229,12 @@ public interface HBaseEndpointBuilderFactory {
          * Defines privileges to communicate with HBase such as using kerberos.
          * 
          * The option is a:
-         * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
+         * &lt;code&gt;org.apache.hadoop.security.UserGroupInformation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userGroupInformation the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder userGroupInformation(
                 Object userGroupInformation) {
@@ -211,9 +245,12 @@ public interface HBaseEndpointBuilderFactory {
          * Defines privileges to communicate with HBase such as using kerberos.
          * 
          * The option will be converted to a
-         * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
+         * &lt;code&gt;org.apache.hadoop.security.UserGroupInformation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userGroupInformation the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder userGroupInformation(
                 String userGroupInformation) {
@@ -229,10 +266,13 @@ public interface HBaseEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -248,10 +288,14 @@ public interface HBaseEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -263,9 +307,12 @@ public interface HBaseEndpointBuilderFactory {
          * polling. Is default unlimited, but use 0 or negative number to
          * disable it as unlimited.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -277,9 +324,12 @@ public interface HBaseEndpointBuilderFactory {
          * polling. Is default unlimited, but use 0 or negative number to
          * disable it as unlimited.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -289,9 +339,12 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * The HBase operation to perform.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -301,10 +354,13 @@ public interface HBaseEndpointBuilderFactory {
          * If the option is true, Camel HBase Consumer will remove the rows
          * which it processes.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param remove the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder remove(boolean remove) {
             doSetProperty("remove", remove);
@@ -314,10 +370,14 @@ public interface HBaseEndpointBuilderFactory {
          * If the option is true, Camel HBase Consumer will remove the rows
          * which it processes.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param remove the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder remove(String remove) {
             doSetProperty("remove", remove);
@@ -328,10 +388,12 @@ public interface HBaseEndpointBuilderFactory {
          * be removed.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hbase.HBaseRemoveHandler</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hbase.HBaseRemoveHandler&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param removeHandler the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder removeHandler(Object removeHandler) {
             doSetProperty("removeHandler", removeHandler);
@@ -342,10 +404,12 @@ public interface HBaseEndpointBuilderFactory {
          * be removed.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hbase.HBaseRemoveHandler</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hbase.HBaseRemoveHandler&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param removeHandler the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointConsumerBuilder removeHandler(String removeHandler) {
             doSetProperty("removeHandler", removeHandler);
@@ -368,10 +432,13 @@ public interface HBaseEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -385,9 +452,12 @@ public interface HBaseEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHBaseEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -397,9 +467,13 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -410,9 +484,12 @@ public interface HBaseEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedHBaseEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -423,10 +500,13 @@ public interface HBaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHBaseEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -437,10 +517,14 @@ public interface HBaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHBaseEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -463,9 +547,12 @@ public interface HBaseEndpointBuilderFactory {
          * mapping cells.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cellMappingStrategyFactory the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
@@ -477,9 +564,12 @@ public interface HBaseEndpointBuilderFactory {
          * mapping cells.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cellMappingStrategyFactory the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
@@ -490,9 +580,12 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder filters(List<Object> filters) {
             doSetProperty("filters", filters);
@@ -502,9 +595,12 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder filters(String filters) {
             doSetProperty("filters", filters);
@@ -513,9 +609,12 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * The class name of a custom mapping strategy implementation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mappingStrategyClassName the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
@@ -526,9 +625,12 @@ public interface HBaseEndpointBuilderFactory {
          * The strategy to use for mapping Camel messages to HBase columns.
          * Supported values: header, or body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mappingStrategyName the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder mappingStrategyName(
                 String mappingStrategyName) {
@@ -547,13 +649,17 @@ public interface HBaseEndpointBuilderFactory {
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder rowMapping(String key, Object value) {
             doSetMultiValueProperty("rowMapping", "row." + key, value);
@@ -571,13 +677,16 @@ public interface HBaseEndpointBuilderFactory {
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder rowMapping(Map values) {
             doSetMultiValueProperties("rowMapping", "row.", values);
@@ -588,9 +697,12 @@ public interface HBaseEndpointBuilderFactory {
          * describes how each row should be modeled.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.model.HBaseRow&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param rowModel the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder rowModel(Object rowModel) {
             doSetProperty("rowModel", rowModel);
@@ -601,9 +713,12 @@ public interface HBaseEndpointBuilderFactory {
          * describes how each row should be modeled.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.model.HBaseRow&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param rowModel the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder rowModel(String rowModel) {
             doSetProperty("rowModel", rowModel);
@@ -613,9 +728,12 @@ public interface HBaseEndpointBuilderFactory {
          * Defines privileges to communicate with HBase such as using kerberos.
          * 
          * The option is a:
-         * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
+         * &lt;code&gt;org.apache.hadoop.security.UserGroupInformation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userGroupInformation the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder userGroupInformation(
                 Object userGroupInformation) {
@@ -626,9 +744,12 @@ public interface HBaseEndpointBuilderFactory {
          * Defines privileges to communicate with HBase such as using kerberos.
          * 
          * The option will be converted to a
-         * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
+         * &lt;code&gt;org.apache.hadoop.security.UserGroupInformation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userGroupInformation the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder userGroupInformation(
                 String userGroupInformation) {
@@ -646,10 +767,13 @@ public interface HBaseEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -667,10 +791,14 @@ public interface HBaseEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -680,10 +808,13 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * The maximum number of rows to scan.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: producer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder maxResults(int maxResults) {
             doSetProperty("maxResults", maxResults);
@@ -692,10 +823,13 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * The maximum number of rows to scan.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: producer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointProducerBuilder maxResults(String maxResults) {
             doSetProperty("maxResults", maxResults);
@@ -716,10 +850,13 @@ public interface HBaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHBaseEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -730,10 +867,14 @@ public interface HBaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHBaseEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -757,9 +898,12 @@ public interface HBaseEndpointBuilderFactory {
          * mapping cells.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cellMappingStrategyFactory the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder cellMappingStrategyFactory(
                 Object cellMappingStrategyFactory) {
@@ -771,9 +915,12 @@ public interface HBaseEndpointBuilderFactory {
          * mapping cells.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.mapping.CellMappingStrategyFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cellMappingStrategyFactory the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder cellMappingStrategyFactory(
                 String cellMappingStrategyFactory) {
@@ -784,9 +931,12 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder filters(List<Object> filters) {
             doSetProperty("filters", filters);
@@ -796,9 +946,12 @@ public interface HBaseEndpointBuilderFactory {
          * A list of filters to use.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;org.apache.hadoop.hbase.filter.Filter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;org.apache.hadoop.hbase.filter.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder filters(String filters) {
             doSetProperty("filters", filters);
@@ -807,9 +960,12 @@ public interface HBaseEndpointBuilderFactory {
         /**
          * The class name of a custom mapping strategy implementation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mappingStrategyClassName the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder mappingStrategyClassName(
                 String mappingStrategyClassName) {
@@ -820,9 +976,12 @@ public interface HBaseEndpointBuilderFactory {
          * The strategy to use for mapping Camel messages to HBase columns.
          * Supported values: header, or body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mappingStrategyName the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder mappingStrategyName(
                 String mappingStrategyName) {
@@ -841,13 +1000,17 @@ public interface HBaseEndpointBuilderFactory {
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder rowMapping(String key, Object value) {
             doSetMultiValueProperty("rowMapping", "row." + key, value);
@@ -865,13 +1028,16 @@ public interface HBaseEndpointBuilderFactory {
          * value type. Supports a number suffix for referring to more than one
          * columns. Supported operations: CamelHBaseGet, and CamelHBaseScan.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the rowMapping(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder rowMapping(Map values) {
             doSetMultiValueProperties("rowMapping", "row.", values);
@@ -882,9 +1048,12 @@ public interface HBaseEndpointBuilderFactory {
          * describes how each row should be modeled.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.model.HBaseRow&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param rowModel the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder rowModel(Object rowModel) {
             doSetProperty("rowModel", rowModel);
@@ -895,9 +1064,12 @@ public interface HBaseEndpointBuilderFactory {
          * describes how each row should be modeled.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hbase.model.HBaseRow</code> type.
+         * &lt;code&gt;org.apache.camel.component.hbase.model.HBaseRow&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param rowModel the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder rowModel(String rowModel) {
             doSetProperty("rowModel", rowModel);
@@ -907,9 +1079,12 @@ public interface HBaseEndpointBuilderFactory {
          * Defines privileges to communicate with HBase such as using kerberos.
          * 
          * The option is a:
-         * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
+         * &lt;code&gt;org.apache.hadoop.security.UserGroupInformation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userGroupInformation the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder userGroupInformation(
                 Object userGroupInformation) {
@@ -920,9 +1095,12 @@ public interface HBaseEndpointBuilderFactory {
          * Defines privileges to communicate with HBase such as using kerberos.
          * 
          * The option will be converted to a
-         * <code>org.apache.hadoop.security.UserGroupInformation</code> type.
+         * &lt;code&gt;org.apache.hadoop.security.UserGroupInformation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userGroupInformation the value to set
+         * @return the dsl builder
          */
         default HBaseEndpointBuilder userGroupInformation(
                 String userGroupInformation) {
@@ -945,10 +1123,13 @@ public interface HBaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHBaseEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -958,10 +1139,14 @@ public interface HBaseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHBaseEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

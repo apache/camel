@@ -50,9 +50,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Encoding to use for all request.
          * 
-         * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder encoding(EncodingEnum encoding) {
             doSetProperty("encoding", encoding);
@@ -62,9 +66,12 @@ public interface FhirEndpointBuilderFactory {
          * Encoding to use for all request.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -73,11 +80,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The FHIR Version to use.
          * 
-         * The option is a: <code>ca.uhn.fhir.context.FhirVersionEnum</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
          * 
          * Default: R4
          * Group: common
+         * 
+         * @param fhirVersion the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder fhirVersion(
                 FhirVersionEnum fhirVersion) {
@@ -88,10 +98,13 @@ public interface FhirEndpointBuilderFactory {
          * The FHIR Version to use.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
+         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
          * 
          * Default: R4
          * Group: common
+         * 
+         * @param fhirVersion the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder fhirVersion(String fhirVersion) {
             doSetProperty("fhirVersion", fhirVersion);
@@ -100,9 +113,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -111,10 +127,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Will log every requests and responses.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder log(boolean log) {
             doSetProperty("log", log);
@@ -123,10 +142,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Will log every requests and responses.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder log(String log) {
             doSetProperty("log", log);
@@ -135,10 +158,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Pretty print all request.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyPrint the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder prettyPrint(boolean prettyPrint) {
             doSetProperty("prettyPrint", prettyPrint);
@@ -147,10 +173,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Pretty print all request.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyPrint the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder prettyPrint(String prettyPrint) {
             doSetProperty("prettyPrint", prettyPrint);
@@ -159,9 +189,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The FHIR server base URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverUrl the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder serverUrl(String serverUrl) {
             doSetProperty("serverUrl", serverUrl);
@@ -176,10 +209,13 @@ public interface FhirEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -195,10 +231,14 @@ public interface FhirEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -209,10 +249,13 @@ public interface FhirEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -223,10 +266,14 @@ public interface FhirEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -236,9 +283,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -247,9 +297,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder proxyPassword(String proxyPassword) {
             doSetProperty("proxyPassword", proxyPassword);
@@ -258,9 +311,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -269,10 +325,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -281,9 +340,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyUser the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder proxyUser(String proxyUser) {
             doSetProperty("proxyUser", proxyUser);
@@ -293,9 +355,12 @@ public interface FhirEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -306,9 +371,12 @@ public interface FhirEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -319,9 +387,12 @@ public interface FhirEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -332,9 +403,12 @@ public interface FhirEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -349,9 +423,12 @@ public interface FhirEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -366,9 +443,12 @@ public interface FhirEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -378,10 +458,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -390,10 +473,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -403,10 +489,13 @@ public interface FhirEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -416,10 +505,14 @@ public interface FhirEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -428,10 +521,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -440,10 +536,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -454,10 +553,13 @@ public interface FhirEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -468,10 +570,13 @@ public interface FhirEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -481,10 +586,14 @@ public interface FhirEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -496,10 +605,13 @@ public interface FhirEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -512,9 +624,12 @@ public interface FhirEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -527,9 +642,12 @@ public interface FhirEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -540,10 +658,13 @@ public interface FhirEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -553,10 +674,14 @@ public interface FhirEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -566,13 +691,17 @@ public interface FhirEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -584,13 +713,16 @@ public interface FhirEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -599,10 +731,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -612,10 +747,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder startScheduler(String startScheduler) {
             doSetProperty("startScheduler", startScheduler);
@@ -624,10 +763,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -637,10 +780,13 @@ public interface FhirEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -650,10 +796,13 @@ public interface FhirEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -663,10 +812,14 @@ public interface FhirEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -675,9 +828,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * OAuth access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -686,9 +842,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Username to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -697,9 +856,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Username to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default FhirEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -722,10 +884,13 @@ public interface FhirEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -739,9 +904,12 @@ public interface FhirEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -751,9 +919,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -764,9 +936,12 @@ public interface FhirEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -780,9 +955,12 @@ public interface FhirEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -796,9 +974,12 @@ public interface FhirEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -809,9 +990,13 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client.
          * 
          * The option is a:
-         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IGenericClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder client(Object client) {
             doSetProperty("client", client);
@@ -821,9 +1006,13 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IGenericClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder client(String client) {
             doSetProperty("client", client);
@@ -833,9 +1022,12 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client factory.
          * 
          * The option is a:
-         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IRestfulClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder clientFactory(
                 Object clientFactory) {
@@ -846,9 +1038,12 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client factory.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IRestfulClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder clientFactory(
                 String clientFactory) {
@@ -858,10 +1053,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param compress the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder compress(boolean compress) {
             doSetProperty("compress", compress);
@@ -870,10 +1068,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param compress the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder compress(String compress) {
             doSetProperty("compress", compress);
@@ -882,10 +1084,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to try and establish the initial TCP connection (in ms).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -895,11 +1100,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to try and establish the initial TCP connection (in ms).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -911,10 +1119,13 @@ public interface FhirEndpointBuilderFactory {
          * children until the child list for the given type is actually
          * accessed.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param deferModelScanning the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder deferModelScanning(
                 boolean deferModelScanning) {
@@ -926,10 +1137,14 @@ public interface FhirEndpointBuilderFactory {
          * children until the child list for the given type is actually
          * accessed.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param deferModelScanning the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder deferModelScanning(
                 String deferModelScanning) {
@@ -940,9 +1155,13 @@ public interface FhirEndpointBuilderFactory {
          * FhirContext is an expensive object to create. To avoid creating
          * multiple instances, it can be set directly.
          * 
-         * The option is a: <code>ca.uhn.fhir.context.FhirContext</code> type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.context.FhirContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param fhirContext the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder fhirContext(
                 Object fhirContext) {
@@ -954,9 +1173,12 @@ public interface FhirEndpointBuilderFactory {
          * multiple instances, it can be set directly.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.context.FhirContext</code> type.
+         * &lt;code&gt;ca.uhn.fhir.context.FhirContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param fhirContext the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder fhirContext(
                 String fhirContext) {
@@ -966,10 +1188,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Force conformance check.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param forceConformanceCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder forceConformanceCheck(
                 boolean forceConformanceCheck) {
@@ -979,10 +1204,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Force conformance check.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param forceConformanceCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder forceConformanceCheck(
                 String forceConformanceCheck) {
@@ -992,9 +1221,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * HTTP session cookie to add to every request.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionCookie the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder sessionCookie(
                 String sessionCookie) {
@@ -1004,10 +1236,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to block for individual read/write operations (in ms).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder socketTimeout(
                 Integer socketTimeout) {
@@ -1017,11 +1252,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to block for individual read/write operations (in ms).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder socketTimeout(
                 String socketTimeout) {
@@ -1031,9 +1269,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Request that the server modify the response using the _summary param.
          * 
-         * The option is a: <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param summary the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder summary(SummaryEnum summary) {
             doSetProperty("summary", summary);
@@ -1043,9 +1285,12 @@ public interface FhirEndpointBuilderFactory {
          * Request that the server modify the response using the _summary param.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param summary the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder summary(String summary) {
             doSetProperty("summary", summary);
@@ -1055,10 +1300,13 @@ public interface FhirEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -1069,10 +1317,14 @@ public interface FhirEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -1083,11 +1335,13 @@ public interface FhirEndpointBuilderFactory {
          * When should Camel validate the FHIR Server's conformance statement.
          * 
          * The option is a:
-         * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
-         * type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
          * 
          * Default: ONCE
          * Group: advanced
+         * 
+         * @param validationMode the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder validationMode(
                 ServerValidationModeEnum validationMode) {
@@ -1098,11 +1352,13 @@ public interface FhirEndpointBuilderFactory {
          * When should Camel validate the FHIR Server's conformance statement.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
-         * type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
          * 
          * Default: ONCE
          * Group: advanced
+         * 
+         * @param validationMode the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointConsumerBuilder validationMode(
                 String validationMode) {
@@ -1123,9 +1379,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Encoding to use for all request.
          * 
-         * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder encoding(EncodingEnum encoding) {
             doSetProperty("encoding", encoding);
@@ -1135,9 +1395,12 @@ public interface FhirEndpointBuilderFactory {
          * Encoding to use for all request.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -1146,11 +1409,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The FHIR Version to use.
          * 
-         * The option is a: <code>ca.uhn.fhir.context.FhirVersionEnum</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
          * 
          * Default: R4
          * Group: common
+         * 
+         * @param fhirVersion the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder fhirVersion(
                 FhirVersionEnum fhirVersion) {
@@ -1161,10 +1427,13 @@ public interface FhirEndpointBuilderFactory {
          * The FHIR Version to use.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
+         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
          * 
          * Default: R4
          * Group: common
+         * 
+         * @param fhirVersion the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder fhirVersion(String fhirVersion) {
             doSetProperty("fhirVersion", fhirVersion);
@@ -1173,9 +1442,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -1184,10 +1456,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Will log every requests and responses.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder log(boolean log) {
             doSetProperty("log", log);
@@ -1196,10 +1471,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Will log every requests and responses.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder log(String log) {
             doSetProperty("log", log);
@@ -1208,10 +1487,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Pretty print all request.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyPrint the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder prettyPrint(boolean prettyPrint) {
             doSetProperty("prettyPrint", prettyPrint);
@@ -1220,10 +1502,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Pretty print all request.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyPrint the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder prettyPrint(String prettyPrint) {
             doSetProperty("prettyPrint", prettyPrint);
@@ -1232,9 +1518,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The FHIR server base URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverUrl the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder serverUrl(String serverUrl) {
             doSetProperty("serverUrl", serverUrl);
@@ -1251,10 +1540,13 @@ public interface FhirEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1272,10 +1564,14 @@ public interface FhirEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1285,9 +1581,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -1296,9 +1595,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder proxyPassword(String proxyPassword) {
             doSetProperty("proxyPassword", proxyPassword);
@@ -1307,9 +1609,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1318,10 +1623,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1330,9 +1638,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyUser the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder proxyUser(String proxyUser) {
             doSetProperty("proxyUser", proxyUser);
@@ -1341,9 +1652,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * OAuth access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -1352,9 +1666,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Username to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -1363,9 +1680,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Username to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default FhirEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -1386,9 +1706,13 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client.
          * 
          * The option is a:
-         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IGenericClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder client(Object client) {
             doSetProperty("client", client);
@@ -1398,9 +1722,13 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IGenericClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder client(String client) {
             doSetProperty("client", client);
@@ -1410,9 +1738,12 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client factory.
          * 
          * The option is a:
-         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IRestfulClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder clientFactory(
                 Object clientFactory) {
@@ -1423,9 +1754,12 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client factory.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IRestfulClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder clientFactory(
                 String clientFactory) {
@@ -1435,10 +1769,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param compress the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder compress(boolean compress) {
             doSetProperty("compress", compress);
@@ -1447,10 +1784,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param compress the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder compress(String compress) {
             doSetProperty("compress", compress);
@@ -1459,10 +1800,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to try and establish the initial TCP connection (in ms).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -1472,11 +1816,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to try and establish the initial TCP connection (in ms).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -1488,10 +1835,13 @@ public interface FhirEndpointBuilderFactory {
          * children until the child list for the given type is actually
          * accessed.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param deferModelScanning the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder deferModelScanning(
                 boolean deferModelScanning) {
@@ -1503,10 +1853,14 @@ public interface FhirEndpointBuilderFactory {
          * children until the child list for the given type is actually
          * accessed.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param deferModelScanning the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder deferModelScanning(
                 String deferModelScanning) {
@@ -1517,9 +1871,13 @@ public interface FhirEndpointBuilderFactory {
          * FhirContext is an expensive object to create. To avoid creating
          * multiple instances, it can be set directly.
          * 
-         * The option is a: <code>ca.uhn.fhir.context.FhirContext</code> type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.context.FhirContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param fhirContext the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder fhirContext(
                 Object fhirContext) {
@@ -1531,9 +1889,12 @@ public interface FhirEndpointBuilderFactory {
          * multiple instances, it can be set directly.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.context.FhirContext</code> type.
+         * &lt;code&gt;ca.uhn.fhir.context.FhirContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param fhirContext the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder fhirContext(
                 String fhirContext) {
@@ -1543,10 +1904,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Force conformance check.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param forceConformanceCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder forceConformanceCheck(
                 boolean forceConformanceCheck) {
@@ -1556,10 +1920,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Force conformance check.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param forceConformanceCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder forceConformanceCheck(
                 String forceConformanceCheck) {
@@ -1569,9 +1937,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * HTTP session cookie to add to every request.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionCookie the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder sessionCookie(
                 String sessionCookie) {
@@ -1581,10 +1952,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to block for individual read/write operations (in ms).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder socketTimeout(
                 Integer socketTimeout) {
@@ -1594,11 +1968,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to block for individual read/write operations (in ms).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder socketTimeout(
                 String socketTimeout) {
@@ -1608,9 +1985,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Request that the server modify the response using the _summary param.
          * 
-         * The option is a: <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param summary the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder summary(SummaryEnum summary) {
             doSetProperty("summary", summary);
@@ -1620,9 +2001,12 @@ public interface FhirEndpointBuilderFactory {
          * Request that the server modify the response using the _summary param.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param summary the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder summary(String summary) {
             doSetProperty("summary", summary);
@@ -1632,10 +2016,13 @@ public interface FhirEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1646,10 +2033,14 @@ public interface FhirEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1660,11 +2051,13 @@ public interface FhirEndpointBuilderFactory {
          * When should Camel validate the FHIR Server's conformance statement.
          * 
          * The option is a:
-         * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
-         * type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
          * 
          * Default: ONCE
          * Group: advanced
+         * 
+         * @param validationMode the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder validationMode(
                 ServerValidationModeEnum validationMode) {
@@ -1675,11 +2068,13 @@ public interface FhirEndpointBuilderFactory {
          * When should Camel validate the FHIR Server's conformance statement.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
-         * type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
          * 
          * Default: ONCE
          * Group: advanced
+         * 
+         * @param validationMode the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointProducerBuilder validationMode(
                 String validationMode) {
@@ -1701,9 +2096,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Encoding to use for all request.
          * 
-         * The option is a: <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder encoding(EncodingEnum encoding) {
             doSetProperty("encoding", encoding);
@@ -1713,9 +2112,12 @@ public interface FhirEndpointBuilderFactory {
          * Encoding to use for all request.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.api.EncodingEnum</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.api.EncodingEnum&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -1724,11 +2126,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The FHIR Version to use.
          * 
-         * The option is a: <code>ca.uhn.fhir.context.FhirVersionEnum</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
          * 
          * Default: R4
          * Group: common
+         * 
+         * @param fhirVersion the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder fhirVersion(FhirVersionEnum fhirVersion) {
             doSetProperty("fhirVersion", fhirVersion);
@@ -1738,10 +2143,13 @@ public interface FhirEndpointBuilderFactory {
          * The FHIR Version to use.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
+         * &lt;code&gt;ca.uhn.fhir.context.FhirVersionEnum&lt;/code&gt; type.
          * 
          * Default: R4
          * Group: common
+         * 
+         * @param fhirVersion the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder fhirVersion(String fhirVersion) {
             doSetProperty("fhirVersion", fhirVersion);
@@ -1750,9 +2158,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -1761,10 +2172,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Will log every requests and responses.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder log(boolean log) {
             doSetProperty("log", log);
@@ -1773,10 +2187,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Will log every requests and responses.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param log the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder log(String log) {
             doSetProperty("log", log);
@@ -1785,10 +2203,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Pretty print all request.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyPrint the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder prettyPrint(boolean prettyPrint) {
             doSetProperty("prettyPrint", prettyPrint);
@@ -1797,10 +2218,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Pretty print all request.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param prettyPrint the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder prettyPrint(String prettyPrint) {
             doSetProperty("prettyPrint", prettyPrint);
@@ -1809,9 +2234,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The FHIR server base URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverUrl the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder serverUrl(String serverUrl) {
             doSetProperty("serverUrl", serverUrl);
@@ -1820,9 +2248,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -1831,9 +2262,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPassword the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder proxyPassword(String proxyPassword) {
             doSetProperty("proxyPassword", proxyPassword);
@@ -1842,9 +2276,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1853,10 +2290,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -1865,9 +2305,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * The proxy username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyUser the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder proxyUser(String proxyUser) {
             doSetProperty("proxyUser", proxyUser);
@@ -1876,9 +2319,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * OAuth access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -1887,9 +2333,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Username to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -1898,9 +2347,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Username to use for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default FhirEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -1922,9 +2374,13 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client.
          * 
          * The option is a:
-         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IGenericClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder client(Object client) {
             doSetProperty("client", client);
@@ -1934,9 +2390,13 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.client.api.IGenericClient</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IGenericClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder client(String client) {
             doSetProperty("client", client);
@@ -1946,9 +2406,12 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client factory.
          * 
          * The option is a:
-         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IRestfulClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder clientFactory(Object clientFactory) {
             doSetProperty("clientFactory", clientFactory);
@@ -1958,9 +2421,12 @@ public interface FhirEndpointBuilderFactory {
          * To use the custom client factory.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.client.api.IRestfulClientFactory</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.IRestfulClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder clientFactory(String clientFactory) {
             doSetProperty("clientFactory", clientFactory);
@@ -1969,10 +2435,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param compress the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder compress(boolean compress) {
             doSetProperty("compress", compress);
@@ -1981,10 +2450,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Compresses outgoing (POST/PUT) contents to the GZIP format.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param compress the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder compress(String compress) {
             doSetProperty("compress", compress);
@@ -1993,10 +2466,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to try and establish the initial TCP connection (in ms).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -2006,11 +2482,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to try and establish the initial TCP connection (in ms).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -2022,10 +2501,13 @@ public interface FhirEndpointBuilderFactory {
          * children until the child list for the given type is actually
          * accessed.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param deferModelScanning the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder deferModelScanning(
                 boolean deferModelScanning) {
@@ -2037,10 +2519,14 @@ public interface FhirEndpointBuilderFactory {
          * children until the child list for the given type is actually
          * accessed.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param deferModelScanning the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder deferModelScanning(
                 String deferModelScanning) {
@@ -2051,9 +2537,13 @@ public interface FhirEndpointBuilderFactory {
          * FhirContext is an expensive object to create. To avoid creating
          * multiple instances, it can be set directly.
          * 
-         * The option is a: <code>ca.uhn.fhir.context.FhirContext</code> type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.context.FhirContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param fhirContext the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder fhirContext(Object fhirContext) {
             doSetProperty("fhirContext", fhirContext);
@@ -2064,9 +2554,12 @@ public interface FhirEndpointBuilderFactory {
          * multiple instances, it can be set directly.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.context.FhirContext</code> type.
+         * &lt;code&gt;ca.uhn.fhir.context.FhirContext&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param fhirContext the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder fhirContext(String fhirContext) {
             doSetProperty("fhirContext", fhirContext);
@@ -2075,10 +2568,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Force conformance check.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param forceConformanceCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder forceConformanceCheck(
                 boolean forceConformanceCheck) {
@@ -2088,10 +2584,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Force conformance check.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param forceConformanceCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder forceConformanceCheck(
                 String forceConformanceCheck) {
@@ -2101,9 +2601,12 @@ public interface FhirEndpointBuilderFactory {
         /**
          * HTTP session cookie to add to every request.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionCookie the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder sessionCookie(String sessionCookie) {
             doSetProperty("sessionCookie", sessionCookie);
@@ -2112,10 +2615,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to block for individual read/write operations (in ms).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder socketTimeout(Integer socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
@@ -2124,11 +2630,14 @@ public interface FhirEndpointBuilderFactory {
         /**
          * How long to block for individual read/write operations (in ms).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder socketTimeout(String socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
@@ -2137,9 +2646,13 @@ public interface FhirEndpointBuilderFactory {
         /**
          * Request that the server modify the response using the _summary param.
          * 
-         * The option is a: <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
+         * The option is a:
+         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param summary the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder summary(SummaryEnum summary) {
             doSetProperty("summary", summary);
@@ -2149,9 +2662,12 @@ public interface FhirEndpointBuilderFactory {
          * Request that the server modify the response using the _summary param.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.api.SummaryEnum</code> type.
+         * &lt;code&gt;ca.uhn.fhir.rest.api.SummaryEnum&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param summary the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder summary(String summary) {
             doSetProperty("summary", summary);
@@ -2161,10 +2677,13 @@ public interface FhirEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -2174,10 +2693,14 @@ public interface FhirEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -2187,11 +2710,13 @@ public interface FhirEndpointBuilderFactory {
          * When should Camel validate the FHIR Server's conformance statement.
          * 
          * The option is a:
-         * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
-         * type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
          * 
          * Default: ONCE
          * Group: advanced
+         * 
+         * @param validationMode the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder validationMode(
                 ServerValidationModeEnum validationMode) {
@@ -2202,11 +2727,13 @@ public interface FhirEndpointBuilderFactory {
          * When should Camel validate the FHIR Server's conformance statement.
          * 
          * The option will be converted to a
-         * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
-         * type.
+         * &lt;code&gt;ca.uhn.fhir.rest.client.api.ServerValidationModeEnum&lt;/code&gt; type.
          * 
          * Default: ONCE
          * Group: advanced
+         * 
+         * @param validationMode the value to set
+         * @return the dsl builder
          */
         default AdvancedFhirEndpointBuilder validationMode(String validationMode) {
             doSetProperty("validationMode", validationMode);

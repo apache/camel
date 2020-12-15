@@ -48,9 +48,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder connectTimeout(
                 Duration connectTimeout) {
@@ -60,10 +63,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
@@ -74,9 +80,12 @@ public interface ConsulEndpointBuilderFactory {
          * Connect timeout for OkHttpClient. Deprecation note: Use
          * connectTimeout instead.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointConsumerBuilder connectTimeoutMillis(
@@ -88,9 +97,13 @@ public interface ConsulEndpointBuilderFactory {
          * Connect timeout for OkHttpClient. Deprecation note: Use
          * connectTimeout instead.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointConsumerBuilder connectTimeoutMillis(
@@ -101,9 +114,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Reference to a com.orbitz.consul.Consul in the registry.
          * 
-         * The option is a: <code>com.orbitz.consul.Consul</code> type.
+         * The option is a: &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder consulClient(Object consulClient) {
             doSetProperty("consulClient", consulClient);
@@ -113,9 +130,12 @@ public interface ConsulEndpointBuilderFactory {
          * Reference to a com.orbitz.consul.Consul in the registry.
          * 
          * The option will be converted to a
-         * <code>com.orbitz.consul.Consul</code> type.
+         * &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder consulClient(String consulClient) {
             doSetProperty("consulClient", consulClient);
@@ -124,9 +144,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The default key. Can be overridden by CamelConsulKey.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder key(String key) {
             doSetProperty("key", key);
@@ -136,10 +159,13 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param pingInstance the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder pingInstance(boolean pingInstance) {
             doSetProperty("pingInstance", pingInstance);
@@ -149,10 +175,14 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param pingInstance the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder pingInstance(String pingInstance) {
             doSetProperty("pingInstance", pingInstance);
@@ -161,9 +191,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder readTimeout(Duration readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -172,10 +205,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder readTimeout(String readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -185,9 +221,12 @@ public interface ConsulEndpointBuilderFactory {
          * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
          * instead.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointConsumerBuilder readTimeoutMillis(
@@ -199,9 +238,13 @@ public interface ConsulEndpointBuilderFactory {
          * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
          * instead.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointConsumerBuilder readTimeoutMillis(
@@ -212,10 +255,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Set tags. You can separate multiple tags by comma.
          * 
-         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder tags(Set<String> tags) {
             doSetProperty("tags", tags);
@@ -225,9 +271,12 @@ public interface ConsulEndpointBuilderFactory {
          * Set tags. You can separate multiple tags by comma.
          * 
          * The option will be converted to a
-         * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder tags(String tags) {
             doSetProperty("tags", tags);
@@ -236,9 +285,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul agent URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param url the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder url(String url) {
             doSetProperty("url", url);
@@ -247,9 +299,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder writeTimeout(Duration writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -258,10 +313,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder writeTimeout(String writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -271,9 +329,12 @@ public interface ConsulEndpointBuilderFactory {
          * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
          * instead.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointConsumerBuilder writeTimeoutMillis(
@@ -285,9 +346,13 @@ public interface ConsulEndpointBuilderFactory {
          * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
          * instead.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointConsumerBuilder writeTimeoutMillis(
@@ -304,10 +369,13 @@ public interface ConsulEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -323,10 +391,14 @@ public interface ConsulEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -336,9 +408,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the ACL token to be used with Consul.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param aclToken the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder aclToken(String aclToken) {
             doSetProperty("aclToken", aclToken);
@@ -347,9 +422,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the password to be used for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -360,9 +438,12 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -374,9 +455,12 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -386,9 +470,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the username to be used for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -397,10 +484,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The second to wait for a watch event, default 10 seconds.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: watch
+         * 
+         * @param blockSeconds the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder blockSeconds(Integer blockSeconds) {
             doSetProperty("blockSeconds", blockSeconds);
@@ -409,11 +499,14 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The second to wait for a watch event, default 10 seconds.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: watch
+         * 
+         * @param blockSeconds the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder blockSeconds(String blockSeconds) {
             doSetProperty("blockSeconds", blockSeconds);
@@ -422,10 +515,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The first index for watch for, default 0.
          * 
-         * The option is a: <code>java.math.BigInteger</code> type.
+         * The option is a: &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: watch
+         * 
+         * @param firstIndex the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder firstIndex(BigInteger firstIndex) {
             doSetProperty("firstIndex", firstIndex);
@@ -434,11 +530,14 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The first index for watch for, default 0.
          * 
-         * The option will be converted to a <code>java.math.BigInteger</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.math.BigInteger&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: watch
+         * 
+         * @param firstIndex the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder firstIndex(String firstIndex) {
             doSetProperty("firstIndex", firstIndex);
@@ -447,10 +546,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Recursively watch, default false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: watch
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -459,10 +561,14 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Recursively watch, default false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: watch
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointConsumerBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
@@ -485,10 +591,13 @@ public interface ConsulEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -502,9 +611,12 @@ public interface ConsulEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -514,9 +626,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -527,9 +643,12 @@ public interface ConsulEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -541,10 +660,14 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option is a:
-         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
+         * type.
          * 
          * Default: DEFAULT
          * Group: advanced
+         * 
+         * @param consistencyMode the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder consistencyMode(
                 Object consistencyMode) {
@@ -556,10 +679,14 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option will be converted to a
-         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
+         * type.
          * 
          * Default: DEFAULT
          * Group: advanced
+         * 
+         * @param consistencyMode the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder consistencyMode(
                 String consistencyMode) {
@@ -569,9 +696,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The data center.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param datacenter the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder datacenter(
                 String datacenter) {
@@ -581,9 +711,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The near node to use for queries.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nearNode the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder nearNode(String nearNode) {
             doSetProperty("nearNode", nearNode);
@@ -592,10 +725,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The note meta-data to use for queries.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nodeMeta the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder nodeMeta(
                 List<String> nodeMeta) {
@@ -606,9 +742,12 @@ public interface ConsulEndpointBuilderFactory {
          * The note meta-data to use for queries.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nodeMeta the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder nodeMeta(String nodeMeta) {
             doSetProperty("nodeMeta", nodeMeta);
@@ -618,10 +757,13 @@ public interface ConsulEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -632,10 +774,14 @@ public interface ConsulEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -656,9 +802,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder connectTimeout(
                 Duration connectTimeout) {
@@ -668,10 +817,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
@@ -682,9 +834,12 @@ public interface ConsulEndpointBuilderFactory {
          * Connect timeout for OkHttpClient. Deprecation note: Use
          * connectTimeout instead.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointProducerBuilder connectTimeoutMillis(
@@ -696,9 +851,13 @@ public interface ConsulEndpointBuilderFactory {
          * Connect timeout for OkHttpClient. Deprecation note: Use
          * connectTimeout instead.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointProducerBuilder connectTimeoutMillis(
@@ -709,9 +868,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Reference to a com.orbitz.consul.Consul in the registry.
          * 
-         * The option is a: <code>com.orbitz.consul.Consul</code> type.
+         * The option is a: &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder consulClient(Object consulClient) {
             doSetProperty("consulClient", consulClient);
@@ -721,9 +884,12 @@ public interface ConsulEndpointBuilderFactory {
          * Reference to a com.orbitz.consul.Consul in the registry.
          * 
          * The option will be converted to a
-         * <code>com.orbitz.consul.Consul</code> type.
+         * &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder consulClient(String consulClient) {
             doSetProperty("consulClient", consulClient);
@@ -732,9 +898,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The default key. Can be overridden by CamelConsulKey.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder key(String key) {
             doSetProperty("key", key);
@@ -744,10 +913,13 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param pingInstance the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder pingInstance(boolean pingInstance) {
             doSetProperty("pingInstance", pingInstance);
@@ -757,10 +929,14 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param pingInstance the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder pingInstance(String pingInstance) {
             doSetProperty("pingInstance", pingInstance);
@@ -769,9 +945,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder readTimeout(Duration readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -780,10 +959,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder readTimeout(String readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -793,9 +975,12 @@ public interface ConsulEndpointBuilderFactory {
          * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
          * instead.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointProducerBuilder readTimeoutMillis(
@@ -807,9 +992,13 @@ public interface ConsulEndpointBuilderFactory {
          * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
          * instead.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointProducerBuilder readTimeoutMillis(
@@ -820,10 +1009,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Set tags. You can separate multiple tags by comma.
          * 
-         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder tags(Set<String> tags) {
             doSetProperty("tags", tags);
@@ -833,9 +1025,12 @@ public interface ConsulEndpointBuilderFactory {
          * Set tags. You can separate multiple tags by comma.
          * 
          * The option will be converted to a
-         * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder tags(String tags) {
             doSetProperty("tags", tags);
@@ -844,9 +1039,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul agent URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param url the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder url(String url) {
             doSetProperty("url", url);
@@ -855,9 +1053,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder writeTimeout(Duration writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -866,10 +1067,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder writeTimeout(String writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -879,9 +1083,12 @@ public interface ConsulEndpointBuilderFactory {
          * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
          * instead.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointProducerBuilder writeTimeoutMillis(
@@ -893,9 +1100,13 @@ public interface ConsulEndpointBuilderFactory {
          * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
          * instead.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointProducerBuilder writeTimeoutMillis(
@@ -906,9 +1117,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The default action. Can be overridden by CamelConsulAction.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder action(String action) {
             doSetProperty("action", action);
@@ -925,10 +1139,13 @@ public interface ConsulEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -946,10 +1163,14 @@ public interface ConsulEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -960,10 +1181,13 @@ public interface ConsulEndpointBuilderFactory {
          * Default to transform values retrieved from Consul i.e. on KV endpoint
          * to string.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param valueAsString the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder valueAsString(
                 boolean valueAsString) {
@@ -974,10 +1198,14 @@ public interface ConsulEndpointBuilderFactory {
          * Default to transform values retrieved from Consul i.e. on KV endpoint
          * to string.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param valueAsString the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder valueAsString(String valueAsString) {
             doSetProperty("valueAsString", valueAsString);
@@ -986,9 +1214,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the ACL token to be used with Consul.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param aclToken the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder aclToken(String aclToken) {
             doSetProperty("aclToken", aclToken);
@@ -997,9 +1228,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the password to be used for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -1010,9 +1244,12 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1024,9 +1261,12 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1036,9 +1276,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the username to be used for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointProducerBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -1060,10 +1303,14 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option is a:
-         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
+         * type.
          * 
          * Default: DEFAULT
          * Group: advanced
+         * 
+         * @param consistencyMode the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointProducerBuilder consistencyMode(
                 Object consistencyMode) {
@@ -1075,10 +1322,14 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option will be converted to a
-         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
+         * type.
          * 
          * Default: DEFAULT
          * Group: advanced
+         * 
+         * @param consistencyMode the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointProducerBuilder consistencyMode(
                 String consistencyMode) {
@@ -1088,9 +1339,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The data center.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param datacenter the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointProducerBuilder datacenter(
                 String datacenter) {
@@ -1100,9 +1354,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The near node to use for queries.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nearNode the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointProducerBuilder nearNode(String nearNode) {
             doSetProperty("nearNode", nearNode);
@@ -1111,10 +1368,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The note meta-data to use for queries.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nodeMeta the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointProducerBuilder nodeMeta(
                 List<String> nodeMeta) {
@@ -1125,9 +1385,12 @@ public interface ConsulEndpointBuilderFactory {
          * The note meta-data to use for queries.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nodeMeta the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointProducerBuilder nodeMeta(String nodeMeta) {
             doSetProperty("nodeMeta", nodeMeta);
@@ -1137,10 +1400,13 @@ public interface ConsulEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1151,10 +1417,14 @@ public interface ConsulEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1176,9 +1446,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder connectTimeout(Duration connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -1187,10 +1460,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Connect timeout for OkHttpClient.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder connectTimeout(String connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -1200,9 +1476,12 @@ public interface ConsulEndpointBuilderFactory {
          * Connect timeout for OkHttpClient. Deprecation note: Use
          * connectTimeout instead.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointBuilder connectTimeoutMillis(
@@ -1214,9 +1493,13 @@ public interface ConsulEndpointBuilderFactory {
          * Connect timeout for OkHttpClient. Deprecation note: Use
          * connectTimeout instead.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointBuilder connectTimeoutMillis(
@@ -1227,9 +1510,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Reference to a com.orbitz.consul.Consul in the registry.
          * 
-         * The option is a: <code>com.orbitz.consul.Consul</code> type.
+         * The option is a: &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder consulClient(Object consulClient) {
             doSetProperty("consulClient", consulClient);
@@ -1239,9 +1526,12 @@ public interface ConsulEndpointBuilderFactory {
          * Reference to a com.orbitz.consul.Consul in the registry.
          * 
          * The option will be converted to a
-         * <code>com.orbitz.consul.Consul</code> type.
+         * &lt;code&gt;com.orbitz.consul.Consul&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consulClient the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder consulClient(String consulClient) {
             doSetProperty("consulClient", consulClient);
@@ -1250,9 +1540,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The default key. Can be overridden by CamelConsulKey.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder key(String key) {
             doSetProperty("key", key);
@@ -1262,10 +1555,13 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param pingInstance the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder pingInstance(boolean pingInstance) {
             doSetProperty("pingInstance", pingInstance);
@@ -1275,10 +1571,14 @@ public interface ConsulEndpointBuilderFactory {
          * Configure if the AgentClient should attempt a ping before returning
          * the Consul instance.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param pingInstance the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder pingInstance(String pingInstance) {
             doSetProperty("pingInstance", pingInstance);
@@ -1287,9 +1587,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder readTimeout(Duration readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -1298,10 +1601,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Read timeout for OkHttpClient.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder readTimeout(String readTimeout) {
             doSetProperty("readTimeout", readTimeout);
@@ -1311,9 +1617,12 @@ public interface ConsulEndpointBuilderFactory {
          * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
          * instead.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointBuilder readTimeoutMillis(Long readTimeoutMillis) {
@@ -1324,9 +1633,13 @@ public interface ConsulEndpointBuilderFactory {
          * Read timeout for OkHttpClient. Deprecation note: Use readTimeout
          * instead.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param readTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointBuilder readTimeoutMillis(String readTimeoutMillis) {
@@ -1336,10 +1649,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Set tags. You can separate multiple tags by comma.
          * 
-         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder tags(Set<String> tags) {
             doSetProperty("tags", tags);
@@ -1349,9 +1665,12 @@ public interface ConsulEndpointBuilderFactory {
          * Set tags. You can separate multiple tags by comma.
          * 
          * The option will be converted to a
-         * <code>java.util.Set&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param tags the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder tags(String tags) {
             doSetProperty("tags", tags);
@@ -1360,9 +1679,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The Consul agent URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param url the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder url(String url) {
             doSetProperty("url", url);
@@ -1371,9 +1693,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder writeTimeout(Duration writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -1382,10 +1707,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Write timeout for OkHttpClient.
          * 
-         * The option will be converted to a <code>java.time.Duration</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeout the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder writeTimeout(String writeTimeout) {
             doSetProperty("writeTimeout", writeTimeout);
@@ -1395,9 +1723,12 @@ public interface ConsulEndpointBuilderFactory {
          * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
          * instead.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointBuilder writeTimeoutMillis(Long writeTimeoutMillis) {
@@ -1408,9 +1739,13 @@ public interface ConsulEndpointBuilderFactory {
          * Write timeout for OkHttpClient. Deprecation note: Use writeTimeout
          * instead.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param writeTimeoutMillis the value to set
+         * @return the dsl builder
          */
         @Deprecated
         default ConsulEndpointBuilder writeTimeoutMillis(
@@ -1421,9 +1756,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the ACL token to be used with Consul.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param aclToken the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder aclToken(String aclToken) {
             doSetProperty("aclToken", aclToken);
@@ -1432,9 +1770,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the password to be used for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -1445,9 +1786,12 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -1459,9 +1803,12 @@ public interface ConsulEndpointBuilderFactory {
          * org.apache.camel.support.jsse.SSLContextParameters instance.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -1471,9 +1818,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * Sets the username to be used for basic authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default ConsulEndpointBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -1496,10 +1846,14 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option is a:
-         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
+         * type.
          * 
          * Default: DEFAULT
          * Group: advanced
+         * 
+         * @param consistencyMode the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointBuilder consistencyMode(
                 Object consistencyMode) {
@@ -1511,10 +1865,14 @@ public interface ConsulEndpointBuilderFactory {
          * ConsistencyMode.DEFAULT.
          * 
          * The option will be converted to a
-         * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
+         * &lt;code&gt;com.orbitz.consul.option.ConsistencyMode&lt;/code&gt;
+         * type.
          * 
          * Default: DEFAULT
          * Group: advanced
+         * 
+         * @param consistencyMode the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointBuilder consistencyMode(
                 String consistencyMode) {
@@ -1524,9 +1882,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The data center.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param datacenter the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointBuilder datacenter(String datacenter) {
             doSetProperty("datacenter", datacenter);
@@ -1535,9 +1896,12 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The near node to use for queries.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nearNode the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointBuilder nearNode(String nearNode) {
             doSetProperty("nearNode", nearNode);
@@ -1546,10 +1910,13 @@ public interface ConsulEndpointBuilderFactory {
         /**
          * The note meta-data to use for queries.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nodeMeta the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointBuilder nodeMeta(List<String> nodeMeta) {
             doSetProperty("nodeMeta", nodeMeta);
@@ -1559,9 +1926,12 @@ public interface ConsulEndpointBuilderFactory {
          * The note meta-data to use for queries.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;java.lang.String&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param nodeMeta the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointBuilder nodeMeta(String nodeMeta) {
             doSetProperty("nodeMeta", nodeMeta);
@@ -1571,10 +1941,13 @@ public interface ConsulEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1584,10 +1957,14 @@ public interface ConsulEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedConsulEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

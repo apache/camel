@@ -45,9 +45,12 @@ public interface RestOpenApiEndpointBuilderFactory {
          * value present in OpenApi specification and in the component
          * configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param basePath the value to set
+         * @return the dsl builder
          */
         default RestOpenApiEndpointBuilder basePath(String basePath) {
             doSetProperty("basePath", basePath);
@@ -60,9 +63,12 @@ public interface RestOpenApiEndpointBuilderFactory {
          * is searched for single component that implements RestProducerFactory
          * SPI. Overrides component configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param componentName the value to set
+         * @return the dsl builder
          */
         default RestOpenApiEndpointBuilder componentName(String componentName) {
             doSetProperty("componentName", componentName);
@@ -75,9 +81,12 @@ public interface RestOpenApiEndpointBuilderFactory {
          * value of Accept HTTP header. If set overrides any value found in the
          * OpenApi specification and. in the component configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param consumes the value to set
+         * @return the dsl builder
          */
         default RestOpenApiEndpointBuilder consumes(String consumes) {
             doSetProperty("consumes", consumes);
@@ -92,9 +101,12 @@ public interface RestOpenApiEndpointBuilderFactory {
          * configuration last. If set overrides any value found in the OpenApi
          * specification, RestConfiguration. Overrides all other configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default RestOpenApiEndpointBuilder host(String host) {
             doSetProperty("host", host);
@@ -111,10 +123,13 @@ public interface RestOpenApiEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RestOpenApiEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -132,10 +147,14 @@ public interface RestOpenApiEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RestOpenApiEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -148,9 +167,12 @@ public interface RestOpenApiEndpointBuilderFactory {
          * of Content-Type HTTP header. If set overrides any value present in
          * the OpenApi specification. Overrides all other configuration.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param produces the value to set
+         * @return the dsl builder
          */
         default RestOpenApiEndpointBuilder produces(String produces) {
             doSetProperty("produces", produces);
@@ -171,10 +193,13 @@ public interface RestOpenApiEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestOpenApiEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -185,10 +210,14 @@ public interface RestOpenApiEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRestOpenApiEndpointBuilder synchronous(
                 String synchronous) {

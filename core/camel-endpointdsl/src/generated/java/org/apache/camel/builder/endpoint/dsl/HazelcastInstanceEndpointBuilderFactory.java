@@ -50,10 +50,13 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HazelcastInstanceEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -69,10 +72,14 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HazelcastInstanceEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -84,10 +91,12 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastInstanceEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -99,10 +108,12 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastInstanceEndpointBuilder defaultOperation(
                 String defaultOperation) {
@@ -113,10 +124,13 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastInstanceEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -128,9 +142,12 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.hazelcast.core.HazelcastInstance</code> type.
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastInstanceEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -142,9 +159,12 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param hazelcastInstanceName the value to set
+         * @return the dsl builder
          */
         default HazelcastInstanceEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -168,10 +188,13 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastInstanceEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -185,9 +208,12 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastInstanceEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -197,9 +223,13 @@ public interface HazelcastInstanceEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastInstanceEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -210,9 +240,12 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastInstanceEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -223,10 +256,13 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastInstanceEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -237,10 +273,14 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastInstanceEndpointBuilder synchronous(
                 String synchronous) {

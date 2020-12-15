@@ -40,9 +40,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The environment Either SANDBOX or PRODUCTION.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param environment the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder environment(String environment) {
             doSetProperty("environment", environment);
@@ -51,9 +54,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -70,10 +76,13 @@ public interface BraintreeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -91,10 +100,14 @@ public interface BraintreeEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -104,9 +117,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The merchant id provided by Braintree.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param merchantId the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder merchantId(String merchantId) {
             doSetProperty("merchantId", merchantId);
@@ -115,9 +131,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set logging level for http calls, see java.util.logging.Level.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: logging
+         * 
+         * @param httpLogLevel the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder httpLogLevel(String httpLogLevel) {
             doSetProperty("httpLogLevel", httpLogLevel);
@@ -126,10 +145,13 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set log category to use to log http calls.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: Braintree
          * Group: logging
+         * 
+         * @param httpLogName the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder httpLogName(String httpLogName) {
             doSetProperty("httpLogName", httpLogName);
@@ -141,10 +163,13 @@ public interface BraintreeEndpointBuilderFactory {
          * on the classpath. This option can also be configured globally on the
          * BraintreeComponent.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: logging
+         * 
+         * @param logHandlerEnabled the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder logHandlerEnabled(
                 boolean logHandlerEnabled) {
@@ -157,10 +182,14 @@ public interface BraintreeEndpointBuilderFactory {
          * on the classpath. This option can also be configured globally on the
          * BraintreeComponent.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: logging
+         * 
+         * @param logHandlerEnabled the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder logHandlerEnabled(
                 String logHandlerEnabled) {
@@ -170,9 +199,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The proxy host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -181,9 +213,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -192,10 +227,13 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The proxy port.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -206,9 +244,12 @@ public interface BraintreeEndpointBuilderFactory {
          * transactions on their behalf. Used in place of environment, merchant
          * id, public key and private key fields.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -217,9 +258,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The private key provided by Braintree.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKey the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder privateKey(String privateKey) {
             doSetProperty("privateKey", privateKey);
@@ -228,9 +272,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * The public key provided by Braintree.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param publicKey the value to set
+         * @return the dsl builder
          */
         default BraintreeEndpointBuilder publicKey(String publicKey) {
             doSetProperty("publicKey", publicKey);
@@ -250,9 +297,12 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set read timeout for http calls.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpReadTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
@@ -262,10 +312,13 @@ public interface BraintreeEndpointBuilderFactory {
         /**
          * Set read timeout for http calls.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpReadTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 String httpReadTimeout) {
@@ -276,10 +329,13 @@ public interface BraintreeEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBraintreeEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -289,10 +345,14 @@ public interface BraintreeEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBraintreeEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

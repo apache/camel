@@ -50,10 +50,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param lazyCreateEngine the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointConsumerBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
@@ -68,10 +71,14 @@ public interface QuickfixjEndpointBuilderFactory {
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param lazyCreateEngine the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointConsumerBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
@@ -83,9 +90,12 @@ public interface QuickfixjEndpointBuilderFactory {
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
-         * The option is a: <code>quickfix.SessionID</code> type.
+         * The option is a: &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sessionID the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointConsumerBuilder sessionID(Object sessionID) {
             doSetProperty("sessionID", sessionID);
@@ -96,10 +106,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
-         * The option will be converted to a <code>quickfix.SessionID</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sessionID the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointConsumerBuilder sessionID(String sessionID) {
             doSetProperty("sessionID", sessionID);
@@ -114,10 +127,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -133,10 +149,14 @@ public interface QuickfixjEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -160,10 +180,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -177,9 +200,12 @@ public interface QuickfixjEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -189,9 +215,13 @@ public interface QuickfixjEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -202,9 +232,12 @@ public interface QuickfixjEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedQuickfixjEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -215,10 +248,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQuickfixjEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -229,10 +265,14 @@ public interface QuickfixjEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQuickfixjEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -258,10 +298,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param lazyCreateEngine the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointProducerBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
@@ -276,10 +319,14 @@ public interface QuickfixjEndpointBuilderFactory {
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param lazyCreateEngine the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointProducerBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
@@ -291,9 +338,12 @@ public interface QuickfixjEndpointBuilderFactory {
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
-         * The option is a: <code>quickfix.SessionID</code> type.
+         * The option is a: &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sessionID the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointProducerBuilder sessionID(Object sessionID) {
             doSetProperty("sessionID", sessionID);
@@ -304,10 +354,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
-         * The option will be converted to a <code>quickfix.SessionID</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sessionID the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointProducerBuilder sessionID(String sessionID) {
             doSetProperty("sessionID", sessionID);
@@ -324,10 +377,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -345,10 +401,14 @@ public interface QuickfixjEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -370,10 +430,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQuickfixjEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -384,10 +447,14 @@ public interface QuickfixjEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQuickfixjEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -414,10 +481,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param lazyCreateEngine the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointBuilder lazyCreateEngine(
                 boolean lazyCreateEngine) {
@@ -432,10 +502,14 @@ public interface QuickfixjEndpointBuilderFactory {
          * is missing, the value of component's property lazyCreateEngines is
          * being used.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param lazyCreateEngine the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointBuilder lazyCreateEngine(
                 String lazyCreateEngine) {
@@ -447,9 +521,12 @@ public interface QuickfixjEndpointBuilderFactory {
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
-         * The option is a: <code>quickfix.SessionID</code> type.
+         * The option is a: &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sessionID the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointBuilder sessionID(Object sessionID) {
             doSetProperty("sessionID", sessionID);
@@ -460,10 +537,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * of the sessionID is:
          * (BeginString):(SenderCompID)/(SenderSubID)/(SenderLocationID)-(TargetCompID)/(TargetSubID)/(TargetLocationID).
          * 
-         * The option will be converted to a <code>quickfix.SessionID</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;quickfix.SessionID&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sessionID the value to set
+         * @return the dsl builder
          */
         default QuickfixjEndpointBuilder sessionID(String sessionID) {
             doSetProperty("sessionID", sessionID);
@@ -485,10 +565,13 @@ public interface QuickfixjEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQuickfixjEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -498,10 +581,14 @@ public interface QuickfixjEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedQuickfixjEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

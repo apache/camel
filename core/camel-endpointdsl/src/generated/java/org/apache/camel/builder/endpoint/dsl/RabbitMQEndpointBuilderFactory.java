@@ -47,9 +47,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * based on the setting of option addresses. The addresses value is a
          * string which looks like server1:12345, server2:12345.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param addresses the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder addresses(String addresses) {
             doSetProperty("addresses", addresses);
@@ -59,10 +62,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If it is true, the exchange will be deleted when it is no longer in
          * use.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDelete the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder autoDelete(boolean autoDelete) {
             doSetProperty("autoDelete", autoDelete);
@@ -72,10 +78,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If it is true, the exchange will be deleted when it is no longer in
          * use.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDelete the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder autoDelete(String autoDelete) {
             doSetProperty("autoDelete", autoDelete);
@@ -86,10 +96,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * that performs automatic recovery when existing connection has
          * failures).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder automaticRecoveryEnabled(
                 Boolean automaticRecoveryEnabled) {
@@ -101,11 +114,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * that performs automatic recovery when existing connection has
          * failures).
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder automaticRecoveryEnabled(
                 String automaticRecoveryEnabled) {
@@ -117,10 +133,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * all connection options (connectionTimeout, requestedChannelMax...)
          * set on URI are not used.
          * 
-         * The option is a: <code>com.rabbitmq.client.ConnectionFactory</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.rabbitmq.client.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
@@ -133,9 +152,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * set on URI are not used.
          * 
          * The option will be converted to a
-         * <code>com.rabbitmq.client.ConnectionFactory</code> type.
+         * &lt;code&gt;com.rabbitmq.client.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
@@ -145,9 +167,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param deadLetterExchange the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder deadLetterExchange(
                 String deadLetterExchange) {
@@ -157,10 +182,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The type of the dead letter exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: direct
          * Group: common
+         * 
+         * @param deadLetterExchangeType the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder deadLetterExchangeType(
                 String deadLetterExchangeType) {
@@ -170,9 +198,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter queue.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param deadLetterQueue the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder deadLetterQueue(
                 String deadLetterQueue) {
@@ -182,9 +213,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The routing key for the dead letter exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param deadLetterRoutingKey the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder deadLetterRoutingKey(
                 String deadLetterRoutingKey) {
@@ -196,10 +230,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * bind them together. If the option is false, camel won't declare the
          * exchange and queue name on the server.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param declare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder declare(boolean declare) {
             doSetProperty("declare", declare);
@@ -210,10 +247,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * bind them together. If the option is false, camel won't declare the
          * exchange and queue name on the server.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param declare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder declare(String declare) {
             doSetProperty("declare", declare);
@@ -223,10 +264,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If we are declaring a durable exchange (the exchange will survive a
          * server restart).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param durable the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder durable(boolean durable) {
             doSetProperty("durable", durable);
@@ -236,10 +280,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If we are declaring a durable exchange (the exchange will survive a
          * server restart).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param durable the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder durable(String durable) {
             doSetProperty("durable", durable);
@@ -248,10 +296,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The exchange type such as direct or topic.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: direct
          * Group: common
+         * 
+         * @param exchangeType the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder exchangeType(String exchangeType) {
             doSetProperty("exchangeType", exchangeType);
@@ -261,10 +312,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Exclusive queues may only be accessed by the current connection, and
          * are deleted when that connection closes.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exclusive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder exclusive(boolean exclusive) {
             doSetProperty("exclusive", exclusive);
@@ -274,10 +328,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Exclusive queues may only be accessed by the current connection, and
          * are deleted when that connection closes.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exclusive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder exclusive(String exclusive) {
             doSetProperty("exclusive", exclusive);
@@ -286,9 +344,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The hostname of the running rabbitmq instance or cluster.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hostname the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder hostname(String hostname) {
             doSetProperty("hostname", hostname);
@@ -298,10 +359,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Passive queues depend on the queue already to be available at
          * RabbitMQ.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder passive(boolean passive) {
             doSetProperty("passive", passive);
@@ -311,10 +375,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Passive queues depend on the queue already to be available at
          * RabbitMQ.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder passive(String passive) {
             doSetProperty("passive", passive);
@@ -324,9 +392,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Port number for the host with the running rabbitmq instance or
          * cluster. Default value is 5672.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portNumber the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder portNumber(int portNumber) {
             doSetProperty("portNumber", portNumber);
@@ -336,9 +407,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Port number for the host with the running rabbitmq instance or
          * cluster. Default value is 5672.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portNumber the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder portNumber(String portNumber) {
             doSetProperty("portNumber", portNumber);
@@ -347,9 +421,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The queue to receive messages from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder queue(String queue) {
             doSetProperty("queue", queue);
@@ -359,9 +436,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * The routing key to use when binding a consumer queue to the exchange.
          * For producer routing keys, you set the header rabbitmq.ROUTING_KEY.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param routingKey the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder routingKey(String routingKey) {
             doSetProperty("routingKey", routingKey);
@@ -374,10 +454,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * have no effect, if DLQ configured (deadLetterExchange option is not
          * set).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipDlqDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder skipDlqDeclare(
                 boolean skipDlqDeclare) {
@@ -391,10 +474,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * have no effect, if DLQ configured (deadLetterExchange option is not
          * set).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipDlqDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder skipDlqDeclare(
                 String skipDlqDeclare) {
@@ -405,10 +492,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * This can be used if we need to declare the queue but not the
          * exchange.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipExchangeDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder skipExchangeDeclare(
                 boolean skipExchangeDeclare) {
@@ -419,10 +509,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * This can be used if we need to declare the queue but not the
          * exchange.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipExchangeDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder skipExchangeDeclare(
                 String skipExchangeDeclare) {
@@ -433,10 +527,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the queue will not be bound to the exchange after declaring
          * it.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueBind the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder skipQueueBind(
                 boolean skipQueueBind) {
@@ -447,10 +544,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the queue will not be bound to the exchange after declaring
          * it.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueBind the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder skipQueueBind(
                 String skipQueueBind) {
@@ -461,10 +562,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the producer will not declare and bind a queue. This can be
          * used for directing messages via an existing routing key.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder skipQueueDeclare(
                 boolean skipQueueDeclare) {
@@ -475,10 +579,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the producer will not declare and bind a queue. This can be
          * used for directing messages via an existing routing key.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder skipQueueDeclare(
                 String skipQueueDeclare) {
@@ -488,10 +596,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The vhost for the channel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /
          * Group: common
+         * 
+         * @param vhost the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder vhost(String vhost) {
             doSetProperty("vhost", vhost);
@@ -500,10 +611,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * If messages should be auto acknowledged.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoAck the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder autoAck(boolean autoAck) {
             doSetProperty("autoAck", autoAck);
@@ -512,10 +626,14 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * If messages should be auto acknowledged.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoAck the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder autoAck(String autoAck) {
             doSetProperty("autoAck", autoAck);
@@ -530,10 +648,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -549,10 +670,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -563,10 +688,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Number of concurrent consumers when consuming from broker. (eg
          * similar as to the same option for the JMS component).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -577,10 +705,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Number of concurrent consumers when consuming from broker. (eg
          * similar as to the same option for the JMS component).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
@@ -591,9 +722,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Specify a client-generated consumer tag to establish context when
          * invoking the consume operation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param consumerTag the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder consumerTag(String consumerTag) {
             doSetProperty("consumerTag", consumerTag);
@@ -604,10 +738,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * access the queue). This is useful when you want a long-lived shared
          * queue to be temporarily accessible by just one consumer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param exclusiveConsumer the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder exclusiveConsumer(
                 boolean exclusiveConsumer) {
@@ -619,10 +756,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * access the queue). This is useful when you want a long-lived shared
          * queue to be temporarily accessible by just one consumer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param exclusiveConsumer the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder exclusiveConsumer(
                 String exclusiveConsumer) {
@@ -634,9 +775,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * unlimited. You need to specify the option of prefetchSize,
          * prefetchCount, prefetchGlobal at the same time.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder prefetchCount(int prefetchCount) {
             doSetProperty("prefetchCount", prefetchCount);
@@ -647,9 +791,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * unlimited. You need to specify the option of prefetchSize,
          * prefetchCount, prefetchGlobal at the same time.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param prefetchCount the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder prefetchCount(
                 String prefetchCount) {
@@ -661,10 +808,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * to specify the option of prefetchSize, prefetchCount, prefetchGlobal
          * at the same time.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param prefetchEnabled the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder prefetchEnabled(
                 boolean prefetchEnabled) {
@@ -676,10 +826,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * to specify the option of prefetchSize, prefetchCount, prefetchGlobal
          * at the same time.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param prefetchEnabled the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder prefetchEnabled(
                 String prefetchEnabled) {
@@ -691,10 +845,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * each consumer You need to specify the option of prefetchSize,
          * prefetchCount, prefetchGlobal at the same time.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param prefetchGlobal the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder prefetchGlobal(
                 boolean prefetchGlobal) {
@@ -706,10 +863,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * each consumer You need to specify the option of prefetchSize,
          * prefetchCount, prefetchGlobal at the same time.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param prefetchGlobal the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder prefetchGlobal(
                 String prefetchGlobal) {
@@ -721,9 +882,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * will deliver, 0 if unlimited. You need to specify the option of
          * prefetchSize, prefetchCount, prefetchGlobal at the same time.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param prefetchSize the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder prefetchSize(int prefetchSize) {
             doSetProperty("prefetchSize", prefetchSize);
@@ -734,9 +898,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * will deliver, 0 if unlimited. You need to specify the option of
          * prefetchSize, prefetchCount, prefetchGlobal at the same time.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param prefetchSize the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder prefetchSize(String prefetchSize) {
             doSetProperty("prefetchSize", prefetchSize);
@@ -752,10 +919,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * default) then the message is discarded/dead-lettered. If the value is
          * true, then the message is re-queued.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param reQueue the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder reQueue(boolean reQueue) {
             doSetProperty("reQueue", reQueue);
@@ -771,10 +941,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * default) then the message is discarded/dead-lettered. If the value is
          * true, then the message is re-queued.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param reQueue the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder reQueue(String reQueue) {
             doSetProperty("reQueue", reQueue);
@@ -791,10 +965,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * deserialize to a gadget object which could result in a RCE or other
          * security vulnerability.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: allowMessageBodySerialization
+         * 
+         * @param allowMessageBodySerialization the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder allowMessageBodySerialization(
                 boolean allowMessageBodySerialization) {
@@ -812,10 +989,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * deserialize to a gadget object which could result in a RCE or other
          * security vulnerability.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: allowMessageBodySerialization
+         * 
+         * @param allowMessageBodySerialization the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder allowMessageBodySerialization(
                 String allowMessageBodySerialization) {
@@ -825,10 +1006,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Password for authenticated access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: guest
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -837,9 +1021,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Enables SSL on connection, accepted value are true, TLS and 'SSLv3.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder sslProtocol(String sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
@@ -849,9 +1036,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Configure SSL trust manager, SSL should be enabled for this option to
          * be effective.
          * 
-         * The option is a: <code>javax.net.ssl.TrustManager</code> type.
+         * The option is a: &lt;code&gt;javax.net.ssl.TrustManager&lt;/code&gt;
+         * type.
          * 
          * Group: security
+         * 
+         * @param trustManager the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder trustManager(Object trustManager) {
             doSetProperty("trustManager", trustManager);
@@ -862,9 +1053,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * be effective.
          * 
          * The option will be converted to a
-         * <code>javax.net.ssl.TrustManager</code> type.
+         * &lt;code&gt;javax.net.ssl.TrustManager&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustManager the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder trustManager(String trustManager) {
             doSetProperty("trustManager", trustManager);
@@ -873,10 +1067,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Username in case of authenticated access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: guest
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -899,10 +1096,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -916,9 +1116,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -928,9 +1131,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -941,9 +1148,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -954,10 +1164,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * The consumer uses a Thread Pool Executor with a fixed number of
          * threads. This setting allows you to set that number of threads.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer (advanced)
+         * 
+         * @param threadPoolSize the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder threadPoolSize(
                 int threadPoolSize) {
@@ -968,10 +1181,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * The consumer uses a Thread Pool Executor with a fixed number of
          * threads. This setting allows you to set that number of threads.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer (advanced)
+         * 
+         * @param threadPoolSize the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder threadPoolSize(
                 String threadPoolSize) {
@@ -986,13 +1202,17 @@ public interface RabbitMQEndpointBuilderFactory {
          * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder args(
                 String key,
@@ -1008,13 +1228,16 @@ public interface RabbitMQEndpointBuilderFactory {
          * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder args(Map values) {
             doSetMultiValueProperties("args", "arg.", values);
@@ -1024,10 +1247,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Connection client properties (client info used in negotiating with
          * the server).
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder clientProperties(
                 Map<String, Object> clientProperties) {
@@ -1039,10 +1265,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * the server).
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder clientProperties(
                 String clientProperties) {
@@ -1052,10 +1281,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Custom rabbitmq ExceptionHandler for ConnectionFactory.
          * 
-         * The option is a: <code>com.rabbitmq.client.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.rabbitmq.client.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionFactoryExceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder connectionFactoryExceptionHandler(
                 Object connectionFactoryExceptionHandler) {
@@ -1066,9 +1298,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Custom rabbitmq ExceptionHandler for ConnectionFactory.
          * 
          * The option will be converted to a
-         * <code>com.rabbitmq.client.ExceptionHandler</code> type.
+         * &lt;code&gt;com.rabbitmq.client.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionFactoryExceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder connectionFactoryExceptionHandler(
                 String connectionFactoryExceptionHandler) {
@@ -1078,10 +1313,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection timeout.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -1091,10 +1329,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection timeout.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -1105,10 +1346,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Network recovery interval in milliseconds (interval used when
          * recovering from network failure).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param networkRecoveryInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder networkRecoveryInterval(
                 Integer networkRecoveryInterval) {
@@ -1119,11 +1363,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Network recovery interval in milliseconds (interval used when
          * recovering from network failure).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param networkRecoveryInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder networkRecoveryInterval(
                 String networkRecoveryInterval) {
@@ -1133,10 +1380,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested channel max (max number of channels offered).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2047
          * Group: advanced
+         * 
+         * @param requestedChannelMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedChannelMax(
                 int requestedChannelMax) {
@@ -1146,10 +1396,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested channel max (max number of channels offered).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2047
          * Group: advanced
+         * 
+         * @param requestedChannelMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedChannelMax(
                 String requestedChannelMax) {
@@ -1159,10 +1412,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested frame max (max size of frame offered).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: advanced
+         * 
+         * @param requestedFrameMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedFrameMax(
                 int requestedFrameMax) {
@@ -1172,10 +1428,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested frame max (max size of frame offered).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: advanced
+         * 
+         * @param requestedFrameMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedFrameMax(
                 String requestedFrameMax) {
@@ -1185,10 +1444,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested heartbeat (heart-beat in seconds offered).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: advanced
+         * 
+         * @param requestedHeartbeat the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedHeartbeat(
                 int requestedHeartbeat) {
@@ -1198,10 +1460,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested heartbeat (heart-beat in seconds offered).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: advanced
+         * 
+         * @param requestedHeartbeat the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedHeartbeat(
                 String requestedHeartbeat) {
@@ -1212,10 +1477,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Set timeout for waiting for a reply when using the InOut Exchange
          * Pattern (in milliseconds).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestTimeout(
                 long requestTimeout) {
@@ -1226,10 +1494,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Set timeout for waiting for a reply when using the InOut Exchange
          * Pattern (in milliseconds).
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestTimeout(
                 String requestTimeout) {
@@ -1239,10 +1510,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Set requestTimeoutCheckerInterval for inOut exchange.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: advanced
+         * 
+         * @param requestTimeoutCheckerInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
@@ -1252,10 +1526,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Set requestTimeoutCheckerInterval for inOut exchange.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: advanced
+         * 
+         * @param requestTimeoutCheckerInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
@@ -1266,10 +1543,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -1280,10 +1560,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -1294,9 +1578,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Enables connection topology recovery (should topology recovery be
          * performed).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param topologyRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder topologyRecoveryEnabled(
                 Boolean topologyRecoveryEnabled) {
@@ -1307,10 +1594,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Enables connection topology recovery (should topology recovery be
          * performed).
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param topologyRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder topologyRecoveryEnabled(
                 String topologyRecoveryEnabled) {
@@ -1321,10 +1611,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * When true and an inOut Exchange failed on the consumer side send the
          * caused Exception back in the response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder transferException(
                 boolean transferException) {
@@ -1335,10 +1628,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * When true and an inOut Exchange failed on the consumer side send the
          * caused Exception back in the response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointConsumerBuilder transferException(
                 String transferException) {
@@ -1361,9 +1658,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * based on the setting of option addresses. The addresses value is a
          * string which looks like server1:12345, server2:12345.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param addresses the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder addresses(String addresses) {
             doSetProperty("addresses", addresses);
@@ -1373,10 +1673,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If it is true, the exchange will be deleted when it is no longer in
          * use.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDelete the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder autoDelete(boolean autoDelete) {
             doSetProperty("autoDelete", autoDelete);
@@ -1386,10 +1689,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If it is true, the exchange will be deleted when it is no longer in
          * use.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDelete the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder autoDelete(String autoDelete) {
             doSetProperty("autoDelete", autoDelete);
@@ -1400,10 +1707,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * that performs automatic recovery when existing connection has
          * failures).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder automaticRecoveryEnabled(
                 Boolean automaticRecoveryEnabled) {
@@ -1415,11 +1725,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * that performs automatic recovery when existing connection has
          * failures).
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder automaticRecoveryEnabled(
                 String automaticRecoveryEnabled) {
@@ -1431,10 +1744,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * all connection options (connectionTimeout, requestedChannelMax...)
          * set on URI are not used.
          * 
-         * The option is a: <code>com.rabbitmq.client.ConnectionFactory</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.rabbitmq.client.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
@@ -1447,9 +1763,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * set on URI are not used.
          * 
          * The option will be converted to a
-         * <code>com.rabbitmq.client.ConnectionFactory</code> type.
+         * &lt;code&gt;com.rabbitmq.client.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
@@ -1459,9 +1778,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param deadLetterExchange the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder deadLetterExchange(
                 String deadLetterExchange) {
@@ -1471,10 +1793,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The type of the dead letter exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: direct
          * Group: common
+         * 
+         * @param deadLetterExchangeType the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder deadLetterExchangeType(
                 String deadLetterExchangeType) {
@@ -1484,9 +1809,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter queue.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param deadLetterQueue the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder deadLetterQueue(
                 String deadLetterQueue) {
@@ -1496,9 +1824,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The routing key for the dead letter exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param deadLetterRoutingKey the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder deadLetterRoutingKey(
                 String deadLetterRoutingKey) {
@@ -1510,10 +1841,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * bind them together. If the option is false, camel won't declare the
          * exchange and queue name on the server.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param declare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder declare(boolean declare) {
             doSetProperty("declare", declare);
@@ -1524,10 +1858,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * bind them together. If the option is false, camel won't declare the
          * exchange and queue name on the server.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param declare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder declare(String declare) {
             doSetProperty("declare", declare);
@@ -1537,10 +1875,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If we are declaring a durable exchange (the exchange will survive a
          * server restart).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param durable the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder durable(boolean durable) {
             doSetProperty("durable", durable);
@@ -1550,10 +1891,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If we are declaring a durable exchange (the exchange will survive a
          * server restart).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param durable the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder durable(String durable) {
             doSetProperty("durable", durable);
@@ -1562,10 +1907,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The exchange type such as direct or topic.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: direct
          * Group: common
+         * 
+         * @param exchangeType the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder exchangeType(String exchangeType) {
             doSetProperty("exchangeType", exchangeType);
@@ -1575,10 +1923,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Exclusive queues may only be accessed by the current connection, and
          * are deleted when that connection closes.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exclusive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder exclusive(boolean exclusive) {
             doSetProperty("exclusive", exclusive);
@@ -1588,10 +1939,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Exclusive queues may only be accessed by the current connection, and
          * are deleted when that connection closes.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exclusive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder exclusive(String exclusive) {
             doSetProperty("exclusive", exclusive);
@@ -1600,9 +1955,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The hostname of the running rabbitmq instance or cluster.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hostname the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder hostname(String hostname) {
             doSetProperty("hostname", hostname);
@@ -1612,10 +1970,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Passive queues depend on the queue already to be available at
          * RabbitMQ.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder passive(boolean passive) {
             doSetProperty("passive", passive);
@@ -1625,10 +1986,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Passive queues depend on the queue already to be available at
          * RabbitMQ.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder passive(String passive) {
             doSetProperty("passive", passive);
@@ -1638,9 +2003,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Port number for the host with the running rabbitmq instance or
          * cluster. Default value is 5672.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portNumber the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder portNumber(int portNumber) {
             doSetProperty("portNumber", portNumber);
@@ -1650,9 +2018,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Port number for the host with the running rabbitmq instance or
          * cluster. Default value is 5672.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portNumber the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder portNumber(String portNumber) {
             doSetProperty("portNumber", portNumber);
@@ -1661,9 +2032,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The queue to receive messages from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder queue(String queue) {
             doSetProperty("queue", queue);
@@ -1673,9 +2047,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * The routing key to use when binding a consumer queue to the exchange.
          * For producer routing keys, you set the header rabbitmq.ROUTING_KEY.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param routingKey the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder routingKey(String routingKey) {
             doSetProperty("routingKey", routingKey);
@@ -1688,10 +2065,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * have no effect, if DLQ configured (deadLetterExchange option is not
          * set).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipDlqDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder skipDlqDeclare(
                 boolean skipDlqDeclare) {
@@ -1705,10 +2085,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * have no effect, if DLQ configured (deadLetterExchange option is not
          * set).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipDlqDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder skipDlqDeclare(
                 String skipDlqDeclare) {
@@ -1719,10 +2103,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * This can be used if we need to declare the queue but not the
          * exchange.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipExchangeDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder skipExchangeDeclare(
                 boolean skipExchangeDeclare) {
@@ -1733,10 +2120,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * This can be used if we need to declare the queue but not the
          * exchange.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipExchangeDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder skipExchangeDeclare(
                 String skipExchangeDeclare) {
@@ -1747,10 +2138,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the queue will not be bound to the exchange after declaring
          * it.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueBind the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder skipQueueBind(
                 boolean skipQueueBind) {
@@ -1761,10 +2155,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the queue will not be bound to the exchange after declaring
          * it.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueBind the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder skipQueueBind(
                 String skipQueueBind) {
@@ -1775,10 +2173,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the producer will not declare and bind a queue. This can be
          * used for directing messages via an existing routing key.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder skipQueueDeclare(
                 boolean skipQueueDeclare) {
@@ -1789,10 +2190,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the producer will not declare and bind a queue. This can be
          * used for directing messages via an existing routing key.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder skipQueueDeclare(
                 String skipQueueDeclare) {
@@ -1802,10 +2207,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The vhost for the channel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /
          * Group: common
+         * 
+         * @param vhost the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder vhost(String vhost) {
             doSetProperty("vhost", vhost);
@@ -1815,10 +2223,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Map of additional headers. These headers will be set only when the
          * 'allowCustomHeaders' is set to true.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param additionalHeaders the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder additionalHeaders(
                 Map<String, Object> additionalHeaders) {
@@ -1830,10 +2241,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * 'allowCustomHeaders' is set to true.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param additionalHeaders the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder additionalHeaders(
                 String additionalHeaders) {
@@ -1846,10 +2260,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * should be from org.apache.camel.component.rabbitmq.RabbitMQConstants.
          * Any other keys will be ignored.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param additionalProperties the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder additionalProperties(
                 Map<String, Object> additionalProperties) {
@@ -1863,10 +2280,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Any other keys will be ignored.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param additionalProperties the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder additionalProperties(
                 String additionalProperties) {
@@ -1876,10 +2296,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Allow pass custom values to header.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowCustomHeaders the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder allowCustomHeaders(
                 boolean allowCustomHeaders) {
@@ -1889,10 +2312,14 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Allow pass custom values to header.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowCustomHeaders the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder allowCustomHeaders(
                 String allowCustomHeaders) {
@@ -1902,10 +2329,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Allow pass null values to header.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowNullHeaders the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder allowNullHeaders(
                 boolean allowNullHeaders) {
@@ -1915,10 +2345,14 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Allow pass null values to header.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowNullHeaders the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder allowNullHeaders(
                 String allowNullHeaders) {
@@ -1929,10 +2363,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If the bridgeEndpoint is true, the producer will ignore the message
          * header of rabbitmq.EXCHANGE_NAME and rabbitmq.ROUTING_KEY.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder bridgeEndpoint(
                 boolean bridgeEndpoint) {
@@ -1943,10 +2380,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If the bridgeEndpoint is true, the producer will ignore the message
          * header of rabbitmq.EXCHANGE_NAME and rabbitmq.ROUTING_KEY.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param bridgeEndpoint the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder bridgeEndpoint(
                 String bridgeEndpoint) {
@@ -1956,10 +2397,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Get maximum number of opened channel in pool.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: producer
+         * 
+         * @param channelPoolMaxSize the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder channelPoolMaxSize(
                 int channelPoolMaxSize) {
@@ -1969,10 +2413,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Get maximum number of opened channel in pool.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: producer
+         * 
+         * @param channelPoolMaxSize the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder channelPoolMaxSize(
                 String channelPoolMaxSize) {
@@ -1983,10 +2430,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Set the maximum number of milliseconds to wait for a channel from the
          * pool.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param channelPoolMaxWait the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder channelPoolMaxWait(
                 long channelPoolMaxWait) {
@@ -1997,10 +2447,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Set the maximum number of milliseconds to wait for a channel from the
          * pool.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param channelPoolMaxWait the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder channelPoolMaxWait(
                 String channelPoolMaxWait) {
@@ -2013,10 +2466,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * PublisherAcknowledgement will also be activated in this case. See
          * also publisher acknowledgements - When will messages be confirmed.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param guaranteedDeliveries the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder guaranteedDeliveries(
                 boolean guaranteedDeliveries) {
@@ -2029,10 +2485,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * PublisherAcknowledgement will also be activated in this case. See
          * also publisher acknowledgements - When will messages be confirmed.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param guaranteedDeliveries the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder guaranteedDeliveries(
                 String guaranteedDeliveries) {
@@ -2047,10 +2507,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * guarantee that it will ever be consumed. If the header is present
          * rabbitmq.IMMEDIATE it will override this option.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param immediate the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder immediate(boolean immediate) {
             doSetProperty("immediate", immediate);
@@ -2064,10 +2527,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * guarantee that it will ever be consumed. If the header is present
          * rabbitmq.IMMEDIATE it will override this option.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param immediate the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder immediate(String immediate) {
             doSetProperty("immediate", immediate);
@@ -2084,10 +2551,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -2105,10 +2575,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -2122,10 +2596,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * server silently drops the message. If the header is present
          * rabbitmq.MANDATORY it will override this option.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param mandatory the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder mandatory(boolean mandatory) {
             doSetProperty("mandatory", mandatory);
@@ -2138,10 +2615,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * server silently drops the message. If the header is present
          * rabbitmq.MANDATORY it will override this option.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param mandatory the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder mandatory(String mandatory) {
             doSetProperty("mandatory", mandatory);
@@ -2151,10 +2632,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * When true, the message will be published with publisher
          * acknowledgements turned on.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param publisherAcknowledgements the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder publisherAcknowledgements(
                 boolean publisherAcknowledgements) {
@@ -2165,10 +2649,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * When true, the message will be published with publisher
          * acknowledgements turned on.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param publisherAcknowledgements the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder publisherAcknowledgements(
                 String publisherAcknowledgements) {
@@ -2179,9 +2667,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * The amount of time in milliseconds to wait for a basic.ack response
          * from RabbitMQ server.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param publisherAcknowledgementsTimeout the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder publisherAcknowledgementsTimeout(
                 long publisherAcknowledgementsTimeout) {
@@ -2192,9 +2683,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * The amount of time in milliseconds to wait for a basic.ack response
          * from RabbitMQ server.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param publisherAcknowledgementsTimeout the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder publisherAcknowledgementsTimeout(
                 String publisherAcknowledgementsTimeout) {
@@ -2212,10 +2706,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * deserialize to a gadget object which could result in a RCE or other
          * security vulnerability.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: allowMessageBodySerialization
+         * 
+         * @param allowMessageBodySerialization the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder allowMessageBodySerialization(
                 boolean allowMessageBodySerialization) {
@@ -2233,10 +2730,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * deserialize to a gadget object which could result in a RCE or other
          * security vulnerability.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: allowMessageBodySerialization
+         * 
+         * @param allowMessageBodySerialization the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder allowMessageBodySerialization(
                 String allowMessageBodySerialization) {
@@ -2246,10 +2747,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Password for authenticated access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: guest
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -2258,9 +2762,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Enables SSL on connection, accepted value are true, TLS and 'SSLv3.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder sslProtocol(String sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
@@ -2270,9 +2777,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Configure SSL trust manager, SSL should be enabled for this option to
          * be effective.
          * 
-         * The option is a: <code>javax.net.ssl.TrustManager</code> type.
+         * The option is a: &lt;code&gt;javax.net.ssl.TrustManager&lt;/code&gt;
+         * type.
          * 
          * Group: security
+         * 
+         * @param trustManager the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder trustManager(Object trustManager) {
             doSetProperty("trustManager", trustManager);
@@ -2283,9 +2794,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * be effective.
          * 
          * The option will be converted to a
-         * <code>javax.net.ssl.TrustManager</code> type.
+         * &lt;code&gt;javax.net.ssl.TrustManager&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustManager the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder trustManager(String trustManager) {
             doSetProperty("trustManager", trustManager);
@@ -2294,10 +2808,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Username in case of authenticated access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: guest
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -2322,13 +2839,17 @@ public interface RabbitMQEndpointBuilderFactory {
          * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder args(
                 String key,
@@ -2344,13 +2865,16 @@ public interface RabbitMQEndpointBuilderFactory {
          * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder args(Map values) {
             doSetMultiValueProperties("args", "arg.", values);
@@ -2360,10 +2884,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Connection client properties (client info used in negotiating with
          * the server).
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder clientProperties(
                 Map<String, Object> clientProperties) {
@@ -2375,10 +2902,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * the server).
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder clientProperties(
                 String clientProperties) {
@@ -2388,10 +2918,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Custom rabbitmq ExceptionHandler for ConnectionFactory.
          * 
-         * The option is a: <code>com.rabbitmq.client.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.rabbitmq.client.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionFactoryExceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder connectionFactoryExceptionHandler(
                 Object connectionFactoryExceptionHandler) {
@@ -2402,9 +2935,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Custom rabbitmq ExceptionHandler for ConnectionFactory.
          * 
          * The option will be converted to a
-         * <code>com.rabbitmq.client.ExceptionHandler</code> type.
+         * &lt;code&gt;com.rabbitmq.client.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionFactoryExceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder connectionFactoryExceptionHandler(
                 String connectionFactoryExceptionHandler) {
@@ -2414,10 +2950,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection timeout.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -2427,10 +2966,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection timeout.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -2441,10 +2983,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Network recovery interval in milliseconds (interval used when
          * recovering from network failure).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param networkRecoveryInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder networkRecoveryInterval(
                 Integer networkRecoveryInterval) {
@@ -2455,11 +3000,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Network recovery interval in milliseconds (interval used when
          * recovering from network failure).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param networkRecoveryInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder networkRecoveryInterval(
                 String networkRecoveryInterval) {
@@ -2469,10 +3017,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested channel max (max number of channels offered).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2047
          * Group: advanced
+         * 
+         * @param requestedChannelMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedChannelMax(
                 int requestedChannelMax) {
@@ -2482,10 +3033,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested channel max (max number of channels offered).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2047
          * Group: advanced
+         * 
+         * @param requestedChannelMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedChannelMax(
                 String requestedChannelMax) {
@@ -2495,10 +3049,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested frame max (max size of frame offered).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: advanced
+         * 
+         * @param requestedFrameMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedFrameMax(
                 int requestedFrameMax) {
@@ -2508,10 +3065,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested frame max (max size of frame offered).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: advanced
+         * 
+         * @param requestedFrameMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedFrameMax(
                 String requestedFrameMax) {
@@ -2521,10 +3081,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested heartbeat (heart-beat in seconds offered).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: advanced
+         * 
+         * @param requestedHeartbeat the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedHeartbeat(
                 int requestedHeartbeat) {
@@ -2534,10 +3097,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested heartbeat (heart-beat in seconds offered).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: advanced
+         * 
+         * @param requestedHeartbeat the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedHeartbeat(
                 String requestedHeartbeat) {
@@ -2548,10 +3114,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Set timeout for waiting for a reply when using the InOut Exchange
          * Pattern (in milliseconds).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestTimeout(
                 long requestTimeout) {
@@ -2562,10 +3131,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Set timeout for waiting for a reply when using the InOut Exchange
          * Pattern (in milliseconds).
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestTimeout(
                 String requestTimeout) {
@@ -2575,10 +3147,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Set requestTimeoutCheckerInterval for inOut exchange.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: advanced
+         * 
+         * @param requestTimeoutCheckerInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
@@ -2588,10 +3163,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Set requestTimeoutCheckerInterval for inOut exchange.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: advanced
+         * 
+         * @param requestTimeoutCheckerInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
@@ -2602,10 +3180,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -2616,10 +3197,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -2630,9 +3215,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Enables connection topology recovery (should topology recovery be
          * performed).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param topologyRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder topologyRecoveryEnabled(
                 Boolean topologyRecoveryEnabled) {
@@ -2643,10 +3231,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Enables connection topology recovery (should topology recovery be
          * performed).
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param topologyRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder topologyRecoveryEnabled(
                 String topologyRecoveryEnabled) {
@@ -2657,10 +3248,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * When true and an inOut Exchange failed on the consumer side send the
          * caused Exception back in the response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder transferException(
                 boolean transferException) {
@@ -2671,10 +3265,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * When true and an inOut Exchange failed on the consumer side send the
          * caused Exception back in the response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointProducerBuilder transferException(
                 String transferException) {
@@ -2698,9 +3296,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * based on the setting of option addresses. The addresses value is a
          * string which looks like server1:12345, server2:12345.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param addresses the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder addresses(String addresses) {
             doSetProperty("addresses", addresses);
@@ -2710,10 +3311,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If it is true, the exchange will be deleted when it is no longer in
          * use.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDelete the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder autoDelete(boolean autoDelete) {
             doSetProperty("autoDelete", autoDelete);
@@ -2723,10 +3327,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If it is true, the exchange will be deleted when it is no longer in
          * use.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDelete the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder autoDelete(String autoDelete) {
             doSetProperty("autoDelete", autoDelete);
@@ -2737,10 +3345,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * that performs automatic recovery when existing connection has
          * failures).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder automaticRecoveryEnabled(
                 Boolean automaticRecoveryEnabled) {
@@ -2752,11 +3363,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * that performs automatic recovery when existing connection has
          * failures).
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder automaticRecoveryEnabled(
                 String automaticRecoveryEnabled) {
@@ -2768,10 +3382,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * all connection options (connectionTimeout, requestedChannelMax...)
          * set on URI are not used.
          * 
-         * The option is a: <code>com.rabbitmq.client.ConnectionFactory</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.rabbitmq.client.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder connectionFactory(
                 Object connectionFactory) {
@@ -2784,9 +3401,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * set on URI are not used.
          * 
          * The option will be converted to a
-         * <code>com.rabbitmq.client.ConnectionFactory</code> type.
+         * &lt;code&gt;com.rabbitmq.client.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder connectionFactory(
                 String connectionFactory) {
@@ -2796,9 +3416,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param deadLetterExchange the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder deadLetterExchange(
                 String deadLetterExchange) {
@@ -2808,10 +3431,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The type of the dead letter exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: direct
          * Group: common
+         * 
+         * @param deadLetterExchangeType the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder deadLetterExchangeType(
                 String deadLetterExchangeType) {
@@ -2821,9 +3447,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The name of the dead letter queue.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param deadLetterQueue the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder deadLetterQueue(String deadLetterQueue) {
             doSetProperty("deadLetterQueue", deadLetterQueue);
@@ -2832,9 +3461,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The routing key for the dead letter exchange.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param deadLetterRoutingKey the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder deadLetterRoutingKey(
                 String deadLetterRoutingKey) {
@@ -2846,10 +3478,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * bind them together. If the option is false, camel won't declare the
          * exchange and queue name on the server.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param declare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder declare(boolean declare) {
             doSetProperty("declare", declare);
@@ -2860,10 +3495,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * bind them together. If the option is false, camel won't declare the
          * exchange and queue name on the server.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param declare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder declare(String declare) {
             doSetProperty("declare", declare);
@@ -2873,10 +3512,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If we are declaring a durable exchange (the exchange will survive a
          * server restart).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param durable the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder durable(boolean durable) {
             doSetProperty("durable", durable);
@@ -2886,10 +3528,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If we are declaring a durable exchange (the exchange will survive a
          * server restart).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param durable the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder durable(String durable) {
             doSetProperty("durable", durable);
@@ -2898,10 +3544,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The exchange type such as direct or topic.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: direct
          * Group: common
+         * 
+         * @param exchangeType the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder exchangeType(String exchangeType) {
             doSetProperty("exchangeType", exchangeType);
@@ -2911,10 +3560,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Exclusive queues may only be accessed by the current connection, and
          * are deleted when that connection closes.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exclusive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder exclusive(boolean exclusive) {
             doSetProperty("exclusive", exclusive);
@@ -2924,10 +3576,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Exclusive queues may only be accessed by the current connection, and
          * are deleted when that connection closes.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param exclusive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder exclusive(String exclusive) {
             doSetProperty("exclusive", exclusive);
@@ -2936,9 +3592,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The hostname of the running rabbitmq instance or cluster.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hostname the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder hostname(String hostname) {
             doSetProperty("hostname", hostname);
@@ -2948,10 +3607,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Passive queues depend on the queue already to be available at
          * RabbitMQ.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder passive(boolean passive) {
             doSetProperty("passive", passive);
@@ -2961,10 +3623,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Passive queues depend on the queue already to be available at
          * RabbitMQ.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passive the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder passive(String passive) {
             doSetProperty("passive", passive);
@@ -2974,9 +3640,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Port number for the host with the running rabbitmq instance or
          * cluster. Default value is 5672.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portNumber the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder portNumber(int portNumber) {
             doSetProperty("portNumber", portNumber);
@@ -2986,9 +3655,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Port number for the host with the running rabbitmq instance or
          * cluster. Default value is 5672.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portNumber the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder portNumber(String portNumber) {
             doSetProperty("portNumber", portNumber);
@@ -2997,9 +3669,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The queue to receive messages from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param queue the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder queue(String queue) {
             doSetProperty("queue", queue);
@@ -3009,9 +3684,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * The routing key to use when binding a consumer queue to the exchange.
          * For producer routing keys, you set the header rabbitmq.ROUTING_KEY.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param routingKey the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder routingKey(String routingKey) {
             doSetProperty("routingKey", routingKey);
@@ -3024,10 +3702,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * have no effect, if DLQ configured (deadLetterExchange option is not
          * set).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipDlqDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder skipDlqDeclare(boolean skipDlqDeclare) {
             doSetProperty("skipDlqDeclare", skipDlqDeclare);
@@ -3040,10 +3721,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * have no effect, if DLQ configured (deadLetterExchange option is not
          * set).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipDlqDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder skipDlqDeclare(String skipDlqDeclare) {
             doSetProperty("skipDlqDeclare", skipDlqDeclare);
@@ -3053,10 +3738,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * This can be used if we need to declare the queue but not the
          * exchange.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipExchangeDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder skipExchangeDeclare(
                 boolean skipExchangeDeclare) {
@@ -3067,10 +3755,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * This can be used if we need to declare the queue but not the
          * exchange.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipExchangeDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder skipExchangeDeclare(
                 String skipExchangeDeclare) {
@@ -3081,10 +3773,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the queue will not be bound to the exchange after declaring
          * it.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueBind the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder skipQueueBind(boolean skipQueueBind) {
             doSetProperty("skipQueueBind", skipQueueBind);
@@ -3094,10 +3789,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the queue will not be bound to the exchange after declaring
          * it.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueBind the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder skipQueueBind(String skipQueueBind) {
             doSetProperty("skipQueueBind", skipQueueBind);
@@ -3107,10 +3806,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the producer will not declare and bind a queue. This can be
          * used for directing messages via an existing routing key.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder skipQueueDeclare(
                 boolean skipQueueDeclare) {
@@ -3121,10 +3823,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * If true the producer will not declare and bind a queue. This can be
          * used for directing messages via an existing routing key.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param skipQueueDeclare the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder skipQueueDeclare(String skipQueueDeclare) {
             doSetProperty("skipQueueDeclare", skipQueueDeclare);
@@ -3133,10 +3839,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * The vhost for the channel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: /
          * Group: common
+         * 
+         * @param vhost the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder vhost(String vhost) {
             doSetProperty("vhost", vhost);
@@ -3153,10 +3862,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * deserialize to a gadget object which could result in a RCE or other
          * security vulnerability.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: allowMessageBodySerialization
+         * 
+         * @param allowMessageBodySerialization the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder allowMessageBodySerialization(
                 boolean allowMessageBodySerialization) {
@@ -3174,10 +3886,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * deserialize to a gadget object which could result in a RCE or other
          * security vulnerability.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: allowMessageBodySerialization
+         * 
+         * @param allowMessageBodySerialization the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder allowMessageBodySerialization(
                 String allowMessageBodySerialization) {
@@ -3187,10 +3903,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Password for authenticated access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: guest
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -3199,9 +3918,12 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Enables SSL on connection, accepted value are true, TLS and 'SSLv3.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslProtocol the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder sslProtocol(String sslProtocol) {
             doSetProperty("sslProtocol", sslProtocol);
@@ -3211,9 +3933,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Configure SSL trust manager, SSL should be enabled for this option to
          * be effective.
          * 
-         * The option is a: <code>javax.net.ssl.TrustManager</code> type.
+         * The option is a: &lt;code&gt;javax.net.ssl.TrustManager&lt;/code&gt;
+         * type.
          * 
          * Group: security
+         * 
+         * @param trustManager the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder trustManager(Object trustManager) {
             doSetProperty("trustManager", trustManager);
@@ -3224,9 +3950,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * be effective.
          * 
          * The option will be converted to a
-         * <code>javax.net.ssl.TrustManager</code> type.
+         * &lt;code&gt;javax.net.ssl.TrustManager&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustManager the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder trustManager(String trustManager) {
             doSetProperty("trustManager", trustManager);
@@ -3235,10 +3964,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Username in case of authenticated access.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: guest
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default RabbitMQEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -3264,13 +3996,17 @@ public interface RabbitMQEndpointBuilderFactory {
          * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder args(String key, Object value) {
             doSetMultiValueProperty("args", "arg." + key, value);
@@ -3284,13 +4020,16 @@ public interface RabbitMQEndpointBuilderFactory {
          * argument:
          * http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the args(String, Object)
          * method to add a value (call the method multiple times to set more
          * values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder args(Map values) {
             doSetMultiValueProperties("args", "arg.", values);
@@ -3300,10 +4039,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Connection client properties (client info used in negotiating with
          * the server).
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder clientProperties(
                 Map<String, Object> clientProperties) {
@@ -3315,10 +4057,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * the server).
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientProperties the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder clientProperties(
                 String clientProperties) {
@@ -3328,10 +4073,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Custom rabbitmq ExceptionHandler for ConnectionFactory.
          * 
-         * The option is a: <code>com.rabbitmq.client.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.rabbitmq.client.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionFactoryExceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder connectionFactoryExceptionHandler(
                 Object connectionFactoryExceptionHandler) {
@@ -3342,9 +4090,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Custom rabbitmq ExceptionHandler for ConnectionFactory.
          * 
          * The option will be converted to a
-         * <code>com.rabbitmq.client.ExceptionHandler</code> type.
+         * &lt;code&gt;com.rabbitmq.client.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionFactoryExceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder connectionFactoryExceptionHandler(
                 String connectionFactoryExceptionHandler) {
@@ -3354,10 +4105,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection timeout.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -3367,10 +4121,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection timeout.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -3381,10 +4138,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Network recovery interval in milliseconds (interval used when
          * recovering from network failure).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param networkRecoveryInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder networkRecoveryInterval(
                 Integer networkRecoveryInterval) {
@@ -3395,11 +4155,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Network recovery interval in milliseconds (interval used when
          * recovering from network failure).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param networkRecoveryInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder networkRecoveryInterval(
                 String networkRecoveryInterval) {
@@ -3409,10 +4172,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested channel max (max number of channels offered).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2047
          * Group: advanced
+         * 
+         * @param requestedChannelMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder requestedChannelMax(
                 int requestedChannelMax) {
@@ -3422,10 +4188,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested channel max (max number of channels offered).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2047
          * Group: advanced
+         * 
+         * @param requestedChannelMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder requestedChannelMax(
                 String requestedChannelMax) {
@@ -3435,10 +4204,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested frame max (max size of frame offered).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: advanced
+         * 
+         * @param requestedFrameMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder requestedFrameMax(
                 int requestedFrameMax) {
@@ -3448,10 +4220,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested frame max (max size of frame offered).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: advanced
+         * 
+         * @param requestedFrameMax the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder requestedFrameMax(
                 String requestedFrameMax) {
@@ -3461,10 +4236,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested heartbeat (heart-beat in seconds offered).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: advanced
+         * 
+         * @param requestedHeartbeat the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder requestedHeartbeat(
                 int requestedHeartbeat) {
@@ -3474,10 +4252,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Connection requested heartbeat (heart-beat in seconds offered).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: advanced
+         * 
+         * @param requestedHeartbeat the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder requestedHeartbeat(
                 String requestedHeartbeat) {
@@ -3488,10 +4269,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Set timeout for waiting for a reply when using the InOut Exchange
          * Pattern (in milliseconds).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder requestTimeout(
                 long requestTimeout) {
@@ -3502,10 +4286,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Set timeout for waiting for a reply when using the InOut Exchange
          * Pattern (in milliseconds).
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: advanced
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder requestTimeout(
                 String requestTimeout) {
@@ -3515,10 +4302,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Set requestTimeoutCheckerInterval for inOut exchange.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: advanced
+         * 
+         * @param requestTimeoutCheckerInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
@@ -3528,10 +4318,13 @@ public interface RabbitMQEndpointBuilderFactory {
         /**
          * Set requestTimeoutCheckerInterval for inOut exchange.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: advanced
+         * 
+         * @param requestTimeoutCheckerInterval the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
@@ -3542,10 +4335,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -3555,10 +4351,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -3568,9 +4368,12 @@ public interface RabbitMQEndpointBuilderFactory {
          * Enables connection topology recovery (should topology recovery be
          * performed).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param topologyRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder topologyRecoveryEnabled(
                 Boolean topologyRecoveryEnabled) {
@@ -3581,10 +4384,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * Enables connection topology recovery (should topology recovery be
          * performed).
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param topologyRecoveryEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder topologyRecoveryEnabled(
                 String topologyRecoveryEnabled) {
@@ -3595,10 +4401,13 @@ public interface RabbitMQEndpointBuilderFactory {
          * When true and an inOut Exchange failed on the consumer side send the
          * caused Exception back in the response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder transferException(
                 boolean transferException) {
@@ -3609,10 +4418,14 @@ public interface RabbitMQEndpointBuilderFactory {
          * When true and an inOut Exchange failed on the consumer side send the
          * caused Exception back in the response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AdvancedRabbitMQEndpointBuilder transferException(
                 String transferException) {

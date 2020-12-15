@@ -40,10 +40,13 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Define if this operation is a batch operation or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param batch the value to set
+         * @return the dsl builder
          */
         default InfluxDbEndpointBuilder batch(boolean batch) {
             doSetProperty("batch", batch);
@@ -52,10 +55,14 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Define if this operation is a batch operation or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param batch the value to set
+         * @return the dsl builder
          */
         default InfluxDbEndpointBuilder batch(String batch) {
             doSetProperty("batch", batch);
@@ -64,9 +71,12 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * The name of the database where the time series will be stored.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param databaseName the value to set
+         * @return the dsl builder
          */
         default InfluxDbEndpointBuilder databaseName(String databaseName) {
             doSetProperty("databaseName", databaseName);
@@ -83,10 +93,13 @@ public interface InfluxDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default InfluxDbEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -104,10 +117,14 @@ public interface InfluxDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default InfluxDbEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -117,10 +134,13 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Define if this operation is an insert or a query.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: insert
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default InfluxDbEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -129,9 +149,12 @@ public interface InfluxDbEndpointBuilderFactory {
         /**
          * Define the query in case of operation query.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param query the value to set
+         * @return the dsl builder
          */
         default InfluxDbEndpointBuilder query(String query) {
             doSetProperty("query", query);
@@ -141,10 +164,13 @@ public interface InfluxDbEndpointBuilderFactory {
          * The string that defines the retention policy to the data created by
          * the endpoint.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: default
          * Group: producer
+         * 
+         * @param retentionPolicy the value to set
+         * @return the dsl builder
          */
         default InfluxDbEndpointBuilder retentionPolicy(String retentionPolicy) {
             doSetProperty("retentionPolicy", retentionPolicy);
@@ -165,10 +191,13 @@ public interface InfluxDbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedInfluxDbEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -178,10 +207,14 @@ public interface InfluxDbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedInfluxDbEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

@@ -40,10 +40,13 @@ public interface SparkEndpointBuilderFactory {
         /**
          * Indicates if results should be collected or counted.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param collect the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder collect(boolean collect) {
             doSetProperty("collect", collect);
@@ -52,10 +55,14 @@ public interface SparkEndpointBuilderFactory {
         /**
          * Indicates if results should be collected or counted.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param collect the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder collect(String collect) {
             doSetProperty("collect", collect);
@@ -65,9 +72,12 @@ public interface SparkEndpointBuilderFactory {
          * DataFrame to compute against.
          * 
          * The option is a:
-         * <code>org.apache.spark.sql.Dataset&lt;org.apache.spark.sql.Row&gt;</code> type.
+         * &lt;code&gt;org.apache.spark.sql.Dataset&amp;lt;org.apache.spark.sql.Row&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataFrame the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder dataFrame(Object dataFrame) {
             doSetProperty("dataFrame", dataFrame);
@@ -77,9 +87,12 @@ public interface SparkEndpointBuilderFactory {
          * DataFrame to compute against.
          * 
          * The option will be converted to a
-         * <code>org.apache.spark.sql.Dataset&lt;org.apache.spark.sql.Row&gt;</code> type.
+         * &lt;code&gt;org.apache.spark.sql.Dataset&amp;lt;org.apache.spark.sql.Row&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataFrame the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder dataFrame(String dataFrame) {
             doSetProperty("dataFrame", dataFrame);
@@ -89,9 +102,12 @@ public interface SparkEndpointBuilderFactory {
          * Function performing action against an DataFrame.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.spark.DataFrameCallback</code> type.
+         * &lt;code&gt;org.apache.camel.component.spark.DataFrameCallback&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataFrameCallback the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder dataFrameCallback(Object dataFrameCallback) {
             doSetProperty("dataFrameCallback", dataFrameCallback);
@@ -101,9 +117,12 @@ public interface SparkEndpointBuilderFactory {
          * Function performing action against an DataFrame.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.spark.DataFrameCallback</code> type.
+         * &lt;code&gt;org.apache.camel.component.spark.DataFrameCallback&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param dataFrameCallback the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder dataFrameCallback(String dataFrameCallback) {
             doSetProperty("dataFrameCallback", dataFrameCallback);
@@ -120,10 +139,13 @@ public interface SparkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -140,10 +162,14 @@ public interface SparkEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -152,10 +178,13 @@ public interface SparkEndpointBuilderFactory {
         /**
          * RDD to compute against.
          * 
-         * The option is a: <code>org.apache.spark.api.java.JavaRDDLike</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.spark.api.java.JavaRDDLike&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param rdd the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder rdd(Object rdd) {
             doSetProperty("rdd", rdd);
@@ -165,9 +194,12 @@ public interface SparkEndpointBuilderFactory {
          * RDD to compute against.
          * 
          * The option will be converted to a
-         * <code>org.apache.spark.api.java.JavaRDDLike</code> type.
+         * &lt;code&gt;org.apache.spark.api.java.JavaRDDLike&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param rdd the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder rdd(String rdd) {
             doSetProperty("rdd", rdd);
@@ -177,9 +209,13 @@ public interface SparkEndpointBuilderFactory {
          * Function performing action against an RDD.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.spark.RddCallback</code> type.
+         * &lt;code&gt;org.apache.camel.component.spark.RddCallback&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param rddCallback the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder rddCallback(Object rddCallback) {
             doSetProperty("rddCallback", rddCallback);
@@ -189,9 +225,13 @@ public interface SparkEndpointBuilderFactory {
          * Function performing action against an RDD.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.spark.RddCallback</code> type.
+         * &lt;code&gt;org.apache.camel.component.spark.RddCallback&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param rddCallback the value to set
+         * @return the dsl builder
          */
         default SparkEndpointBuilder rddCallback(String rddCallback) {
             doSetProperty("rddCallback", rddCallback);
@@ -212,10 +252,13 @@ public interface SparkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSparkEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -225,10 +268,14 @@ public interface SparkEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSparkEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

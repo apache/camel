@@ -44,9 +44,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Kubernetes API Version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder apiVersion(
                 String apiVersion) {
@@ -56,9 +59,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The dns domain, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dnsDomain the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder dnsDomain(String dnsDomain) {
             doSetProperty("dnsDomain", dnsDomain);
@@ -68,9 +74,12 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option is a:
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -81,9 +90,12 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option will be converted to a
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -93,9 +105,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The port name, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portName the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder portName(String portName) {
             doSetProperty("portName", portName);
@@ -104,10 +119,13 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The port protocol, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: common
+         * 
+         * @param portProtocol the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder portProtocol(
                 String portProtocol) {
@@ -123,10 +141,13 @@ public interface KubernetesJobEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -142,10 +163,14 @@ public interface KubernetesJobEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -155,9 +180,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Consumer CRD Resource Group we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param crdGroup the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder crdGroup(String crdGroup) {
             doSetProperty("crdGroup", crdGroup);
@@ -166,9 +194,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Consumer CRD Resource name we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param crdName the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder crdName(String crdName) {
             doSetProperty("crdName", crdName);
@@ -177,9 +208,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Consumer CRD Resource Plural we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param crdPlural the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder crdPlural(String crdPlural) {
             doSetProperty("crdPlural", crdPlural);
@@ -188,9 +222,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Consumer CRD Resource Scope we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param crdScope the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder crdScope(String crdScope) {
             doSetProperty("crdScope", crdScope);
@@ -199,9 +236,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Consumer CRD Resource Version we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param crdVersion the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder crdVersion(
                 String crdVersion) {
@@ -211,9 +251,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Consumer Label key when watching at some resources.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param labelKey the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder labelKey(String labelKey) {
             doSetProperty("labelKey", labelKey);
@@ -222,9 +265,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Consumer Label value when watching at some resources.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param labelValue the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder labelValue(
                 String labelValue) {
@@ -234,9 +280,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The namespace.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param namespace the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder namespace(String namespace) {
             doSetProperty("namespace", namespace);
@@ -245,10 +294,13 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Consumer pool size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder poolSize(int poolSize) {
             doSetProperty("poolSize", poolSize);
@@ -257,10 +309,13 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Consumer pool size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder poolSize(String poolSize) {
             doSetProperty("poolSize", poolSize);
@@ -269,9 +324,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Consumer Resource Name we would like to watch.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param resourceName the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder resourceName(
                 String resourceName) {
@@ -281,9 +339,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The CA Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder caCertData(
                 String caCertData) {
@@ -293,9 +354,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The CA Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder caCertFile(
                 String caCertFile) {
@@ -305,9 +369,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder clientCertData(
                 String clientCertData) {
@@ -317,9 +384,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder clientCertFile(
                 String clientCertFile) {
@@ -329,9 +399,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Key Algorithm used by the client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyAlgo the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -341,9 +414,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Key data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyData the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder clientKeyData(
                 String clientKeyData) {
@@ -353,9 +429,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Key file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyFile the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -365,9 +444,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Key Passphrase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyPassphrase the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -377,9 +459,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Auth Token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthToken the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder oauthToken(
                 String oauthToken) {
@@ -389,9 +474,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Password to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -400,9 +488,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder trustCerts(
                 Boolean trustCerts) {
@@ -412,10 +503,13 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder trustCerts(
                 String trustCerts) {
@@ -425,9 +519,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Username to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -450,10 +547,13 @@ public interface KubernetesJobEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -467,9 +567,12 @@ public interface KubernetesJobEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -479,9 +582,13 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -492,9 +599,12 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -505,9 +615,12 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -518,10 +631,13 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -532,10 +648,13 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -546,10 +665,14 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -570,9 +693,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Kubernetes API Version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder apiVersion(
                 String apiVersion) {
@@ -582,9 +708,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The dns domain, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dnsDomain the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder dnsDomain(String dnsDomain) {
             doSetProperty("dnsDomain", dnsDomain);
@@ -594,9 +723,12 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option is a:
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -607,9 +739,12 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option will be converted to a
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -619,9 +754,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The port name, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portName the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder portName(String portName) {
             doSetProperty("portName", portName);
@@ -630,10 +768,13 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The port protocol, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: common
+         * 
+         * @param portProtocol the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder portProtocol(
                 String portProtocol) {
@@ -651,10 +792,13 @@ public interface KubernetesJobEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -672,10 +816,14 @@ public interface KubernetesJobEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -685,9 +833,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Producer operation to do on Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -696,9 +847,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The CA Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder caCertData(
                 String caCertData) {
@@ -708,9 +862,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The CA Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder caCertFile(
                 String caCertFile) {
@@ -720,9 +877,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder clientCertData(
                 String clientCertData) {
@@ -732,9 +892,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder clientCertFile(
                 String clientCertFile) {
@@ -744,9 +907,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Key Algorithm used by the client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyAlgo the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
@@ -756,9 +922,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Key data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyData the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder clientKeyData(
                 String clientKeyData) {
@@ -768,9 +937,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Key file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyFile the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder clientKeyFile(
                 String clientKeyFile) {
@@ -780,9 +952,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Key Passphrase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyPassphrase the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -792,9 +967,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Auth Token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthToken the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder oauthToken(
                 String oauthToken) {
@@ -804,9 +982,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Password to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -815,9 +996,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder trustCerts(
                 Boolean trustCerts) {
@@ -827,10 +1011,13 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder trustCerts(
                 String trustCerts) {
@@ -840,9 +1027,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Username to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -863,9 +1053,12 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointProducerBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -876,10 +1069,13 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -890,10 +1086,13 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -904,10 +1103,14 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -929,9 +1132,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Kubernetes API Version to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder apiVersion(String apiVersion) {
             doSetProperty("apiVersion", apiVersion);
@@ -940,9 +1146,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The dns domain, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param dnsDomain the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder dnsDomain(String dnsDomain) {
             doSetProperty("dnsDomain", dnsDomain);
@@ -952,9 +1161,12 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option is a:
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
@@ -965,9 +1177,12 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Default KubernetesClient to use if provided.
          * 
          * The option will be converted to a
-         * <code>io.fabric8.kubernetes.client.KubernetesClient</code> type.
+         * &lt;code&gt;io.fabric8.kubernetes.client.KubernetesClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param kubernetesClient the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
@@ -977,9 +1192,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The port name, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param portName the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder portName(String portName) {
             doSetProperty("portName", portName);
@@ -988,10 +1206,13 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The port protocol, used for ServiceCall EIP.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp
          * Group: common
+         * 
+         * @param portProtocol the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder portProtocol(String portProtocol) {
             doSetProperty("portProtocol", portProtocol);
@@ -1000,9 +1221,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The CA Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder caCertData(String caCertData) {
             doSetProperty("caCertData", caCertData);
@@ -1011,9 +1235,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The CA Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param caCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder caCertFile(String caCertFile) {
             doSetProperty("caCertFile", caCertFile);
@@ -1022,9 +1249,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Cert Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertData the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder clientCertData(
                 String clientCertData) {
@@ -1034,9 +1264,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Cert File.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientCertFile the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder clientCertFile(
                 String clientCertFile) {
@@ -1046,9 +1279,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Key Algorithm used by the client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyAlgo the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder clientKeyAlgo(String clientKeyAlgo) {
             doSetProperty("clientKeyAlgo", clientKeyAlgo);
@@ -1057,9 +1293,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Key data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyData the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder clientKeyData(String clientKeyData) {
             doSetProperty("clientKeyData", clientKeyData);
@@ -1068,9 +1307,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Key file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyFile the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder clientKeyFile(String clientKeyFile) {
             doSetProperty("clientKeyFile", clientKeyFile);
@@ -1079,9 +1321,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Client Key Passphrase.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientKeyPassphrase the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
@@ -1091,9 +1336,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * The Auth Token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthToken the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder oauthToken(String oauthToken) {
             doSetProperty("oauthToken", oauthToken);
@@ -1102,9 +1350,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Password to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -1113,9 +1364,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder trustCerts(Boolean trustCerts) {
             doSetProperty("trustCerts", trustCerts);
@@ -1124,10 +1378,13 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Define if the certs we used are trusted anyway or not.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustCerts the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder trustCerts(String trustCerts) {
             doSetProperty("trustCerts", trustCerts);
@@ -1136,9 +1393,12 @@ public interface KubernetesJobEndpointBuilderFactory {
         /**
          * Username to connect to Kubernetes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -1160,9 +1420,12 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
@@ -1173,10 +1436,13 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Connection timeout in milliseconds to use when making requests to the
          * Kubernetes API server.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -1187,10 +1453,13 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1201,10 +1470,14 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKubernetesJobEndpointBuilder synchronous(
                 String synchronous) {

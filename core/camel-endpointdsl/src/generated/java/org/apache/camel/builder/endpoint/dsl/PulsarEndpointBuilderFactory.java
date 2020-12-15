@@ -45,10 +45,13 @@ public interface PulsarEndpointBuilderFactory {
          * Group the consumer acknowledgments for the specified time in
          * milliseconds - defaults to 100.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: consumer
+         * 
+         * @param ackGroupTimeMillis the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder ackGroupTimeMillis(
                 long ackGroupTimeMillis) {
@@ -59,10 +62,13 @@ public interface PulsarEndpointBuilderFactory {
          * Group the consumer acknowledgments for the specified time in
          * milliseconds - defaults to 100.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: consumer
+         * 
+         * @param ackGroupTimeMillis the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder ackGroupTimeMillis(
                 String ackGroupTimeMillis) {
@@ -73,10 +79,13 @@ public interface PulsarEndpointBuilderFactory {
          * Timeout for unacknowledged messages in milliseconds - defaults to
          * 10000.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: consumer
+         * 
+         * @param ackTimeoutMillis the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder ackTimeoutMillis(
                 long ackTimeoutMillis) {
@@ -87,10 +96,13 @@ public interface PulsarEndpointBuilderFactory {
          * Timeout for unacknowledged messages in milliseconds - defaults to
          * 10000.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: consumer
+         * 
+         * @param ackTimeoutMillis the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder ackTimeoutMillis(
                 String ackTimeoutMillis) {
@@ -105,10 +117,13 @@ public interface PulsarEndpointBuilderFactory {
          * org.apache.camel.Exchange. Messages can then be acknowledged using
          * PulsarMessageReceipt at any time before the ackTimeout occurs.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param allowManualAcknowledgement the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder allowManualAcknowledgement(
                 boolean allowManualAcknowledgement) {
@@ -123,10 +138,14 @@ public interface PulsarEndpointBuilderFactory {
          * org.apache.camel.Exchange. Messages can then be acknowledged using
          * PulsarMessageReceipt at any time before the ackTimeout occurs.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param allowManualAcknowledgement the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder allowManualAcknowledgement(
                 String allowManualAcknowledgement) {
@@ -142,10 +161,13 @@ public interface PulsarEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -161,10 +183,14 @@ public interface PulsarEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -174,10 +200,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Name of the consumer when subscription is EXCLUSIVE.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: sole-consumer
          * Group: consumer
+         * 
+         * @param consumerName the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder consumerName(String consumerName) {
             doSetProperty("consumerName", consumerName);
@@ -187,10 +216,13 @@ public interface PulsarEndpointBuilderFactory {
          * Prefix to add to consumer names when a SHARED or FAILOVER
          * subscription is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: cons
          * Group: consumer
+         * 
+         * @param consumerNamePrefix the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder consumerNamePrefix(
                 String consumerNamePrefix) {
@@ -200,10 +232,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Size of the consumer queue - defaults to 10.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param consumerQueueSize the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder consumerQueueSize(
                 int consumerQueueSize) {
@@ -213,10 +248,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Size of the consumer queue - defaults to 10.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param consumerQueueSize the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder consumerQueueSize(
                 String consumerQueueSize) {
@@ -228,9 +266,12 @@ public interface PulsarEndpointBuilderFactory {
          * times will be sent. Note: if not set, default topic name will be
          * topicName-subscriptionName-DLQ.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param deadLetterTopic the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder deadLetterTopic(
                 String deadLetterTopic) {
@@ -242,9 +283,12 @@ public interface PulsarEndpointBuilderFactory {
          * being sent to the dead letter queue. If this value is not set, no
          * Dead Letter Policy will be created.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxRedeliverCount the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder maxRedeliverCount(
                 Integer maxRedeliverCount) {
@@ -256,10 +300,13 @@ public interface PulsarEndpointBuilderFactory {
          * being sent to the dead letter queue. If this value is not set, no
          * Dead Letter Policy will be created.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxRedeliverCount the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder maxRedeliverCount(
                 String maxRedeliverCount) {
@@ -269,10 +316,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Set the negative acknowledgement delay.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000000
          * Group: consumer
+         * 
+         * @param negativeAckRedeliveryDelayMicros the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder negativeAckRedeliveryDelayMicros(
                 long negativeAckRedeliveryDelayMicros) {
@@ -282,10 +332,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Set the negative acknowledgement delay.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000000
          * Group: consumer
+         * 
+         * @param negativeAckRedeliveryDelayMicros the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder negativeAckRedeliveryDelayMicros(
                 String negativeAckRedeliveryDelayMicros) {
@@ -295,10 +348,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Number of consumers - defaults to 1.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param numberOfConsumers the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder numberOfConsumers(
                 int numberOfConsumers) {
@@ -308,10 +364,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Number of consumers - defaults to 1.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param numberOfConsumers the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder numberOfConsumers(
                 String numberOfConsumers) {
@@ -321,10 +380,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Enable compacted topic reading.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param readCompacted the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder readCompacted(
                 boolean readCompacted) {
@@ -334,10 +396,14 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Enable compacted topic reading.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param readCompacted the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder readCompacted(String readCompacted) {
             doSetProperty("readCompacted", readCompacted);
@@ -348,10 +414,13 @@ public interface PulsarEndpointBuilderFactory {
          * subscription. Default is latest message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> type.
+         * &lt;code&gt;org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition&lt;/code&gt; type.
          * 
          * Default: LATEST
          * Group: consumer
+         * 
+         * @param subscriptionInitialPosition the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder subscriptionInitialPosition(
                 SubscriptionInitialPosition subscriptionInitialPosition) {
@@ -363,10 +432,13 @@ public interface PulsarEndpointBuilderFactory {
          * subscription. Default is latest message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition</code> type.
+         * &lt;code&gt;org.apache.camel.component.pulsar.utils.consumers.SubscriptionInitialPosition&lt;/code&gt; type.
          * 
          * Default: LATEST
          * Group: consumer
+         * 
+         * @param subscriptionInitialPosition the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder subscriptionInitialPosition(
                 String subscriptionInitialPosition) {
@@ -376,10 +448,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Name of the subscription to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: subs
          * Group: consumer
+         * 
+         * @param subscriptionName the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder subscriptionName(
                 String subscriptionName) {
@@ -392,10 +467,13 @@ public interface PulsarEndpointBuilderFactory {
          * subscriptions.
          * 
          * The option is a:
-         * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.RegexSubscriptionMode&lt;/code&gt; type.
          * 
          * Default: PersistentOnly
          * Group: consumer
+         * 
+         * @param subscriptionTopicsMode the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder subscriptionTopicsMode(
                 RegexSubscriptionMode subscriptionTopicsMode) {
@@ -408,10 +486,13 @@ public interface PulsarEndpointBuilderFactory {
          * subscriptions.
          * 
          * The option will be converted to a
-         * <code>org.apache.pulsar.client.api.RegexSubscriptionMode</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.RegexSubscriptionMode&lt;/code&gt; type.
          * 
          * Default: PersistentOnly
          * Group: consumer
+         * 
+         * @param subscriptionTopicsMode the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder subscriptionTopicsMode(
                 String subscriptionTopicsMode) {
@@ -423,10 +504,13 @@ public interface PulsarEndpointBuilderFactory {
          * to EXCLUSIVE.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.pulsar.utils.consumers.SubscriptionType&lt;/code&gt; type.
          * 
          * Default: EXCLUSIVE
          * Group: consumer
+         * 
+         * @param subscriptionType the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
                 SubscriptionType subscriptionType) {
@@ -438,10 +522,13 @@ public interface PulsarEndpointBuilderFactory {
          * to EXCLUSIVE.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
+         * &lt;code&gt;org.apache.camel.component.pulsar.utils.consumers.SubscriptionType&lt;/code&gt; type.
          * 
          * Default: EXCLUSIVE
          * Group: consumer
+         * 
+         * @param subscriptionType the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
                 String subscriptionType) {
@@ -452,10 +539,13 @@ public interface PulsarEndpointBuilderFactory {
          * Whether the topic is a pattern (regular expression) that allows the
          * consumer to subscribe to all matching topics in the namespace.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param topicsPattern the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder topicsPattern(
                 boolean topicsPattern) {
@@ -466,10 +556,14 @@ public interface PulsarEndpointBuilderFactory {
          * Whether the topic is a pattern (regular expression) that allows the
          * consumer to subscribe to all matching topics in the namespace.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param topicsPattern the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointConsumerBuilder topicsPattern(String topicsPattern) {
             doSetProperty("topicsPattern", topicsPattern);
@@ -492,10 +586,13 @@ public interface PulsarEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -509,9 +606,12 @@ public interface PulsarEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -521,9 +621,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -534,9 +638,12 @@ public interface PulsarEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -547,10 +654,13 @@ public interface PulsarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -561,10 +671,14 @@ public interface PulsarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -586,10 +700,14 @@ public interface PulsarEndpointBuilderFactory {
          * Control batching method used by the producer.
          * 
          * The option is a:
-         * <code>org.apache.pulsar.client.api.BatcherBuilder</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.BatcherBuilder&lt;/code&gt;
+         * type.
          * 
          * Default: DEFAULT
          * Group: producer
+         * 
+         * @param batcherBuilder the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder batcherBuilder(
                 Object batcherBuilder) {
@@ -600,10 +718,14 @@ public interface PulsarEndpointBuilderFactory {
          * Control batching method used by the producer.
          * 
          * The option will be converted to a
-         * <code>org.apache.pulsar.client.api.BatcherBuilder</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.BatcherBuilder&lt;/code&gt;
+         * type.
          * 
          * Default: DEFAULT
          * Group: producer
+         * 
+         * @param batcherBuilder the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder batcherBuilder(
                 String batcherBuilder) {
@@ -614,10 +736,13 @@ public interface PulsarEndpointBuilderFactory {
          * Control whether automatic batching of messages is enabled for the
          * producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param batchingEnabled the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder batchingEnabled(
                 boolean batchingEnabled) {
@@ -628,10 +753,14 @@ public interface PulsarEndpointBuilderFactory {
          * Control whether automatic batching of messages is enabled for the
          * producer.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param batchingEnabled the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder batchingEnabled(
                 String batchingEnabled) {
@@ -641,10 +770,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * The maximum size to batch messages.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param batchingMaxMessages the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder batchingMaxMessages(
                 int batchingMaxMessages) {
@@ -654,10 +786,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * The maximum size to batch messages.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param batchingMaxMessages the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder batchingMaxMessages(
                 String batchingMaxMessages) {
@@ -668,10 +803,13 @@ public interface PulsarEndpointBuilderFactory {
          * The maximum time period within which the messages sent will be
          * batched if batchingEnabled is true.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param batchingMaxPublishDelayMicros the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder batchingMaxPublishDelayMicros(
                 long batchingMaxPublishDelayMicros) {
@@ -682,10 +820,13 @@ public interface PulsarEndpointBuilderFactory {
          * The maximum time period within which the messages sent will be
          * batched if batchingEnabled is true.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param batchingMaxPublishDelayMicros the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder batchingMaxPublishDelayMicros(
                 String batchingMaxPublishDelayMicros) {
@@ -696,10 +837,13 @@ public interface PulsarEndpointBuilderFactory {
          * Whether to block the producing thread if pending messages queue is
          * full or to throw a ProducerQueueIsFullError.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param blockIfQueueFull the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder blockIfQueueFull(
                 boolean blockIfQueueFull) {
@@ -710,10 +854,14 @@ public interface PulsarEndpointBuilderFactory {
          * Whether to block the producing thread if pending messages queue is
          * full or to throw a ProducerQueueIsFullError.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param blockIfQueueFull the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder blockIfQueueFull(
                 String blockIfQueueFull) {
@@ -724,10 +872,14 @@ public interface PulsarEndpointBuilderFactory {
          * Compression type to use.
          * 
          * The option is a:
-         * <code>org.apache.pulsar.client.api.CompressionType</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.CompressionType&lt;/code&gt;
+         * type.
          * 
          * Default: NONE
          * Group: producer
+         * 
+         * @param compressionType the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder compressionType(
                 CompressionType compressionType) {
@@ -738,10 +890,14 @@ public interface PulsarEndpointBuilderFactory {
          * Compression type to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.pulsar.client.api.CompressionType</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.CompressionType&lt;/code&gt;
+         * type.
          * 
          * Default: NONE
          * Group: producer
+         * 
+         * @param compressionType the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder compressionType(
                 String compressionType) {
@@ -752,10 +908,13 @@ public interface PulsarEndpointBuilderFactory {
          * The first message published will have a sequence Id of
          * initialSequenceId 1.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param initialSequenceId the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder initialSequenceId(
                 long initialSequenceId) {
@@ -766,10 +925,13 @@ public interface PulsarEndpointBuilderFactory {
          * The first message published will have a sequence Id of
          * initialSequenceId 1.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param initialSequenceId the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder initialSequenceId(
                 String initialSequenceId) {
@@ -787,10 +949,13 @@ public interface PulsarEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -808,10 +973,14 @@ public interface PulsarEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -822,10 +991,13 @@ public interface PulsarEndpointBuilderFactory {
          * Size of the pending massages queue. When the queue is full, by
          * default, any further sends will fail unless blockIfQueueFull=true.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param maxPendingMessages the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder maxPendingMessages(
                 int maxPendingMessages) {
@@ -836,10 +1008,13 @@ public interface PulsarEndpointBuilderFactory {
          * Size of the pending massages queue. When the queue is full, by
          * default, any further sends will fail unless blockIfQueueFull=true.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param maxPendingMessages the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder maxPendingMessages(
                 String maxPendingMessages) {
@@ -852,10 +1027,13 @@ public interface PulsarEndpointBuilderFactory {
          * maxPendingMessages) exceeds this value. Partitioned topics have a
          * pending message queue for each partition.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 50000
          * Group: producer
+         * 
+         * @param maxPendingMessagesAcrossPartitions the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder maxPendingMessagesAcrossPartitions(
                 int maxPendingMessagesAcrossPartitions) {
@@ -868,10 +1046,13 @@ public interface PulsarEndpointBuilderFactory {
          * maxPendingMessages) exceeds this value. Partitioned topics have a
          * pending message queue for each partition.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 50000
          * Group: producer
+         * 
+         * @param maxPendingMessagesAcrossPartitions the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder maxPendingMessagesAcrossPartitions(
                 String maxPendingMessagesAcrossPartitions) {
@@ -882,9 +1063,13 @@ public interface PulsarEndpointBuilderFactory {
          * Custom Message Router to use.
          * 
          * The option is a:
-         * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.MessageRouter&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param messageRouter the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder messageRouter(Object messageRouter) {
             doSetProperty("messageRouter", messageRouter);
@@ -894,9 +1079,13 @@ public interface PulsarEndpointBuilderFactory {
          * Custom Message Router to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.MessageRouter&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param messageRouter the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder messageRouter(String messageRouter) {
             doSetProperty("messageRouter", messageRouter);
@@ -906,10 +1095,13 @@ public interface PulsarEndpointBuilderFactory {
          * Message Routing Mode to use.
          * 
          * The option is a:
-         * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.MessageRoutingMode&lt;/code&gt; type.
          * 
          * Default: RoundRobinPartition
          * Group: producer
+         * 
+         * @param messageRoutingMode the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder messageRoutingMode(
                 MessageRoutingMode messageRoutingMode) {
@@ -920,10 +1112,13 @@ public interface PulsarEndpointBuilderFactory {
          * Message Routing Mode to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
+         * &lt;code&gt;org.apache.pulsar.client.api.MessageRoutingMode&lt;/code&gt; type.
          * 
          * Default: RoundRobinPartition
          * Group: producer
+         * 
+         * @param messageRoutingMode the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder messageRoutingMode(
                 String messageRoutingMode) {
@@ -934,9 +1129,12 @@ public interface PulsarEndpointBuilderFactory {
          * Name of the producer. If unset, lets Pulsar select a unique
          * identifier.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param producerName the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder producerName(String producerName) {
             doSetProperty("producerName", producerName);
@@ -945,10 +1143,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Send timeout in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param sendTimeoutMs the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder sendTimeoutMs(int sendTimeoutMs) {
             doSetProperty("sendTimeoutMs", sendTimeoutMs);
@@ -957,10 +1158,13 @@ public interface PulsarEndpointBuilderFactory {
         /**
          * Send timeout in milliseconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: producer
+         * 
+         * @param sendTimeoutMs the value to set
+         * @return the dsl builder
          */
         default PulsarEndpointProducerBuilder sendTimeoutMs(String sendTimeoutMs) {
             doSetProperty("sendTimeoutMs", sendTimeoutMs);
@@ -981,10 +1185,13 @@ public interface PulsarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -995,10 +1202,14 @@ public interface PulsarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1033,10 +1244,13 @@ public interface PulsarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPulsarEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1046,10 +1260,14 @@ public interface PulsarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPulsarEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

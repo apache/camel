@@ -50,10 +50,13 @@ public interface IgniteEventsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default IgniteEventsEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -69,10 +72,14 @@ public interface IgniteEventsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default IgniteEventsEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -83,10 +90,12 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The cluster group expression.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ignite.ClusterGroupExpression&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
          */
         default IgniteEventsEndpointBuilder clusterGroupExpression(
                 Object clusterGroupExpression) {
@@ -97,10 +106,12 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The cluster group expression.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ignite.ClusterGroupExpression</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ignite.ClusterGroupExpression&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param clusterGroupExpression the value to set
+         * @return the dsl builder
          */
         default IgniteEventsEndpointBuilder clusterGroupExpression(
                 String clusterGroupExpression) {
@@ -112,10 +123,13 @@ public interface IgniteEventsEndpointBuilderFactory {
          * constants as defined in EventType. For example:
          * EVT_CACHE_ENTRY_CREATED,EVT_CACHE_OBJECT_REMOVED,EVT_IGFS_DIR_CREATED.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: EVTS_ALL
          * Group: consumer
+         * 
+         * @param events the value to set
+         * @return the dsl builder
          */
         default IgniteEventsEndpointBuilder events(String events) {
             doSetProperty("events", events);
@@ -125,10 +139,13 @@ public interface IgniteEventsEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteEventsEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
@@ -139,10 +156,14 @@ public interface IgniteEventsEndpointBuilderFactory {
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param propagateIncomingBodyIfNoReturnValue the value to set
+         * @return the dsl builder
          */
         default IgniteEventsEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
@@ -153,10 +174,13 @@ public interface IgniteEventsEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteEventsEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
@@ -167,10 +191,14 @@ public interface IgniteEventsEndpointBuilderFactory {
          * Sets whether to treat Collections as cache objects or as Collections
          * of items to insert/update/compute, etc.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param treatCollectionsAsCacheObjects the value to set
+         * @return the dsl builder
          */
         default IgniteEventsEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
@@ -194,10 +222,13 @@ public interface IgniteEventsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteEventsEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -211,9 +242,12 @@ public interface IgniteEventsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteEventsEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -223,9 +257,13 @@ public interface IgniteEventsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteEventsEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -236,9 +274,12 @@ public interface IgniteEventsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteEventsEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -249,10 +290,13 @@ public interface IgniteEventsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteEventsEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -263,10 +307,14 @@ public interface IgniteEventsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedIgniteEventsEndpointBuilder synchronous(
                 String synchronous) {

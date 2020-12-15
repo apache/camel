@@ -45,9 +45,12 @@ public interface NsqEndpointBuilderFactory {
          * The hostnames of one or more nsqlookupd servers (consumer) or nsqd
          * servers (producer).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param servers the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder servers(String servers) {
             doSetProperty("servers", servers);
@@ -56,9 +59,12 @@ public interface NsqEndpointBuilderFactory {
         /**
          * A String to identify the kind of client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userAgent the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder userAgent(String userAgent) {
             doSetProperty("userAgent", userAgent);
@@ -68,10 +74,13 @@ public interface NsqEndpointBuilderFactory {
          * Automatically finish the NSQ Message when it is retrieved from the
          * queue and before the Exchange is processed.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoFinish the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder autoFinish(Boolean autoFinish) {
             doSetProperty("autoFinish", autoFinish);
@@ -81,11 +90,14 @@ public interface NsqEndpointBuilderFactory {
          * Automatically finish the NSQ Message when it is retrieved from the
          * queue and before the Exchange is processed.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoFinish the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder autoFinish(String autoFinish) {
             doSetProperty("autoFinish", autoFinish);
@@ -100,10 +112,13 @@ public interface NsqEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -119,10 +134,14 @@ public interface NsqEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -132,9 +151,12 @@ public interface NsqEndpointBuilderFactory {
         /**
          * The NSQ channel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param channel the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder channel(String channel) {
             doSetProperty("channel", channel);
@@ -144,9 +166,13 @@ public interface NsqEndpointBuilderFactory {
          * A Custom NSQ lookup implementation.
          * 
          * The option is a:
-         * <code>com.github.brainlag.nsq.lookup.NSQLookup</code> type.
+         * &lt;code&gt;com.github.brainlag.nsq.lookup.NSQLookup&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param customNSQLookup the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder customNSQLookup(
                 Object customNSQLookup) {
@@ -157,9 +183,13 @@ public interface NsqEndpointBuilderFactory {
          * A Custom NSQ lookup implementation.
          * 
          * The option will be converted to a
-         * <code>com.github.brainlag.nsq.lookup.NSQLookup</code> type.
+         * &lt;code&gt;com.github.brainlag.nsq.lookup.NSQLookup&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param customNSQLookup the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder customNSQLookup(
                 String customNSQLookup) {
@@ -169,10 +199,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * The lookup interval.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: consumer
+         * 
+         * @param lookupInterval the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder lookupInterval(long lookupInterval) {
             doSetProperty("lookupInterval", lookupInterval);
@@ -181,10 +214,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * The lookup interval.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: consumer
+         * 
+         * @param lookupInterval the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder lookupInterval(String lookupInterval) {
             doSetProperty("lookupInterval", lookupInterval);
@@ -193,10 +229,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * The NSQ lookup server port.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4161
          * Group: consumer
+         * 
+         * @param lookupServerPort the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder lookupServerPort(int lookupServerPort) {
             doSetProperty("lookupServerPort", lookupServerPort);
@@ -205,10 +244,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * The NSQ lookup server port.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4161
          * Group: consumer
+         * 
+         * @param lookupServerPort the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder lookupServerPort(
                 String lookupServerPort) {
@@ -219,10 +261,13 @@ public interface NsqEndpointBuilderFactory {
          * The NSQ consumer timeout period for messages retrieved from the
          * queue. A value of -1 is the server default.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param messageTimeout the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder messageTimeout(long messageTimeout) {
             doSetProperty("messageTimeout", messageTimeout);
@@ -232,10 +277,13 @@ public interface NsqEndpointBuilderFactory {
          * The NSQ consumer timeout period for messages retrieved from the
          * queue. A value of -1 is the server default.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param messageTimeout the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder messageTimeout(String messageTimeout) {
             doSetProperty("messageTimeout", messageTimeout);
@@ -244,10 +292,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * Consumer pool size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder poolSize(int poolSize) {
             doSetProperty("poolSize", poolSize);
@@ -256,10 +307,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * Consumer pool size.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: consumer
+         * 
+         * @param poolSize the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder poolSize(String poolSize) {
             doSetProperty("poolSize", poolSize);
@@ -269,10 +323,13 @@ public interface NsqEndpointBuilderFactory {
          * The requeue interval in milliseconds. A value of -1 is the server
          * default.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param requeueInterval the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder requeueInterval(long requeueInterval) {
             doSetProperty("requeueInterval", requeueInterval);
@@ -282,10 +339,13 @@ public interface NsqEndpointBuilderFactory {
          * The requeue interval in milliseconds. A value of -1 is the server
          * default.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param requeueInterval the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder requeueInterval(
                 String requeueInterval) {
@@ -295,10 +355,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -307,10 +370,14 @@ public interface NsqEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -320,9 +387,12 @@ public interface NsqEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -333,9 +403,12 @@ public interface NsqEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NsqEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -359,10 +432,13 @@ public interface NsqEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedNsqEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -376,9 +452,12 @@ public interface NsqEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedNsqEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -388,9 +467,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedNsqEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -401,9 +484,12 @@ public interface NsqEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedNsqEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -414,10 +500,13 @@ public interface NsqEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNsqEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -428,10 +517,14 @@ public interface NsqEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNsqEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -453,9 +546,12 @@ public interface NsqEndpointBuilderFactory {
          * The hostnames of one or more nsqlookupd servers (consumer) or nsqd
          * servers (producer).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param servers the value to set
+         * @return the dsl builder
          */
         default NsqEndpointProducerBuilder servers(String servers) {
             doSetProperty("servers", servers);
@@ -464,9 +560,12 @@ public interface NsqEndpointBuilderFactory {
         /**
          * A String to identify the kind of client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userAgent the value to set
+         * @return the dsl builder
          */
         default NsqEndpointProducerBuilder userAgent(String userAgent) {
             doSetProperty("userAgent", userAgent);
@@ -483,10 +582,13 @@ public interface NsqEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NsqEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -504,10 +606,14 @@ public interface NsqEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NsqEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -517,10 +623,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * The port of the nsqd server.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4150
          * Group: producer
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default NsqEndpointProducerBuilder port(int port) {
             doSetProperty("port", port);
@@ -529,10 +638,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * The port of the nsqd server.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4150
          * Group: producer
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default NsqEndpointProducerBuilder port(String port) {
             doSetProperty("port", port);
@@ -541,10 +653,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NsqEndpointProducerBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -553,10 +668,14 @@ public interface NsqEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NsqEndpointProducerBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -566,9 +685,12 @@ public interface NsqEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NsqEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -579,9 +701,12 @@ public interface NsqEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NsqEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -603,10 +728,13 @@ public interface NsqEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNsqEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -617,10 +745,14 @@ public interface NsqEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNsqEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -643,9 +775,12 @@ public interface NsqEndpointBuilderFactory {
          * The hostnames of one or more nsqlookupd servers (consumer) or nsqd
          * servers (producer).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param servers the value to set
+         * @return the dsl builder
          */
         default NsqEndpointBuilder servers(String servers) {
             doSetProperty("servers", servers);
@@ -654,9 +789,12 @@ public interface NsqEndpointBuilderFactory {
         /**
          * A String to identify the kind of client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param userAgent the value to set
+         * @return the dsl builder
          */
         default NsqEndpointBuilder userAgent(String userAgent) {
             doSetProperty("userAgent", userAgent);
@@ -665,10 +803,13 @@ public interface NsqEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NsqEndpointBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -677,10 +818,14 @@ public interface NsqEndpointBuilderFactory {
         /**
          * Set secure option indicating TLS is required.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default NsqEndpointBuilder secure(String secure) {
             doSetProperty("secure", secure);
@@ -690,9 +835,12 @@ public interface NsqEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NsqEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -703,9 +851,12 @@ public interface NsqEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NsqEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -728,10 +879,13 @@ public interface NsqEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNsqEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -741,10 +895,14 @@ public interface NsqEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNsqEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

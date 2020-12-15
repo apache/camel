@@ -45,10 +45,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param sessionCount the value to set
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointConsumerBuilder sessionCount(
                 int sessionCount) {
@@ -59,10 +62,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param sessionCount the value to set
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointConsumerBuilder sessionCount(
                 String sessionCount) {
@@ -78,10 +84,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -97,10 +106,14 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -125,10 +138,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -142,9 +158,12 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -154,9 +173,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -167,9 +190,12 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -180,10 +206,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -194,10 +223,14 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -219,10 +252,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param sessionCount the value to set
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointProducerBuilder sessionCount(
                 int sessionCount) {
@@ -233,10 +269,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param sessionCount the value to set
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointProducerBuilder sessionCount(
                 String sessionCount) {
@@ -254,10 +293,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -275,10 +317,14 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -301,10 +347,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -315,10 +364,14 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -341,10 +394,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param sessionCount the value to set
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointBuilder sessionCount(int sessionCount) {
             doSetProperty("sessionCount", sessionCount);
@@ -354,10 +410,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Used when the endpoint is in client mode to populate a pool of
          * sessions.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: common
+         * 
+         * @param sessionCount the value to set
+         * @return the dsl builder
          */
         default JSR356WebSocketEndpointBuilder sessionCount(String sessionCount) {
             doSetProperty("sessionCount", sessionCount);
@@ -379,10 +438,13 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -393,10 +455,14 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJSR356WebSocketEndpointBuilder synchronous(
                 String synchronous) {

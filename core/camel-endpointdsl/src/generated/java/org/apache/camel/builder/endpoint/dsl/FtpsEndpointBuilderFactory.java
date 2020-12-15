@@ -55,10 +55,13 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder binary(boolean binary) {
             doSetProperty("binary", binary);
@@ -68,10 +71,14 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder binary(String binary) {
             doSetProperty("binary", binary);
@@ -88,9 +95,12 @@ public interface FtpsEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param charset the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder charset(String charset) {
             doSetProperty("charset", charset);
@@ -102,10 +112,13 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -117,10 +130,14 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -139,9 +156,12 @@ public interface FtpsEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param doneFileName the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder doneFileName(String doneFileName) {
             doSetProperty("doneFileName", doneFileName);
@@ -165,9 +185,13 @@ public interface FtpsEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder fileName(Expression fileName) {
             doSetProperty("fileName", fileName);
@@ -192,9 +216,12 @@ public interface FtpsEndpointBuilderFactory {
          * CamelFileName and have to restore it afterwards.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
@@ -203,10 +230,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passiveMode the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder passiveMode(boolean passiveMode) {
             doSetProperty("passiveMode", passiveMode);
@@ -215,10 +245,14 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passiveMode the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder passiveMode(String passiveMode) {
             doSetProperty("passiveMode", passiveMode);
@@ -230,10 +264,13 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
+         * 
+         * @param separator the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder separator(PathSeparator separator) {
             doSetProperty("separator", separator);
@@ -245,10 +282,13 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
+         * 
+         * @param separator the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder separator(String separator) {
             doSetProperty("separator", separator);
@@ -259,10 +299,13 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param transferLoggingIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder transferLoggingIntervalSeconds(
                 int transferLoggingIntervalSeconds) {
@@ -274,10 +317,13 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param transferLoggingIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder transferLoggingIntervalSeconds(
                 String transferLoggingIntervalSeconds) {
@@ -288,10 +334,14 @@ public interface FtpsEndpointBuilderFactory {
          * Configure the logging level to use when logging the progress of
          * upload and download operations.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: common
+         * 
+         * @param transferLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder transferLoggingLevel(
                 LoggingLevel transferLoggingLevel) {
@@ -303,10 +353,13 @@ public interface FtpsEndpointBuilderFactory {
          * upload and download operations.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: common
+         * 
+         * @param transferLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder transferLoggingLevel(
                 String transferLoggingLevel) {
@@ -317,10 +370,13 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferLoggingVerbose the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder transferLoggingVerbose(
                 boolean transferLoggingVerbose) {
@@ -331,10 +387,14 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferLoggingVerbose the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder transferLoggingVerbose(
                 String transferLoggingVerbose) {
@@ -350,10 +410,13 @@ public interface FtpsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -369,10 +432,14 @@ public interface FtpsEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -382,10 +449,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * If true, the file will be deleted after it is processed successfully.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param delete the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder delete(boolean delete) {
             doSetProperty("delete", delete);
@@ -394,10 +464,14 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * If true, the file will be deleted after it is processed successfully.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param delete the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder delete(String delete) {
             doSetProperty("delete", delete);
@@ -409,9 +483,13 @@ public interface FtpsEndpointBuilderFactory {
          * When moving the files to the fail location Camel will handle the
          * error and will not pick up the file again.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param moveFailed the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder moveFailed(Expression moveFailed) {
             doSetProperty("moveFailed", moveFailed);
@@ -424,9 +502,12 @@ public interface FtpsEndpointBuilderFactory {
          * error and will not pick up the file again.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param moveFailed the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder moveFailed(String moveFailed) {
             doSetProperty("moveFailed", moveFailed);
@@ -438,10 +519,13 @@ public interface FtpsEndpointBuilderFactory {
          * Camel will set idempotent=true as well, to avoid consuming the same
          * files over and over again.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param noop the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder noop(boolean noop) {
             doSetProperty("noop", noop);
@@ -453,10 +537,14 @@ public interface FtpsEndpointBuilderFactory {
          * Camel will set idempotent=true as well, to avoid consuming the same
          * files over and over again.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param noop the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder noop(String noop) {
             doSetProperty("noop", noop);
@@ -467,9 +555,13 @@ public interface FtpsEndpointBuilderFactory {
          * filename when moving it before processing. For example to move
          * in-progress files into the order directory set this value to order.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param preMove the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder preMove(Expression preMove) {
             doSetProperty("preMove", preMove);
@@ -481,9 +573,12 @@ public interface FtpsEndpointBuilderFactory {
          * in-progress files into the order directory set this value to order.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param preMove the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder preMove(String preMove) {
             doSetProperty("preMove", preMove);
@@ -497,10 +592,13 @@ public interface FtpsEndpointBuilderFactory {
          * starts to filter, and accept files to process by Camel. This option
          * is default=false meaning disabled.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param preSort the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder preSort(boolean preSort) {
             doSetProperty("preSort", preSort);
@@ -514,10 +612,14 @@ public interface FtpsEndpointBuilderFactory {
          * starts to filter, and accept files to process by Camel. This option
          * is default=false meaning disabled.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param preSort the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder preSort(String preSort) {
             doSetProperty("preSort", preSort);
@@ -527,10 +629,13 @@ public interface FtpsEndpointBuilderFactory {
          * If a directory, will look for files in all the sub-directories as
          * well.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder recursive(boolean recursive) {
             doSetProperty("recursive", recursive);
@@ -540,10 +645,14 @@ public interface FtpsEndpointBuilderFactory {
          * If a directory, will look for files in all the sub-directories as
          * well.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param recursive the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder recursive(String recursive) {
             doSetProperty("recursive", recursive);
@@ -556,10 +665,13 @@ public interface FtpsEndpointBuilderFactory {
          * are stored in a local directory, and the option binary must be
          * enabled, which is required to support resuming of downloads.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param resumeDownload the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder resumeDownload(
                 boolean resumeDownload) {
@@ -573,10 +685,14 @@ public interface FtpsEndpointBuilderFactory {
          * are stored in a local directory, and the option binary must be
          * enabled, which is required to support resuming of downloads.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param resumeDownload the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder resumeDownload(String resumeDownload) {
             doSetProperty("resumeDownload", resumeDownload);
@@ -586,10 +702,13 @@ public interface FtpsEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -600,10 +719,14 @@ public interface FtpsEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -618,10 +741,13 @@ public interface FtpsEndpointBuilderFactory {
          * you must set stepwise=false as both cannot be enabled at the same
          * time.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param streamDownload the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder streamDownload(
                 boolean streamDownload) {
@@ -636,10 +762,14 @@ public interface FtpsEndpointBuilderFactory {
          * you must set stepwise=false as both cannot be enabled at the same
          * time.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param streamDownload the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder streamDownload(String streamDownload) {
             doSetProperty("streamDownload", streamDownload);
@@ -650,9 +780,12 @@ public interface FtpsEndpointBuilderFactory {
          * used, antExclude takes precedence over antInclude. Multiple
          * exclusions may be specified in comma-delimited format.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param antExclude the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder antExclude(String antExclude) {
             doSetProperty("antExclude", antExclude);
@@ -661,10 +794,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets case sensitive flag on ant filter.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param antFilterCaseSensitive the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder antFilterCaseSensitive(
                 boolean antFilterCaseSensitive) {
@@ -674,10 +810,14 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets case sensitive flag on ant filter.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param antFilterCaseSensitive the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder antFilterCaseSensitive(
                 String antFilterCaseSensitive) {
@@ -688,9 +828,12 @@ public interface FtpsEndpointBuilderFactory {
          * Ant style filter inclusion. Multiple inclusions may be specified in
          * comma-delimited format.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param antInclude the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder antInclude(String antInclude) {
             doSetProperty("antInclude", antInclude);
@@ -704,10 +847,13 @@ public interface FtpsEndpointBuilderFactory {
          * then limit the poll. Mind that this requires a higher memory usage as
          * all file details are in memory to perform the sorting.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param eagerMaxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 boolean eagerMaxMessagesPerPoll) {
@@ -722,10 +868,14 @@ public interface FtpsEndpointBuilderFactory {
          * then limit the poll. Mind that this requires a higher memory usage as
          * all file details are in memory to perform the sorting.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param eagerMaxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 String eagerMaxMessagesPerPoll) {
@@ -739,9 +889,12 @@ public interface FtpsEndpointBuilderFactory {
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param exclude the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder exclude(String exclude) {
             doSetProperty("exclude", exclude);
@@ -753,9 +906,12 @@ public interface FtpsEndpointBuilderFactory {
          * files if filter returns false in its accept() method.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileFilter&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder filter(Object filter) {
             doSetProperty("filter", filter);
@@ -767,9 +923,12 @@ public interface FtpsEndpointBuilderFactory {
          * files if filter returns false in its accept() method.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.GenericFileFilter&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileFilter&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param filter the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder filter(String filter) {
             doSetProperty("filter", filter);
@@ -780,9 +939,13 @@ public interface FtpsEndpointBuilderFactory {
          * on current date, you can use a simple date pattern such as
          * ${date:now:yyyMMdd}.
          * 
-         * The option is a: <code>org.apache.camel.Predicate</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param filterDirectory the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder filterDirectory(
                 Predicate filterDirectory) {
@@ -795,9 +958,12 @@ public interface FtpsEndpointBuilderFactory {
          * ${date:now:yyyMMdd}.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Predicate</code> type.
+         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param filterDirectory the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder filterDirectory(
                 String filterDirectory) {
@@ -808,9 +974,13 @@ public interface FtpsEndpointBuilderFactory {
          * Filters the file based on Simple language. For example to filter on
          * file size, you can use ${file:size} 5000.
          * 
-         * The option is a: <code>org.apache.camel.Predicate</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param filterFile the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder filterFile(Predicate filterFile) {
             doSetProperty("filterFile", filterFile);
@@ -821,9 +991,12 @@ public interface FtpsEndpointBuilderFactory {
          * file size, you can use ${file:size} 5000.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Predicate</code> type.
+         * &lt;code&gt;org.apache.camel.Predicate&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param filterFile the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder filterFile(String filterFile) {
             doSetProperty("filterFile", filterFile);
@@ -835,10 +1008,13 @@ public interface FtpsEndpointBuilderFactory {
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: filter
+         * 
+         * @param idempotent the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder idempotent(Boolean idempotent) {
             doSetProperty("idempotent", idempotent);
@@ -850,11 +1026,14 @@ public interface FtpsEndpointBuilderFactory {
          * that holds 1000 entries. If noop=true then idempotent will be enabled
          * as well to avoid consuming the same files over and over again.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: filter
+         * 
+         * @param idempotent the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder idempotent(String idempotent) {
             doSetProperty("idempotent", idempotent);
@@ -866,9 +1045,13 @@ public interface FtpsEndpointBuilderFactory {
          * file name and file size, you can do:
          * idempotentKey=${file:name}-${file:size}.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param idempotentKey the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder idempotentKey(
                 Expression idempotentKey) {
@@ -882,9 +1065,12 @@ public interface FtpsEndpointBuilderFactory {
          * idempotentKey=${file:name}-${file:size}.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param idempotentKey the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder idempotentKey(String idempotentKey) {
             doSetProperty("idempotentKey", idempotentKey);
@@ -896,9 +1082,13 @@ public interface FtpsEndpointBuilderFactory {
          * and idempotent is true.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder idempotentRepository(
                 IdempotentRepository idempotentRepository) {
@@ -911,9 +1101,13 @@ public interface FtpsEndpointBuilderFactory {
          * and idempotent is true.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param idempotentRepository the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder idempotentRepository(
                 String idempotentRepository) {
@@ -927,9 +1121,12 @@ public interface FtpsEndpointBuilderFactory {
          * syntax if configuring this as an endpoint uri. See more details at
          * configuring endpoint uris.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param include the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder include(String include) {
             doSetProperty("include", include);
@@ -939,10 +1136,13 @@ public interface FtpsEndpointBuilderFactory {
          * The maximum depth to traverse when recursively processing a
          * directory.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: filter
+         * 
+         * @param maxDepth the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder maxDepth(int maxDepth) {
             doSetProperty("maxDepth", maxDepth);
@@ -952,10 +1152,13 @@ public interface FtpsEndpointBuilderFactory {
          * The maximum depth to traverse when recursively processing a
          * directory.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: filter
+         * 
+         * @param maxDepth the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder maxDepth(String maxDepth) {
             doSetProperty("maxDepth", maxDepth);
@@ -972,9 +1175,12 @@ public interface FtpsEndpointBuilderFactory {
          * use the eagerMaxMessagesPerPoll option and set this to false to allow
          * to scan all files first and then sort afterwards.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
@@ -992,9 +1198,12 @@ public interface FtpsEndpointBuilderFactory {
          * use the eagerMaxMessagesPerPoll option and set this to false to allow
          * to scan all files first and then sort afterwards.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param maxMessagesPerPoll the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
@@ -1006,9 +1215,12 @@ public interface FtpsEndpointBuilderFactory {
          * directory. Using minDepth=1 means the base directory. Using
          * minDepth=2 means the first sub directory.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param minDepth the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder minDepth(int minDepth) {
             doSetProperty("minDepth", minDepth);
@@ -1019,9 +1231,12 @@ public interface FtpsEndpointBuilderFactory {
          * directory. Using minDepth=1 means the base directory. Using
          * minDepth=2 means the first sub directory.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param minDepth the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder minDepth(String minDepth) {
             doSetProperty("minDepth", minDepth);
@@ -1032,9 +1247,13 @@ public interface FtpsEndpointBuilderFactory {
          * filename when moving it after processing. To move files into a .done
          * subdirectory just enter .done.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param move the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder move(Expression move) {
             doSetProperty("move", move);
@@ -1046,9 +1265,12 @@ public interface FtpsEndpointBuilderFactory {
          * subdirectory just enter .done.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param move the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder move(String move) {
             doSetProperty("move", move);
@@ -1060,9 +1282,12 @@ public interface FtpsEndpointBuilderFactory {
          * implementation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
          * 
          * Group: lock
+         * 
+         * @param exclusiveReadLockStrategy the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder exclusiveReadLockStrategy(
                 Object exclusiveReadLockStrategy) {
@@ -1075,9 +1300,12 @@ public interface FtpsEndpointBuilderFactory {
          * implementation.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
          * 
          * Group: lock
+         * 
+         * @param exclusiveReadLockStrategy the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder exclusiveReadLockStrategy(
                 String exclusiveReadLockStrategy) {
@@ -1124,10 +1352,13 @@ public interface FtpsEndpointBuilderFactory {
          * repository supports clustering, such as Hazelcast Component or
          * Infinispan.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: none
          * Group: lock
+         * 
+         * @param readLock the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLock(String readLock) {
             doSetProperty("readLock", readLock);
@@ -1146,10 +1377,13 @@ public interface FtpsEndpointBuilderFactory {
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: lock
+         * 
+         * @param readLockCheckInterval the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockCheckInterval(
                 long readLockCheckInterval) {
@@ -1169,10 +1403,13 @@ public interface FtpsEndpointBuilderFactory {
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: lock
+         * 
+         * @param readLockCheckInterval the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockCheckInterval(
                 String readLockCheckInterval) {
@@ -1188,10 +1425,13 @@ public interface FtpsEndpointBuilderFactory {
          * another node is concurrently reading files from the same shared
          * directory.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockDeleteOrphanLockFiles the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 boolean readLockDeleteOrphanLockFiles) {
@@ -1207,10 +1447,14 @@ public interface FtpsEndpointBuilderFactory {
          * another node is concurrently reading files from the same shared
          * directory.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockDeleteOrphanLockFiles the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 String readLockDeleteOrphanLockFiles) {
@@ -1224,10 +1468,14 @@ public interface FtpsEndpointBuilderFactory {
          * types: changed, fileLock, idempotent, idempotent-changed,
          * idempotent-rename, rename.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: lock
+         * 
+         * @param readLockLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockLoggingLevel(
                 LoggingLevel readLockLoggingLevel) {
@@ -1242,10 +1490,13 @@ public interface FtpsEndpointBuilderFactory {
          * idempotent-rename, rename.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: lock
+         * 
+         * @param readLockLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockLoggingLevel(
                 String readLockLoggingLevel) {
@@ -1260,10 +1511,13 @@ public interface FtpsEndpointBuilderFactory {
          * not want to write marker files to the file systems by the Camel
          * application.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockMarkerFile the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockMarkerFile(
                 boolean readLockMarkerFile) {
@@ -1278,10 +1532,14 @@ public interface FtpsEndpointBuilderFactory {
          * not want to write marker files to the file systems by the Camel
          * application.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockMarkerFile the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockMarkerFile(
                 String readLockMarkerFile) {
@@ -1296,10 +1554,13 @@ public interface FtpsEndpointBuilderFactory {
          * as it will only attempt to acquire files which are at least that
          * given age.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: lock
+         * 
+         * @param readLockMinAge the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockMinAge(long readLockMinAge) {
             doSetProperty("readLockMinAge", readLockMinAge);
@@ -1313,10 +1574,13 @@ public interface FtpsEndpointBuilderFactory {
          * as it will only attempt to acquire files which are at least that
          * given age.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: lock
+         * 
+         * @param readLockMinAge the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockMinAge(String readLockMinAge) {
             doSetProperty("readLockMinAge", readLockMinAge);
@@ -1328,10 +1592,13 @@ public interface FtpsEndpointBuilderFactory {
          * contain data, and thus the default value is 1. You can set this
          * option to zero, to allow consuming zero-length files.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: lock
+         * 
+         * @param readLockMinLength the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockMinLength(
                 long readLockMinLength) {
@@ -1344,10 +1611,13 @@ public interface FtpsEndpointBuilderFactory {
          * contain data, and thus the default value is 1. You can set this
          * option to zero, to allow consuming zero-length files.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: lock
+         * 
+         * @param readLockMinLength the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockMinLength(
                 String readLockMinLength) {
@@ -1365,10 +1635,13 @@ public interface FtpsEndpointBuilderFactory {
          * X minutes - this ensures no problems with race conditions. See more
          * details at the readLockIdempotentReleaseDelay option.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: lock
+         * 
+         * @param readLockRemoveOnCommit the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockRemoveOnCommit(
                 boolean readLockRemoveOnCommit) {
@@ -1386,10 +1659,14 @@ public interface FtpsEndpointBuilderFactory {
          * X minutes - this ensures no problems with race conditions. See more
          * details at the readLockIdempotentReleaseDelay option.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: lock
+         * 
+         * @param readLockRemoveOnCommit the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockRemoveOnCommit(
                 String readLockRemoveOnCommit) {
@@ -1403,10 +1680,13 @@ public interface FtpsEndpointBuilderFactory {
          * this option is false, then the file name entry is confirmed (as if
          * the file did a commit).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockRemoveOnRollback the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockRemoveOnRollback(
                 boolean readLockRemoveOnRollback) {
@@ -1420,10 +1700,14 @@ public interface FtpsEndpointBuilderFactory {
          * this option is false, then the file name entry is confirmed (as if
          * the file did a commit).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: lock
+         * 
+         * @param readLockRemoveOnRollback the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockRemoveOnRollback(
                 String readLockRemoveOnRollback) {
@@ -1444,10 +1728,13 @@ public interface FtpsEndpointBuilderFactory {
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: lock
+         * 
+         * @param readLockTimeout the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockTimeout(long readLockTimeout) {
             doSetProperty("readLockTimeout", readLockTimeout);
@@ -1467,10 +1754,13 @@ public interface FtpsEndpointBuilderFactory {
          * amble time is allowed for the read lock process to try to grab the
          * lock before the timeout was hit.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: lock
+         * 
+         * @param readLockTimeout the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder readLockTimeout(
                 String readLockTimeout) {
@@ -1481,9 +1771,12 @@ public interface FtpsEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -1494,9 +1787,12 @@ public interface FtpsEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -1507,9 +1803,12 @@ public interface FtpsEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -1520,9 +1819,12 @@ public interface FtpsEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -1537,9 +1839,12 @@ public interface FtpsEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -1554,9 +1859,12 @@ public interface FtpsEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -1566,10 +1874,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -1578,10 +1889,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -1591,10 +1905,13 @@ public interface FtpsEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -1604,10 +1921,14 @@ public interface FtpsEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -1616,10 +1937,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -1628,10 +1952,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder initialDelay(String initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -1642,10 +1969,13 @@ public interface FtpsEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -1656,10 +1986,13 @@ public interface FtpsEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -1669,10 +2002,14 @@ public interface FtpsEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -1684,10 +2021,13 @@ public interface FtpsEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -1700,9 +2040,12 @@ public interface FtpsEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -1715,9 +2058,12 @@ public interface FtpsEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -1728,10 +2074,13 @@ public interface FtpsEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -1741,10 +2090,14 @@ public interface FtpsEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -1754,13 +2107,17 @@ public interface FtpsEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -1772,13 +2129,16 @@ public interface FtpsEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -1787,10 +2147,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -1800,10 +2163,14 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder startScheduler(String startScheduler) {
             doSetProperty("startScheduler", startScheduler);
@@ -1812,10 +2179,14 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -1825,10 +2196,13 @@ public interface FtpsEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -1838,10 +2212,13 @@ public interface FtpsEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -1851,10 +2228,14 @@ public interface FtpsEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
             doSetProperty("useFixedDelay", useFixedDelay);
@@ -1863,9 +2244,12 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Account to use for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param account the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder account(String account) {
             doSetProperty("account", account);
@@ -1876,10 +2260,13 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param disableSecureDataChannelDefaults the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder disableSecureDataChannelDefaults(
                 boolean disableSecureDataChannelDefaults) {
@@ -1891,10 +2278,14 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param disableSecureDataChannelDefaults the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder disableSecureDataChannelDefaults(
                 String disableSecureDataChannelDefaults) {
@@ -1905,9 +2296,12 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param execPbsz the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder execPbsz(Long execPbsz) {
             doSetProperty("execPbsz", execPbsz);
@@ -1917,9 +2311,13 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param execPbsz the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder execPbsz(String execPbsz) {
             doSetProperty("execPbsz", execPbsz);
@@ -1929,9 +2327,12 @@ public interface FtpsEndpointBuilderFactory {
          * The exec protection level PROT command. C - Clear S - Safe(SSL
          * protocol only) E - Confidential(SSL protocol only) P - Private.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param execProt the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder execProt(String execProt) {
             doSetProperty("execProt", execProt);
@@ -1940,13 +2341,17 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder ftpClientKeyStoreParameters(
                 String key,
@@ -1957,13 +2362,16 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder ftpClientKeyStoreParameters(
                 Map values) {
@@ -1973,13 +2381,17 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder ftpClientTrustStoreParameters(
                 String key,
@@ -1990,13 +2402,16 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder ftpClientTrustStoreParameters(
                 Map values) {
@@ -2007,10 +2422,13 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param implicit the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder implicit(boolean implicit) {
             doSetProperty("implicit", implicit);
@@ -2020,10 +2438,14 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param implicit the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder implicit(String implicit) {
             doSetProperty("implicit", implicit);
@@ -2032,9 +2454,12 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Password to use for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -2043,10 +2468,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the underlying security protocol.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: TLSv1.2
          * Group: security
+         * 
+         * @param securityProtocol the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder securityProtocol(
                 String securityProtocol) {
@@ -2060,9 +2488,12 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -2076,9 +2507,12 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -2088,9 +2522,12 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Username to use for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -2099,10 +2536,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * To shuffle the list of files (sort in random order).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: sort
+         * 
+         * @param shuffle the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder shuffle(boolean shuffle) {
             doSetProperty("shuffle", shuffle);
@@ -2111,10 +2551,14 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * To shuffle the list of files (sort in random order).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: sort
+         * 
+         * @param shuffle the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder shuffle(String shuffle) {
             doSetProperty("shuffle", shuffle);
@@ -2126,10 +2570,12 @@ public interface FtpsEndpointBuilderFactory {
          * date.
          * 
          * The option is a:
-         * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: sort
+         * 
+         * @param sortBy the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
             doSetProperty("sortBy", sortBy);
@@ -2141,10 +2587,12 @@ public interface FtpsEndpointBuilderFactory {
          * date.
          * 
          * The option will be converted to a
-         * <code>java.util.Comparator&lt;org.apache.camel.Exchange&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: sort
+         * 
+         * @param sortBy the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder sortBy(String sortBy) {
             doSetProperty("sortBy", sortBy);
@@ -2154,9 +2602,12 @@ public interface FtpsEndpointBuilderFactory {
          * Pluggable sorter as a java.util.Comparator class.
          * 
          * The option is a:
-         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.commons.net.ftp.FTPFile&gt;&gt;</code> type.
+         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.component.file.GenericFile&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: sort
+         * 
+         * @param sorter the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
             doSetProperty("sorter", sorter);
@@ -2166,9 +2617,12 @@ public interface FtpsEndpointBuilderFactory {
          * Pluggable sorter as a java.util.Comparator class.
          * 
          * The option will be converted to a
-         * <code>java.util.Comparator&lt;org.apache.camel.component.file.GenericFile&lt;org.apache.commons.net.ftp.FTPFile&gt;&gt;</code> type.
+         * &lt;code&gt;java.util.Comparator&amp;lt;org.apache.camel.component.file.GenericFile&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&amp;gt;&lt;/code&gt; type.
          * 
          * Group: sort
+         * 
+         * @param sorter the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointConsumerBuilder sorter(String sorter) {
             doSetProperty("sorter", sorter);
@@ -2195,10 +2649,13 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param fastExistsCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
@@ -2215,10 +2672,14 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param fastExistsCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder fastExistsCheck(
                 String fastExistsCheck) {
@@ -2232,10 +2693,13 @@ public interface FtpsEndpointBuilderFactory {
          * such as file name, file size, etc. It's just that the file will not
          * be downloaded.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param download the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder download(boolean download) {
             doSetProperty("download", download);
@@ -2248,10 +2712,14 @@ public interface FtpsEndpointBuilderFactory {
          * such as file name, file size, etc. It's just that the file will not
          * be downloaded.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param download the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder download(String download) {
             doSetProperty("download", download);
@@ -2263,10 +2731,13 @@ public interface FtpsEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -2280,9 +2751,12 @@ public interface FtpsEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -2292,9 +2766,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -2305,9 +2783,12 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -2321,10 +2802,13 @@ public interface FtpsEndpointBuilderFactory {
          * with absolute paths, and if so then the FTP component needs to handle
          * this by converting the returned path into a relative path.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param handleDirectoryParserAbsoluteResult the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder handleDirectoryParserAbsoluteResult(
                 boolean handleDirectoryParserAbsoluteResult) {
@@ -2338,10 +2822,14 @@ public interface FtpsEndpointBuilderFactory {
          * with absolute paths, and if so then the FTP component needs to handle
          * this by converting the returned path into a relative path.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param handleDirectoryParserAbsoluteResult the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder handleDirectoryParserAbsoluteResult(
                 String handleDirectoryParserAbsoluteResult) {
@@ -2355,10 +2843,13 @@ public interface FtpsEndpointBuilderFactory {
          * permission, then an exception is thrown. Setting this option to true
          * allows to ignore that instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param ignoreFileNotFoundOrPermissionError the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 boolean ignoreFileNotFoundOrPermissionError) {
@@ -2372,10 +2863,14 @@ public interface FtpsEndpointBuilderFactory {
          * permission, then an exception is thrown. Setting this option to true
          * allows to ignore that instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param ignoreFileNotFoundOrPermissionError the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 String ignoreFileNotFoundOrPermissionError) {
@@ -2389,9 +2884,13 @@ public interface FtpsEndpointBuilderFactory {
          * default a memory based repository is used.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param inProgressRepository the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder inProgressRepository(
                 IdempotentRepository inProgressRepository) {
@@ -2405,9 +2904,13 @@ public interface FtpsEndpointBuilderFactory {
          * default a memory based repository is used.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.IdempotentRepository</code> type.
+         * &lt;code&gt;org.apache.camel.spi.IdempotentRepository&lt;/code&gt;
+         * type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param inProgressRepository the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder inProgressRepository(
                 String inProgressRepository) {
@@ -2420,9 +2923,12 @@ public interface FtpsEndpointBuilderFactory {
          * content into memory. This is beneficial, if you consume a very big
          * remote file and thus can conserve memory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param localWorkDirectory the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder localWorkDirectory(
                 String localWorkDirectory) {
@@ -2435,10 +2941,13 @@ public interface FtpsEndpointBuilderFactory {
          * where the consumer does either a commit or rollback. The default
          * implementation will log any exception at WARN level and ignore.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param onCompletionExceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder onCompletionExceptionHandler(
                 ExceptionHandler onCompletionExceptionHandler) {
@@ -2452,9 +2961,12 @@ public interface FtpsEndpointBuilderFactory {
          * implementation will log any exception at WARN level and ignore.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param onCompletionExceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder onCompletionExceptionHandler(
                 String onCompletionExceptionHandler) {
@@ -2468,9 +2980,12 @@ public interface FtpsEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -2484,9 +2999,12 @@ public interface FtpsEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -2502,9 +3020,12 @@ public interface FtpsEndpointBuilderFactory {
          * then the readLock option does not apply.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileProcessStrategy&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param processStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder processStrategy(
                 Object processStrategy) {
@@ -2520,9 +3041,12 @@ public interface FtpsEndpointBuilderFactory {
          * then the readLock option does not apply.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.GenericFileProcessStrategy&lt;org.apache.commons.net.ftp.FTPFile&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileProcessStrategy&amp;lt;org.apache.commons.net.ftp.FTPFile&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param processStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder processStrategy(
                 String processStrategy) {
@@ -2538,10 +3062,13 @@ public interface FtpsEndpointBuilderFactory {
          * as file size, timestamp, permissions etc, because those information
          * is only possible to retrieve when LIST command is in use.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param useList the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder useList(boolean useList) {
             doSetProperty("useList", useList);
@@ -2556,10 +3083,14 @@ public interface FtpsEndpointBuilderFactory {
          * as file size, timestamp, permissions etc, because those information
          * is only possible to retrieve when LIST command is in use.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param useList the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder useList(String useList) {
             doSetProperty("useList", useList);
@@ -2570,9 +3101,12 @@ public interface FtpsEndpointBuilderFactory {
          * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
          * include all 1xxxx ports.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param activePortRange the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder activePortRange(
                 String activePortRange) {
@@ -2585,10 +3119,13 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder autoCreate(
                 boolean autoCreate) {
@@ -2601,10 +3138,14 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder autoCreate(String autoCreate) {
             doSetProperty("autoCreate", autoCreate);
@@ -2614,10 +3155,13 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -2627,10 +3171,13 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -2640,10 +3187,13 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder connectTimeout(
                 int connectTimeout) {
@@ -2654,10 +3204,13 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
@@ -2667,10 +3220,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * To use a custom instance of FTPClient.
          * 
-         * The option is a: <code>org.apache.commons.net.ftp.FTPClient</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClient the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClient(Object ftpClient) {
             doSetProperty("ftpClient", ftpClient);
@@ -2680,9 +3236,12 @@ public interface FtpsEndpointBuilderFactory {
          * To use a custom instance of FTPClient.
          * 
          * The option will be converted to a
-         * <code>org.apache.commons.net.ftp.FTPClient</code> type.
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClient the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClient(String ftpClient) {
             doSetProperty("ftpClient", ftpClient);
@@ -2693,9 +3252,13 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option is a:
-         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientConfig(
                 Object ftpClientConfig) {
@@ -2707,9 +3270,13 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option will be converted to a
-         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientConfig(
                 String ftpClientConfig) {
@@ -2720,13 +3287,17 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientConfigParameters(
                 String key,
@@ -2738,13 +3309,16 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientConfigParameters(
                 Map values) {
@@ -2755,13 +3329,17 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientParameters(
                 String key,
@@ -2773,13 +3351,16 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientParameters(
                 Map values) {
@@ -2790,9 +3371,12 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maximumReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
@@ -2803,9 +3387,12 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maximumReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
@@ -2816,9 +3403,12 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder reconnectDelay(
                 long reconnectDelay) {
@@ -2829,9 +3419,12 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder reconnectDelay(
                 String reconnectDelay) {
@@ -2842,9 +3435,12 @@ public interface FtpsEndpointBuilderFactory {
          * Sets optional site command(s) to be executed after successful login.
          * Multiple site commands can be separated using a new line character.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param siteCommand the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder siteCommand(
                 String siteCommand) {
@@ -2858,10 +3454,13 @@ public interface FtpsEndpointBuilderFactory {
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5m
          * Group: advanced
+         * 
+         * @param soTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder soTimeout(int soTimeout) {
             doSetProperty("soTimeout", soTimeout);
@@ -2874,10 +3473,13 @@ public interface FtpsEndpointBuilderFactory {
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5m
          * Group: advanced
+         * 
+         * @param soTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder soTimeout(String soTimeout) {
             doSetProperty("soTimeout", soTimeout);
@@ -2891,10 +3493,13 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param stepwise the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder stepwise(boolean stepwise) {
             doSetProperty("stepwise", stepwise);
@@ -2908,10 +3513,14 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param stepwise the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder stepwise(String stepwise) {
             doSetProperty("stepwise", stepwise);
@@ -2921,10 +3530,13 @@ public interface FtpsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -2935,10 +3547,14 @@ public interface FtpsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -2952,10 +3568,13 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
@@ -2969,10 +3588,14 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
@@ -2982,10 +3605,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: advanced
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
@@ -2994,10 +3620,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: advanced
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointConsumerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -3018,10 +3647,13 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder binary(boolean binary) {
             doSetProperty("binary", binary);
@@ -3031,10 +3663,14 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder binary(String binary) {
             doSetProperty("binary", binary);
@@ -3051,9 +3687,12 @@ public interface FtpsEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param charset the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder charset(String charset) {
             doSetProperty("charset", charset);
@@ -3065,10 +3704,13 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -3080,10 +3722,14 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -3102,9 +3748,12 @@ public interface FtpsEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param doneFileName the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder doneFileName(String doneFileName) {
             doSetProperty("doneFileName", doneFileName);
@@ -3128,9 +3777,13 @@ public interface FtpsEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder fileName(Expression fileName) {
             doSetProperty("fileName", fileName);
@@ -3155,9 +3808,12 @@ public interface FtpsEndpointBuilderFactory {
          * CamelFileName and have to restore it afterwards.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
@@ -3166,10 +3822,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passiveMode the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder passiveMode(boolean passiveMode) {
             doSetProperty("passiveMode", passiveMode);
@@ -3178,10 +3837,14 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passiveMode the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder passiveMode(String passiveMode) {
             doSetProperty("passiveMode", passiveMode);
@@ -3193,10 +3856,13 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
+         * 
+         * @param separator the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder separator(PathSeparator separator) {
             doSetProperty("separator", separator);
@@ -3208,10 +3874,13 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
+         * 
+         * @param separator the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder separator(String separator) {
             doSetProperty("separator", separator);
@@ -3222,10 +3891,13 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param transferLoggingIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder transferLoggingIntervalSeconds(
                 int transferLoggingIntervalSeconds) {
@@ -3237,10 +3909,13 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param transferLoggingIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder transferLoggingIntervalSeconds(
                 String transferLoggingIntervalSeconds) {
@@ -3251,10 +3926,14 @@ public interface FtpsEndpointBuilderFactory {
          * Configure the logging level to use when logging the progress of
          * upload and download operations.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: common
+         * 
+         * @param transferLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder transferLoggingLevel(
                 LoggingLevel transferLoggingLevel) {
@@ -3266,10 +3945,13 @@ public interface FtpsEndpointBuilderFactory {
          * upload and download operations.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: common
+         * 
+         * @param transferLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder transferLoggingLevel(
                 String transferLoggingLevel) {
@@ -3280,10 +3962,13 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferLoggingVerbose the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder transferLoggingVerbose(
                 boolean transferLoggingVerbose) {
@@ -3294,10 +3979,14 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferLoggingVerbose the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder transferLoggingVerbose(
                 String transferLoggingVerbose) {
@@ -3322,10 +4011,13 @@ public interface FtpsEndpointBuilderFactory {
          * systems and especially FTP servers.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.GenericFileExist</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileExist&lt;/code&gt; type.
          * 
          * Default: Override
          * Group: producer
+         * 
+         * @param fileExist the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
             doSetProperty("fileExist", fileExist);
@@ -3349,10 +4041,13 @@ public interface FtpsEndpointBuilderFactory {
          * systems and especially FTP servers.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.GenericFileExist</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.GenericFileExist&lt;/code&gt; type.
          * 
          * Default: Override
          * Group: producer
+         * 
+         * @param fileExist the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder fileExist(String fileExist) {
             doSetProperty("fileExist", fileExist);
@@ -3366,10 +4061,13 @@ public interface FtpsEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param flatten the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder flatten(boolean flatten) {
             doSetProperty("flatten", flatten);
@@ -3383,10 +4081,14 @@ public interface FtpsEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param flatten the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder flatten(String flatten) {
             doSetProperty("flatten", flatten);
@@ -3400,10 +4102,13 @@ public interface FtpsEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder jailStartingDirectory(
                 boolean jailStartingDirectory) {
@@ -3418,10 +4123,14 @@ public interface FtpsEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder jailStartingDirectory(
                 String jailStartingDirectory) {
@@ -3439,10 +4148,13 @@ public interface FtpsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -3460,10 +4172,14 @@ public interface FtpsEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -3480,9 +4196,13 @@ public interface FtpsEndpointBuilderFactory {
          * component, as the FTP component can only move any existing files to a
          * relative directory based on current dir as base.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param moveExisting the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder moveExisting(Expression moveExisting) {
             doSetProperty("moveExisting", moveExisting);
@@ -3499,9 +4219,12 @@ public interface FtpsEndpointBuilderFactory {
          * relative directory based on current dir as base.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param moveExisting the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder moveExisting(String moveExisting) {
             doSetProperty("moveExisting", moveExisting);
@@ -3516,9 +4239,13 @@ public interface FtpsEndpointBuilderFactory {
          * dir/finalFilename then tempFileName is relative to that subdirectory
          * dir.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param tempFileName the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder tempFileName(Expression tempFileName) {
             doSetProperty("tempFileName", tempFileName);
@@ -3534,9 +4261,12 @@ public interface FtpsEndpointBuilderFactory {
          * dir.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param tempFileName the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder tempFileName(String tempFileName) {
             doSetProperty("tempFileName", tempFileName);
@@ -3549,9 +4279,12 @@ public interface FtpsEndpointBuilderFactory {
          * using exclusive read locks) reading in progress files. Is often used
          * by FTP when uploading big files.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param tempPrefix the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder tempPrefix(String tempPrefix) {
             doSetProperty("tempPrefix", tempPrefix);
@@ -3560,9 +4293,12 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Account to use for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param account the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder account(String account) {
             doSetProperty("account", account);
@@ -3573,10 +4309,13 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param disableSecureDataChannelDefaults the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder disableSecureDataChannelDefaults(
                 boolean disableSecureDataChannelDefaults) {
@@ -3588,10 +4327,14 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param disableSecureDataChannelDefaults the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder disableSecureDataChannelDefaults(
                 String disableSecureDataChannelDefaults) {
@@ -3602,9 +4345,12 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param execPbsz the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder execPbsz(Long execPbsz) {
             doSetProperty("execPbsz", execPbsz);
@@ -3614,9 +4360,13 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param execPbsz the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder execPbsz(String execPbsz) {
             doSetProperty("execPbsz", execPbsz);
@@ -3626,9 +4376,12 @@ public interface FtpsEndpointBuilderFactory {
          * The exec protection level PROT command. C - Clear S - Safe(SSL
          * protocol only) E - Confidential(SSL protocol only) P - Private.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param execProt the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder execProt(String execProt) {
             doSetProperty("execProt", execProt);
@@ -3637,13 +4390,17 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder ftpClientKeyStoreParameters(
                 String key,
@@ -3654,13 +4411,16 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder ftpClientKeyStoreParameters(
                 Map values) {
@@ -3670,13 +4430,17 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder ftpClientTrustStoreParameters(
                 String key,
@@ -3687,13 +4451,16 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder ftpClientTrustStoreParameters(
                 Map values) {
@@ -3704,10 +4471,13 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param implicit the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder implicit(boolean implicit) {
             doSetProperty("implicit", implicit);
@@ -3717,10 +4487,14 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param implicit the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder implicit(String implicit) {
             doSetProperty("implicit", implicit);
@@ -3729,9 +4503,12 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Password to use for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -3740,10 +4517,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the underlying security protocol.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: TLSv1.2
          * Group: security
+         * 
+         * @param securityProtocol the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder securityProtocol(
                 String securityProtocol) {
@@ -3757,9 +4537,12 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -3773,9 +4556,12 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -3785,9 +4571,12 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Username to use for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -3814,10 +4603,13 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param fastExistsCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
@@ -3834,10 +4626,14 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param fastExistsCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder fastExistsCheck(
                 String fastExistsCheck) {
@@ -3853,10 +4649,13 @@ public interface FtpsEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
@@ -3872,10 +4671,14 @@ public interface FtpsEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
@@ -3885,9 +4688,12 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Allows you to set chmod on the stored file. For example chmod=640.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param chmod the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder chmod(String chmod) {
             doSetProperty("chmod", chmod);
@@ -3898,10 +4704,13 @@ public interface FtpsEndpointBuilderFactory {
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param disconnectOnBatchComplete the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder disconnectOnBatchComplete(
                 boolean disconnectOnBatchComplete) {
@@ -3913,10 +4722,14 @@ public interface FtpsEndpointBuilderFactory {
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param disconnectOnBatchComplete the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder disconnectOnBatchComplete(
                 String disconnectOnBatchComplete) {
@@ -3938,10 +4751,13 @@ public interface FtpsEndpointBuilderFactory {
          * an existing file existed, if its true, then the existing file is
          * deleted before the move operation.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param eagerDeleteTargetFile the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder eagerDeleteTargetFile(
                 boolean eagerDeleteTargetFile) {
@@ -3963,10 +4779,14 @@ public interface FtpsEndpointBuilderFactory {
          * an existing file existed, if its true, then the existing file is
          * deleted before the move operation.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param eagerDeleteTargetFile the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder eagerDeleteTargetFile(
                 String eagerDeleteTargetFile) {
@@ -3982,10 +4802,13 @@ public interface FtpsEndpointBuilderFactory {
          * only applies to the file producer. You cannot use this option with
          * any of the ftp producers.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param keepLastModified the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder keepLastModified(
                 boolean keepLastModified) {
@@ -4001,10 +4824,14 @@ public interface FtpsEndpointBuilderFactory {
          * only applies to the file producer. You cannot use this option with
          * any of the ftp producers.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param keepLastModified the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder keepLastModified(
                 String keepLastModified) {
@@ -4017,9 +4844,12 @@ public interface FtpsEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param moveExistingFileStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder moveExistingFileStrategy(
                 Object moveExistingFileStrategy) {
@@ -4032,9 +4862,12 @@ public interface FtpsEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param moveExistingFileStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder moveExistingFileStrategy(
                 String moveExistingFileStrategy) {
@@ -4048,10 +4881,13 @@ public interface FtpsEndpointBuilderFactory {
          * to be able to upload the file. However if this causes problems, you
          * can turn this option off.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder sendNoop(boolean sendNoop) {
             doSetProperty("sendNoop", sendNoop);
@@ -4064,10 +4900,14 @@ public interface FtpsEndpointBuilderFactory {
          * to be able to upload the file. However if this causes problems, you
          * can turn this option off.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param sendNoop the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder sendNoop(String sendNoop) {
             doSetProperty("sendNoop", sendNoop);
@@ -4078,9 +4918,12 @@ public interface FtpsEndpointBuilderFactory {
          * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
          * include all 1xxxx ports.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param activePortRange the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder activePortRange(
                 String activePortRange) {
@@ -4093,10 +4936,13 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder autoCreate(
                 boolean autoCreate) {
@@ -4109,10 +4955,14 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder autoCreate(String autoCreate) {
             doSetProperty("autoCreate", autoCreate);
@@ -4122,10 +4972,13 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -4135,10 +4988,13 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -4148,10 +5004,13 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
@@ -4162,10 +5021,13 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
@@ -4175,10 +5037,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * To use a custom instance of FTPClient.
          * 
-         * The option is a: <code>org.apache.commons.net.ftp.FTPClient</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClient the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClient(Object ftpClient) {
             doSetProperty("ftpClient", ftpClient);
@@ -4188,9 +5053,12 @@ public interface FtpsEndpointBuilderFactory {
          * To use a custom instance of FTPClient.
          * 
          * The option will be converted to a
-         * <code>org.apache.commons.net.ftp.FTPClient</code> type.
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClient the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClient(String ftpClient) {
             doSetProperty("ftpClient", ftpClient);
@@ -4201,9 +5069,13 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option is a:
-         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientConfig(
                 Object ftpClientConfig) {
@@ -4215,9 +5087,13 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option will be converted to a
-         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientConfig(
                 String ftpClientConfig) {
@@ -4228,13 +5104,17 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientConfigParameters(
                 String key,
@@ -4246,13 +5126,16 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientConfigParameters(
                 Map values) {
@@ -4263,13 +5146,17 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientParameters(
                 String key,
@@ -4281,13 +5168,16 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientParameters(
                 Map values) {
@@ -4298,9 +5188,12 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maximumReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
@@ -4311,9 +5204,12 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maximumReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
@@ -4324,9 +5220,12 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder reconnectDelay(
                 long reconnectDelay) {
@@ -4337,9 +5236,12 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder reconnectDelay(
                 String reconnectDelay) {
@@ -4350,9 +5252,12 @@ public interface FtpsEndpointBuilderFactory {
          * Sets optional site command(s) to be executed after successful login.
          * Multiple site commands can be separated using a new line character.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param siteCommand the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder siteCommand(
                 String siteCommand) {
@@ -4366,10 +5271,13 @@ public interface FtpsEndpointBuilderFactory {
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5m
          * Group: advanced
+         * 
+         * @param soTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder soTimeout(int soTimeout) {
             doSetProperty("soTimeout", soTimeout);
@@ -4382,10 +5290,13 @@ public interface FtpsEndpointBuilderFactory {
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5m
          * Group: advanced
+         * 
+         * @param soTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder soTimeout(String soTimeout) {
             doSetProperty("soTimeout", soTimeout);
@@ -4399,10 +5310,13 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param stepwise the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder stepwise(boolean stepwise) {
             doSetProperty("stepwise", stepwise);
@@ -4416,10 +5330,14 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param stepwise the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder stepwise(String stepwise) {
             doSetProperty("stepwise", stepwise);
@@ -4429,10 +5347,13 @@ public interface FtpsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -4443,10 +5364,14 @@ public interface FtpsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -4460,10 +5385,13 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
@@ -4477,10 +5405,14 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
@@ -4490,10 +5422,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: advanced
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
@@ -4502,10 +5437,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: advanced
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointProducerBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -4527,10 +5465,13 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder binary(boolean binary) {
             doSetProperty("binary", binary);
@@ -4540,10 +5481,14 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the file transfer mode, BINARY or ASCII. Default is ASCII
          * (false).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param binary the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder binary(String binary) {
             doSetProperty("binary", binary);
@@ -4560,9 +5505,12 @@ public interface FtpsEndpointBuilderFactory {
          * into the configured charset, so do not use this if you have big
          * messages.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param charset the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder charset(String charset) {
             doSetProperty("charset", charset);
@@ -4574,10 +5522,13 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -4589,10 +5540,14 @@ public interface FtpsEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -4611,9 +5566,12 @@ public interface FtpsEndpointBuilderFactory {
          * ${file.name} and ${file.name.next} is supported as dynamic
          * placeholders.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param doneFileName the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder doneFileName(String doneFileName) {
             doSetProperty("doneFileName", doneFileName);
@@ -4637,9 +5595,13 @@ public interface FtpsEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder fileName(Expression fileName) {
             doSetProperty("fileName", fileName);
@@ -4664,9 +5626,12 @@ public interface FtpsEndpointBuilderFactory {
          * CamelFileName and have to restore it afterwards.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
@@ -4675,10 +5640,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passiveMode the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder passiveMode(boolean passiveMode) {
             doSetProperty("passiveMode", passiveMode);
@@ -4687,10 +5655,14 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets passive mode connections. Default is active mode connections.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param passiveMode the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder passiveMode(String passiveMode) {
             doSetProperty("passiveMode", passiveMode);
@@ -4702,10 +5674,13 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
+         * 
+         * @param separator the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder separator(PathSeparator separator) {
             doSetProperty("separator", separator);
@@ -4717,10 +5692,13 @@ public interface FtpsEndpointBuilderFactory {
          * default) Use existing path separator in file name.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator&lt;/code&gt; type.
          * 
          * Default: UNIX
          * Group: common
+         * 
+         * @param separator the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder separator(String separator) {
             doSetProperty("separator", separator);
@@ -4731,10 +5709,13 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param transferLoggingIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder transferLoggingIntervalSeconds(
                 int transferLoggingIntervalSeconds) {
@@ -4746,10 +5727,13 @@ public interface FtpsEndpointBuilderFactory {
          * of upload and download operations that are in-flight. This is used
          * for logging progress when operations takes longer time.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: common
+         * 
+         * @param transferLoggingIntervalSeconds the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder transferLoggingIntervalSeconds(
                 String transferLoggingIntervalSeconds) {
@@ -4760,10 +5744,14 @@ public interface FtpsEndpointBuilderFactory {
          * Configure the logging level to use when logging the progress of
          * upload and download operations.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: common
+         * 
+         * @param transferLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder transferLoggingLevel(
                 LoggingLevel transferLoggingLevel) {
@@ -4775,10 +5763,13 @@ public interface FtpsEndpointBuilderFactory {
          * upload and download operations.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: common
+         * 
+         * @param transferLoggingLevel the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder transferLoggingLevel(
                 String transferLoggingLevel) {
@@ -4789,10 +5780,13 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferLoggingVerbose the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder transferLoggingVerbose(
                 boolean transferLoggingVerbose) {
@@ -4803,10 +5797,14 @@ public interface FtpsEndpointBuilderFactory {
          * Configures whether the perform verbose (fine grained) logging of the
          * progress of upload and download operations.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param transferLoggingVerbose the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder transferLoggingVerbose(
                 String transferLoggingVerbose) {
@@ -4816,9 +5814,12 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Account to use for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param account the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder account(String account) {
             doSetProperty("account", account);
@@ -4829,10 +5830,13 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param disableSecureDataChannelDefaults the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder disableSecureDataChannelDefaults(
                 boolean disableSecureDataChannelDefaults) {
@@ -4844,10 +5848,14 @@ public interface FtpsEndpointBuilderFactory {
          * channel. This allows you to be in full control what the execPbsz and
          * execProt setting should be used. Default is false.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param disableSecureDataChannelDefaults the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder disableSecureDataChannelDefaults(
                 String disableSecureDataChannelDefaults) {
@@ -4858,9 +5866,12 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param execPbsz the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder execPbsz(Long execPbsz) {
             doSetProperty("execPbsz", execPbsz);
@@ -4870,9 +5881,13 @@ public interface FtpsEndpointBuilderFactory {
          * When using secure data channel you can set the exec protection buffer
          * size.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param execPbsz the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder execPbsz(String execPbsz) {
             doSetProperty("execPbsz", execPbsz);
@@ -4882,9 +5897,12 @@ public interface FtpsEndpointBuilderFactory {
          * The exec protection level PROT command. C - Clear S - Safe(SSL
          * protocol only) E - Confidential(SSL protocol only) P - Private.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param execProt the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder execProt(String execProt) {
             doSetProperty("execProt", execProt);
@@ -4893,13 +5911,17 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder ftpClientKeyStoreParameters(
                 String key,
@@ -4910,13 +5932,16 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the key store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientKeyStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder ftpClientKeyStoreParameters(Map values) {
             doSetMultiValueProperties("ftpClientKeyStoreParameters", "ftpClient.keyStore.", values);
@@ -4925,13 +5950,17 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder ftpClientTrustStoreParameters(
                 String key,
@@ -4942,13 +5971,16 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the trust store parameters.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientTrustStoreParameters(String, Object) method to add a value
          * (call the method multiple times to set more values).
          * 
          * Group: security
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder ftpClientTrustStoreParameters(Map values) {
             doSetMultiValueProperties("ftpClientTrustStoreParameters", "ftpClient.trustStore.", values);
@@ -4958,10 +5990,13 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param implicit the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder implicit(boolean implicit) {
             doSetProperty("implicit", implicit);
@@ -4971,10 +6006,14 @@ public interface FtpsEndpointBuilderFactory {
          * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param implicit the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder implicit(String implicit) {
             doSetProperty("implicit", implicit);
@@ -4983,9 +6022,12 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Password to use for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -4994,10 +6036,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Set the underlying security protocol.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: TLSv1.2
          * Group: security
+         * 
+         * @param securityProtocol the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder securityProtocol(String securityProtocol) {
             doSetProperty("securityProtocol", securityProtocol);
@@ -5010,9 +6055,12 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -5026,9 +6074,12 @@ public interface FtpsEndpointBuilderFactory {
          * FtpsConfiguration#getSecurityProtocol().
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -5038,9 +6089,12 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Username to use for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -5068,10 +6122,13 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param fastExistsCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
@@ -5088,10 +6145,14 @@ public interface FtpsEndpointBuilderFactory {
          * This can be used to speed up the process if the FTP server has a lot
          * of files.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common (advanced)
+         * 
+         * @param fastExistsCheck the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder fastExistsCheck(
                 String fastExistsCheck) {
@@ -5103,9 +6164,12 @@ public interface FtpsEndpointBuilderFactory {
          * minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to
          * include all 1xxxx ports.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param activePortRange the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder activePortRange(
                 String activePortRange) {
@@ -5118,10 +6182,13 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder autoCreate(boolean autoCreate) {
             doSetProperty("autoCreate", autoCreate);
@@ -5133,10 +6200,14 @@ public interface FtpsEndpointBuilderFactory {
          * the file producer, it means the directory the files should be written
          * to.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autoCreate the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder autoCreate(String autoCreate) {
             doSetProperty("autoCreate", autoCreate);
@@ -5146,10 +6217,13 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder bufferSize(int bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -5159,10 +6233,13 @@ public interface FtpsEndpointBuilderFactory {
          * Buffer size in bytes used for writing files (or in case of FTP for
          * downloading and uploading files).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 131072
          * Group: advanced
+         * 
+         * @param bufferSize the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder bufferSize(String bufferSize) {
             doSetProperty("bufferSize", bufferSize);
@@ -5172,10 +6249,13 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder connectTimeout(int connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -5185,10 +6265,13 @@ public interface FtpsEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder connectTimeout(String connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -5197,10 +6280,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * To use a custom instance of FTPClient.
          * 
-         * The option is a: <code>org.apache.commons.net.ftp.FTPClient</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClient the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder ftpClient(Object ftpClient) {
             doSetProperty("ftpClient", ftpClient);
@@ -5210,9 +6296,12 @@ public interface FtpsEndpointBuilderFactory {
          * To use a custom instance of FTPClient.
          * 
          * The option will be converted to a
-         * <code>org.apache.commons.net.ftp.FTPClient</code> type.
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClient the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder ftpClient(String ftpClient) {
             doSetProperty("ftpClient", ftpClient);
@@ -5223,9 +6312,13 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option is a:
-         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder ftpClientConfig(
                 Object ftpClientConfig) {
@@ -5237,9 +6330,13 @@ public interface FtpsEndpointBuilderFactory {
          * client the endpoint should use.
          * 
          * The option will be converted to a
-         * <code>org.apache.commons.net.ftp.FTPClientConfig</code> type.
+         * &lt;code&gt;org.apache.commons.net.ftp.FTPClientConfig&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param ftpClientConfig the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder ftpClientConfig(
                 String ftpClientConfig) {
@@ -5250,13 +6347,17 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder ftpClientConfigParameters(
                 String key,
@@ -5268,13 +6369,16 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClientConfig.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientConfigParameters(String, Object) method to add a value (call
          * the method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder ftpClientConfigParameters(Map values) {
             doSetMultiValueProperties("ftpClientConfigParameters", "ftpClientConfig.", values);
@@ -5284,13 +6388,17 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder ftpClientParameters(
                 String key,
@@ -5302,13 +6410,16 @@ public interface FtpsEndpointBuilderFactory {
          * Used by FtpComponent to provide additional parameters for the
          * FTPClient.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * ftpClientParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: advanced
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder ftpClientParameters(Map values) {
             doSetMultiValueProperties("ftpClientParameters", "ftpClient.", values);
@@ -5318,9 +6429,12 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maximumReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
@@ -5331,9 +6445,12 @@ public interface FtpsEndpointBuilderFactory {
          * Specifies the maximum reconnect attempts Camel performs when it tries
          * to connect to the remote FTP server. Use 0 to disable this behavior.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param maximumReconnectAttempts the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
@@ -5344,9 +6461,12 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder reconnectDelay(long reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
@@ -5356,9 +6476,12 @@ public interface FtpsEndpointBuilderFactory {
          * Delay in millis Camel will wait before performing a reconnect
          * attempt.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder reconnectDelay(String reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
@@ -5368,9 +6491,12 @@ public interface FtpsEndpointBuilderFactory {
          * Sets optional site command(s) to be executed after successful login.
          * Multiple site commands can be separated using a new line character.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param siteCommand the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder siteCommand(String siteCommand) {
             doSetProperty("siteCommand", siteCommand);
@@ -5383,10 +6509,13 @@ public interface FtpsEndpointBuilderFactory {
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5m
          * Group: advanced
+         * 
+         * @param soTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder soTimeout(int soTimeout) {
             doSetProperty("soTimeout", soTimeout);
@@ -5399,10 +6528,13 @@ public interface FtpsEndpointBuilderFactory {
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5m
          * Group: advanced
+         * 
+         * @param soTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder soTimeout(String soTimeout) {
             doSetProperty("soTimeout", soTimeout);
@@ -5416,10 +6548,13 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param stepwise the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder stepwise(boolean stepwise) {
             doSetProperty("stepwise", stepwise);
@@ -5433,10 +6568,14 @@ public interface FtpsEndpointBuilderFactory {
          * security reasons. Stepwise cannot be used together with
          * streamDownload.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param stepwise the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder stepwise(String stepwise) {
             doSetProperty("stepwise", stepwise);
@@ -5446,10 +6585,13 @@ public interface FtpsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -5459,10 +6601,14 @@ public interface FtpsEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -5475,10 +6621,13 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
@@ -5492,10 +6641,14 @@ public interface FtpsEndpointBuilderFactory {
          * from the org.apache.camel.spi.PollingConsumerPollStrategy rollback
          * method.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param throwExceptionOnConnectFailed the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
@@ -5505,10 +6658,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: advanced
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
@@ -5517,10 +6673,13 @@ public interface FtpsEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: advanced
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default AdvancedFtpsEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);

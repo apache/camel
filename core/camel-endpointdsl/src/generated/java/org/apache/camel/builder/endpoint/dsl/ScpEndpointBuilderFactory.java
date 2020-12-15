@@ -41,10 +41,13 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Allows you to set chmod on the stored file. For example chmod=664.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 664
          * Group: producer
+         * 
+         * @param chmod the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder chmod(String chmod) {
             doSetProperty("chmod", chmod);
@@ -56,10 +59,13 @@ public interface ScpEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -71,10 +77,14 @@ public interface ScpEndpointBuilderFactory {
          * server. If you have a consumer which you want to stop, then you need
          * to stop the consumer/route instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder disconnect(String disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -98,9 +108,13 @@ public interface ScpEndpointBuilderFactory {
          * used only once, and makes it easier as this avoids to temporary store
          * CamelFileName and have to restore it afterwards.
          * 
-         * The option is a: <code>org.apache.camel.Expression</code> type.
+         * The option is a: &lt;code&gt;org.apache.camel.Expression&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder fileName(Expression fileName) {
             doSetProperty("fileName", fileName);
@@ -125,9 +139,12 @@ public interface ScpEndpointBuilderFactory {
          * CamelFileName and have to restore it afterwards.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.Expression</code> type.
+         * &lt;code&gt;org.apache.camel.Expression&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param fileName the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder fileName(String fileName) {
             doSetProperty("fileName", fileName);
@@ -141,10 +158,13 @@ public interface ScpEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param flatten the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder flatten(boolean flatten) {
             doSetProperty("flatten", flatten);
@@ -158,10 +178,14 @@ public interface ScpEndpointBuilderFactory {
          * this to true on the producer enforces that any file name in
          * CamelFileName header will be stripped for any leading paths.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param flatten the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder flatten(String flatten) {
             doSetProperty("flatten", flatten);
@@ -175,10 +199,13 @@ public interface ScpEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder jailStartingDirectory(
                 boolean jailStartingDirectory) {
@@ -193,10 +220,14 @@ public interface ScpEndpointBuilderFactory {
          * directories outside the starting directory, such as parent or root
          * folders.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param jailStartingDirectory the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder jailStartingDirectory(
                 String jailStartingDirectory) {
@@ -214,10 +245,13 @@ public interface ScpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -234,10 +268,14 @@ public interface ScpEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -247,10 +285,13 @@ public interface ScpEndpointBuilderFactory {
          * Sets whether to use strict host key checking. Possible values are:
          * no, yes.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: no
          * Group: producer
+         * 
+         * @param strictHostKeyChecking the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
@@ -262,9 +303,12 @@ public interface ScpEndpointBuilderFactory {
          * verification. You can prefix with classpath: to load the file from
          * classpath instead of file system.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param knownHostsFile the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder knownHostsFile(String knownHostsFile) {
             doSetProperty("knownHostsFile", knownHostsFile);
@@ -273,9 +317,12 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Password to use for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -288,9 +335,12 @@ public interface ScpEndpointBuilderFactory {
          * gssapi-with-mic,publickey,keyboard-interactive,password If not
          * specified the JSCH and/or system defaults will be used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param preferredAuthentications the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder preferredAuthentications(
                 String preferredAuthentications) {
@@ -302,9 +352,12 @@ public interface ScpEndpointBuilderFactory {
          * verification. This must be used only if privateKeyFile wasn't set.
          * Otherwise the file will have the priority.
          * 
-         * The option is a: <code>byte[]</code> type.
+         * The option is a: &lt;code&gt;byte[]&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKeyBytes the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder privateKeyBytes(Byte[] privateKeyBytes) {
             doSetProperty("privateKeyBytes", privateKeyBytes);
@@ -315,9 +368,13 @@ public interface ScpEndpointBuilderFactory {
          * verification. This must be used only if privateKeyFile wasn't set.
          * Otherwise the file will have the priority.
          * 
-         * The option will be converted to a <code>byte[]</code> type.
+         * The option will be converted to a &lt;code&gt;byte[]&lt;/code&gt;
+         * type.
          * 
          * Group: security
+         * 
+         * @param privateKeyBytes the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder privateKeyBytes(String privateKeyBytes) {
             doSetProperty("privateKeyBytes", privateKeyBytes);
@@ -328,9 +385,12 @@ public interface ScpEndpointBuilderFactory {
          * verification. You can prefix with classpath: to load the file from
          * classpath instead of file system.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKeyFile the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder privateKeyFile(String privateKeyFile) {
             doSetProperty("privateKeyFile", privateKeyFile);
@@ -340,9 +400,12 @@ public interface ScpEndpointBuilderFactory {
          * Set the private key file passphrase to that the endpoint can do
          * private key verification.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param privateKeyFilePassphrase the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder privateKeyFilePassphrase(
                 String privateKeyFilePassphrase) {
@@ -352,9 +415,12 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Username to use for login.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -364,10 +430,13 @@ public interface ScpEndpointBuilderFactory {
          * If knownHostFile has not been explicit configured, then use the host
          * file from System.getProperty(user.home) /.ssh/known_hosts.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param useUserKnownHostsFile the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
@@ -378,10 +447,14 @@ public interface ScpEndpointBuilderFactory {
          * If knownHostFile has not been explicit configured, then use the host
          * file from System.getProperty(user.home) /.ssh/known_hosts.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param useUserKnownHostsFile the value to set
+         * @return the dsl builder
          */
         default ScpEndpointBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
@@ -408,10 +481,13 @@ public interface ScpEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder allowNullBody(boolean allowNullBody) {
             doSetProperty("allowNullBody", allowNullBody);
@@ -426,10 +502,14 @@ public interface ScpEndpointBuilderFactory {
          * file will be truncated, and if set to append the file will remain
          * unchanged.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder allowNullBody(String allowNullBody) {
             doSetProperty("allowNullBody", allowNullBody);
@@ -440,10 +520,13 @@ public interface ScpEndpointBuilderFactory {
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param disconnectOnBatchComplete the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder disconnectOnBatchComplete(
                 boolean disconnectOnBatchComplete) {
@@ -455,10 +538,14 @@ public interface ScpEndpointBuilderFactory {
          * Batch upload is complete. disconnectOnBatchComplete will only
          * disconnect the current connection to the FTP server.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param disconnectOnBatchComplete the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder disconnectOnBatchComplete(
                 String disconnectOnBatchComplete) {
@@ -471,9 +558,12 @@ public interface ScpEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param moveExistingFileStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder moveExistingFileStrategy(
                 Object moveExistingFileStrategy) {
@@ -486,9 +576,12 @@ public interface ScpEndpointBuilderFactory {
          * an implementation used if no custom strategy is provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.file.strategy.FileMoveExistingStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.file.strategy.FileMoveExistingStrategy&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param moveExistingFileStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder moveExistingFileStrategy(
                 String moveExistingFileStrategy) {
@@ -499,10 +592,13 @@ public interface ScpEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder connectTimeout(int connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -512,10 +608,13 @@ public interface ScpEndpointBuilderFactory {
          * Sets the connect timeout for waiting for a connection to be
          * established Used by both FTPClient and JSCH.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder connectTimeout(String connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -528,10 +627,13 @@ public interface ScpEndpointBuilderFactory {
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5m
          * Group: advanced
+         * 
+         * @param soTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder soTimeout(int soTimeout) {
             doSetProperty("soTimeout", soTimeout);
@@ -544,10 +646,13 @@ public interface ScpEndpointBuilderFactory {
          * hanged connection. On SFTP this option is set as timeout on the JSCH
          * Session instance.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5m
          * Group: advanced
+         * 
+         * @param soTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder soTimeout(String soTimeout) {
             doSetProperty("soTimeout", soTimeout);
@@ -557,10 +662,13 @@ public interface ScpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -570,10 +678,14 @@ public interface ScpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -582,10 +694,13 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: advanced
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
@@ -594,10 +709,13 @@ public interface ScpEndpointBuilderFactory {
         /**
          * Sets the data timeout for waiting for reply Used only by FTPClient.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: advanced
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder timeout(String timeout) {
             doSetProperty("timeout", timeout);
@@ -609,9 +727,12 @@ public interface ScpEndpointBuilderFactory {
          * examples include:
          * aes128-ctr,aes128-cbc,3des-ctr,3des-cbc,blowfish-cbc,aes192-cbc,aes256-cbc. If not specified the default list from JSCH will be used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security (advanced)
+         * 
+         * @param ciphers the value to set
+         * @return the dsl builder
          */
         default AdvancedScpEndpointBuilder ciphers(String ciphers) {
             doSetProperty("ciphers", ciphers);

@@ -46,10 +46,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param initialReconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder initialReconnectDelay(
                 long initialReconnectDelay) {
@@ -60,10 +63,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param initialReconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder initialReconnectDelay(
                 String initialReconnectDelay) {
@@ -74,10 +80,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: common
+         * 
+         * @param maxReconnect the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder maxReconnect(int maxReconnect) {
             doSetProperty("maxReconnect", maxReconnect);
@@ -87,10 +96,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: common
+         * 
+         * @param maxReconnect the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder maxReconnect(String maxReconnect) {
             doSetProperty("maxReconnect", maxReconnect);
@@ -101,10 +113,13 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder reconnectDelay(long reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
@@ -115,10 +130,13 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder reconnectDelay(String reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
@@ -135,11 +153,13 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
          * 
          * Default: ALLOW
          * Group: common
+         * 
+         * @param splittingPolicy the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder splittingPolicy(
                 SmppSplittingPolicy splittingPolicy) {
@@ -157,11 +177,13 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
          * 
          * Default: ALLOW
          * Group: common
+         * 
+         * @param splittingPolicy the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder splittingPolicy(
                 String splittingPolicy) {
@@ -172,9 +194,12 @@ public interface SmppEndpointBuilderFactory {
          * This parameter is used to categorize the type of ESME (External Short
          * Message Entity) that is binding to the SMSC (max. 13 characters).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param systemType the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder systemType(String systemType) {
             doSetProperty("systemType", systemType);
@@ -186,9 +211,12 @@ public interface SmppEndpointBuilderFactory {
          * receive messages only from SMSC's which target an address (MSISDN or
          * IP address) within this range.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param addressRange the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder addressRange(String addressRange) {
             doSetProperty("addressRange", addressRange);
@@ -203,10 +231,13 @@ public interface SmppEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -222,10 +253,14 @@ public interface SmppEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -237,9 +272,12 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param alphabet the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder alphabet(byte alphabet) {
             doSetProperty("alphabet", alphabet);
@@ -250,9 +288,12 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param alphabet the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder alphabet(String alphabet) {
             doSetProperty("alphabet", alphabet);
@@ -264,9 +305,12 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param dataCoding the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder dataCoding(byte dataCoding) {
             doSetProperty("dataCoding", dataCoding);
@@ -278,9 +322,12 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param dataCoding the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder dataCoding(String dataCoding) {
             doSetProperty("dataCoding", dataCoding);
@@ -290,10 +337,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the encoding scheme of the short message user data. Only for
          * SubmitSm, ReplaceSm and SubmitMulti.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ISO-8859-1
          * Group: codec
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -303,9 +353,12 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the hostname or ip address of your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder httpProxyHost(String httpProxyHost) {
             doSetProperty("httpProxyHost", httpProxyHost);
@@ -315,9 +368,12 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the password required for your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -328,10 +384,13 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 3128
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder httpProxyPort(Integer httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -341,11 +400,14 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 3128
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder httpProxyPort(String httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -355,9 +417,12 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the username required for your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUsername the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder httpProxyUsername(
                 String httpProxyUsername) {
@@ -368,10 +433,13 @@ public interface SmppEndpointBuilderFactory {
          * These headers will be passed to the proxy server while establishing
          * the connection.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHeaders the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder proxyHeaders(
                 Map<String, String> proxyHeaders) {
@@ -383,10 +451,13 @@ public interface SmppEndpointBuilderFactory {
          * the connection.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHeaders the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder proxyHeaders(String proxyHeaders) {
             doSetProperty("proxyHeaders", proxyHeaders);
@@ -395,9 +466,12 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The password for connecting to SMSC server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -406,10 +480,13 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The system id (username) for connecting to SMSC server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: smppclient
          * Group: security
+         * 
+         * @param systemId the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder systemId(String systemId) {
             doSetProperty("systemId", systemId);
@@ -418,10 +495,13 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param usingSSL the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder usingSSL(boolean usingSSL) {
             doSetProperty("usingSSL", usingSSL);
@@ -430,10 +510,14 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param usingSSL the value to set
+         * @return the dsl builder
          */
         default SmppEndpointConsumerBuilder usingSSL(String usingSSL) {
             doSetProperty("usingSSL", usingSSL);
@@ -456,10 +540,13 @@ public interface SmppEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -473,9 +560,12 @@ public interface SmppEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -485,9 +575,13 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -498,9 +592,12 @@ public interface SmppEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -512,10 +609,13 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param enquireLinkTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder enquireLinkTimer(
                 Integer enquireLinkTimer) {
@@ -527,11 +627,14 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param enquireLinkTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
@@ -542,10 +645,13 @@ public interface SmppEndpointBuilderFactory {
          * You can refer to a org.jsmpp.session.SessionStateListener in the
          * Registry to receive callbacks when the session state changed.
          * 
-         * The option is a: <code>org.jsmpp.session.SessionStateListener</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionStateListener the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
                 Object sessionStateListener) {
@@ -557,9 +663,12 @@ public interface SmppEndpointBuilderFactory {
          * Registry to receive callbacks when the session state changed.
          * 
          * The option will be converted to a
-         * <code>org.jsmpp.session.SessionStateListener</code> type.
+         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionStateListener the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder sessionStateListener(
                 String sessionStateListener) {
@@ -570,10 +679,13 @@ public interface SmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -584,10 +696,14 @@ public interface SmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -600,10 +716,13 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param transactionTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder transactionTimer(
                 Integer transactionTimer) {
@@ -616,11 +735,14 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param transactionTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointConsumerBuilder transactionTimer(
                 String transactionTimer) {
@@ -642,10 +764,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param initialReconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder initialReconnectDelay(
                 long initialReconnectDelay) {
@@ -656,10 +781,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param initialReconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder initialReconnectDelay(
                 String initialReconnectDelay) {
@@ -670,10 +798,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: common
+         * 
+         * @param maxReconnect the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder maxReconnect(int maxReconnect) {
             doSetProperty("maxReconnect", maxReconnect);
@@ -683,10 +814,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: common
+         * 
+         * @param maxReconnect the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder maxReconnect(String maxReconnect) {
             doSetProperty("maxReconnect", maxReconnect);
@@ -697,10 +831,13 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder reconnectDelay(long reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
@@ -711,10 +848,13 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder reconnectDelay(String reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
@@ -731,11 +871,13 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
          * 
          * Default: ALLOW
          * Group: common
+         * 
+         * @param splittingPolicy the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder splittingPolicy(
                 SmppSplittingPolicy splittingPolicy) {
@@ -753,11 +895,13 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
          * 
          * Default: ALLOW
          * Group: common
+         * 
+         * @param splittingPolicy the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder splittingPolicy(
                 String splittingPolicy) {
@@ -768,9 +912,12 @@ public interface SmppEndpointBuilderFactory {
          * This parameter is used to categorize the type of ESME (External Short
          * Message Entity) that is binding to the SMSC (max. 13 characters).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param systemType the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder systemType(String systemType) {
             doSetProperty("systemType", systemType);
@@ -781,10 +928,13 @@ public interface SmppEndpointBuilderFactory {
          * this is the directory number of the recipient MS. Only for SubmitSm,
          * SubmitMulti, CancelSm and DataSm.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 1717
          * Group: producer
+         * 
+         * @param destAddr the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder destAddr(String destAddr) {
             doSetProperty("destAddr", destAddr);
@@ -798,9 +948,12 @@ public interface SmppEndpointBuilderFactory {
          * National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to
          * be defined by WAP Forum).
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param destAddrNpi the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder destAddrNpi(byte destAddrNpi) {
             doSetProperty("destAddrNpi", destAddrNpi);
@@ -814,9 +967,12 @@ public interface SmppEndpointBuilderFactory {
          * National 9: Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to
          * be defined by WAP Forum).
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param destAddrNpi the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder destAddrNpi(String destAddrNpi) {
             doSetProperty("destAddrNpi", destAddrNpi);
@@ -829,9 +985,12 @@ public interface SmppEndpointBuilderFactory {
          * International 2: National 3: Network Specific 4: Subscriber Number 5:
          * Alphanumeric 6: Abbreviated.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param destAddrTon the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder destAddrTon(byte destAddrTon) {
             doSetProperty("destAddrTon", destAddrTon);
@@ -844,9 +1003,12 @@ public interface SmppEndpointBuilderFactory {
          * International 2: National 3: Network Specific 4: Subscriber Number 5:
          * Alphanumeric 6: Abbreviated.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param destAddrTon the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder destAddrTon(String destAddrTon) {
             doSetProperty("destAddrTon", destAddrTon);
@@ -859,10 +1021,13 @@ public interface SmppEndpointBuilderFactory {
          * the first exchange. If they are present, Camel will use these data to
          * connect to the SMSC.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazySessionCreation the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder lazySessionCreation(
                 boolean lazySessionCreation) {
@@ -876,10 +1041,14 @@ public interface SmppEndpointBuilderFactory {
          * the first exchange. If they are present, Camel will use these data to
          * connect to the SMSC.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazySessionCreation the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder lazySessionCreation(
                 String lazySessionCreation) {
@@ -897,10 +1066,13 @@ public interface SmppEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -918,10 +1090,14 @@ public interface SmppEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -935,9 +1111,12 @@ public interface SmppEndpointBuilderFactory {
          * Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined
          * by WAP Forum).
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param numberingPlanIndicator the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder numberingPlanIndicator(
                 byte numberingPlanIndicator) {
@@ -951,9 +1130,12 @@ public interface SmppEndpointBuilderFactory {
          * Private 10: ERMES 13: Internet (IP) 18: WAP Client Id (to be defined
          * by WAP Forum).
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param numberingPlanIndicator the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder numberingPlanIndicator(
                 String numberingPlanIndicator) {
@@ -966,9 +1148,12 @@ public interface SmppEndpointBuilderFactory {
          * supported: 0: Level 0 (lowest) priority 1: Level 1 priority 2: Level
          * 2 priority 3: Level 3 (highest) priority.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param priorityFlag the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder priorityFlag(byte priorityFlag) {
             doSetProperty("priorityFlag", priorityFlag);
@@ -980,9 +1165,12 @@ public interface SmppEndpointBuilderFactory {
          * supported: 0: Level 0 (lowest) priority 1: Level 1 priority 2: Level
          * 2 priority 3: Level 3 (highest) priority.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param priorityFlag the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder priorityFlag(String priorityFlag) {
             doSetProperty("priorityFlag", priorityFlag);
@@ -991,9 +1179,12 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The protocol id.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param protocolId the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder protocolId(byte protocolId) {
             doSetProperty("protocolId", protocolId);
@@ -1002,9 +1193,12 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The protocol id.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param protocolId the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder protocolId(String protocolId) {
             doSetProperty("protocolId", protocolId);
@@ -1018,9 +1212,12 @@ public interface SmppEndpointBuilderFactory {
          * receipt requested where the final delivery outcome is delivery
          * failure.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param registeredDelivery the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder registeredDelivery(
                 byte registeredDelivery) {
@@ -1035,9 +1232,12 @@ public interface SmppEndpointBuilderFactory {
          * receipt requested where the final delivery outcome is delivery
          * failure.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param registeredDelivery the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder registeredDelivery(
                 String registeredDelivery) {
@@ -1052,9 +1252,12 @@ public interface SmppEndpointBuilderFactory {
          * replace if present flag values are defined: 0: Don't replace 1:
          * Replace.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param replaceIfPresentFlag the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder replaceIfPresentFlag(
                 byte replaceIfPresentFlag) {
@@ -1069,9 +1272,12 @@ public interface SmppEndpointBuilderFactory {
          * replace if present flag values are defined: 0: Don't replace 1:
          * Replace.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param replaceIfPresentFlag the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder replaceIfPresentFlag(
                 String replaceIfPresentFlag) {
@@ -1086,9 +1292,12 @@ public interface SmppEndpointBuilderFactory {
          * WAP: Wireless Application Protocol USSD: Unstructured Supplementary
          * Services Data.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param serviceType the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder serviceType(String serviceType) {
             doSetProperty("serviceType", serviceType);
@@ -1098,10 +1307,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the address of SME (Short Message Entity) which originated
          * this message.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 1616
          * Group: producer
+         * 
+         * @param sourceAddr the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder sourceAddr(String sourceAddr) {
             doSetProperty("sourceAddr", sourceAddr);
@@ -1114,9 +1326,12 @@ public interface SmppEndpointBuilderFactory {
          * Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet
          * (IP) 18: WAP Client Id (to be defined by WAP Forum).
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sourceAddrNpi the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder sourceAddrNpi(byte sourceAddrNpi) {
             doSetProperty("sourceAddrNpi", sourceAddrNpi);
@@ -1129,9 +1344,12 @@ public interface SmppEndpointBuilderFactory {
          * Land Mobile (E.212) 8: National 9: Private 10: ERMES 13: Internet
          * (IP) 18: WAP Client Id (to be defined by WAP Forum).
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sourceAddrNpi the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder sourceAddrNpi(String sourceAddrNpi) {
             doSetProperty("sourceAddrNpi", sourceAddrNpi);
@@ -1143,9 +1361,12 @@ public interface SmppEndpointBuilderFactory {
          * 1: International 2: National 3: Network Specific 4: Subscriber Number
          * 5: Alphanumeric 6: Abbreviated.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sourceAddrTon the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder sourceAddrTon(byte sourceAddrTon) {
             doSetProperty("sourceAddrTon", sourceAddrTon);
@@ -1157,9 +1378,12 @@ public interface SmppEndpointBuilderFactory {
          * 1: International 2: National 3: Network Specific 4: Subscriber Number
          * 5: Alphanumeric 6: Abbreviated.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sourceAddrTon the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder sourceAddrTon(String sourceAddrTon) {
             doSetProperty("sourceAddrTon", sourceAddrTon);
@@ -1170,9 +1394,12 @@ public interface SmppEndpointBuilderFactory {
          * TON values are defined: 0: Unknown 1: International 2: National 3:
          * Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param typeOfNumber the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder typeOfNumber(byte typeOfNumber) {
             doSetProperty("typeOfNumber", typeOfNumber);
@@ -1183,9 +1410,12 @@ public interface SmppEndpointBuilderFactory {
          * TON values are defined: 0: Unknown 1: International 2: National 3:
          * Network Specific 4: Subscriber Number 5: Alphanumeric 6: Abbreviated.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param typeOfNumber the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder typeOfNumber(String typeOfNumber) {
             doSetProperty("typeOfNumber", typeOfNumber);
@@ -1196,9 +1426,12 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param alphabet the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder alphabet(byte alphabet) {
             doSetProperty("alphabet", alphabet);
@@ -1209,9 +1442,12 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param alphabet the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder alphabet(String alphabet) {
             doSetProperty("alphabet", alphabet);
@@ -1223,9 +1459,12 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param dataCoding the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder dataCoding(byte dataCoding) {
             doSetProperty("dataCoding", dataCoding);
@@ -1237,9 +1476,12 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param dataCoding the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder dataCoding(String dataCoding) {
             doSetProperty("dataCoding", dataCoding);
@@ -1249,10 +1491,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the encoding scheme of the short message user data. Only for
          * SubmitSm, ReplaceSm and SubmitMulti.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ISO-8859-1
          * Group: codec
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -1262,9 +1507,12 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the hostname or ip address of your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder httpProxyHost(String httpProxyHost) {
             doSetProperty("httpProxyHost", httpProxyHost);
@@ -1274,9 +1522,12 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the password required for your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -1287,10 +1538,13 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 3128
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder httpProxyPort(Integer httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -1300,11 +1554,14 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 3128
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder httpProxyPort(String httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -1314,9 +1571,12 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the username required for your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUsername the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder httpProxyUsername(
                 String httpProxyUsername) {
@@ -1327,10 +1587,13 @@ public interface SmppEndpointBuilderFactory {
          * These headers will be passed to the proxy server while establishing
          * the connection.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHeaders the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder proxyHeaders(
                 Map<String, String> proxyHeaders) {
@@ -1342,10 +1605,13 @@ public interface SmppEndpointBuilderFactory {
          * the connection.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHeaders the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder proxyHeaders(String proxyHeaders) {
             doSetProperty("proxyHeaders", proxyHeaders);
@@ -1354,9 +1620,12 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The password for connecting to SMSC server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -1365,10 +1634,13 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The system id (username) for connecting to SMSC server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: smppclient
          * Group: security
+         * 
+         * @param systemId the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder systemId(String systemId) {
             doSetProperty("systemId", systemId);
@@ -1377,10 +1649,13 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param usingSSL the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder usingSSL(boolean usingSSL) {
             doSetProperty("usingSSL", usingSSL);
@@ -1389,10 +1664,14 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param usingSSL the value to set
+         * @return the dsl builder
          */
         default SmppEndpointProducerBuilder usingSSL(String usingSSL) {
             doSetProperty("usingSSL", usingSSL);
@@ -1414,10 +1693,13 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param enquireLinkTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointProducerBuilder enquireLinkTimer(
                 Integer enquireLinkTimer) {
@@ -1429,11 +1711,14 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param enquireLinkTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointProducerBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
@@ -1444,10 +1729,13 @@ public interface SmppEndpointBuilderFactory {
          * You can refer to a org.jsmpp.session.SessionStateListener in the
          * Registry to receive callbacks when the session state changed.
          * 
-         * The option is a: <code>org.jsmpp.session.SessionStateListener</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionStateListener the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointProducerBuilder sessionStateListener(
                 Object sessionStateListener) {
@@ -1459,9 +1747,12 @@ public interface SmppEndpointBuilderFactory {
          * Registry to receive callbacks when the session state changed.
          * 
          * The option will be converted to a
-         * <code>org.jsmpp.session.SessionStateListener</code> type.
+         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionStateListener the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointProducerBuilder sessionStateListener(
                 String sessionStateListener) {
@@ -1472,10 +1763,13 @@ public interface SmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1486,10 +1780,14 @@ public interface SmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1502,10 +1800,13 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param transactionTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointProducerBuilder transactionTimer(
                 Integer transactionTimer) {
@@ -1518,11 +1819,14 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param transactionTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointProducerBuilder transactionTimer(
                 String transactionTimer) {
@@ -1545,10 +1849,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param initialReconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder initialReconnectDelay(
                 long initialReconnectDelay) {
@@ -1559,10 +1866,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the initial delay in milliseconds after the consumer/producer
          * tries to reconnect to the SMSC, after the connection was lost.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param initialReconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder initialReconnectDelay(
                 String initialReconnectDelay) {
@@ -1573,10 +1883,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: common
+         * 
+         * @param maxReconnect the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder maxReconnect(int maxReconnect) {
             doSetProperty("maxReconnect", maxReconnect);
@@ -1586,10 +1899,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the maximum number of attempts to reconnect to the SMSC, if
          * SMSC returns a negative bind response.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: common
+         * 
+         * @param maxReconnect the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder maxReconnect(String maxReconnect) {
             doSetProperty("maxReconnect", maxReconnect);
@@ -1600,10 +1916,13 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder reconnectDelay(long reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
@@ -1614,10 +1933,13 @@ public interface SmppEndpointBuilderFactory {
          * if the connection to the SMSC was lost and the previous was not
          * succeed.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: common
+         * 
+         * @param reconnectDelay the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder reconnectDelay(String reconnectDelay) {
             doSetProperty("reconnectDelay", reconnectDelay);
@@ -1634,11 +1956,13 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
          * 
          * Default: ALLOW
          * Group: common
+         * 
+         * @param splittingPolicy the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder splittingPolicy(
                 SmppSplittingPolicy splittingPolicy) {
@@ -1656,11 +1980,13 @@ public interface SmppEndpointBuilderFactory {
          * code signifying the message is too long.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.smpp.SmppSplittingPolicy&lt;/code&gt; type.
          * 
          * Default: ALLOW
          * Group: common
+         * 
+         * @param splittingPolicy the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder splittingPolicy(String splittingPolicy) {
             doSetProperty("splittingPolicy", splittingPolicy);
@@ -1670,9 +1996,12 @@ public interface SmppEndpointBuilderFactory {
          * This parameter is used to categorize the type of ESME (External Short
          * Message Entity) that is binding to the SMSC (max. 13 characters).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param systemType the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder systemType(String systemType) {
             doSetProperty("systemType", systemType);
@@ -1683,9 +2012,12 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param alphabet the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder alphabet(byte alphabet) {
             doSetProperty("alphabet", alphabet);
@@ -1696,9 +2028,12 @@ public interface SmppEndpointBuilderFactory {
          * section 5.2.19. 0: SMSC Default Alphabet 4: 8 bit Alphabet 8: UCS2
          * Alphabet.
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param alphabet the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder alphabet(String alphabet) {
             doSetProperty("alphabet", alphabet);
@@ -1710,9 +2045,12 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option is a: <code>byte</code> type.
+         * The option is a: &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param dataCoding the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder dataCoding(byte dataCoding) {
             doSetProperty("dataCoding", dataCoding);
@@ -1724,9 +2062,12 @@ public interface SmppEndpointBuilderFactory {
          * 1 (ISO-8859-1) 4: Octet unspecified (8-bit binary) 8: UCS2
          * (ISO/IEC-10646) 13: Extended Kanji JIS(X 0212-1990).
          * 
-         * The option will be converted to a <code>byte</code> type.
+         * The option will be converted to a &lt;code&gt;byte&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param dataCoding the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder dataCoding(String dataCoding) {
             doSetProperty("dataCoding", dataCoding);
@@ -1736,10 +2077,13 @@ public interface SmppEndpointBuilderFactory {
          * Defines the encoding scheme of the short message user data. Only for
          * SubmitSm, ReplaceSm and SubmitMulti.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ISO-8859-1
          * Group: codec
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder encoding(String encoding) {
             doSetProperty("encoding", encoding);
@@ -1749,9 +2093,12 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the hostname or ip address of your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder httpProxyHost(String httpProxyHost) {
             doSetProperty("httpProxyHost", httpProxyHost);
@@ -1761,9 +2108,12 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the password required for your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder httpProxyPassword(String httpProxyPassword) {
             doSetProperty("httpProxyPassword", httpProxyPassword);
@@ -1773,10 +2123,13 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 3128
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder httpProxyPort(Integer httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -1786,11 +2139,14 @@ public interface SmppEndpointBuilderFactory {
          * If you need to tunnel SMPP through a HTTP proxy, set this attribute
          * to the port of your HTTP proxy.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 3128
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder httpProxyPort(String httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -1800,9 +2156,12 @@ public interface SmppEndpointBuilderFactory {
          * If your HTTP proxy requires basic authentication, set this attribute
          * to the username required for your HTTP proxy.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUsername the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder httpProxyUsername(String httpProxyUsername) {
             doSetProperty("httpProxyUsername", httpProxyUsername);
@@ -1812,10 +2171,13 @@ public interface SmppEndpointBuilderFactory {
          * These headers will be passed to the proxy server while establishing
          * the connection.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHeaders the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder proxyHeaders(
                 Map<String, String> proxyHeaders) {
@@ -1827,10 +2189,13 @@ public interface SmppEndpointBuilderFactory {
          * the connection.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.String&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param proxyHeaders the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder proxyHeaders(String proxyHeaders) {
             doSetProperty("proxyHeaders", proxyHeaders);
@@ -1839,9 +2204,12 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The password for connecting to SMSC server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -1850,10 +2218,13 @@ public interface SmppEndpointBuilderFactory {
         /**
          * The system id (username) for connecting to SMSC server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: smppclient
          * Group: security
+         * 
+         * @param systemId the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder systemId(String systemId) {
             doSetProperty("systemId", systemId);
@@ -1862,10 +2233,13 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param usingSSL the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder usingSSL(boolean usingSSL) {
             doSetProperty("usingSSL", usingSSL);
@@ -1874,10 +2248,14 @@ public interface SmppEndpointBuilderFactory {
         /**
          * Whether using SSL with the smpps protocol.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param usingSSL the value to set
+         * @return the dsl builder
          */
         default SmppEndpointBuilder usingSSL(String usingSSL) {
             doSetProperty("usingSSL", usingSSL);
@@ -1900,10 +2278,13 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param enquireLinkTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointBuilder enquireLinkTimer(
                 Integer enquireLinkTimer) {
@@ -1915,11 +2296,14 @@ public interface SmppEndpointBuilderFactory {
          * The confidence check is used to test the communication path between
          * an ESME and an SMSC.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param enquireLinkTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointBuilder enquireLinkTimer(
                 String enquireLinkTimer) {
@@ -1930,10 +2314,13 @@ public interface SmppEndpointBuilderFactory {
          * You can refer to a org.jsmpp.session.SessionStateListener in the
          * Registry to receive callbacks when the session state changed.
          * 
-         * The option is a: <code>org.jsmpp.session.SessionStateListener</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionStateListener the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointBuilder sessionStateListener(
                 Object sessionStateListener) {
@@ -1945,9 +2332,12 @@ public interface SmppEndpointBuilderFactory {
          * Registry to receive callbacks when the session state changed.
          * 
          * The option will be converted to a
-         * <code>org.jsmpp.session.SessionStateListener</code> type.
+         * &lt;code&gt;org.jsmpp.session.SessionStateListener&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param sessionStateListener the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointBuilder sessionStateListener(
                 String sessionStateListener) {
@@ -1958,10 +2348,13 @@ public interface SmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1971,10 +2364,14 @@ public interface SmppEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1986,10 +2383,13 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param transactionTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointBuilder transactionTimer(
                 Integer transactionTimer) {
@@ -2002,11 +2402,14 @@ public interface SmppEndpointBuilderFactory {
          * active. This timer may be active on either communicating SMPP entity
          * (i.e. SMSC or ESME).
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: advanced
+         * 
+         * @param transactionTimer the value to set
+         * @return the dsl builder
          */
         default AdvancedSmppEndpointBuilder transactionTimer(
                 String transactionTimer) {

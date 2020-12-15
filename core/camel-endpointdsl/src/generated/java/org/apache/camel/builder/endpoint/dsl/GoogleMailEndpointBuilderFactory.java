@@ -49,9 +49,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Google mail application name. Example would be camel-google-mail/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder applicationName(
                 String applicationName) {
@@ -61,9 +64,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Client ID of the mail application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -72,9 +78,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -89,10 +98,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -108,10 +120,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -122,10 +138,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -136,10 +155,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -150,9 +173,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -163,9 +189,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -176,9 +205,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -189,9 +221,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -206,9 +241,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -223,9 +261,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -235,10 +276,13 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -247,10 +291,13 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -260,10 +307,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -273,10 +323,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -285,10 +339,13 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -297,10 +354,13 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
@@ -312,10 +372,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -326,10 +389,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -339,10 +405,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -354,10 +424,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -370,9 +443,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -385,9 +461,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -398,10 +477,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -411,10 +493,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -424,13 +510,17 @@ public interface GoogleMailEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -442,13 +532,16 @@ public interface GoogleMailEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -457,10 +550,13 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -470,10 +566,14 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -483,10 +583,14 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -496,10 +600,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -509,10 +616,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -523,10 +633,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -537,9 +651,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -548,9 +665,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Client secret of the mail application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
@@ -562,9 +682,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
@@ -588,10 +711,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -605,9 +731,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -617,9 +746,13 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -630,9 +763,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -646,9 +782,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -662,9 +801,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -675,10 +817,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -689,10 +834,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -713,9 +862,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Google mail application name. Example would be camel-google-mail/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointProducerBuilder applicationName(
                 String applicationName) {
@@ -725,9 +877,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Client ID of the mail application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointProducerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -736,9 +891,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -755,10 +913,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -776,10 +937,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -790,9 +955,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointProducerBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -801,9 +969,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Client secret of the mail application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointProducerBuilder clientSecret(
                 String clientSecret) {
@@ -815,9 +986,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointProducerBuilder refreshToken(
                 String refreshToken) {
@@ -839,10 +1013,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -853,10 +1030,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -878,9 +1059,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Google mail application name. Example would be camel-google-mail/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointBuilder applicationName(String applicationName) {
             doSetProperty("applicationName", applicationName);
@@ -889,9 +1073,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Client ID of the mail application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -900,9 +1087,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -912,9 +1102,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -923,9 +1116,12 @@ public interface GoogleMailEndpointBuilderFactory {
         /**
          * Client secret of the mail application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointBuilder clientSecret(String clientSecret) {
             doSetProperty("clientSecret", clientSecret);
@@ -936,9 +1132,12 @@ public interface GoogleMailEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleMailEndpointBuilder refreshToken(String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
@@ -960,10 +1159,13 @@ public interface GoogleMailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -974,10 +1176,14 @@ public interface GoogleMailEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleMailEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

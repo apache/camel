@@ -44,10 +44,12 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastRingbufferEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -59,10 +61,12 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastRingbufferEndpointBuilder defaultOperation(
                 String defaultOperation) {
@@ -73,10 +77,13 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastRingbufferEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -88,9 +95,12 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.hazelcast.core.HazelcastInstance</code> type.
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastRingbufferEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -102,9 +112,12 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param hazelcastInstanceName the value to set
+         * @return the dsl builder
          */
         default HazelcastRingbufferEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -122,10 +135,13 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastRingbufferEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -143,10 +159,14 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastRingbufferEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -168,10 +188,13 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastRingbufferEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -182,10 +205,14 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastRingbufferEndpointBuilder synchronous(
                 String synchronous) {

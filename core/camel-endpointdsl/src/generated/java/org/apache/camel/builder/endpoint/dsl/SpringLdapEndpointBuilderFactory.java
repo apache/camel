@@ -50,10 +50,13 @@ public interface SpringLdapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SpringLdapEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -71,10 +74,14 @@ public interface SpringLdapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SpringLdapEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -85,11 +92,13 @@ public interface SpringLdapEndpointBuilderFactory {
          * The LDAP operation to be performed.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.springldap.LdapOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.springldap.LdapOperation&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default SpringLdapEndpointBuilder operation(LdapOperation operation) {
             doSetProperty("operation", operation);
@@ -99,11 +108,13 @@ public interface SpringLdapEndpointBuilderFactory {
          * The LDAP operation to be performed.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.springldap.LdapOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.springldap.LdapOperation&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default SpringLdapEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -112,10 +123,13 @@ public interface SpringLdapEndpointBuilderFactory {
         /**
          * The scope of the search operation.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: subtree
          * Group: producer
+         * 
+         * @param scope the value to set
+         * @return the dsl builder
          */
         default SpringLdapEndpointBuilder scope(String scope) {
             doSetProperty("scope", scope);
@@ -136,10 +150,13 @@ public interface SpringLdapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSpringLdapEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -150,10 +167,14 @@ public interface SpringLdapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedSpringLdapEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

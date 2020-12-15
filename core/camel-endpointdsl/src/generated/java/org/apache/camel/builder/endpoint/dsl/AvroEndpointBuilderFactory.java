@@ -44,9 +44,13 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use.
          * 
-         * The option is a: <code>org.apache.avro.Protocol</code> type.
+         * The option is a: &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointConsumerBuilder protocol(Object protocol) {
             doSetProperty("protocol", protocol);
@@ -56,9 +60,12 @@ public interface AvroEndpointBuilderFactory {
          * Avro protocol to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.avro.Protocol</code> type.
+         * &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointConsumerBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
@@ -67,9 +74,12 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use defined by the FQN class name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolClassName the value to set
+         * @return the dsl builder
          */
         default AvroEndpointConsumerBuilder protocolClassName(
                 String protocolClassName) {
@@ -79,9 +89,12 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol location.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolLocation the value to set
+         * @return the dsl builder
          */
         default AvroEndpointConsumerBuilder protocolLocation(
                 String protocolLocation) {
@@ -93,10 +106,13 @@ public interface AvroEndpointBuilderFactory {
          * only with protocol parameter because for protocolClassName protocol
          * type will be auto detected.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reflectionProtocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointConsumerBuilder reflectionProtocol(
                 boolean reflectionProtocol) {
@@ -108,10 +124,14 @@ public interface AvroEndpointBuilderFactory {
          * only with protocol parameter because for protocolClassName protocol
          * type will be auto detected.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reflectionProtocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointConsumerBuilder reflectionProtocol(
                 String reflectionProtocol) {
@@ -122,10 +142,13 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into array. Will fail if
          * protocol specifies more then 1 parameter for the message.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param singleParameter the value to set
+         * @return the dsl builder
          */
         default AvroEndpointConsumerBuilder singleParameter(
                 boolean singleParameter) {
@@ -136,10 +159,14 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into array. Will fail if
          * protocol specifies more then 1 parameter for the message.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param singleParameter the value to set
+         * @return the dsl builder
          */
         default AvroEndpointConsumerBuilder singleParameter(
                 String singleParameter) {
@@ -149,9 +176,12 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Authority to use (username and password).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param uriAuthority the value to set
+         * @return the dsl builder
          */
         default AvroEndpointConsumerBuilder uriAuthority(String uriAuthority) {
             doSetProperty("uriAuthority", uriAuthority);
@@ -166,10 +196,13 @@ public interface AvroEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AvroEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -185,10 +218,14 @@ public interface AvroEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AvroEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -212,10 +249,13 @@ public interface AvroEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedAvroEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -229,9 +269,12 @@ public interface AvroEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedAvroEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -241,9 +284,13 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedAvroEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -254,9 +301,12 @@ public interface AvroEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedAvroEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -267,10 +317,13 @@ public interface AvroEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAvroEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -281,10 +334,14 @@ public interface AvroEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAvroEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -305,9 +362,13 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use.
          * 
-         * The option is a: <code>org.apache.avro.Protocol</code> type.
+         * The option is a: &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointProducerBuilder protocol(Object protocol) {
             doSetProperty("protocol", protocol);
@@ -317,9 +378,12 @@ public interface AvroEndpointBuilderFactory {
          * Avro protocol to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.avro.Protocol</code> type.
+         * &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointProducerBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
@@ -328,9 +392,12 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use defined by the FQN class name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolClassName the value to set
+         * @return the dsl builder
          */
         default AvroEndpointProducerBuilder protocolClassName(
                 String protocolClassName) {
@@ -340,9 +407,12 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol location.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolLocation the value to set
+         * @return the dsl builder
          */
         default AvroEndpointProducerBuilder protocolLocation(
                 String protocolLocation) {
@@ -354,10 +424,13 @@ public interface AvroEndpointBuilderFactory {
          * only with protocol parameter because for protocolClassName protocol
          * type will be auto detected.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reflectionProtocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointProducerBuilder reflectionProtocol(
                 boolean reflectionProtocol) {
@@ -369,10 +442,14 @@ public interface AvroEndpointBuilderFactory {
          * only with protocol parameter because for protocolClassName protocol
          * type will be auto detected.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reflectionProtocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointProducerBuilder reflectionProtocol(
                 String reflectionProtocol) {
@@ -383,10 +460,13 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into array. Will fail if
          * protocol specifies more then 1 parameter for the message.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param singleParameter the value to set
+         * @return the dsl builder
          */
         default AvroEndpointProducerBuilder singleParameter(
                 boolean singleParameter) {
@@ -397,10 +477,14 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into array. Will fail if
          * protocol specifies more then 1 parameter for the message.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param singleParameter the value to set
+         * @return the dsl builder
          */
         default AvroEndpointProducerBuilder singleParameter(
                 String singleParameter) {
@@ -410,9 +494,12 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Authority to use (username and password).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param uriAuthority the value to set
+         * @return the dsl builder
          */
         default AvroEndpointProducerBuilder uriAuthority(String uriAuthority) {
             doSetProperty("uriAuthority", uriAuthority);
@@ -429,10 +516,13 @@ public interface AvroEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AvroEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -450,10 +540,14 @@ public interface AvroEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AvroEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -475,10 +569,13 @@ public interface AvroEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAvroEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -489,10 +586,14 @@ public interface AvroEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAvroEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -514,9 +615,13 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use.
          * 
-         * The option is a: <code>org.apache.avro.Protocol</code> type.
+         * The option is a: &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointBuilder protocol(Object protocol) {
             doSetProperty("protocol", protocol);
@@ -526,9 +631,12 @@ public interface AvroEndpointBuilderFactory {
          * Avro protocol to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.avro.Protocol</code> type.
+         * &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointBuilder protocol(String protocol) {
             doSetProperty("protocol", protocol);
@@ -537,9 +645,12 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol to use defined by the FQN class name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolClassName the value to set
+         * @return the dsl builder
          */
         default AvroEndpointBuilder protocolClassName(String protocolClassName) {
             doSetProperty("protocolClassName", protocolClassName);
@@ -548,9 +659,12 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Avro protocol location.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolLocation the value to set
+         * @return the dsl builder
          */
         default AvroEndpointBuilder protocolLocation(String protocolLocation) {
             doSetProperty("protocolLocation", protocolLocation);
@@ -561,10 +675,13 @@ public interface AvroEndpointBuilderFactory {
          * only with protocol parameter because for protocolClassName protocol
          * type will be auto detected.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reflectionProtocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointBuilder reflectionProtocol(
                 boolean reflectionProtocol) {
@@ -576,10 +693,14 @@ public interface AvroEndpointBuilderFactory {
          * only with protocol parameter because for protocolClassName protocol
          * type will be auto detected.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reflectionProtocol the value to set
+         * @return the dsl builder
          */
         default AvroEndpointBuilder reflectionProtocol(String reflectionProtocol) {
             doSetProperty("reflectionProtocol", reflectionProtocol);
@@ -589,10 +710,13 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into array. Will fail if
          * protocol specifies more then 1 parameter for the message.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param singleParameter the value to set
+         * @return the dsl builder
          */
         default AvroEndpointBuilder singleParameter(boolean singleParameter) {
             doSetProperty("singleParameter", singleParameter);
@@ -602,10 +726,14 @@ public interface AvroEndpointBuilderFactory {
          * If true, consumer parameter won't be wrapped into array. Will fail if
          * protocol specifies more then 1 parameter for the message.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param singleParameter the value to set
+         * @return the dsl builder
          */
         default AvroEndpointBuilder singleParameter(String singleParameter) {
             doSetProperty("singleParameter", singleParameter);
@@ -614,9 +742,12 @@ public interface AvroEndpointBuilderFactory {
         /**
          * Authority to use (username and password).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param uriAuthority the value to set
+         * @return the dsl builder
          */
         default AvroEndpointBuilder uriAuthority(String uriAuthority) {
             doSetProperty("uriAuthority", uriAuthority);
@@ -638,10 +769,13 @@ public interface AvroEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAvroEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -651,10 +785,14 @@ public interface AvroEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAvroEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

@@ -47,10 +47,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -62,10 +64,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
@@ -76,10 +80,13 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -91,9 +98,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.hazelcast.core.HazelcastInstance</code> type.
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -105,9 +115,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstanceName the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -123,10 +136,13 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -142,10 +158,14 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -170,10 +190,13 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -187,9 +210,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -199,9 +225,13 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -212,9 +242,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -225,10 +258,13 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -239,10 +275,14 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -266,10 +306,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -281,10 +323,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
@@ -295,10 +339,13 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -310,9 +357,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.hazelcast.core.HazelcastInstance</code> type.
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -324,9 +374,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstanceName the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -344,10 +397,13 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -365,10 +421,14 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -391,10 +451,13 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -405,10 +468,14 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -432,10 +499,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -447,10 +516,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointBuilder defaultOperation(
                 String defaultOperation) {
@@ -461,10 +532,13 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -476,9 +550,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.hazelcast.core.HazelcastInstance</code> type.
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -490,9 +567,12 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstanceName the value to set
+         * @return the dsl builder
          */
         default HazelcastReplicatedmapEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -515,10 +595,13 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -529,10 +612,14 @@ public interface HazelcastReplicatedmapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastReplicatedmapEndpointBuilder synchronous(
                 String synchronous) {

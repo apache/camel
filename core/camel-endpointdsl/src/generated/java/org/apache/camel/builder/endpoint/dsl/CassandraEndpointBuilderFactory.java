@@ -50,9 +50,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Cluster name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clusterName the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder clusterName(String clusterName) {
             doSetProperty("clusterName", clusterName);
@@ -62,10 +65,12 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option is a:
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.DefaultConsistencyLevel&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder consistencyLevel(
                 DefaultConsistencyLevel consistencyLevel) {
@@ -76,10 +81,12 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.DefaultConsistencyLevel&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder consistencyLevel(
                 String consistencyLevel) {
@@ -90,9 +97,12 @@ public interface CassandraEndpointBuilderFactory {
          * CQL query to perform. Can be overridden with the message header with
          * key CamelCqlQuery.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cql the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder cql(String cql) {
             doSetProperty("cql", cql);
@@ -101,10 +111,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Datacenter to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: datacenter1
          * Group: common
+         * 
+         * @param datacenter the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder datacenter(String datacenter) {
             doSetProperty("datacenter", datacenter);
@@ -113,9 +126,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use a specific LoadBalancingPolicyClass.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loadBalancingPolicyClass the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder loadBalancingPolicyClass(
                 String loadBalancingPolicyClass) {
@@ -125,9 +141,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Password for session authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -136,10 +155,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether to use PreparedStatements or regular Statements.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param prepareStatements the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder prepareStatements(
                 boolean prepareStatements) {
@@ -149,10 +171,14 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether to use PreparedStatements or regular Statements.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param prepareStatements the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder prepareStatements(
                 String prepareStatements) {
@@ -164,9 +190,12 @@ public interface CassandraEndpointBuilderFactory {
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.cassandra.ResultSetConversionStrategy&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder resultSetConversionStrategy(
                 Object resultSetConversionStrategy) {
@@ -178,9 +207,12 @@ public interface CassandraEndpointBuilderFactory {
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.cassandra.ResultSetConversionStrategy&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder resultSetConversionStrategy(
                 String resultSetConversionStrategy) {
@@ -191,9 +223,13 @@ public interface CassandraEndpointBuilderFactory {
          * To use the Session instance (you would normally not use this option).
          * 
          * The option is a:
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.CqlSession&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder session(Object session) {
             doSetProperty("session", session);
@@ -203,9 +239,13 @@ public interface CassandraEndpointBuilderFactory {
          * To use the Session instance (you would normally not use this option).
          * 
          * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.CqlSession&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder session(String session) {
             doSetProperty("session", session);
@@ -214,9 +254,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Username for session authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder username(String username) {
             doSetProperty("username", username);
@@ -231,10 +274,13 @@ public interface CassandraEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -250,10 +296,14 @@ public interface CassandraEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -264,10 +314,13 @@ public interface CassandraEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -278,10 +331,14 @@ public interface CassandraEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -292,9 +349,12 @@ public interface CassandraEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -305,9 +365,12 @@ public interface CassandraEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -318,9 +381,12 @@ public interface CassandraEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -331,9 +397,12 @@ public interface CassandraEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -348,9 +417,12 @@ public interface CassandraEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -365,9 +437,12 @@ public interface CassandraEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -377,10 +452,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -389,10 +467,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -402,10 +483,13 @@ public interface CassandraEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -415,10 +499,14 @@ public interface CassandraEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -427,10 +515,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -439,10 +530,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
@@ -454,10 +548,13 @@ public interface CassandraEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -468,10 +565,13 @@ public interface CassandraEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -481,10 +581,14 @@ public interface CassandraEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -496,10 +600,13 @@ public interface CassandraEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -512,9 +619,12 @@ public interface CassandraEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -527,9 +637,12 @@ public interface CassandraEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -540,10 +653,13 @@ public interface CassandraEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -553,10 +669,14 @@ public interface CassandraEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -566,13 +686,17 @@ public interface CassandraEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -584,13 +708,16 @@ public interface CassandraEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder schedulerProperties(Map values) {
             doSetMultiValueProperties("schedulerProperties", "scheduler.", values);
@@ -599,10 +726,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -612,10 +742,14 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -625,10 +759,14 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -638,10 +776,13 @@ public interface CassandraEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -651,10 +792,13 @@ public interface CassandraEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -665,10 +809,14 @@ public interface CassandraEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -692,10 +840,13 @@ public interface CassandraEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -709,9 +860,12 @@ public interface CassandraEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -721,9 +875,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -734,9 +892,12 @@ public interface CassandraEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -750,9 +911,12 @@ public interface CassandraEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -766,9 +930,12 @@ public interface CassandraEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -779,10 +946,13 @@ public interface CassandraEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -793,10 +963,14 @@ public interface CassandraEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -817,9 +991,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Cluster name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clusterName the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder clusterName(String clusterName) {
             doSetProperty("clusterName", clusterName);
@@ -829,10 +1006,12 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option is a:
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.DefaultConsistencyLevel&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder consistencyLevel(
                 DefaultConsistencyLevel consistencyLevel) {
@@ -843,10 +1022,12 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.DefaultConsistencyLevel&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder consistencyLevel(
                 String consistencyLevel) {
@@ -857,9 +1038,12 @@ public interface CassandraEndpointBuilderFactory {
          * CQL query to perform. Can be overridden with the message header with
          * key CamelCqlQuery.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cql the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder cql(String cql) {
             doSetProperty("cql", cql);
@@ -868,10 +1052,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Datacenter to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: datacenter1
          * Group: common
+         * 
+         * @param datacenter the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder datacenter(String datacenter) {
             doSetProperty("datacenter", datacenter);
@@ -880,9 +1067,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use a specific LoadBalancingPolicyClass.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loadBalancingPolicyClass the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder loadBalancingPolicyClass(
                 String loadBalancingPolicyClass) {
@@ -892,9 +1082,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Password for session authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -903,10 +1096,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether to use PreparedStatements or regular Statements.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param prepareStatements the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder prepareStatements(
                 boolean prepareStatements) {
@@ -916,10 +1112,14 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether to use PreparedStatements or regular Statements.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param prepareStatements the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder prepareStatements(
                 String prepareStatements) {
@@ -931,9 +1131,12 @@ public interface CassandraEndpointBuilderFactory {
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.cassandra.ResultSetConversionStrategy&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder resultSetConversionStrategy(
                 Object resultSetConversionStrategy) {
@@ -945,9 +1148,12 @@ public interface CassandraEndpointBuilderFactory {
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.cassandra.ResultSetConversionStrategy&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder resultSetConversionStrategy(
                 String resultSetConversionStrategy) {
@@ -958,9 +1164,13 @@ public interface CassandraEndpointBuilderFactory {
          * To use the Session instance (you would normally not use this option).
          * 
          * The option is a:
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.CqlSession&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder session(Object session) {
             doSetProperty("session", session);
@@ -970,9 +1180,13 @@ public interface CassandraEndpointBuilderFactory {
          * To use the Session instance (you would normally not use this option).
          * 
          * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.CqlSession&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder session(String session) {
             doSetProperty("session", session);
@@ -981,9 +1195,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Username for session authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder username(String username) {
             doSetProperty("username", username);
@@ -1000,10 +1217,13 @@ public interface CassandraEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1021,10 +1241,14 @@ public interface CassandraEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1046,10 +1270,13 @@ public interface CassandraEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1060,10 +1287,14 @@ public interface CassandraEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1085,9 +1316,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Cluster name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clusterName the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder clusterName(String clusterName) {
             doSetProperty("clusterName", clusterName);
@@ -1097,10 +1331,12 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option is a:
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.DefaultConsistencyLevel&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder consistencyLevel(
                 DefaultConsistencyLevel consistencyLevel) {
@@ -1111,10 +1347,12 @@ public interface CassandraEndpointBuilderFactory {
          * Consistency level to use.
          * 
          * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.DefaultConsistencyLevel</code>
-         * type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.DefaultConsistencyLevel&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param consistencyLevel the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder consistencyLevel(
                 String consistencyLevel) {
@@ -1125,9 +1363,12 @@ public interface CassandraEndpointBuilderFactory {
          * CQL query to perform. Can be overridden with the message header with
          * key CamelCqlQuery.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cql the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder cql(String cql) {
             doSetProperty("cql", cql);
@@ -1136,10 +1377,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Datacenter to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: datacenter1
          * Group: common
+         * 
+         * @param datacenter the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder datacenter(String datacenter) {
             doSetProperty("datacenter", datacenter);
@@ -1148,9 +1392,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * To use a specific LoadBalancingPolicyClass.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param loadBalancingPolicyClass the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder loadBalancingPolicyClass(
                 String loadBalancingPolicyClass) {
@@ -1160,9 +1407,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Password for session authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -1171,10 +1421,13 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether to use PreparedStatements or regular Statements.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param prepareStatements the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder prepareStatements(
                 boolean prepareStatements) {
@@ -1184,10 +1437,14 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Whether to use PreparedStatements or regular Statements.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param prepareStatements the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder prepareStatements(
                 String prepareStatements) {
@@ -1199,9 +1456,12 @@ public interface CassandraEndpointBuilderFactory {
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.cassandra.ResultSetConversionStrategy&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder resultSetConversionStrategy(
                 Object resultSetConversionStrategy) {
@@ -1213,9 +1473,12 @@ public interface CassandraEndpointBuilderFactory {
          * into message body ALL, ONE, LIMIT_10, LIMIT_100...
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cassandra.ResultSetConversionStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.cassandra.ResultSetConversionStrategy&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultSetConversionStrategy the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder resultSetConversionStrategy(
                 String resultSetConversionStrategy) {
@@ -1226,9 +1489,13 @@ public interface CassandraEndpointBuilderFactory {
          * To use the Session instance (you would normally not use this option).
          * 
          * The option is a:
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.CqlSession&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder session(Object session) {
             doSetProperty("session", session);
@@ -1238,9 +1505,13 @@ public interface CassandraEndpointBuilderFactory {
          * To use the Session instance (you would normally not use this option).
          * 
          * The option will be converted to a
-         * <code>com.datastax.oss.driver.api.core.CqlSession</code> type.
+         * &lt;code&gt;com.datastax.oss.driver.api.core.CqlSession&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param session the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder session(String session) {
             doSetProperty("session", session);
@@ -1249,9 +1520,12 @@ public interface CassandraEndpointBuilderFactory {
         /**
          * Username for session authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default CassandraEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -1273,10 +1547,13 @@ public interface CassandraEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1286,10 +1563,14 @@ public interface CassandraEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCassandraEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

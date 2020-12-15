@@ -46,9 +46,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManager the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder cacheManager(Object cacheManager) {
             doSetProperty("cacheManager", cacheManager);
@@ -58,9 +61,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManager the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder cacheManager(String cacheManager) {
             doSetProperty("cacheManager", cacheManager);
@@ -69,9 +75,13 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager configuration.
          * 
-         * The option is a: <code>org.ehcache.config.Configuration</code> type.
+         * The option is a:
+         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManagerConfiguration the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
@@ -82,9 +92,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager configuration.
          * 
          * The option will be converted to a
-         * <code>org.ehcache.config.Configuration</code> type.
+         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManagerConfiguration the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
@@ -94,9 +107,12 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * URI pointing to the Ehcache XML configuration file's location.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
@@ -107,10 +123,13 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param createCacheIfNotExist the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
@@ -121,10 +140,14 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param createCacheIfNotExist the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
@@ -140,10 +163,13 @@ public interface EhcacheEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -159,10 +185,14 @@ public interface EhcacheEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -172,10 +202,14 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Set the delivery mode (synchronous, asynchronous).
          * 
-         * The option is a: <code>org.ehcache.event.EventFiring</code> type.
+         * The option is a:
+         * &lt;code&gt;org.ehcache.event.EventFiring&lt;/code&gt; type.
          * 
          * Default: ASYNCHRONOUS
          * Group: consumer
+         * 
+         * @param eventFiring the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder eventFiring(
                 EventFiring eventFiring) {
@@ -186,10 +220,13 @@ public interface EhcacheEndpointBuilderFactory {
          * Set the delivery mode (synchronous, asynchronous).
          * 
          * The option will be converted to a
-         * <code>org.ehcache.event.EventFiring</code> type.
+         * &lt;code&gt;org.ehcache.event.EventFiring&lt;/code&gt; type.
          * 
          * Default: ASYNCHRONOUS
          * Group: consumer
+         * 
+         * @param eventFiring the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder eventFiring(String eventFiring) {
             doSetProperty("eventFiring", eventFiring);
@@ -198,10 +235,14 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Set the delivery mode (ordered, unordered).
          * 
-         * The option is a: <code>org.ehcache.event.EventOrdering</code> type.
+         * The option is a:
+         * &lt;code&gt;org.ehcache.event.EventOrdering&lt;/code&gt; type.
          * 
          * Default: ORDERED
          * Group: consumer
+         * 
+         * @param eventOrdering the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(
                 EventOrdering eventOrdering) {
@@ -212,10 +253,13 @@ public interface EhcacheEndpointBuilderFactory {
          * Set the delivery mode (ordered, unordered).
          * 
          * The option will be converted to a
-         * <code>org.ehcache.event.EventOrdering</code> type.
+         * &lt;code&gt;org.ehcache.event.EventOrdering&lt;/code&gt; type.
          * 
          * Default: ORDERED
          * Group: consumer
+         * 
+         * @param eventOrdering the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(
                 String eventOrdering) {
@@ -227,9 +271,12 @@ public interface EhcacheEndpointBuilderFactory {
          * (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED). You can specify multiple
          * entries separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param eventTypes the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointConsumerBuilder eventTypes(String eventTypes) {
             doSetProperty("eventTypes", eventTypes);
@@ -252,10 +299,13 @@ public interface EhcacheEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -269,9 +319,12 @@ public interface EhcacheEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -281,9 +334,13 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -294,9 +351,12 @@ public interface EhcacheEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -307,10 +367,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder configuration(
                 Object configuration) {
@@ -321,10 +383,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder configuration(
                 String configuration) {
@@ -334,10 +398,13 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * A map of cache configuration to be used to create caches.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurations the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder configurations(
                 Map<String, Object> configurations) {
@@ -348,10 +415,13 @@ public interface EhcacheEndpointBuilderFactory {
          * A map of cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&gt;</code> type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurations the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder configurations(
                 String configurations) {
@@ -361,9 +431,12 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param keyType the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder keyType(String keyType) {
             doSetProperty("keyType", keyType);
@@ -373,10 +446,13 @@ public interface EhcacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -387,10 +463,14 @@ public interface EhcacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -400,9 +480,12 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param valueType the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointConsumerBuilder valueType(
                 String valueType) {
@@ -424,9 +507,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManager the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder cacheManager(Object cacheManager) {
             doSetProperty("cacheManager", cacheManager);
@@ -436,9 +522,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManager the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder cacheManager(String cacheManager) {
             doSetProperty("cacheManager", cacheManager);
@@ -447,9 +536,13 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager configuration.
          * 
-         * The option is a: <code>org.ehcache.config.Configuration</code> type.
+         * The option is a:
+         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManagerConfiguration the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
@@ -460,9 +553,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager configuration.
          * 
          * The option will be converted to a
-         * <code>org.ehcache.config.Configuration</code> type.
+         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManagerConfiguration the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
@@ -472,9 +568,12 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * URI pointing to the Ehcache XML configuration file's location.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder configurationUri(
                 String configurationUri) {
@@ -485,10 +584,13 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param createCacheIfNotExist the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
@@ -499,10 +601,14 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param createCacheIfNotExist the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
@@ -513,9 +619,12 @@ public interface EhcacheEndpointBuilderFactory {
          * To configure the default cache action. If an action is set in the
          * message header, then the operation from the header takes precedence.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param action the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder action(String action) {
             doSetProperty("action", action);
@@ -525,9 +634,12 @@ public interface EhcacheEndpointBuilderFactory {
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder key(Object key) {
             doSetProperty("key", key);
@@ -537,9 +649,13 @@ public interface EhcacheEndpointBuilderFactory {
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param key the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder key(String key) {
             doSetProperty("key", key);
@@ -556,10 +672,13 @@ public interface EhcacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -577,10 +696,14 @@ public interface EhcacheEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -602,10 +725,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointProducerBuilder configuration(
                 Object configuration) {
@@ -616,10 +741,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointProducerBuilder configuration(
                 String configuration) {
@@ -629,10 +756,13 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * A map of cache configuration to be used to create caches.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurations the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointProducerBuilder configurations(
                 Map<String, Object> configurations) {
@@ -643,10 +773,13 @@ public interface EhcacheEndpointBuilderFactory {
          * A map of cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&gt;</code> type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurations the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointProducerBuilder configurations(
                 String configurations) {
@@ -656,9 +789,12 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param keyType the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointProducerBuilder keyType(String keyType) {
             doSetProperty("keyType", keyType);
@@ -668,10 +804,13 @@ public interface EhcacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -682,10 +821,14 @@ public interface EhcacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -695,9 +838,12 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param valueType the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointProducerBuilder valueType(
                 String valueType) {
@@ -720,9 +866,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManager the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointBuilder cacheManager(Object cacheManager) {
             doSetProperty("cacheManager", cacheManager);
@@ -732,9 +881,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ehcache.EhcacheManager</code> type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheManager&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManager the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointBuilder cacheManager(String cacheManager) {
             doSetProperty("cacheManager", cacheManager);
@@ -743,9 +895,13 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache manager configuration.
          * 
-         * The option is a: <code>org.ehcache.config.Configuration</code> type.
+         * The option is a:
+         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManagerConfiguration the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
@@ -756,9 +912,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The cache manager configuration.
          * 
          * The option will be converted to a
-         * <code>org.ehcache.config.Configuration</code> type.
+         * &lt;code&gt;org.ehcache.config.Configuration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheManagerConfiguration the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
@@ -768,9 +927,12 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * URI pointing to the Ehcache XML configuration file's location.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointBuilder configurationUri(String configurationUri) {
             doSetProperty("configurationUri", configurationUri);
@@ -780,10 +942,13 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param createCacheIfNotExist the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
@@ -794,10 +959,14 @@ public interface EhcacheEndpointBuilderFactory {
          * Configure if a cache need to be created if it does exist or can't be
          * pre-configured.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param createCacheIfNotExist the value to set
+         * @return the dsl builder
          */
         default EhcacheEndpointBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
@@ -820,10 +989,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointBuilder configuration(
                 Object configuration) {
@@ -834,10 +1005,12 @@ public interface EhcacheEndpointBuilderFactory {
          * The default cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.ehcache.EhcacheConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.ehcache.EhcacheConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointBuilder configuration(
                 String configuration) {
@@ -847,10 +1020,13 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * A map of cache configuration to be used to create caches.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurations the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointBuilder configurations(
                 Map<String, Object> configurations) {
@@ -861,10 +1037,13 @@ public interface EhcacheEndpointBuilderFactory {
          * A map of cache configuration to be used to create caches.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&gt;</code> type.
+         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * org.ehcache.config.CacheConfiguration&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configurations the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointBuilder configurations(
                 String configurations) {
@@ -874,9 +1053,12 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param keyType the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointBuilder keyType(String keyType) {
             doSetProperty("keyType", keyType);
@@ -886,10 +1068,13 @@ public interface EhcacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -899,10 +1084,14 @@ public interface EhcacheEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -911,9 +1100,12 @@ public interface EhcacheEndpointBuilderFactory {
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param valueType the value to set
+         * @return the dsl builder
          */
         default AdvancedEhcacheEndpointBuilder valueType(String valueType) {
             doSetProperty("valueType", valueType);

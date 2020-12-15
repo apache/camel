@@ -45,10 +45,13 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The Wordpress REST API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder apiVersion(String apiVersion) {
             doSetProperty("apiVersion", apiVersion);
@@ -57,13 +60,17 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder criteria(
                 String key,
@@ -74,13 +81,16 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder criteria(Map values) {
             doSetMultiValueProperties("criteria", "criteria.", values);
@@ -89,10 +99,13 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param force the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder force(boolean force) {
             doSetProperty("force", force);
@@ -101,10 +114,14 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param force the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder force(String force) {
             doSetProperty("force", force);
@@ -114,9 +131,12 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param id the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder id(Integer id) {
             doSetProperty("id", id);
@@ -126,10 +146,13 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param id the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder id(String id) {
             doSetProperty("id", id);
@@ -138,9 +161,12 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Password from authorized user.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -150,9 +176,12 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
+         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param searchCriteria the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder searchCriteria(
                 Object searchCriteria) {
@@ -163,9 +192,12 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
+         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param searchCriteria the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder searchCriteria(
                 String searchCriteria) {
@@ -176,10 +208,13 @@ public interface WordpressEndpointBuilderFactory {
          * The Wordpress API URL from your site, e.g.
          * http://myblog.com/wp-json/.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param url the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder url(String url) {
             doSetProperty("url", url);
@@ -188,9 +223,12 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Authorized user to perform writing operations.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder user(String user) {
             doSetProperty("user", user);
@@ -205,10 +243,13 @@ public interface WordpressEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -224,10 +265,14 @@ public interface WordpressEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -251,10 +296,13 @@ public interface WordpressEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedWordpressEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -268,9 +316,12 @@ public interface WordpressEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedWordpressEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -280,9 +331,13 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedWordpressEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -293,9 +348,12 @@ public interface WordpressEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedWordpressEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -306,10 +364,13 @@ public interface WordpressEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWordpressEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -320,10 +381,14 @@ public interface WordpressEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWordpressEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -344,10 +409,13 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The Wordpress REST API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder apiVersion(String apiVersion) {
             doSetProperty("apiVersion", apiVersion);
@@ -356,13 +424,17 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder criteria(
                 String key,
@@ -373,13 +445,16 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder criteria(Map values) {
             doSetMultiValueProperties("criteria", "criteria.", values);
@@ -388,10 +463,13 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param force the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder force(boolean force) {
             doSetProperty("force", force);
@@ -400,10 +478,14 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param force the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder force(String force) {
             doSetProperty("force", force);
@@ -413,9 +495,12 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param id the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder id(Integer id) {
             doSetProperty("id", id);
@@ -425,10 +510,13 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param id the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder id(String id) {
             doSetProperty("id", id);
@@ -437,9 +525,12 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Password from authorized user.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -449,9 +540,12 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
+         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param searchCriteria the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder searchCriteria(
                 Object searchCriteria) {
@@ -462,9 +556,12 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
+         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param searchCriteria the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder searchCriteria(
                 String searchCriteria) {
@@ -475,10 +572,13 @@ public interface WordpressEndpointBuilderFactory {
          * The Wordpress API URL from your site, e.g.
          * http://myblog.com/wp-json/.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param url the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder url(String url) {
             doSetProperty("url", url);
@@ -487,9 +587,12 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Authorized user to perform writing operations.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder user(String user) {
             doSetProperty("user", user);
@@ -506,10 +609,13 @@ public interface WordpressEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -527,10 +633,14 @@ public interface WordpressEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -552,10 +662,13 @@ public interface WordpressEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWordpressEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -566,10 +679,14 @@ public interface WordpressEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWordpressEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -591,10 +708,13 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The Wordpress REST API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder apiVersion(String apiVersion) {
             doSetProperty("apiVersion", apiVersion);
@@ -603,13 +723,17 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder criteria(String key, Object value) {
             doSetMultiValueProperty("criteria", "criteria." + key, value);
@@ -618,13 +742,16 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * The criteria to use with complex searches.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the criteria(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
          * 
          * Group: common
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder criteria(Map values) {
             doSetMultiValueProperties("criteria", "criteria.", values);
@@ -633,10 +760,13 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param force the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder force(boolean force) {
             doSetProperty("force", force);
@@ -645,10 +775,14 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Whether to bypass trash and force deletion.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param force the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder force(String force) {
             doSetProperty("force", force);
@@ -658,9 +792,12 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param id the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder id(Integer id) {
             doSetProperty("id", id);
@@ -670,10 +807,13 @@ public interface WordpressEndpointBuilderFactory {
          * The entity ID. Should be passed when the operation performed requires
          * a specific entity, e.g. deleting a post.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param id the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder id(String id) {
             doSetProperty("id", id);
@@ -682,9 +822,12 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Password from authorized user.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -694,9 +837,12 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
+         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param searchCriteria the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder searchCriteria(Object searchCriteria) {
             doSetProperty("searchCriteria", searchCriteria);
@@ -706,9 +852,12 @@ public interface WordpressEndpointBuilderFactory {
          * Search criteria.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.wordpress.api.model.SearchCriteria</code> type.
+         * &lt;code&gt;org.apache.camel.component.wordpress.api.model.SearchCriteria&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param searchCriteria the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder searchCriteria(String searchCriteria) {
             doSetProperty("searchCriteria", searchCriteria);
@@ -718,10 +867,13 @@ public interface WordpressEndpointBuilderFactory {
          * The Wordpress API URL from your site, e.g.
          * http://myblog.com/wp-json/.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: common
+         * 
+         * @param url the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder url(String url) {
             doSetProperty("url", url);
@@ -730,9 +882,12 @@ public interface WordpressEndpointBuilderFactory {
         /**
          * Authorized user to perform writing operations.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default WordpressEndpointBuilder user(String user) {
             doSetProperty("user", user);
@@ -754,10 +909,13 @@ public interface WordpressEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWordpressEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -767,10 +925,14 @@ public interface WordpressEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedWordpressEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

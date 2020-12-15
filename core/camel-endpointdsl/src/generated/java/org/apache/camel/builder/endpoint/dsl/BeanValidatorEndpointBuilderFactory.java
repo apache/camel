@@ -42,10 +42,13 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * To use a custom validation group.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: javax.validation.groups.Default
          * Group: producer
+         * 
+         * @param group the value to set
+         * @return the dsl builder
          */
         default BeanValidatorEndpointBuilder group(String group) {
             doSetProperty("group", group);
@@ -54,10 +57,13 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * Whether to ignore data from the META-INF/validation.xml file.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param ignoreXmlConfiguration the value to set
+         * @return the dsl builder
          */
         default BeanValidatorEndpointBuilder ignoreXmlConfiguration(
                 boolean ignoreXmlConfiguration) {
@@ -67,10 +73,14 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * Whether to ignore data from the META-INF/validation.xml file.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param ignoreXmlConfiguration the value to set
+         * @return the dsl builder
          */
         default BeanValidatorEndpointBuilder ignoreXmlConfiguration(
                 String ignoreXmlConfiguration) {
@@ -88,10 +98,13 @@ public interface BeanValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BeanValidatorEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -109,10 +122,14 @@ public interface BeanValidatorEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BeanValidatorEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -134,9 +151,13 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom ConstraintValidatorFactory.
          * 
          * The option is a:
-         * <code>javax.validation.ConstraintValidatorFactory</code> type.
+         * &lt;code&gt;javax.validation.ConstraintValidatorFactory&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param constraintValidatorFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder constraintValidatorFactory(
                 Object constraintValidatorFactory) {
@@ -147,9 +168,13 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom ConstraintValidatorFactory.
          * 
          * The option will be converted to a
-         * <code>javax.validation.ConstraintValidatorFactory</code> type.
+         * &lt;code&gt;javax.validation.ConstraintValidatorFactory&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param constraintValidatorFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder constraintValidatorFactory(
                 String constraintValidatorFactory) {
@@ -159,10 +184,13 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * To use a custom MessageInterpolator.
          * 
-         * The option is a: <code>javax.validation.MessageInterpolator</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.validation.MessageInterpolator&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageInterpolator the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder messageInterpolator(
                 Object messageInterpolator) {
@@ -173,9 +201,12 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom MessageInterpolator.
          * 
          * The option will be converted to a
-         * <code>javax.validation.MessageInterpolator</code> type.
+         * &lt;code&gt;javax.validation.MessageInterpolator&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageInterpolator the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder messageInterpolator(
                 String messageInterpolator) {
@@ -186,10 +217,13 @@ public interface BeanValidatorEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -200,10 +234,14 @@ public interface BeanValidatorEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder synchronous(
                 String synchronous) {
@@ -213,10 +251,13 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * To use a custom TraversableResolver.
          * 
-         * The option is a: <code>javax.validation.TraversableResolver</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;javax.validation.TraversableResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param traversableResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder traversableResolver(
                 Object traversableResolver) {
@@ -227,9 +268,12 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom TraversableResolver.
          * 
          * The option will be converted to a
-         * <code>javax.validation.TraversableResolver</code> type.
+         * &lt;code&gt;javax.validation.TraversableResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param traversableResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder traversableResolver(
                 String traversableResolver) {
@@ -240,9 +284,13 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a a custom ValidationProviderResolver.
          * 
          * The option is a:
-         * <code>javax.validation.ValidationProviderResolver</code> type.
+         * &lt;code&gt;javax.validation.ValidationProviderResolver&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param validationProviderResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder validationProviderResolver(
                 Object validationProviderResolver) {
@@ -253,9 +301,13 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a a custom ValidationProviderResolver.
          * 
          * The option will be converted to a
-         * <code>javax.validation.ValidationProviderResolver</code> type.
+         * &lt;code&gt;javax.validation.ValidationProviderResolver&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param validationProviderResolver the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder validationProviderResolver(
                 String validationProviderResolver) {
@@ -265,9 +317,13 @@ public interface BeanValidatorEndpointBuilderFactory {
         /**
          * To use a custom ValidatorFactory.
          * 
-         * The option is a: <code>javax.validation.ValidatorFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.validation.ValidatorFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param validatorFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder validatorFactory(
                 Object validatorFactory) {
@@ -278,9 +334,12 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom ValidatorFactory.
          * 
          * The option will be converted to a
-         * <code>javax.validation.ValidatorFactory</code> type.
+         * &lt;code&gt;javax.validation.ValidatorFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param validatorFactory the value to set
+         * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder validatorFactory(
                 String validatorFactory) {

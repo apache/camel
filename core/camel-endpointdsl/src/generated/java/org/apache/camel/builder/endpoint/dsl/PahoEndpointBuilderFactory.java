@@ -53,10 +53,13 @@ public interface PahoEndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticReconnect the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder automaticReconnect(
                 boolean automaticReconnect) {
@@ -74,10 +77,14 @@ public interface PahoEndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticReconnect the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder automaticReconnect(
                 String automaticReconnect) {
@@ -87,10 +94,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * The URL of the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp://localhost:1883
          * Group: common
+         * 
+         * @param brokerUrl the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder brokerUrl(String brokerUrl) {
             doSetProperty("brokerUrl", brokerUrl);
@@ -109,10 +119,13 @@ public interface PahoEndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cleanSession the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder cleanSession(boolean cleanSession) {
             doSetProperty("cleanSession", cleanSession);
@@ -131,10 +144,14 @@ public interface PahoEndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cleanSession the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder cleanSession(String cleanSession) {
             doSetProperty("cleanSession", cleanSession);
@@ -143,9 +160,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * MQTT client identifier. The identifier must be unique.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -159,10 +179,13 @@ public interface PahoEndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -177,10 +200,13 @@ public interface PahoEndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -191,9 +217,12 @@ public interface PahoEndpointBuilderFactory {
          * Base directory used by file persistence. Will by default use user
          * directory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param filePersistenceDirectory the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
@@ -211,10 +240,13 @@ public interface PahoEndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param keepAliveInterval the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder keepAliveInterval(
                 int keepAliveInterval) {
@@ -232,10 +264,13 @@ public interface PahoEndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param keepAliveInterval the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder keepAliveInterval(
                 String keepAliveInterval) {
@@ -246,10 +281,13 @@ public interface PahoEndpointBuilderFactory {
          * Sets the max inflight. please increase this value in a high traffic
          * environment. The default value is 10.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: common
+         * 
+         * @param maxInflight the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder maxInflight(int maxInflight) {
             doSetProperty("maxInflight", maxInflight);
@@ -259,10 +297,13 @@ public interface PahoEndpointBuilderFactory {
          * Sets the max inflight. please increase this value in a high traffic
          * environment. The default value is 10.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: common
+         * 
+         * @param maxInflight the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder maxInflight(String maxInflight) {
             doSetProperty("maxInflight", maxInflight);
@@ -271,10 +312,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 128000
          * Group: common
+         * 
+         * @param maxReconnectDelay the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder maxReconnectDelay(
                 int maxReconnectDelay) {
@@ -284,10 +328,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 128000
          * Group: common
+         * 
+         * @param maxReconnectDelay the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder maxReconnectDelay(
                 String maxReconnectDelay) {
@@ -300,9 +347,12 @@ public interface PahoEndpointBuilderFactory {
          * can be selected specifically, with no fall back, by using the
          * MQTT_VERSION_3_1_1 or MQTT_VERSION_3_1 options respectively.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder mqttVersion(int mqttVersion) {
             doSetProperty("mqttVersion", mqttVersion);
@@ -314,9 +364,12 @@ public interface PahoEndpointBuilderFactory {
          * can be selected specifically, with no fall back, by using the
          * MQTT_VERSION_3_1_1 or MQTT_VERSION_3_1 options respectively.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder mqttVersion(String mqttVersion) {
             doSetProperty("mqttVersion", mqttVersion);
@@ -326,10 +379,13 @@ public interface PahoEndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
+         * &lt;code&gt;org.apache.camel.component.paho.PahoPersistence&lt;/code&gt; type.
          * 
          * Default: MEMORY
          * Group: common
+         * 
+         * @param persistence the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder persistence(
                 PahoPersistence persistence) {
@@ -340,10 +396,13 @@ public interface PahoEndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
+         * &lt;code&gt;org.apache.camel.component.paho.PahoPersistence&lt;/code&gt; type.
          * 
          * Default: MEMORY
          * Group: common
+         * 
+         * @param persistence the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder persistence(String persistence) {
             doSetProperty("persistence", persistence);
@@ -352,10 +411,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param qos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder qos(int qos) {
             doSetProperty("qos", qos);
@@ -364,10 +426,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param qos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder qos(String qos) {
             doSetProperty("qos", qos);
@@ -376,10 +441,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param retained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder retained(boolean retained) {
             doSetProperty("retained", retained);
@@ -388,10 +456,14 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param retained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder retained(String retained) {
             doSetProperty("retained", retained);
@@ -424,9 +496,12 @@ public interface PahoEndpointBuilderFactory {
          * subscriptions are not valid. The cleansession flag must be set to
          * true if the hunt list mode is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverURIs the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder serverURIs(String serverURIs) {
             doSetProperty("serverURIs", serverURIs);
@@ -440,9 +515,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willPayload the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder willPayload(String willPayload) {
             doSetProperty("willPayload", willPayload);
@@ -456,9 +534,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willQos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder willQos(int willQos) {
             doSetProperty("willQos", willQos);
@@ -472,9 +553,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willQos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder willQos(String willQos) {
             doSetProperty("willQos", willQos);
@@ -488,10 +572,13 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param willRetained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder willRetained(boolean willRetained) {
             doSetProperty("willRetained", willRetained);
@@ -505,10 +592,14 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param willRetained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder willRetained(String willRetained) {
             doSetProperty("willRetained", willRetained);
@@ -522,9 +613,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willTopic the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder willTopic(String willTopic) {
             doSetProperty("willTopic", willTopic);
@@ -539,10 +633,13 @@ public interface PahoEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -558,10 +655,14 @@ public interface PahoEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -572,10 +673,13 @@ public interface PahoEndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param httpsHostnameVerificationEnabled the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder httpsHostnameVerificationEnabled(
                 boolean httpsHostnameVerificationEnabled) {
@@ -586,10 +690,14 @@ public interface PahoEndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param httpsHostnameVerificationEnabled the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder httpsHostnameVerificationEnabled(
                 String httpsHostnameVerificationEnabled) {
@@ -599,9 +707,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Password to be used for authentication against the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder password(String password) {
             doSetProperty("password", password);
@@ -613,9 +724,13 @@ public interface PahoEndpointBuilderFactory {
          * SSL connection, an SSLSocketFactory can be used to supply
          * application-specific security settings.
          * 
-         * The option is a: <code>javax.net.SocketFactory</code> type.
+         * The option is a: &lt;code&gt;javax.net.SocketFactory&lt;/code&gt;
+         * type.
          * 
          * Group: security
+         * 
+         * @param socketFactory the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder socketFactory(Object socketFactory) {
             doSetProperty("socketFactory", socketFactory);
@@ -628,9 +743,12 @@ public interface PahoEndpointBuilderFactory {
          * application-specific security settings.
          * 
          * The option will be converted to a
-         * <code>javax.net.SocketFactory</code> type.
+         * &lt;code&gt;javax.net.SocketFactory&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param socketFactory the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder socketFactory(String socketFactory) {
             doSetProperty("socketFactory", socketFactory);
@@ -677,9 +795,12 @@ public interface PahoEndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslClientProps the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder sslClientProps(
                 Properties sslClientProps) {
@@ -727,10 +848,13 @@ public interface PahoEndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslClientProps the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder sslClientProps(String sslClientProps) {
             doSetProperty("sslClientProps", sslClientProps);
@@ -742,9 +866,13 @@ public interface PahoEndpointBuilderFactory {
          * yourself when hostname is verified error. There is no default
          * HostnameVerifier.
          * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHostnameVerifier the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder sslHostnameVerifier(
                 Object sslHostnameVerifier) {
@@ -758,9 +886,12 @@ public interface PahoEndpointBuilderFactory {
          * HostnameVerifier.
          * 
          * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHostnameVerifier the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder sslHostnameVerifier(
                 String sslHostnameVerifier) {
@@ -770,9 +901,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Username to be used for authentication against the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default PahoEndpointConsumerBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -795,10 +929,13 @@ public interface PahoEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -812,9 +949,12 @@ public interface PahoEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -824,9 +964,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -837,9 +981,12 @@ public interface PahoEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -850,9 +997,13 @@ public interface PahoEndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option is a:
-         * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
+         * &lt;code&gt;org.eclipse.paho.client.mqttv3.MqttClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder client(Object client) {
             doSetProperty("client", client);
@@ -862,9 +1013,13 @@ public interface PahoEndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
+         * &lt;code&gt;org.eclipse.paho.client.mqttv3.MqttClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder client(String client) {
             doSetProperty("client", client);
@@ -873,9 +1028,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param customWebSocketHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder customWebSocketHeaders(
                 Properties customWebSocketHeaders) {
@@ -885,10 +1043,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param customWebSocketHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder customWebSocketHeaders(
                 String customWebSocketHeaders) {
@@ -900,10 +1061,13 @@ public interface PahoEndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: advanced
+         * 
+         * @param executorServiceTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder executorServiceTimeout(
                 int executorServiceTimeout) {
@@ -915,10 +1079,13 @@ public interface PahoEndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: advanced
+         * 
+         * @param executorServiceTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder executorServiceTimeout(
                 String executorServiceTimeout) {
@@ -929,10 +1096,13 @@ public interface PahoEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -943,10 +1113,14 @@ public interface PahoEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -975,10 +1149,13 @@ public interface PahoEndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticReconnect the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder automaticReconnect(
                 boolean automaticReconnect) {
@@ -996,10 +1173,14 @@ public interface PahoEndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticReconnect the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder automaticReconnect(
                 String automaticReconnect) {
@@ -1009,10 +1190,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * The URL of the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp://localhost:1883
          * Group: common
+         * 
+         * @param brokerUrl the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder brokerUrl(String brokerUrl) {
             doSetProperty("brokerUrl", brokerUrl);
@@ -1031,10 +1215,13 @@ public interface PahoEndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cleanSession the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder cleanSession(boolean cleanSession) {
             doSetProperty("cleanSession", cleanSession);
@@ -1053,10 +1240,14 @@ public interface PahoEndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cleanSession the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder cleanSession(String cleanSession) {
             doSetProperty("cleanSession", cleanSession);
@@ -1065,9 +1256,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * MQTT client identifier. The identifier must be unique.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -1081,10 +1275,13 @@ public interface PahoEndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
@@ -1099,10 +1296,13 @@ public interface PahoEndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
@@ -1113,9 +1313,12 @@ public interface PahoEndpointBuilderFactory {
          * Base directory used by file persistence. Will by default use user
          * directory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param filePersistenceDirectory the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
@@ -1133,10 +1336,13 @@ public interface PahoEndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param keepAliveInterval the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder keepAliveInterval(
                 int keepAliveInterval) {
@@ -1154,10 +1360,13 @@ public interface PahoEndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param keepAliveInterval the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder keepAliveInterval(
                 String keepAliveInterval) {
@@ -1168,10 +1377,13 @@ public interface PahoEndpointBuilderFactory {
          * Sets the max inflight. please increase this value in a high traffic
          * environment. The default value is 10.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: common
+         * 
+         * @param maxInflight the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder maxInflight(int maxInflight) {
             doSetProperty("maxInflight", maxInflight);
@@ -1181,10 +1393,13 @@ public interface PahoEndpointBuilderFactory {
          * Sets the max inflight. please increase this value in a high traffic
          * environment. The default value is 10.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: common
+         * 
+         * @param maxInflight the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder maxInflight(String maxInflight) {
             doSetProperty("maxInflight", maxInflight);
@@ -1193,10 +1408,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 128000
          * Group: common
+         * 
+         * @param maxReconnectDelay the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder maxReconnectDelay(
                 int maxReconnectDelay) {
@@ -1206,10 +1424,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 128000
          * Group: common
+         * 
+         * @param maxReconnectDelay the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder maxReconnectDelay(
                 String maxReconnectDelay) {
@@ -1222,9 +1443,12 @@ public interface PahoEndpointBuilderFactory {
          * can be selected specifically, with no fall back, by using the
          * MQTT_VERSION_3_1_1 or MQTT_VERSION_3_1 options respectively.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder mqttVersion(int mqttVersion) {
             doSetProperty("mqttVersion", mqttVersion);
@@ -1236,9 +1460,12 @@ public interface PahoEndpointBuilderFactory {
          * can be selected specifically, with no fall back, by using the
          * MQTT_VERSION_3_1_1 or MQTT_VERSION_3_1 options respectively.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder mqttVersion(String mqttVersion) {
             doSetProperty("mqttVersion", mqttVersion);
@@ -1248,10 +1475,13 @@ public interface PahoEndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
+         * &lt;code&gt;org.apache.camel.component.paho.PahoPersistence&lt;/code&gt; type.
          * 
          * Default: MEMORY
          * Group: common
+         * 
+         * @param persistence the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder persistence(
                 PahoPersistence persistence) {
@@ -1262,10 +1492,13 @@ public interface PahoEndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
+         * &lt;code&gt;org.apache.camel.component.paho.PahoPersistence&lt;/code&gt; type.
          * 
          * Default: MEMORY
          * Group: common
+         * 
+         * @param persistence the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder persistence(String persistence) {
             doSetProperty("persistence", persistence);
@@ -1274,10 +1507,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param qos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder qos(int qos) {
             doSetProperty("qos", qos);
@@ -1286,10 +1522,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param qos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder qos(String qos) {
             doSetProperty("qos", qos);
@@ -1298,10 +1537,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param retained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder retained(boolean retained) {
             doSetProperty("retained", retained);
@@ -1310,10 +1552,14 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param retained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder retained(String retained) {
             doSetProperty("retained", retained);
@@ -1346,9 +1592,12 @@ public interface PahoEndpointBuilderFactory {
          * subscriptions are not valid. The cleansession flag must be set to
          * true if the hunt list mode is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverURIs the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder serverURIs(String serverURIs) {
             doSetProperty("serverURIs", serverURIs);
@@ -1362,9 +1611,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willPayload the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder willPayload(String willPayload) {
             doSetProperty("willPayload", willPayload);
@@ -1378,9 +1630,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willQos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder willQos(int willQos) {
             doSetProperty("willQos", willQos);
@@ -1394,9 +1649,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willQos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder willQos(String willQos) {
             doSetProperty("willQos", willQos);
@@ -1410,10 +1668,13 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param willRetained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder willRetained(boolean willRetained) {
             doSetProperty("willRetained", willRetained);
@@ -1427,10 +1688,14 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param willRetained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder willRetained(String willRetained) {
             doSetProperty("willRetained", willRetained);
@@ -1444,9 +1709,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willTopic the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder willTopic(String willTopic) {
             doSetProperty("willTopic", willTopic);
@@ -1463,10 +1731,13 @@ public interface PahoEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1484,10 +1755,14 @@ public interface PahoEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1498,10 +1773,13 @@ public interface PahoEndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param httpsHostnameVerificationEnabled the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder httpsHostnameVerificationEnabled(
                 boolean httpsHostnameVerificationEnabled) {
@@ -1512,10 +1790,14 @@ public interface PahoEndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param httpsHostnameVerificationEnabled the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder httpsHostnameVerificationEnabled(
                 String httpsHostnameVerificationEnabled) {
@@ -1525,9 +1807,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Password to be used for authentication against the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder password(String password) {
             doSetProperty("password", password);
@@ -1539,9 +1824,13 @@ public interface PahoEndpointBuilderFactory {
          * SSL connection, an SSLSocketFactory can be used to supply
          * application-specific security settings.
          * 
-         * The option is a: <code>javax.net.SocketFactory</code> type.
+         * The option is a: &lt;code&gt;javax.net.SocketFactory&lt;/code&gt;
+         * type.
          * 
          * Group: security
+         * 
+         * @param socketFactory the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder socketFactory(Object socketFactory) {
             doSetProperty("socketFactory", socketFactory);
@@ -1554,9 +1843,12 @@ public interface PahoEndpointBuilderFactory {
          * application-specific security settings.
          * 
          * The option will be converted to a
-         * <code>javax.net.SocketFactory</code> type.
+         * &lt;code&gt;javax.net.SocketFactory&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param socketFactory the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder socketFactory(String socketFactory) {
             doSetProperty("socketFactory", socketFactory);
@@ -1603,9 +1895,12 @@ public interface PahoEndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslClientProps the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder sslClientProps(
                 Properties sslClientProps) {
@@ -1653,10 +1948,13 @@ public interface PahoEndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslClientProps the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder sslClientProps(String sslClientProps) {
             doSetProperty("sslClientProps", sslClientProps);
@@ -1668,9 +1966,13 @@ public interface PahoEndpointBuilderFactory {
          * yourself when hostname is verified error. There is no default
          * HostnameVerifier.
          * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHostnameVerifier the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder sslHostnameVerifier(
                 Object sslHostnameVerifier) {
@@ -1684,9 +1986,12 @@ public interface PahoEndpointBuilderFactory {
          * HostnameVerifier.
          * 
          * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHostnameVerifier the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder sslHostnameVerifier(
                 String sslHostnameVerifier) {
@@ -1696,9 +2001,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Username to be used for authentication against the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default PahoEndpointProducerBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -1719,9 +2027,13 @@ public interface PahoEndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option is a:
-         * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
+         * &lt;code&gt;org.eclipse.paho.client.mqttv3.MqttClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointProducerBuilder client(Object client) {
             doSetProperty("client", client);
@@ -1731,9 +2043,13 @@ public interface PahoEndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
+         * &lt;code&gt;org.eclipse.paho.client.mqttv3.MqttClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointProducerBuilder client(String client) {
             doSetProperty("client", client);
@@ -1742,9 +2058,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param customWebSocketHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointProducerBuilder customWebSocketHeaders(
                 Properties customWebSocketHeaders) {
@@ -1754,10 +2073,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param customWebSocketHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointProducerBuilder customWebSocketHeaders(
                 String customWebSocketHeaders) {
@@ -1769,10 +2091,13 @@ public interface PahoEndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: advanced
+         * 
+         * @param executorServiceTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointProducerBuilder executorServiceTimeout(
                 int executorServiceTimeout) {
@@ -1784,10 +2109,13 @@ public interface PahoEndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: advanced
+         * 
+         * @param executorServiceTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointProducerBuilder executorServiceTimeout(
                 String executorServiceTimeout) {
@@ -1798,10 +2126,13 @@ public interface PahoEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1812,10 +2143,14 @@ public interface PahoEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1845,10 +2180,13 @@ public interface PahoEndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticReconnect the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder automaticReconnect(
                 boolean automaticReconnect) {
@@ -1866,10 +2204,14 @@ public interface PahoEndpointBuilderFactory {
          * until it is at 2 minutes at which point the delay will stay at 2
          * minutes.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param automaticReconnect the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder automaticReconnect(String automaticReconnect) {
             doSetProperty("automaticReconnect", automaticReconnect);
@@ -1878,10 +2220,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * The URL of the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: tcp://localhost:1883
          * Group: common
+         * 
+         * @param brokerUrl the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder brokerUrl(String brokerUrl) {
             doSetProperty("brokerUrl", brokerUrl);
@@ -1900,10 +2245,13 @@ public interface PahoEndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cleanSession the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder cleanSession(boolean cleanSession) {
             doSetProperty("cleanSession", cleanSession);
@@ -1922,10 +2270,14 @@ public interface PahoEndpointBuilderFactory {
          * client, server or connection are restarted The server will treat a
          * subscription as non-durable.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param cleanSession the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder cleanSession(String cleanSession) {
             doSetProperty("cleanSession", cleanSession);
@@ -1934,9 +2286,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * MQTT client identifier. The identifier must be unique.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -1950,10 +2305,13 @@ public interface PahoEndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder connectionTimeout(int connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -1967,10 +2325,13 @@ public interface PahoEndpointBuilderFactory {
          * meaning the client will wait until the network connection is made
          * successfully or fails.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30
          * Group: common
+         * 
+         * @param connectionTimeout the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder connectionTimeout(String connectionTimeout) {
             doSetProperty("connectionTimeout", connectionTimeout);
@@ -1980,9 +2341,12 @@ public interface PahoEndpointBuilderFactory {
          * Base directory used by file persistence. Will by default use user
          * directory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param filePersistenceDirectory the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder filePersistenceDirectory(
                 String filePersistenceDirectory) {
@@ -2000,10 +2364,13 @@ public interface PahoEndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param keepAliveInterval the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder keepAliveInterval(int keepAliveInterval) {
             doSetProperty("keepAliveInterval", keepAliveInterval);
@@ -2020,10 +2387,13 @@ public interface PahoEndpointBuilderFactory {
          * server will acknowledge. A value of 0 disables keepalive processing
          * in the client. The default value is 60 seconds.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param keepAliveInterval the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder keepAliveInterval(String keepAliveInterval) {
             doSetProperty("keepAliveInterval", keepAliveInterval);
@@ -2033,10 +2403,13 @@ public interface PahoEndpointBuilderFactory {
          * Sets the max inflight. please increase this value in a high traffic
          * environment. The default value is 10.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: common
+         * 
+         * @param maxInflight the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder maxInflight(int maxInflight) {
             doSetProperty("maxInflight", maxInflight);
@@ -2046,10 +2419,13 @@ public interface PahoEndpointBuilderFactory {
          * Sets the max inflight. please increase this value in a high traffic
          * environment. The default value is 10.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10
          * Group: common
+         * 
+         * @param maxInflight the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder maxInflight(String maxInflight) {
             doSetProperty("maxInflight", maxInflight);
@@ -2058,10 +2434,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 128000
          * Group: common
+         * 
+         * @param maxReconnectDelay the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder maxReconnectDelay(int maxReconnectDelay) {
             doSetProperty("maxReconnectDelay", maxReconnectDelay);
@@ -2070,10 +2449,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Get the maximum time (in millis) to wait between reconnects.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 128000
          * Group: common
+         * 
+         * @param maxReconnectDelay the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder maxReconnectDelay(String maxReconnectDelay) {
             doSetProperty("maxReconnectDelay", maxReconnectDelay);
@@ -2085,9 +2467,12 @@ public interface PahoEndpointBuilderFactory {
          * can be selected specifically, with no fall back, by using the
          * MQTT_VERSION_3_1_1 or MQTT_VERSION_3_1 options respectively.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder mqttVersion(int mqttVersion) {
             doSetProperty("mqttVersion", mqttVersion);
@@ -2099,9 +2484,12 @@ public interface PahoEndpointBuilderFactory {
          * can be selected specifically, with no fall back, by using the
          * MQTT_VERSION_3_1_1 or MQTT_VERSION_3_1 options respectively.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mqttVersion the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder mqttVersion(String mqttVersion) {
             doSetProperty("mqttVersion", mqttVersion);
@@ -2111,10 +2499,13 @@ public interface PahoEndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
+         * &lt;code&gt;org.apache.camel.component.paho.PahoPersistence&lt;/code&gt; type.
          * 
          * Default: MEMORY
          * Group: common
+         * 
+         * @param persistence the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder persistence(PahoPersistence persistence) {
             doSetProperty("persistence", persistence);
@@ -2124,10 +2515,13 @@ public interface PahoEndpointBuilderFactory {
          * Client persistence to be used - memory or file.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
+         * &lt;code&gt;org.apache.camel.component.paho.PahoPersistence&lt;/code&gt; type.
          * 
          * Default: MEMORY
          * Group: common
+         * 
+         * @param persistence the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder persistence(String persistence) {
             doSetProperty("persistence", persistence);
@@ -2136,10 +2530,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param qos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder qos(int qos) {
             doSetProperty("qos", qos);
@@ -2148,10 +2545,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Client quality of service level (0-2).
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2
          * Group: common
+         * 
+         * @param qos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder qos(String qos) {
             doSetProperty("qos", qos);
@@ -2160,10 +2560,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param retained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder retained(boolean retained) {
             doSetProperty("retained", retained);
@@ -2172,10 +2575,14 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Retain option.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param retained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder retained(String retained) {
             doSetProperty("retained", retained);
@@ -2208,9 +2615,12 @@ public interface PahoEndpointBuilderFactory {
          * subscriptions are not valid. The cleansession flag must be set to
          * true if the hunt list mode is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverURIs the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder serverURIs(String serverURIs) {
             doSetProperty("serverURIs", serverURIs);
@@ -2224,9 +2634,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willPayload the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder willPayload(String willPayload) {
             doSetProperty("willPayload", willPayload);
@@ -2240,9 +2653,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willQos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder willQos(int willQos) {
             doSetProperty("willQos", willQos);
@@ -2256,9 +2672,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willQos the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder willQos(String willQos) {
             doSetProperty("willQos", willQos);
@@ -2272,10 +2691,13 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param willRetained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder willRetained(boolean willRetained) {
             doSetProperty("willRetained", willRetained);
@@ -2289,10 +2711,14 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param willRetained the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder willRetained(String willRetained) {
             doSetProperty("willRetained", willRetained);
@@ -2306,9 +2732,12 @@ public interface PahoEndpointBuilderFactory {
          * message. The quality of service to publish the message at (0, 1 or
          * 2). Whether or not the message should be retained.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param willTopic the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder willTopic(String willTopic) {
             doSetProperty("willTopic", willTopic);
@@ -2318,10 +2747,13 @@ public interface PahoEndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param httpsHostnameVerificationEnabled the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder httpsHostnameVerificationEnabled(
                 boolean httpsHostnameVerificationEnabled) {
@@ -2332,10 +2764,14 @@ public interface PahoEndpointBuilderFactory {
          * Whether SSL HostnameVerifier is enabled or not. The default value is
          * true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param httpsHostnameVerificationEnabled the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder httpsHostnameVerificationEnabled(
                 String httpsHostnameVerificationEnabled) {
@@ -2345,9 +2781,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Password to be used for authentication against the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -2359,9 +2798,13 @@ public interface PahoEndpointBuilderFactory {
          * SSL connection, an SSLSocketFactory can be used to supply
          * application-specific security settings.
          * 
-         * The option is a: <code>javax.net.SocketFactory</code> type.
+         * The option is a: &lt;code&gt;javax.net.SocketFactory&lt;/code&gt;
+         * type.
          * 
          * Group: security
+         * 
+         * @param socketFactory the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder socketFactory(Object socketFactory) {
             doSetProperty("socketFactory", socketFactory);
@@ -2374,9 +2817,12 @@ public interface PahoEndpointBuilderFactory {
          * application-specific security settings.
          * 
          * The option will be converted to a
-         * <code>javax.net.SocketFactory</code> type.
+         * &lt;code&gt;javax.net.SocketFactory&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param socketFactory the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder socketFactory(String socketFactory) {
             doSetProperty("socketFactory", socketFactory);
@@ -2423,9 +2869,12 @@ public interface PahoEndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslClientProps the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder sslClientProps(Properties sslClientProps) {
             doSetProperty("sslClientProps", sslClientProps);
@@ -2472,10 +2921,13 @@ public interface PahoEndpointBuilderFactory {
          * default algorithm available in the platform. Example values: PKIX or
          * IBMJ9X509.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslClientProps the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder sslClientProps(String sslClientProps) {
             doSetProperty("sslClientProps", sslClientProps);
@@ -2487,9 +2939,13 @@ public interface PahoEndpointBuilderFactory {
          * yourself when hostname is verified error. There is no default
          * HostnameVerifier.
          * 
-         * The option is a: <code>javax.net.ssl.HostnameVerifier</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHostnameVerifier the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder sslHostnameVerifier(
                 Object sslHostnameVerifier) {
@@ -2503,9 +2959,12 @@ public interface PahoEndpointBuilderFactory {
          * HostnameVerifier.
          * 
          * The option will be converted to a
-         * <code>javax.net.ssl.HostnameVerifier</code> type.
+         * &lt;code&gt;javax.net.ssl.HostnameVerifier&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHostnameVerifier the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder sslHostnameVerifier(
                 String sslHostnameVerifier) {
@@ -2515,9 +2974,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Username to be used for authentication against the MQTT broker.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default PahoEndpointBuilder userName(String userName) {
             doSetProperty("userName", userName);
@@ -2539,9 +3001,13 @@ public interface PahoEndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option is a:
-         * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
+         * &lt;code&gt;org.eclipse.paho.client.mqttv3.MqttClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointBuilder client(Object client) {
             doSetProperty("client", client);
@@ -2551,9 +3017,13 @@ public interface PahoEndpointBuilderFactory {
          * To use an existing mqtt client.
          * 
          * The option will be converted to a
-         * <code>org.eclipse.paho.client.mqttv3.MqttClient</code> type.
+         * &lt;code&gt;org.eclipse.paho.client.mqttv3.MqttClient&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param client the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointBuilder client(String client) {
             doSetProperty("client", client);
@@ -2562,9 +3032,12 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param customWebSocketHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointBuilder customWebSocketHeaders(
                 Properties customWebSocketHeaders) {
@@ -2574,10 +3047,13 @@ public interface PahoEndpointBuilderFactory {
         /**
          * Sets the Custom WebSocket Headers for the WebSocket Connection.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Properties&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param customWebSocketHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointBuilder customWebSocketHeaders(
                 String customWebSocketHeaders) {
@@ -2589,10 +3065,13 @@ public interface PahoEndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: advanced
+         * 
+         * @param executorServiceTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointBuilder executorServiceTimeout(
                 int executorServiceTimeout) {
@@ -2604,10 +3083,13 @@ public interface PahoEndpointBuilderFactory {
          * terminating before forcefully terminating. It is not recommended to
          * change this value unless you are absolutely sure that you need to.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: advanced
+         * 
+         * @param executorServiceTimeout the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointBuilder executorServiceTimeout(
                 String executorServiceTimeout) {
@@ -2618,10 +3100,13 @@ public interface PahoEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -2631,10 +3116,14 @@ public interface PahoEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedPahoEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

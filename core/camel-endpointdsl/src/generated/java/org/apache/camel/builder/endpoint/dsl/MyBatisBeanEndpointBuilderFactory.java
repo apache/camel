@@ -45,11 +45,14 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * executor does nothing special. reuse - executor reuses prepared
          * statements. batch - executor reuses statements and batches updates.
          * 
-         * The option is a: <code>org.apache.ibatis.session.ExecutorType</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.ibatis.session.ExecutorType&lt;/code&gt; type.
          * 
          * Default: SIMPLE
          * Group: producer
+         * 
+         * @param executorType the value to set
+         * @return the dsl builder
          */
         default MyBatisBeanEndpointBuilder executorType(
                 ExecutorType executorType) {
@@ -62,10 +65,13 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * statements. batch - executor reuses statements and batches updates.
          * 
          * The option will be converted to a
-         * <code>org.apache.ibatis.session.ExecutorType</code> type.
+         * &lt;code&gt;org.apache.ibatis.session.ExecutorType&lt;/code&gt; type.
          * 
          * Default: SIMPLE
          * Group: producer
+         * 
+         * @param executorType the value to set
+         * @return the dsl builder
          */
         default MyBatisBeanEndpointBuilder executorType(String executorType) {
             doSetProperty("executorType", executorType);
@@ -78,9 +84,12 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * used and query parameters will be taken from the header instead of
          * the body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param inputHeader the value to set
+         * @return the dsl builder
          */
         default MyBatisBeanEndpointBuilder inputHeader(String inputHeader) {
             doSetProperty("inputHeader", inputHeader);
@@ -97,10 +106,13 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MyBatisBeanEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -118,10 +130,14 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MyBatisBeanEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -138,9 +154,12 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * CamelMyBatisResult header since it would be the same as outputHeader
          * all the time.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputHeader the value to set
+         * @return the dsl builder
          */
         default MyBatisBeanEndpointBuilder outputHeader(String outputHeader) {
             doSetProperty("outputHeader", outputHeader);
@@ -161,10 +180,13 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisBeanEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -175,10 +197,14 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedMyBatisBeanEndpointBuilder synchronous(
                 String synchronous) {

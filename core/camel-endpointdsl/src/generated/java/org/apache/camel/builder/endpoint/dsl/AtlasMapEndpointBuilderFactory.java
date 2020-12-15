@@ -44,10 +44,13 @@ public interface AtlasMapEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder allowContextMapAll(
                 boolean allowContextMapAll) {
@@ -61,10 +64,14 @@ public interface AtlasMapEndpointBuilderFactory {
          * CamelContext. Doing so impose a potential security risk as this opens
          * access to the full power of CamelContext API.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param allowContextMapAll the value to set
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder allowContextMapAll(
                 String allowContextMapAll) {
@@ -74,10 +81,13 @@ public interface AtlasMapEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder contentCache(boolean contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -86,10 +96,14 @@ public interface AtlasMapEndpointBuilderFactory {
         /**
          * Sets whether to use resource content cache or not.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param contentCache the value to set
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder contentCache(String contentCache) {
             doSetProperty("contentCache", contentCache);
@@ -106,10 +120,13 @@ public interface AtlasMapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -127,10 +144,14 @@ public interface AtlasMapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -139,14 +160,17 @@ public interface AtlasMapEndpointBuilderFactory {
         }
         /**
          * The Exchange property name for a source message map which hold
-         * java.util.Map&amp;lt;String, Message&amp;gt; where the key is
+         * java.util.Map&amp;amp;lt;String, Message&amp;amp;gt; where the key is
          * AtlasMap Document ID. AtlasMap consumes Message bodies as source
          * documents, as well as message headers as source properties where the
          * scope equals to Document ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sourceMapName the value to set
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder sourceMapName(String sourceMapName) {
             doSetProperty("sourceMapName", sourceMapName);
@@ -161,10 +185,13 @@ public interface AtlasMapEndpointBuilderFactory {
          * properties. ).
          * 
          * The option is a:
-         * <code>org.apache.camel.component.atlasmap.AtlasMapEndpoint$TargetMapMode</code> type.
+         * &lt;code&gt;org.apache.camel.component.atlasmap.AtlasMapEndpoint$TargetMapMode&lt;/code&gt; type.
          * 
          * Default: MAP
          * Group: producer
+         * 
+         * @param targetMapMode the value to set
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder targetMapMode(
                 TargetMapMode targetMapMode) {
@@ -180,10 +207,13 @@ public interface AtlasMapEndpointBuilderFactory {
          * properties. ).
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.atlasmap.AtlasMapEndpoint$TargetMapMode</code> type.
+         * &lt;code&gt;org.apache.camel.component.atlasmap.AtlasMapEndpoint$TargetMapMode&lt;/code&gt; type.
          * 
          * Default: MAP
          * Group: producer
+         * 
+         * @param targetMapMode the value to set
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder targetMapMode(String targetMapMode) {
             doSetProperty("targetMapMode", targetMapMode);
@@ -191,13 +221,16 @@ public interface AtlasMapEndpointBuilderFactory {
         }
         /**
          * The Exchange property name for a target document map which hold
-         * java.util.Map&amp;lt;String, Object&amp;gt; where the key is AtlasMap
-         * Document ID. AtlasMap populates multiple target documents into this
-         * map.
+         * java.util.Map&amp;amp;lt;String, Object&amp;amp;gt; where the key is
+         * AtlasMap Document ID. AtlasMap populates multiple target documents
+         * into this map.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param targetMapName the value to set
+         * @return the dsl builder
          */
         default AtlasMapEndpointBuilder targetMapName(String targetMapName) {
             doSetProperty("targetMapName", targetMapName);
@@ -218,9 +251,12 @@ public interface AtlasMapEndpointBuilderFactory {
          * The URI of the properties file which is used for AtlasContextFactory
          * initialization.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param propertiesFile the value to set
+         * @return the dsl builder
          */
         default AdvancedAtlasMapEndpointBuilder propertiesFile(
                 String propertiesFile) {
@@ -231,10 +267,13 @@ public interface AtlasMapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtlasMapEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -244,10 +283,14 @@ public interface AtlasMapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedAtlasMapEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

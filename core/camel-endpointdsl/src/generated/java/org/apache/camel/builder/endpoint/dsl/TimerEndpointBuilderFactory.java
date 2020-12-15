@@ -50,10 +50,13 @@ public interface TimerEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -69,10 +72,14 @@ public interface TimerEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -82,10 +89,13 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Delay before first event is triggered.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1s
          * Group: consumer
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -94,10 +104,13 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Delay before first event is triggered.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1s
          * Group: consumer
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -107,10 +120,13 @@ public interface TimerEndpointBuilderFactory {
          * Events take place at approximately regular intervals, separated by
          * the specified period.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param fixedRate the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder fixedRate(boolean fixedRate) {
             doSetProperty("fixedRate", fixedRate);
@@ -120,10 +136,14 @@ public interface TimerEndpointBuilderFactory {
          * Events take place at approximately regular intervals, separated by
          * the specified period.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param fixedRate the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder fixedRate(String fixedRate) {
             doSetProperty("fixedRate", fixedRate);
@@ -133,10 +153,13 @@ public interface TimerEndpointBuilderFactory {
          * Whether to include metadata in the exchange such as fired time, timer
          * name, timer count etc. This information is default included.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param includeMetadata the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder includeMetadata(boolean includeMetadata) {
             doSetProperty("includeMetadata", includeMetadata);
@@ -146,10 +169,14 @@ public interface TimerEndpointBuilderFactory {
          * Whether to include metadata in the exchange such as fired time, timer
          * name, timer count etc. This information is default included.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param includeMetadata the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder includeMetadata(String includeMetadata) {
             doSetProperty("includeMetadata", includeMetadata);
@@ -158,10 +185,13 @@ public interface TimerEndpointBuilderFactory {
         /**
          * If greater than 0, generate periodic events every period.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1s
          * Group: consumer
+         * 
+         * @param period the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder period(long period) {
             doSetProperty("period", period);
@@ -170,10 +200,13 @@ public interface TimerEndpointBuilderFactory {
         /**
          * If greater than 0, generate periodic events every period.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1s
          * Group: consumer
+         * 
+         * @param period the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder period(String period) {
             doSetProperty("period", period);
@@ -184,10 +217,13 @@ public interface TimerEndpointBuilderFactory {
          * the timer will only fire once. If you set it to 5, it will only fire
          * five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder repeatCount(long repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -198,10 +234,13 @@ public interface TimerEndpointBuilderFactory {
          * the timer will only fire once. If you set it to 5, it will only fire
          * five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: consumer
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default TimerEndpointBuilder repeatCount(String repeatCount) {
             doSetProperty("repeatCount", repeatCount);
@@ -224,10 +263,13 @@ public interface TimerEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -241,9 +283,12 @@ public interface TimerEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -253,9 +298,13 @@ public interface TimerEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -266,9 +315,12 @@ public interface TimerEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -279,10 +331,13 @@ public interface TimerEndpointBuilderFactory {
          * Specifies whether or not the thread associated with the timer
          * endpoint runs as a daemon. The default value is true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param daemon the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder daemon(boolean daemon) {
             doSetProperty("daemon", daemon);
@@ -292,10 +347,14 @@ public interface TimerEndpointBuilderFactory {
          * Specifies whether or not the thread associated with the timer
          * endpoint runs as a daemon. The default value is true.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param daemon the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder daemon(String daemon) {
             doSetProperty("daemon", daemon);
@@ -305,9 +364,12 @@ public interface TimerEndpointBuilderFactory {
          * Allows you to specify a custom Date pattern to use for setting the
          * time option using URI syntax.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param pattern the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder pattern(String pattern) {
             doSetProperty("pattern", pattern);
@@ -317,10 +379,13 @@ public interface TimerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -330,10 +395,14 @@ public interface TimerEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -344,9 +413,12 @@ public interface TimerEndpointBuilderFactory {
          * URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or
          * yyyy-MM-dd'T'HH:mm:ss.
          * 
-         * The option is a: <code>java.util.Date</code> type.
+         * The option is a: &lt;code&gt;java.util.Date&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param time the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder time(Date time) {
             doSetProperty("time", time);
@@ -357,9 +429,13 @@ public interface TimerEndpointBuilderFactory {
          * URI, the pattern expected is: yyyy-MM-dd HH:mm:ss or
          * yyyy-MM-dd'T'HH:mm:ss.
          * 
-         * The option will be converted to a <code>java.util.Date</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Date&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param time the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder time(String time) {
             doSetProperty("time", time);
@@ -368,9 +444,12 @@ public interface TimerEndpointBuilderFactory {
         /**
          * To use a custom Timer.
          * 
-         * The option is a: <code>java.util.Timer</code> type.
+         * The option is a: &lt;code&gt;java.util.Timer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param timer the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder timer(Timer timer) {
             doSetProperty("timer", timer);
@@ -379,9 +458,13 @@ public interface TimerEndpointBuilderFactory {
         /**
          * To use a custom Timer.
          * 
-         * The option will be converted to a <code>java.util.Timer</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Timer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param timer the value to set
+         * @return the dsl builder
          */
         default AdvancedTimerEndpointBuilder timer(String timer) {
             doSetProperty("timer", timer);

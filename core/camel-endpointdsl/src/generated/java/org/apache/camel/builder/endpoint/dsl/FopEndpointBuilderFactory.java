@@ -41,9 +41,13 @@ public interface FopEndpointBuilderFactory {
          * Allows to use a custom configured or implementation of
          * org.apache.fop.apps.FopFactory.
          * 
-         * The option is a: <code>org.apache.fop.apps.FopFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.fop.apps.FopFactory&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param fopFactory the value to set
+         * @return the dsl builder
          */
         default FopEndpointBuilder fopFactory(Object fopFactory) {
             doSetProperty("fopFactory", fopFactory);
@@ -54,9 +58,12 @@ public interface FopEndpointBuilderFactory {
          * org.apache.fop.apps.FopFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.fop.apps.FopFactory</code> type.
+         * &lt;code&gt;org.apache.fop.apps.FopFactory&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param fopFactory the value to set
+         * @return the dsl builder
          */
         default FopEndpointBuilder fopFactory(String fopFactory) {
             doSetProperty("fopFactory", fopFactory);
@@ -73,10 +80,13 @@ public interface FopEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FopEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -93,10 +103,14 @@ public interface FopEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default FopEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -106,9 +120,12 @@ public interface FopEndpointBuilderFactory {
          * The location of a configuration file which can be loaded from
          * classpath or file system.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param userConfigURL the value to set
+         * @return the dsl builder
          */
         default FopEndpointBuilder userConfigURL(String userConfigURL) {
             doSetProperty("userConfigURL", userConfigURL);
@@ -129,10 +146,13 @@ public interface FopEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFopEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -142,10 +162,14 @@ public interface FopEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedFopEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

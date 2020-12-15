@@ -42,9 +42,12 @@ public interface CwEndpointBuilderFactory {
          * To use the AmazonCloudWatch as the client.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.cloudwatch.AmazonCloudWatch</code> type.
+         * &lt;code&gt;com.amazonaws.services.cloudwatch.AmazonCloudWatch&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonCwClient the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder amazonCwClient(Object amazonCwClient) {
             doSetProperty("amazonCwClient", amazonCwClient);
@@ -54,9 +57,12 @@ public interface CwEndpointBuilderFactory {
          * To use the AmazonCloudWatch as the client.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.cloudwatch.AmazonCloudWatch</code> type.
+         * &lt;code&gt;com.amazonaws.services.cloudwatch.AmazonCloudWatch&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonCwClient the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder amazonCwClient(String amazonCwClient) {
             doSetProperty("amazonCwClient", amazonCwClient);
@@ -67,10 +73,13 @@ public interface CwEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder autoDiscoverClient(boolean autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -81,10 +90,14 @@ public interface CwEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder autoDiscoverClient(String autoDiscoverClient) {
             doSetProperty("autoDiscoverClient", autoDiscoverClient);
@@ -101,10 +114,13 @@ public interface CwEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -121,10 +137,14 @@ public interface CwEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder lazyStartProducer(String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -133,9 +153,12 @@ public interface CwEndpointBuilderFactory {
         /**
          * The metric name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param name the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder name(String name) {
             doSetProperty("name", name);
@@ -144,9 +167,12 @@ public interface CwEndpointBuilderFactory {
         /**
          * To define a proxy host when instantiating the CW client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -155,9 +181,12 @@ public interface CwEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the CW client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -166,10 +195,13 @@ public interface CwEndpointBuilderFactory {
         /**
          * To define a proxy port when instantiating the CW client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -178,10 +210,14 @@ public interface CwEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the CW client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -190,11 +226,14 @@ public interface CwEndpointBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the CW client.
          * 
-         * The option will be converted to a <code>com.amazonaws.Protocol</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder proxyProtocol(String proxyProtocol) {
             doSetProperty("proxyProtocol", proxyProtocol);
@@ -206,9 +245,12 @@ public interface CwEndpointBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -217,9 +259,12 @@ public interface CwEndpointBuilderFactory {
         /**
          * The metric timestamp.
          * 
-         * The option is a: <code>java.util.Date</code> type.
+         * The option is a: &lt;code&gt;java.util.Date&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timestamp the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder timestamp(Date timestamp) {
             doSetProperty("timestamp", timestamp);
@@ -228,9 +273,13 @@ public interface CwEndpointBuilderFactory {
         /**
          * The metric timestamp.
          * 
-         * The option will be converted to a <code>java.util.Date</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.util.Date&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param timestamp the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder timestamp(String timestamp) {
             doSetProperty("timestamp", timestamp);
@@ -239,9 +288,12 @@ public interface CwEndpointBuilderFactory {
         /**
          * The metric unit.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param unit the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder unit(String unit) {
             doSetProperty("unit", unit);
@@ -250,9 +302,12 @@ public interface CwEndpointBuilderFactory {
         /**
          * The metric value.
          * 
-         * The option is a: <code>java.lang.Double</code> type.
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder value(Double value) {
             doSetProperty("value", value);
@@ -261,9 +316,13 @@ public interface CwEndpointBuilderFactory {
         /**
          * The metric value.
          * 
-         * The option will be converted to a <code>java.lang.Double</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param value the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder value(String value) {
             doSetProperty("value", value);
@@ -272,9 +331,12 @@ public interface CwEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -283,9 +345,12 @@ public interface CwEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default CwEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -306,10 +371,13 @@ public interface CwEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCwEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -319,10 +387,14 @@ public interface CwEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedCwEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

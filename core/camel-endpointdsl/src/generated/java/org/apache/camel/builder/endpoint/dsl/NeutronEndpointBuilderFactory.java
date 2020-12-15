@@ -40,10 +40,13 @@ public interface NeutronEndpointBuilderFactory {
         /**
          * OpenStack API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: V3
          * Group: producer
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder apiVersion(String apiVersion) {
             doSetProperty("apiVersion", apiVersion);
@@ -52,10 +55,13 @@ public interface NeutronEndpointBuilderFactory {
         /**
          * OpenStack configuration.
          * 
-         * The option is a: <code>org.openstack4j.core.transport.Config</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.openstack4j.core.transport.Config&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param config the value to set
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder config(Object config) {
             doSetProperty("config", config);
@@ -65,9 +71,12 @@ public interface NeutronEndpointBuilderFactory {
          * OpenStack configuration.
          * 
          * The option will be converted to a
-         * <code>org.openstack4j.core.transport.Config</code> type.
+         * &lt;code&gt;org.openstack4j.core.transport.Config&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param config the value to set
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder config(String config) {
             doSetProperty("config", config);
@@ -76,10 +85,13 @@ public interface NeutronEndpointBuilderFactory {
         /**
          * Authentication domain.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: default
          * Group: producer
+         * 
+         * @param domain the value to set
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder domain(String domain) {
             doSetProperty("domain", domain);
@@ -96,10 +108,13 @@ public interface NeutronEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -117,10 +132,14 @@ public interface NeutronEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -130,9 +149,12 @@ public interface NeutronEndpointBuilderFactory {
         /**
          * The operation to do.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -141,10 +163,13 @@ public interface NeutronEndpointBuilderFactory {
         /**
          * OpenStack password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -153,10 +178,13 @@ public interface NeutronEndpointBuilderFactory {
         /**
          * The project ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param project the value to set
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder project(String project) {
             doSetProperty("project", project);
@@ -165,10 +193,13 @@ public interface NeutronEndpointBuilderFactory {
         /**
          * OpenStack Neutron subsystem.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param subsystem the value to set
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder subsystem(String subsystem) {
             doSetProperty("subsystem", subsystem);
@@ -177,10 +208,13 @@ public interface NeutronEndpointBuilderFactory {
         /**
          * OpenStack username.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Required: true
          * Group: producer
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder username(String username) {
             doSetProperty("username", username);
@@ -201,10 +235,13 @@ public interface NeutronEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNeutronEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -214,10 +251,14 @@ public interface NeutronEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedNeutronEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

@@ -44,9 +44,12 @@ public interface ArangoDbEndpointBuilderFactory {
          * database collections (SAVE_DOCUMENT , FIND_DOCUMENT_BY_KEY,
          * UPDATE_DOCUMENT, DELETE_DOCUMENT).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param documentCollection the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder documentCollection(
                 String documentCollection) {
@@ -59,9 +62,12 @@ public interface ArangoDbEndpointBuilderFactory {
          * these operations : SAVE_VERTEX, FIND_VERTEX_BY_KEY, UPDATE_VERTEX,
          * DELETE_VERTEX. The graph attribute is mandatory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param edgeCollection the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder edgeCollection(String edgeCollection) {
             doSetProperty("edgeCollection", edgeCollection);
@@ -72,9 +78,12 @@ public interface ArangoDbEndpointBuilderFactory {
          * attribute with one of the two attributes vertexCollection and
          * edgeCollection.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param graph the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder graph(String graph) {
             doSetProperty("graph", graph);
@@ -83,9 +92,12 @@ public interface ArangoDbEndpointBuilderFactory {
         /**
          * ArangoDB host. If host and port are default, this field is Optional.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder host(String host) {
             doSetProperty("host", host);
@@ -102,10 +114,13 @@ public interface ArangoDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -123,10 +138,14 @@ public interface ArangoDbEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -138,10 +157,12 @@ public interface ArangoDbEndpointBuilderFactory {
          * need to specify a collection or graph.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.arangodb.ArangoDbOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.arangodb.ArangoDbOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder operation(ArangoDbOperation operation) {
             doSetProperty("operation", operation);
@@ -152,10 +173,12 @@ public interface ArangoDbEndpointBuilderFactory {
          * need to specify a collection or graph.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.arangodb.ArangoDbOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.arangodb.ArangoDbOperation&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
@@ -165,9 +188,12 @@ public interface ArangoDbEndpointBuilderFactory {
          * ArangoDB exposed port. If host and port are default, this field is
          * Optional.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder port(int port) {
             doSetProperty("port", port);
@@ -177,9 +203,12 @@ public interface ArangoDbEndpointBuilderFactory {
          * ArangoDB exposed port. If host and port are default, this field is
          * Optional.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder port(String port) {
             doSetProperty("port", port);
@@ -191,9 +220,12 @@ public interface ArangoDbEndpointBuilderFactory {
          * using these operations : SAVE_EDGE, FIND_EDGE_BY_KEY, UPDATE_EDGE,
          * DELETE_EDGE. The graph attribute is mandatory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param vertexCollection the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder vertexCollection(String vertexCollection) {
             doSetProperty("vertexCollection", vertexCollection);
@@ -203,9 +235,12 @@ public interface ArangoDbEndpointBuilderFactory {
          * ArangoDB password. If user and password are default, this field is
          * Optional.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder password(String password) {
             doSetProperty("password", password);
@@ -215,9 +250,12 @@ public interface ArangoDbEndpointBuilderFactory {
          * ArangoDB user. If user and password are default, this field is
          * Optional.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder user(String user) {
             doSetProperty("user", user);
@@ -238,10 +276,13 @@ public interface ArangoDbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedArangoDbEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -251,10 +292,14 @@ public interface ArangoDbEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedArangoDbEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);

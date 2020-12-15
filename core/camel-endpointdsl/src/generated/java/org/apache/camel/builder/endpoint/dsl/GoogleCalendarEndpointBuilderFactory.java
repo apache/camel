@@ -50,9 +50,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Google calendar application name. Example would be
          * camel-google-calendar/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder applicationName(
                 String applicationName) {
@@ -62,9 +65,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Client ID of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -73,9 +79,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * The emailAddress of the Google Service Account.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param emailAddress the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder emailAddress(
                 String emailAddress) {
@@ -85,9 +94,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -97,9 +109,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param p12FileName the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder p12FileName(
                 String p12FileName) {
@@ -112,10 +127,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://www.googleapis.com/auth/calendar
          * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
@@ -125,9 +143,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The email address of the user the application is trying to
          * impersonate in the service account flow.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder user(String user) {
             doSetProperty("user", user);
@@ -142,10 +163,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -161,10 +185,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -175,10 +203,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -189,10 +220,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -203,9 +238,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -216,9 +254,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -229,9 +270,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -242,9 +286,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -259,9 +306,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -276,9 +326,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -288,10 +341,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -300,10 +356,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -313,10 +372,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -326,10 +388,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -338,10 +404,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder initialDelay(
                 long initialDelay) {
@@ -351,10 +420,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
@@ -366,10 +438,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder repeatCount(
                 long repeatCount) {
@@ -381,10 +456,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder repeatCount(
                 String repeatCount) {
@@ -395,10 +473,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -410,10 +492,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -426,9 +511,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -441,9 +529,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -454,10 +545,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -467,10 +561,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -480,13 +578,17 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -498,13 +600,16 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder schedulerProperties(
                 Map values) {
@@ -514,10 +619,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -527,10 +635,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -540,10 +652,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -553,10 +669,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -566,10 +685,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -580,10 +702,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -594,9 +720,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder accessToken(
                 String accessToken) {
@@ -606,9 +735,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Client secret of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
@@ -620,9 +752,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
@@ -647,10 +782,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -664,9 +802,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -676,9 +817,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -689,9 +834,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -705,9 +853,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -721,9 +872,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -734,10 +888,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -748,10 +905,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -773,9 +934,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Google calendar application name. Example would be
          * camel-google-calendar/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder applicationName(
                 String applicationName) {
@@ -785,9 +949,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Client ID of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -796,9 +963,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * The emailAddress of the Google Service Account.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param emailAddress the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder emailAddress(
                 String emailAddress) {
@@ -808,9 +978,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -820,9 +993,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param p12FileName the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder p12FileName(
                 String p12FileName) {
@@ -835,10 +1011,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://www.googleapis.com/auth/calendar
          * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
@@ -848,9 +1027,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The email address of the user the application is trying to
          * impersonate in the service account flow.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder user(String user) {
             doSetProperty("user", user);
@@ -867,10 +1049,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -888,10 +1073,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -902,9 +1091,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder accessToken(
                 String accessToken) {
@@ -914,9 +1106,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Client secret of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder clientSecret(
                 String clientSecret) {
@@ -928,9 +1123,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointProducerBuilder refreshToken(
                 String refreshToken) {
@@ -953,10 +1151,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -967,10 +1168,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -993,9 +1198,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Google calendar application name. Example would be
          * camel-google-calendar/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointBuilder applicationName(
                 String applicationName) {
@@ -1005,9 +1213,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Client ID of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointBuilder clientId(String clientId) {
             doSetProperty("clientId", clientId);
@@ -1016,9 +1227,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * The emailAddress of the Google Service Account.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param emailAddress the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointBuilder emailAddress(String emailAddress) {
             doSetProperty("emailAddress", emailAddress);
@@ -1027,9 +1241,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param inBody the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
@@ -1039,9 +1256,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param p12FileName the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointBuilder p12FileName(String p12FileName) {
             doSetProperty("p12FileName", p12FileName);
@@ -1053,10 +1273,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://www.googleapis.com/auth/calendar
          * Group: common
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
@@ -1066,9 +1289,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * The email address of the user the application is trying to
          * impersonate in the service account flow.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param user the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointBuilder user(String user) {
             doSetProperty("user", user);
@@ -1078,9 +1304,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -1089,9 +1318,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
         /**
          * Client secret of the calendar application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointBuilder clientSecret(String clientSecret) {
             doSetProperty("clientSecret", clientSecret);
@@ -1102,9 +1334,12 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleCalendarEndpointBuilder refreshToken(String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
@@ -1126,10 +1361,13 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1140,10 +1378,14 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedGoogleCalendarEndpointBuilder synchronous(
                 String synchronous) {

@@ -55,10 +55,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -74,10 +77,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -88,10 +95,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
@@ -102,10 +112,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendEmptyMessageWhenIdle the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
@@ -116,11 +130,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Endpoint type to use.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.twitter.data.EndpointType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.twitter.data.EndpointType&lt;/code&gt; type.
          * 
          * Default: polling
          * Group: consumer
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder type(EndpointType type) {
             doSetProperty("type", type);
@@ -130,11 +146,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Endpoint type to use.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.twitter.data.EndpointType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.twitter.data.EndpointType&lt;/code&gt; type.
          * 
          * Default: polling
          * Group: consumer
+         * 
+         * @param type the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder type(String type) {
             doSetProperty("type", type);
@@ -143,10 +161,13 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Limiting number of results per page.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: filter
+         * 
+         * @param count the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder count(Integer count) {
             doSetProperty("count", count);
@@ -155,11 +176,14 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Limiting number of results per page.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 5
          * Group: filter
+         * 
+         * @param count the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder count(String count) {
             doSetProperty("count", count);
@@ -169,10 +193,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Filter out old tweets, that has previously been polled. This state is
          * stored in memory only, and based on last tweet id.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param filterOld the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder filterOld(boolean filterOld) {
             doSetProperty("filterOld", filterOld);
@@ -182,10 +209,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Filter out old tweets, that has previously been polled. This state is
          * stored in memory only, and based on last tweet id.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: filter
+         * 
+         * @param filterOld the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder filterOld(String filterOld) {
             doSetProperty("filterOld", filterOld);
@@ -194,9 +225,12 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * The lang string ISO_639-1 which will be used for searching.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param lang the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder lang(String lang) {
             doSetProperty("lang", lang);
@@ -205,10 +239,13 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * The number of pages result which you want camel-twitter to consume.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: filter
+         * 
+         * @param numberOfPages the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder numberOfPages(
                 Integer numberOfPages) {
@@ -218,11 +255,14 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * The number of pages result which you want camel-twitter to consume.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: filter
+         * 
+         * @param numberOfPages the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder numberOfPages(
                 String numberOfPages) {
@@ -233,10 +273,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The last tweet id which will be used for pulling the tweets. It is
          * useful when the camel route is restarted after a long running.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: filter
+         * 
+         * @param sinceId the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder sinceId(long sinceId) {
             doSetProperty("sinceId", sinceId);
@@ -246,10 +289,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The last tweet id which will be used for pulling the tweets. It is
          * useful when the camel route is restarted after a long running.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: filter
+         * 
+         * @param sinceId the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder sinceId(String sinceId) {
             doSetProperty("sinceId", sinceId);
@@ -259,9 +305,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * To filter by user ids for filter. Multiple values can be separated by
          * comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: filter
+         * 
+         * @param userIds the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder userIds(String userIds) {
             doSetProperty("userIds", userIds);
@@ -271,9 +320,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy host which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyHost(
                 String httpProxyHost) {
@@ -284,9 +336,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy password which can be used for the camel-twitter. Can
          * also be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -297,9 +352,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyPort(
                 Integer httpProxyPort) {
@@ -310,10 +368,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyPort(
                 String httpProxyPort) {
@@ -324,9 +385,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy user which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUser the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder httpProxyUser(
                 String httpProxyUser) {
@@ -337,9 +401,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
@@ -350,9 +417,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The number of subsequent error polls (failed due some error) that
          * should happen before the backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffErrorThreshold the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
@@ -363,9 +433,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
@@ -376,9 +449,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The number of subsequent idle polls that should happen before the
          * backoffMultipler should kick-in.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffIdleThreshold the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
@@ -393,9 +469,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
@@ -410,9 +489,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * backoffIdleThreshold and/or backoffErrorThreshold must also be
          * configured.
          * 
-         * The option will be converted to a <code>int</code> type.
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param backoffMultiplier the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
@@ -422,10 +504,13 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -434,10 +519,13 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Milliseconds before the next poll.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: scheduler
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder delay(String delay) {
             doSetProperty("delay", delay);
@@ -447,10 +535,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder greedy(boolean greedy) {
             doSetProperty("greedy", greedy);
@@ -460,10 +551,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * If greedy is enabled, then the ScheduledPollConsumer will run
          * immediately again, if the previous run polled 1 or more messages.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: scheduler
+         * 
+         * @param greedy the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder greedy(String greedy) {
             doSetProperty("greedy", greedy);
@@ -472,10 +567,13 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder initialDelay(
                 long initialDelay) {
@@ -485,10 +583,13 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Milliseconds before the first poll starts.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: scheduler
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
@@ -500,10 +601,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder repeatCount(
                 long repeatCount) {
@@ -515,10 +619,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * the scheduler will only fire once. If you set it to 5, it will only
          * fire five times. A value of zero or negative means fire forever.
          * 
-         * The option will be converted to a <code>long</code> type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: scheduler
+         * 
+         * @param repeatCount the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder repeatCount(
                 String repeatCount) {
@@ -529,10 +636,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The consumer logs a start/complete log line when it polls. This
          * option allows you to configure the logging level for that.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
@@ -544,10 +655,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * option allows you to configure the logging level for that.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.LoggingLevel</code> type.
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: TRACE
          * Group: scheduler
+         * 
+         * @param runLoggingLevel the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
@@ -560,9 +674,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * pool.
          * 
          * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
@@ -575,9 +692,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * pool.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * &lt;code&gt;java.util.concurrent.ScheduledExecutorService&lt;/code&gt; type.
          * 
          * Group: scheduler
+         * 
+         * @param scheduledExecutorService the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
@@ -588,10 +708,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder scheduler(Object scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -601,10 +724,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * To use a cron scheduler from either camel-spring or camel-quartz
          * component. Use value spring or quartz for built in scheduler.
          * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Default: none
          * Group: scheduler
+         * 
+         * @param scheduler the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder scheduler(String scheduler) {
             doSetProperty("scheduler", scheduler);
@@ -614,13 +741,17 @@ public interface TwitterSearchEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder schedulerProperties(
                 String key,
@@ -632,13 +763,16 @@ public interface TwitterSearchEndpointBuilderFactory {
          * To configure additional properties when using a custom scheduler or
          * any of the Quartz, Spring based scheduler.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * schedulerProperties(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: scheduler
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder schedulerProperties(
                 Map values) {
@@ -648,10 +782,13 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
@@ -661,10 +798,14 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Whether the scheduler should be auto started.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param startScheduler the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
@@ -674,10 +815,14 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Time unit for initialDelay and delay options.
          * 
-         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * The option is a:
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -687,10 +832,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Time unit for initialDelay and delay options.
          * 
          * The option will be converted to a
-         * <code>java.util.concurrent.TimeUnit</code> type.
+         * &lt;code&gt;java.util.concurrent.TimeUnit&lt;/code&gt; type.
          * 
          * Default: MILLISECONDS
          * Group: scheduler
+         * 
+         * @param timeUnit the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder timeUnit(String timeUnit) {
             doSetProperty("timeUnit", timeUnit);
@@ -700,10 +848,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
@@ -714,10 +865,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Controls if fixed delay or fixed rate is used. See
          * ScheduledExecutorService in JDK for details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: scheduler
+         * 
+         * @param useFixedDelay the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
@@ -728,9 +883,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The access token. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder accessToken(
                 String accessToken) {
@@ -741,9 +899,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The access secret. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessTokenSecret the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder accessTokenSecret(
                 String accessTokenSecret) {
@@ -754,9 +915,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The consumer key. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param consumerKey the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder consumerKey(
                 String consumerKey) {
@@ -767,9 +931,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The consumer secret. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param consumerSecret the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder consumerSecret(
                 String consumerSecret) {
@@ -779,10 +946,13 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Sorts by id, so the oldest are first, and newest last.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: sort
+         * 
+         * @param sortById the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder sortById(boolean sortById) {
             doSetProperty("sortById", sortById);
@@ -791,10 +961,14 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Sorts by id, so the oldest are first, and newest last.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: sort
+         * 
+         * @param sortById the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointConsumerBuilder sortById(String sortById) {
             doSetProperty("sortById", sortById);
@@ -817,10 +991,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * kilometers. You need to configure all the following options:
          * longitude, latitude, radius, and distanceMetric.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: km
          * Group: consumer (advanced)
+         * 
+         * @param distanceMetric the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder distanceMetric(
                 String distanceMetric) {
@@ -833,10 +1010,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -850,9 +1030,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -862,9 +1045,13 @@ public interface TwitterSearchEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -875,9 +1062,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -888,10 +1078,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Used for enabling full text from twitter (eg receive tweets that
          * contains more than 140 characters).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param extendedMode the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder extendedMode(
                 boolean extendedMode) {
@@ -902,10 +1095,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Used for enabling full text from twitter (eg receive tweets that
          * contains more than 140 characters).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param extendedMode the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder extendedMode(
                 String extendedMode) {
@@ -917,9 +1114,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * configure all the following options: longitude, latitude, radius, and
          * distanceMetric.
          * 
-         * The option is a: <code>java.lang.Double</code> type.
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param latitude the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder latitude(
                 Double latitude) {
@@ -931,9 +1131,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * configure all the following options: longitude, latitude, radius, and
          * distanceMetric.
          * 
-         * The option will be converted to a <code>java.lang.Double</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param latitude the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder latitude(
                 String latitude) {
@@ -945,9 +1149,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * A pair is defined as lat,lon. And multiple paris can be separated by
          * semi colon.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param locations the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder locations(
                 String locations) {
@@ -959,9 +1166,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * configure all the following options: longitude, latitude, radius, and
          * distanceMetric.
          * 
-         * The option is a: <code>java.lang.Double</code> type.
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param longitude the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder longitude(
                 Double longitude) {
@@ -973,9 +1183,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * configure all the following options: longitude, latitude, radius, and
          * distanceMetric.
          * 
-         * The option will be converted to a <code>java.lang.Double</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param longitude the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder longitude(
                 String longitude) {
@@ -989,9 +1203,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
@@ -1005,9 +1222,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * been created and being routed in Camel.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.PollingConsumerPollStrategy&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param pollStrategy the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
@@ -1019,9 +1239,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * configure all the following options: longitude, latitude, radius, and
          * distanceMetric.
          * 
-         * The option is a: <code>java.lang.Double</code> type.
+         * The option is a: &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param radius the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder radius(
                 Double radius) {
@@ -1033,9 +1256,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * configure all the following options: longitude, latitude, radius, and
          * distanceMetric.
          * 
-         * The option will be converted to a <code>java.lang.Double</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Double&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param radius the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder radius(
                 String radius) {
@@ -1046,10 +1273,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -1060,10 +1290,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -1092,10 +1326,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -1113,10 +1350,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -1127,9 +1368,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy host which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointProducerBuilder httpProxyHost(
                 String httpProxyHost) {
@@ -1140,9 +1384,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy password which can be used for the camel-twitter. Can
          * also be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -1153,9 +1400,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointProducerBuilder httpProxyPort(
                 Integer httpProxyPort) {
@@ -1166,10 +1416,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointProducerBuilder httpProxyPort(
                 String httpProxyPort) {
@@ -1180,9 +1433,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy user which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUser the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointProducerBuilder httpProxyUser(
                 String httpProxyUser) {
@@ -1193,9 +1449,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The access token. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointProducerBuilder accessToken(
                 String accessToken) {
@@ -1206,9 +1465,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The access secret. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessTokenSecret the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointProducerBuilder accessTokenSecret(
                 String accessTokenSecret) {
@@ -1219,9 +1481,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The consumer key. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param consumerKey the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointProducerBuilder consumerKey(
                 String consumerKey) {
@@ -1232,9 +1497,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The consumer secret. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param consumerSecret the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointProducerBuilder consumerSecret(
                 String consumerSecret) {
@@ -1256,10 +1524,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -1270,10 +1541,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -1296,9 +1571,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy host which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointBuilder httpProxyHost(String httpProxyHost) {
             doSetProperty("httpProxyHost", httpProxyHost);
@@ -1308,9 +1586,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy password which can be used for the camel-twitter. Can
          * also be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
@@ -1321,9 +1602,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointBuilder httpProxyPort(Integer httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -1333,10 +1617,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy port which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointBuilder httpProxyPort(String httpProxyPort) {
             doSetProperty("httpProxyPort", httpProxyPort);
@@ -1346,9 +1633,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The http proxy user which can be used for the camel-twitter. Can also
          * be configured on the TwitterComponent level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyUser the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointBuilder httpProxyUser(String httpProxyUser) {
             doSetProperty("httpProxyUser", httpProxyUser);
@@ -1358,9 +1648,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The access token. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointBuilder accessToken(String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -1370,9 +1663,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The access secret. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessTokenSecret the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointBuilder accessTokenSecret(
                 String accessTokenSecret) {
@@ -1383,9 +1679,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The consumer key. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param consumerKey the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointBuilder consumerKey(String consumerKey) {
             doSetProperty("consumerKey", consumerKey);
@@ -1395,9 +1694,12 @@ public interface TwitterSearchEndpointBuilderFactory {
          * The consumer secret. Can also be configured on the TwitterComponent
          * level instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param consumerSecret the value to set
+         * @return the dsl builder
          */
         default TwitterSearchEndpointBuilder consumerSecret(
                 String consumerSecret) {
@@ -1420,10 +1722,13 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -1434,10 +1739,14 @@ public interface TwitterSearchEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedTwitterSearchEndpointBuilder synchronous(
                 String synchronous) {

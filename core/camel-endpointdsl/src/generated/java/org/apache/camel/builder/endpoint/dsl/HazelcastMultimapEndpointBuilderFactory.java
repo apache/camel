@@ -46,10 +46,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -61,10 +63,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
@@ -75,10 +79,13 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -90,9 +97,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.hazelcast.core.HazelcastInstance</code> type.
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -104,9 +114,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstanceName the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -122,10 +135,13 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -141,10 +157,14 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -169,10 +189,13 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -186,9 +209,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -198,9 +224,13 @@ public interface HazelcastMultimapEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -211,9 +241,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
@@ -224,10 +257,13 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
@@ -238,10 +274,14 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder synchronous(
                 String synchronous) {
@@ -264,10 +304,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -279,10 +321,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
@@ -293,10 +337,13 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -308,9 +355,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.hazelcast.core.HazelcastInstance</code> type.
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -322,9 +372,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstanceName the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -342,10 +395,13 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -363,10 +419,14 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -389,10 +449,13 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastMultimapEndpointProducerBuilder synchronous(
                 boolean synchronous) {
@@ -403,10 +466,14 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastMultimapEndpointProducerBuilder synchronous(
                 String synchronous) {
@@ -430,10 +497,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * been provided.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
@@ -445,10 +514,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * been provided.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.HazelcastOperation</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.hazelcast.HazelcastOperation&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultOperation the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointBuilder defaultOperation(
                 String defaultOperation) {
@@ -459,10 +530,13 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The hazelcast instance reference which can be used for hazelcast
          * endpoint.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
@@ -474,9 +548,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.hazelcast.core.HazelcastInstance</code> type.
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
@@ -488,9 +565,12 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param hazelcastInstanceName the value to set
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
@@ -513,10 +593,13 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastMultimapEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -527,10 +610,14 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedHazelcastMultimapEndpointBuilder synchronous(
                 String synchronous) {

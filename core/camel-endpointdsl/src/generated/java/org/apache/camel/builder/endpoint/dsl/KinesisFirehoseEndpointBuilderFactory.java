@@ -44,9 +44,12 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * endpoint.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose</code> type.
+         * &lt;code&gt;com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonKinesisFirehoseClient the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
                 Object amazonKinesisFirehoseClient) {
@@ -58,9 +61,12 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * endpoint.
          * 
          * The option will be converted to a
-         * <code>com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose</code> type.
+         * &lt;code&gt;com.amazonaws.services.kinesisfirehose.AmazonKinesisFirehose&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonKinesisFirehoseClient the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder amazonKinesisFirehoseClient(
                 String amazonKinesisFirehoseClient) {
@@ -72,10 +78,13 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -87,10 +96,14 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder autoDiscoverClient(
                 String autoDiscoverClient) {
@@ -108,10 +121,13 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -129,10 +145,14 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder lazyStartProducer(
                 String lazyStartProducer) {
@@ -143,9 +163,12 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * To define a proxy host when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder proxyHost(String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -155,9 +178,12 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * To define a proxy port when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder proxyPort(Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -167,10 +193,13 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * To define a proxy port when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -180,10 +209,14 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * To define a proxy protocol when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder proxyProtocol(
                 Protocol proxyProtocol) {
@@ -194,11 +227,14 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * To define a proxy protocol when instantiating the Kinesis Firehose
          * client.
          * 
-         * The option will be converted to a <code>com.amazonaws.Protocol</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder proxyProtocol(
                 String proxyProtocol) {
@@ -211,9 +247,12 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * region (for example AP_EAST_1)You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder region(String region) {
             doSetProperty("region", region);
@@ -222,9 +261,12 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder accessKey(String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -233,9 +275,12 @@ public interface KinesisFirehoseEndpointBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default KinesisFirehoseEndpointBuilder secretKey(String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -256,10 +301,13 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesisFirehoseEndpointBuilder synchronous(
                 boolean synchronous) {
@@ -270,10 +318,14 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedKinesisFirehoseEndpointBuilder synchronous(
                 String synchronous) {

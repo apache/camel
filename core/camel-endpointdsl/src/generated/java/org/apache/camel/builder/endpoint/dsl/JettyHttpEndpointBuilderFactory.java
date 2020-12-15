@@ -46,10 +46,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder chunked(boolean chunked) {
             doSetProperty("chunked", chunked);
@@ -59,10 +62,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * If this option is false the Servlet will disable the HTTP streaming
          * and set the content-length header on the response.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder chunked(String chunked) {
             doSetProperty("chunked", chunked);
@@ -86,10 +93,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
@@ -114,10 +124,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * not cache the response body stream but use the response stream as-is
          * as the message body.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disableStreamCache the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
@@ -129,9 +143,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
@@ -143,9 +161,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * Camel message.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
@@ -155,10 +177,13 @@ public interface JettyHttpEndpointBuilderFactory {
         /**
          * Configure the consumer to work in async mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder async(boolean async) {
             doSetProperty("async", async);
@@ -167,10 +192,14 @@ public interface JettyHttpEndpointBuilderFactory {
         /**
          * Configure the consumer to work in async mode.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param async the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder async(String async) {
             doSetProperty("async", async);
@@ -185,10 +214,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -204,10 +236,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
@@ -222,10 +258,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * option is only in use when using Jetty with the Asynchronous Routing
          * Engine.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: consumer
+         * 
+         * @param continuationTimeout the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder continuationTimeout(
                 Long continuationTimeout) {
@@ -240,10 +279,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * option is only in use when using Jetty with the Asynchronous Routing
          * Engine.
          * 
-         * The option will be converted to a <code>java.lang.Long</code> type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: consumer
+         * 
+         * @param continuationTimeout the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder continuationTimeout(
                 String continuationTimeout) {
@@ -254,10 +297,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * If the option is true, Jetty server will setup the CrossOriginFilter
          * which supports the CORS out of box.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param enableCORS the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder enableCORS(boolean enableCORS) {
             doSetProperty("enableCORS", enableCORS);
@@ -267,10 +313,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * If the option is true, Jetty server will setup the CrossOriginFilter
          * which supports the CORS out of box.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param enableCORS the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder enableCORS(String enableCORS) {
             doSetProperty("enableCORS", enableCORS);
@@ -280,10 +330,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * If this option is true, Jetty JMX support will be enabled for this
          * endpoint. See Jetty JMX support for more details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param enableJmx the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder enableJmx(boolean enableJmx) {
             doSetProperty("enableJmx", enableJmx);
@@ -293,10 +346,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * If this option is true, Jetty JMX support will be enabled for this
          * endpoint. See Jetty JMX support for more details.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param enableJmx the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder enableJmx(String enableJmx) {
             doSetProperty("enableJmx", enableJmx);
@@ -307,10 +364,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * or not. You should set this value to false when bridging endpoints,
          * to ensure multipart requests is proxied/bridged as well.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param enableMultipartFilter the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder enableMultipartFilter(
                 boolean enableMultipartFilter) {
@@ -322,10 +382,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * or not. You should set this value to false when bridging endpoints,
          * to ensure multipart requests is proxied/bridged as well.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param enableMultipartFilter the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder enableMultipartFilter(
                 String enableMultipartFilter) {
@@ -337,9 +401,12 @@ public interface JettyHttpEndpointBuilderFactory {
          * GET/POST/PUT etc. Multiple methods can be specified separated by
          * comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param httpMethodRestrict the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
@@ -350,10 +417,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param matchOnUriPrefix the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder matchOnUriPrefix(
                 boolean matchOnUriPrefix) {
@@ -364,10 +434,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * Whether or not the consumer should try to find a target consumer by
          * matching the URI prefix if no exact match is found.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param matchOnUriPrefix the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
@@ -378,10 +452,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder muteException(boolean muteException) {
             doSetProperty("muteException", muteException);
@@ -391,10 +468,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * If enabled and an Exchange failed processing on the consumer side the
          * response's body won't contain the exception's stack trace.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param muteException the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder muteException(String muteException) {
             doSetProperty("muteException", muteException);
@@ -403,9 +484,12 @@ public interface JettyHttpEndpointBuilderFactory {
         /**
          * To use a custom buffer size on the javax.servlet.ServletResponse.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param responseBufferSize the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder responseBufferSize(
                 Integer responseBufferSize) {
@@ -415,10 +499,13 @@ public interface JettyHttpEndpointBuilderFactory {
         /**
          * To use a custom buffer size on the javax.servlet.ServletResponse.
          * 
-         * The option will be converted to a <code>java.lang.Integer</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param responseBufferSize the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder responseBufferSize(
                 String responseBufferSize) {
@@ -431,10 +518,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * other camel-jetty endpoint is share the same port, otherwise this
          * option may not work as expected.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendDateHeader the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder sendDateHeader(boolean sendDateHeader) {
             doSetProperty("sendDateHeader", sendDateHeader);
@@ -446,10 +536,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * other camel-jetty endpoint is share the same port, otherwise this
          * option may not work as expected.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sendDateHeader the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder sendDateHeader(String sendDateHeader) {
             doSetProperty("sendDateHeader", sendDateHeader);
@@ -461,10 +555,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * please make sure there is no any other camel-jetty endpoint is share
          * the same port, otherwise this option may not work as expected.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param sendServerVersion the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder sendServerVersion(
                 boolean sendServerVersion) {
@@ -477,10 +574,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * please make sure there is no any other camel-jetty endpoint is share
          * the same port, otherwise this option may not work as expected.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param sendServerVersion the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder sendServerVersion(
                 String sendServerVersion) {
@@ -491,10 +592,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * Specifies whether to enable the session manager on the server side of
          * Jetty.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sessionSupport the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder sessionSupport(boolean sessionSupport) {
             doSetProperty("sessionSupport", sessionSupport);
@@ -504,10 +608,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * Specifies whether to enable the session manager on the server side of
          * Jetty.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param sessionSupport the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder sessionSupport(String sessionSupport) {
             doSetProperty("sessionSupport", sessionSupport);
@@ -524,10 +632,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder transferException(
                 boolean transferException) {
@@ -545,10 +656,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * data from the request to Java and that can be a potential security
          * risk.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder transferException(
                 String transferException) {
@@ -558,9 +673,12 @@ public interface JettyHttpEndpointBuilderFactory {
         /**
          * Whether or not to use Jetty continuations for the Jetty Server.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param useContinuation the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder useContinuation(boolean useContinuation) {
             doSetProperty("useContinuation", useContinuation);
@@ -569,9 +687,13 @@ public interface JettyHttpEndpointBuilderFactory {
         /**
          * Whether or not to use Jetty continuations for the Jetty Server.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param useContinuation the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder useContinuation(String useContinuation) {
             doSetProperty("useContinuation", useContinuation);
@@ -581,9 +703,12 @@ public interface JettyHttpEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
@@ -594,9 +719,12 @@ public interface JettyHttpEndpointBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default JettyHttpEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
@@ -619,9 +747,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * message and HttpClient.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
+         * type.
          * 
          * Group: common (advanced)
+         * 
+         * @param httpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder httpBinding(Object httpBinding) {
             doSetProperty("httpBinding", httpBinding);
@@ -632,9 +764,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * message and HttpClient.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.http.common.HttpBinding</code> type.
+         * &lt;code&gt;org.apache.camel.http.common.HttpBinding&lt;/code&gt;
+         * type.
          * 
          * Group: common (advanced)
+         * 
+         * @param httpBinding the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder httpBinding(String httpBinding) {
             doSetProperty("httpBinding", httpBinding);
@@ -645,10 +781,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * content-length header is 0 or not present. This can be turned on in
          * case HTTP clients do not send streamed data.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param eagerCheckContentAvailable the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder eagerCheckContentAvailable(
                 boolean eagerCheckContentAvailable) {
@@ -660,10 +799,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * content-length header is 0 or not present. This can be turned on in
          * case HTTP clients do not send streamed data.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param eagerCheckContentAvailable the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder eagerCheckContentAvailable(
                 String eagerCheckContentAvailable) {
@@ -676,10 +819,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * By default the consumer will deal with exceptions, that will be
          * logged at WARN or ERROR level and ignored.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
@@ -693,9 +839,12 @@ public interface JettyHttpEndpointBuilderFactory {
          * logged at WARN or ERROR level and ignored.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * &lt;code&gt;org.apache.camel.spi.ExceptionHandler&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exceptionHandler the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder exceptionHandler(
                 String exceptionHandler) {
@@ -705,9 +854,13 @@ public interface JettyHttpEndpointBuilderFactory {
         /**
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
-         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
@@ -718,9 +871,12 @@ public interface JettyHttpEndpointBuilderFactory {
          * Sets the exchange pattern when the consumer creates an exchange.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.ExchangePattern</code> type.
+         * &lt;code&gt;org.apache.camel.ExchangePattern&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param exchangePattern the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder exchangePattern(
                 String exchangePattern) {
@@ -731,13 +887,17 @@ public interface JettyHttpEndpointBuilderFactory {
          * Configuration of the filter init parameters. These parameters will be
          * applied to the filter list before starting the jetty server.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * filterInitParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: consumer (advanced)
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder filterInitParameters(
                 String key,
@@ -749,13 +909,16 @@ public interface JettyHttpEndpointBuilderFactory {
          * Configuration of the filter init parameters. These parameters will be
          * applied to the filter list before starting the jetty server.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * The option is multivalued, and you can use the
          * filterInitParameters(String, Object) method to add a value (call the
          * method multiple times to set more values).
          * 
          * Group: consumer (advanced)
+         * 
+         * @param values the values
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder filterInitParameters(Map values) {
             doSetMultiValueProperties("filterInitParameters", "filter.", values);
@@ -766,9 +929,12 @@ public interface JettyHttpEndpointBuilderFactory {
          * find in the Registry. Multiple values can be separated by comma.
          * 
          * The option is a:
-         * <code>java.util.List&lt;javax.servlet.Filter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.servlet.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder filters(List<Object> filters) {
             doSetProperty("filters", filters);
@@ -779,9 +945,12 @@ public interface JettyHttpEndpointBuilderFactory {
          * find in the Registry. Multiple values can be separated by comma.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;javax.servlet.Filter&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.servlet.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param filters the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder filters(String filters) {
             doSetProperty("filters", filters);
@@ -796,10 +965,12 @@ public interface JettyHttpEndpointBuilderFactory {
          * handlers, then use different port numbers.
          * 
          * The option is a:
-         * <code>java.util.List&lt;org.eclipse.jetty.server.Handler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;org.eclipse.jetty.server.Handler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param handlers the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder handlers(List<Object> handlers) {
             doSetProperty("handlers", handlers);
@@ -814,10 +985,12 @@ public interface JettyHttpEndpointBuilderFactory {
          * handlers, then use different port numbers.
          * 
          * The option will be converted to a
-         * <code>java.util.List&lt;org.eclipse.jetty.server.Handler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;org.eclipse.jetty.server.Handler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param handlers the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder handlers(String handlers) {
             doSetProperty("handlers", handlers);
@@ -827,9 +1000,12 @@ public interface JettyHttpEndpointBuilderFactory {
          * Allows using a custom multipart filter. Note: setting
          * multipartFilterRef forces the value of enableMultipartFilter to true.
          * 
-         * The option is a: <code>javax.servlet.Filter</code> type.
+         * The option is a: &lt;code&gt;javax.servlet.Filter&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param multipartFilter the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder multipartFilter(
                 Object multipartFilter) {
@@ -840,10 +1016,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * Allows using a custom multipart filter. Note: setting
          * multipartFilterRef forces the value of enableMultipartFilter to true.
          * 
-         * The option will be converted to a <code>javax.servlet.Filter</code>
-         * type.
+         * The option will be converted to a
+         * &lt;code&gt;javax.servlet.Filter&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param multipartFilter the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder multipartFilter(
                 String multipartFilter) {
@@ -854,10 +1033,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param optionsEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder optionsEnabled(
                 boolean optionsEnabled) {
@@ -868,10 +1050,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * Specifies whether to enable HTTP OPTIONS for this Servlet consumer.
          * By default OPTIONS is turned off.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param optionsEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder optionsEnabled(
                 String optionsEnabled) {
@@ -882,10 +1068,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * Specifies whether to enable HTTP TRACE for this Servlet consumer. By
          * default TRACE is turned off.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param traceEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder traceEnabled(
                 boolean traceEnabled) {
@@ -896,10 +1085,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * Specifies whether to enable HTTP TRACE for this Servlet consumer. By
          * default TRACE is turned off.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param traceEnabled the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder traceEnabled(
                 String traceEnabled) {
@@ -911,10 +1104,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
@@ -926,10 +1122,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * mapped to HTTP body. Setting this to false will avoid the HTTP
          * mapping.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageBody the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
@@ -941,10 +1141,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
@@ -956,10 +1159,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * exchange will be mapped to HTTP. Setting this to false will avoid the
          * HTTP Form Encoded body mapping.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageFormUrlEncodedBody the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
@@ -971,10 +1178,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
@@ -986,10 +1196,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * be mapped to HTTP headers. Setting this to false will avoid the HTTP
          * Headers mapping.
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapHttpMessageHeaders the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
@@ -1000,10 +1214,13 @@ public interface JettyHttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder synchronous(boolean synchronous) {
             doSetProperty("synchronous", synchronous);
@@ -1013,10 +1230,14 @@ public interface JettyHttpEndpointBuilderFactory {
          * Sets whether synchronous processing should be strictly used, or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
-         * The option will be converted to a <code>boolean</code> type.
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder synchronous(String synchronous) {
             doSetProperty("synchronous", synchronous);
