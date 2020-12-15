@@ -1607,6 +1607,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * Name of websocket endpoint
          * 
          * @param path servicePath
+         * @return the dsl builder
          */
         default AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
                 String path) {
@@ -1628,6 +1629,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path servicePath
+         * @return the dsl builder
          */
         default AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(
                 String componentName,

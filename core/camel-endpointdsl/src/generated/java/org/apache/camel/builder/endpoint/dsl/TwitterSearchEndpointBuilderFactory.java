@@ -1471,6 +1471,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * search results.
          * 
          * @param path keywords
+         * @return the dsl builder
          */
         default TwitterSearchEndpointBuilder twitterSearch(String path) {
             return TwitterSearchEndpointBuilderFactory.endpointBuilder("twitter-search", path);
@@ -1492,6 +1493,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path keywords
+         * @return the dsl builder
          */
         default TwitterSearchEndpointBuilder twitterSearch(
                 String componentName,

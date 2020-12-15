@@ -740,6 +740,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * Destination Name
          * 
          * @param path projectId:destinationName
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder googlePubsub(String path) {
             return GooglePubsubEndpointBuilderFactory.endpointBuilder("google-pubsub", path);
@@ -764,6 +765,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path projectId:destinationName
+         * @return the dsl builder
          */
         default GooglePubsubEndpointBuilder googlePubsub(
                 String componentName,

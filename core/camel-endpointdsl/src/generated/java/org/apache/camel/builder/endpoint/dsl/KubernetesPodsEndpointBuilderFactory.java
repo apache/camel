@@ -1231,6 +1231,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder kubernetesPods(String path) {
             return KubernetesPodsEndpointBuilderFactory.endpointBuilder("kubernetes-pods", path);
@@ -1252,6 +1253,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesPodsEndpointBuilder kubernetesPods(
                 String componentName,

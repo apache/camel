@@ -245,6 +245,7 @@ public interface XChangeEndpointBuilderFactory {
          * The exchange to connect to
          * 
          * @param path name
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder xchange(String path) {
             return XChangeEndpointBuilderFactory.endpointBuilder("xchange", path);
@@ -265,6 +266,7 @@ public interface XChangeEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default XChangeEndpointBuilder xchange(String componentName, String path) {
             return XChangeEndpointBuilderFactory.endpointBuilder(componentName, path);

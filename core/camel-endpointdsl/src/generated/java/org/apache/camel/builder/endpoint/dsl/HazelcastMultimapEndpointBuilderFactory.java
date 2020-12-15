@@ -598,6 +598,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * The name of the cache
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointBuilder hazelcastMultimap(String path) {
             return HazelcastMultimapEndpointBuilderFactory.endpointBuilder("hazelcast-multimap", path);
@@ -618,6 +619,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastMultimapEndpointBuilder hazelcastMultimap(
                 String componentName,

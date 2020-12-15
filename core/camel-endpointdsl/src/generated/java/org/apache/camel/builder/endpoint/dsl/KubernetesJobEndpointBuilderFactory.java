@@ -1228,6 +1228,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder kubernetesJob(String path) {
             return KubernetesJobEndpointBuilderFactory.endpointBuilder("kubernetes-job", path);
@@ -1248,6 +1249,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesJobEndpointBuilder kubernetesJob(
                 String componentName,

@@ -1070,6 +1070,7 @@ public interface CometdEndpointBuilderFactory {
          * Camel endpoints.
          * 
          * @param path host:port/channelName
+         * @return the dsl builder
          */
         default CometdEndpointBuilder cometd(String path) {
             return CometdEndpointBuilderFactory.endpointBuilder("cometd", path);
@@ -1098,6 +1099,7 @@ public interface CometdEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/channelName
+         * @return the dsl builder
          */
         default CometdEndpointBuilder cometd(String componentName, String path) {
             return CometdEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -1124,6 +1126,7 @@ public interface CometdEndpointBuilderFactory {
          * Camel endpoints.
          * 
          * @param path host:port/channelName
+         * @return the dsl builder
          */
         default CometdEndpointBuilder cometds(String path) {
             return CometdEndpointBuilderFactory.endpointBuilder("cometds", path);

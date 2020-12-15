@@ -291,6 +291,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * The endpoint ID (not used).
          * 
          * @param path endpointId
+         * @return the dsl builder
          */
         default IgniteEventsEndpointBuilder igniteEvents(String path) {
             return IgniteEventsEndpointBuilderFactory.endpointBuilder("ignite-events", path);
@@ -312,6 +313,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path endpointId
+         * @return the dsl builder
          */
         default IgniteEventsEndpointBuilder igniteEvents(
                 String componentName,

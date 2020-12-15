@@ -37,6 +37,8 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
      * Category: api,cloud,sheets
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-sheets
+     * 
+     * @return the dsl builder
      */
     static GoogleSheetsStreamComponentBuilder googleSheetsStream() {
         return new GoogleSheetsStreamComponentBuilderImpl();
@@ -52,9 +54,12 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * Google sheets application name. Example would be
          * camel-google-sheets/1.0.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param applicationName the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder applicationName(
                 java.lang.String applicationName) {
@@ -70,10 +75,13 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -83,9 +91,12 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         /**
          * Client ID of the sheets application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder clientId(
                 java.lang.String clientId) {
@@ -96,9 +107,12 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * To use the shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder configuration(
                 org.apache.camel.component.google.sheets.stream.GoogleSheetsStreamConfiguration configuration) {
@@ -108,10 +122,13 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         /**
          * True if grid data should be returned.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param includeGridData the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder includeGridData(
                 boolean includeGridData) {
@@ -121,10 +138,13 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         /**
          * Specifies the major dimension that results should use..
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ROWS
          * Group: consumer
+         * 
+         * @param majorDimension the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder majorDimension(
                 java.lang.String majorDimension) {
@@ -136,9 +156,12 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * number of rows in a returned value range data set or the number of
          * returned value ranges in a batch request.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder maxResults(int maxResults) {
             doSetProperty("maxResults", maxResults);
@@ -147,9 +170,12 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         /**
          * Specifies the range of rows and columns in a sheet to get data from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param range the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder range(java.lang.String range) {
             doSetProperty("range", range);
@@ -161,10 +187,13 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * https://developers.google.com/identity/protocols/googlescopes for
          * more info.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param scopes the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder scopes(
                 java.util.List<java.lang.String> scopes) {
@@ -177,10 +206,13 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * represented with a separate exchange in batch processing. Otherwise
          * value range object is used as exchange junk size.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param splitResults the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder splitResults(
                 boolean splitResults) {
@@ -191,9 +223,12 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * Specifies the spreadsheet identifier that is used to identify the
          * target to obtain.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param spreadsheetId the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder spreadsheetId(
                 java.lang.String spreadsheetId) {
@@ -203,10 +238,13 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         /**
          * Determines how values should be rendered in the output.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: FORMATTED_VALUE
          * Group: consumer
+         * 
+         * @param valueRenderOption the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder valueRenderOption(
                 java.lang.String valueRenderOption) {
@@ -221,10 +259,13 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -236,9 +277,12 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * client. Will by default use BatchGoogleSheetsClientFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.sheets.GoogleSheetsClientFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.sheets.GoogleSheetsClientFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientFactory the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder clientFactory(
                 org.apache.camel.component.google.sheets.GoogleSheetsClientFactory clientFactory) {
@@ -249,9 +293,12 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * OAuth 2 access token. This typically expires after an hour so
          * refreshToken is recommended for long term usage.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder accessToken(
                 java.lang.String accessToken) {
@@ -261,9 +308,12 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
         /**
          * Client secret of the sheets application.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder clientSecret(
                 java.lang.String clientSecret) {
@@ -275,9 +325,12 @@ public interface GoogleSheetsStreamComponentBuilderFactory {
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default GoogleSheetsStreamComponentBuilder refreshToken(
                 java.lang.String refreshToken) {

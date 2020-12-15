@@ -1379,6 +1379,7 @@ public interface Jt400EndpointBuilderFactory {
          * MSGQ
          * 
          * @param path userID:password/systemName/objectPath.type
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder jt400(String path) {
             return Jt400EndpointBuilderFactory.endpointBuilder("jt400", path);
@@ -1416,6 +1417,7 @@ public interface Jt400EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path userID:password/systemName/objectPath.type
+         * @return the dsl builder
          */
         default Jt400EndpointBuilder jt400(String componentName, String path) {
             return Jt400EndpointBuilderFactory.endpointBuilder(componentName, path);

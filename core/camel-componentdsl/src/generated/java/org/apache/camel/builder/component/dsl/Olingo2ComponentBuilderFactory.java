@@ -37,6 +37,8 @@ public interface Olingo2ComponentBuilderFactory {
      * Category: cloud
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-olingo2
+     * 
+     * @return the dsl builder
      */
     static Olingo2ComponentBuilder olingo2() {
         return new Olingo2ComponentBuilderImpl();
@@ -52,10 +54,12 @@ public interface Olingo2ComponentBuilderFactory {
          * To use the shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.olingo2.Olingo2Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.olingo2.Olingo2Configuration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder configuration(
                 org.apache.camel.component.olingo2.Olingo2Configuration configuration) {
@@ -66,10 +70,13 @@ public interface Olingo2ComponentBuilderFactory {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder connectTimeout(int connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -79,10 +86,13 @@ public interface Olingo2ComponentBuilderFactory {
          * Content-Type header value can be used to specify JSON or XML message
          * format, defaults to application/json;charset=utf-8.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: application/json;charset=utf-8
          * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder contentType(java.lang.String contentType) {
             doSetProperty("contentType", contentType);
@@ -93,9 +103,12 @@ public interface Olingo2ComponentBuilderFactory {
          * operations.
          * 
          * The option is a:
-         * <code>org.apache.olingo.odata2.api.ep.EntityProviderReadProperties</code> type.
+         * &lt;code&gt;org.apache.olingo.odata2.api.ep.EntityProviderReadProperties&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param entityProviderReadProperties the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder entityProviderReadProperties(
                 org.apache.olingo.odata2.api.ep.EntityProviderReadProperties entityProviderReadProperties) {
@@ -112,9 +125,12 @@ public interface Olingo2ComponentBuilderFactory {
          * respective write property here.
          * 
          * The option is a:
-         * <code>org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties</code> type.
+         * &lt;code&gt;org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param entityProviderWriteProperties the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder entityProviderWriteProperties(
                 org.apache.olingo.odata2.api.ep.EntityProviderWriteProperties entityProviderWriteProperties) {
@@ -125,10 +141,13 @@ public interface Olingo2ComponentBuilderFactory {
          * Set this to true to filter out results that have already been
          * communicated by this component.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param filterAlreadySeen the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
@@ -139,10 +158,13 @@ public interface Olingo2ComponentBuilderFactory {
          * Custom HTTP headers to inject into every request, this could include
          * OAuth tokens, etc.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.String&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param httpHeaders the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder httpHeaders(
                 java.util.Map<java.lang.String, java.lang.String> httpHeaders) {
@@ -152,9 +174,13 @@ public interface Olingo2ComponentBuilderFactory {
         /**
          * HTTP proxy server configuration.
          * 
-         * The option is a: <code>org.apache.http.HttpHost</code> type.
+         * The option is a: &lt;code&gt;org.apache.http.HttpHost&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param proxy the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder proxy(org.apache.http.HttpHost proxy) {
             doSetProperty("proxy", proxy);
@@ -164,9 +190,12 @@ public interface Olingo2ComponentBuilderFactory {
          * Target OData service base URI, e.g.
          * http://services.odata.org/OData/OData.svc.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serviceUri the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder serviceUri(java.lang.String serviceUri) {
             doSetProperty("serviceUri", serviceUri);
@@ -176,10 +205,13 @@ public interface Olingo2ComponentBuilderFactory {
          * HTTP request timeout in milliseconds, defaults to 30,000 (30
          * seconds).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param socketTimeout the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder socketTimeout(int socketTimeout) {
             doSetProperty("socketTimeout", socketTimeout);
@@ -194,10 +226,13 @@ public interface Olingo2ComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -209,10 +244,13 @@ public interface Olingo2ComponentBuilderFactory {
          * will map every element to distinct messages, unless splitResult is
          * set to false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param splitResult the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder splitResult(boolean splitResult) {
             doSetProperty("splitResult", splitResult);
@@ -229,10 +267,13 @@ public interface Olingo2ComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -247,10 +288,13 @@ public interface Olingo2ComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -264,10 +308,12 @@ public interface Olingo2ComponentBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * <code>org.apache.http.impl.nio.client.HttpAsyncClientBuilder</code>
-         * type.
+         * &lt;code&gt;org.apache.http.impl.nio.client.HttpAsyncClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpAsyncClientBuilder the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder httpAsyncClientBuilder(
                 org.apache.http.impl.nio.client.HttpAsyncClientBuilder httpAsyncClientBuilder) {
@@ -281,9 +327,12 @@ public interface Olingo2ComponentBuilderFactory {
          * builder, otherwise OData requests could block indefinitely.
          * 
          * The option is a:
-         * <code>org.apache.http.impl.client.HttpClientBuilder</code> type.
+         * &lt;code&gt;org.apache.http.impl.client.HttpClientBuilder&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param httpClientBuilder the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder httpClientBuilder(
                 org.apache.http.impl.client.HttpClientBuilder httpClientBuilder) {
@@ -294,9 +343,12 @@ public interface Olingo2ComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -306,10 +358,13 @@ public interface Olingo2ComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default Olingo2ComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

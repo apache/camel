@@ -240,6 +240,7 @@ public interface NeutronEndpointBuilderFactory {
          * OpenStack host url
          * 
          * @param path host
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder openstackNeutron(String path) {
             return NeutronEndpointBuilderFactory.endpointBuilder("openstack-neutron", path);
@@ -260,6 +261,7 @@ public interface NeutronEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host
+         * @return the dsl builder
          */
         default NeutronEndpointBuilder openstackNeutron(
                 String componentName,

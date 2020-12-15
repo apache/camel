@@ -1549,6 +1549,7 @@ public interface ClientEndpointBuilderFactory {
          * The object information address
          * 
          * @param path uriPath
+         * @return the dsl builder
          */
         default ClientEndpointBuilder iec60870Client(String path) {
             return ClientEndpointBuilderFactory.endpointBuilder("iec60870-client", path);
@@ -1570,6 +1571,7 @@ public interface ClientEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path uriPath
+         * @return the dsl builder
          */
         default ClientEndpointBuilder iec60870Client(
                 String componentName,

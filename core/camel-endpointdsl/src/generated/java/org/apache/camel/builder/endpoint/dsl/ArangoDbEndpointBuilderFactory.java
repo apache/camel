@@ -298,6 +298,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * database name
          * 
          * @param path database
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder arangodb(String path) {
             return ArangoDbEndpointBuilderFactory.endpointBuilder("arangodb", path);
@@ -319,6 +320,7 @@ public interface ArangoDbEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path database
+         * @return the dsl builder
          */
         default ArangoDbEndpointBuilder arangodb(
                 String componentName,

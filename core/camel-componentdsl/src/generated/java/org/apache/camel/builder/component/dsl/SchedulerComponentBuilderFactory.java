@@ -39,6 +39,8 @@ public interface SchedulerComponentBuilderFactory {
      * Category: core,scheduling
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-scheduler
+     * 
+     * @return the dsl builder
      */
     static SchedulerComponentBuilder scheduler() {
         return new SchedulerComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface SchedulerComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SchedulerComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -77,10 +82,13 @@ public interface SchedulerComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SchedulerComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -91,10 +99,13 @@ public interface SchedulerComponentBuilderFactory {
          * Number of threads used by the scheduling thread pool. Is by default
          * using a single thread.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: scheduler
+         * 
+         * @param concurrentTasks the value to set
+         * @return the dsl builder
          */
         default SchedulerComponentBuilder concurrentTasks(int concurrentTasks) {
             doSetProperty("concurrentTasks", concurrentTasks);

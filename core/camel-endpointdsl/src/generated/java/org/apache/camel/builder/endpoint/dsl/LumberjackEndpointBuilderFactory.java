@@ -221,6 +221,7 @@ public interface LumberjackEndpointBuilderFactory {
          * Default value: 5044
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default LumberjackEndpointBuilder lumberjack(String path) {
             return LumberjackEndpointBuilderFactory.endpointBuilder("lumberjack", path);
@@ -245,6 +246,7 @@ public interface LumberjackEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port
+         * @return the dsl builder
          */
         default LumberjackEndpointBuilder lumberjack(
                 String componentName,

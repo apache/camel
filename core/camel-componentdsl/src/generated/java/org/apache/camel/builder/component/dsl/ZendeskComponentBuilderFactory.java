@@ -37,6 +37,8 @@ public interface ZendeskComponentBuilderFactory {
      * Category: cloud,api,support
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-zendesk
+     * 
+     * @return the dsl builder
      */
     static ZendeskComponentBuilder zendesk() {
         return new ZendeskComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface ZendeskComponentBuilderFactory {
         /**
          * The server URL to connect.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param serverUrl the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder serverUrl(java.lang.String serverUrl) {
             doSetProperty("serverUrl", serverUrl);
@@ -68,10 +73,13 @@ public interface ZendeskComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -89,10 +97,13 @@ public interface ZendeskComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -107,10 +118,13 @@ public interface ZendeskComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -121,10 +135,12 @@ public interface ZendeskComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.zendesk.ZendeskConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.zendesk.ZendeskConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder configuration(
                 org.apache.camel.component.zendesk.ZendeskConfiguration configuration) {
@@ -134,9 +150,13 @@ public interface ZendeskComponentBuilderFactory {
         /**
          * To use a shared Zendesk instance.
          * 
-         * The option is a: <code>org.zendesk.client.v2.Zendesk</code> type.
+         * The option is a:
+         * &lt;code&gt;org.zendesk.client.v2.Zendesk&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param zendesk the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder zendesk(
                 org.zendesk.client.v2.Zendesk zendesk) {
@@ -146,9 +166,12 @@ public interface ZendeskComponentBuilderFactory {
         /**
          * The OAuth token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param oauthToken the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder oauthToken(java.lang.String oauthToken) {
             doSetProperty("oauthToken", oauthToken);
@@ -157,9 +180,12 @@ public interface ZendeskComponentBuilderFactory {
         /**
          * The password.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -168,9 +194,12 @@ public interface ZendeskComponentBuilderFactory {
         /**
          * The security token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param token the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder token(java.lang.String token) {
             doSetProperty("token", token);
@@ -179,9 +208,12 @@ public interface ZendeskComponentBuilderFactory {
         /**
          * The user name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default ZendeskComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);

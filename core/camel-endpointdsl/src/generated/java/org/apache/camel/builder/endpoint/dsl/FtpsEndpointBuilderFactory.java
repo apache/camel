@@ -5573,6 +5573,7 @@ public interface FtpsEndpointBuilderFactory {
          * The starting directory
          * 
          * @param path host:port/directoryName
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder ftps(String path) {
             return FtpsEndpointBuilderFactory.endpointBuilder("ftps", path);
@@ -5600,6 +5601,7 @@ public interface FtpsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/directoryName
+         * @return the dsl builder
          */
         default FtpsEndpointBuilder ftps(String componentName, String path) {
             return FtpsEndpointBuilderFactory.endpointBuilder(componentName, path);

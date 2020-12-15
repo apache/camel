@@ -799,6 +799,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * prefixed by 'queue:'.
          * 
          * @param path destinationName
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder sjmsBatch(String path) {
             return SjmsBatchEndpointBuilderFactory.endpointBuilder("sjms-batch", path);
@@ -821,6 +822,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path destinationName
+         * @return the dsl builder
          */
         default SjmsBatchEndpointBuilder sjmsBatch(
                 String componentName,

@@ -1782,6 +1782,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * same name will fail.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumMySqlEndpointBuilder debeziumMysql(String path) {
             return DebeziumMySqlEndpointBuilderFactory.endpointBuilder("debezium-mysql", path);
@@ -1803,6 +1804,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumMySqlEndpointBuilder debeziumMysql(
                 String componentName,

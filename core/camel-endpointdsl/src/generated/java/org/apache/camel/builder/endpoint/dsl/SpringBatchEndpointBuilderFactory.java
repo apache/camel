@@ -213,6 +213,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * The name of the Spring Batch job located in the registry.
          * 
          * @param path jobName
+         * @return the dsl builder
          */
         default SpringBatchEndpointBuilder springBatch(String path) {
             return SpringBatchEndpointBuilderFactory.endpointBuilder("spring-batch", path);
@@ -233,6 +234,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path jobName
+         * @return the dsl builder
          */
         default SpringBatchEndpointBuilder springBatch(
                 String componentName,

@@ -310,6 +310,7 @@ public interface ExecEndpointBuilderFactory {
          * or null.
          * 
          * @param path executable
+         * @return the dsl builder
          */
         default ExecEndpointBuilder exec(String path) {
             return ExecEndpointBuilderFactory.endpointBuilder("exec", path);
@@ -331,6 +332,7 @@ public interface ExecEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path executable
+         * @return the dsl builder
          */
         default ExecEndpointBuilder exec(String componentName, String path) {
             return ExecEndpointBuilderFactory.endpointBuilder(componentName, path);

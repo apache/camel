@@ -252,6 +252,7 @@ public interface SparkEndpointBuilderFactory {
          * There are 3 enums and the value can be one of: rdd, dataframe, hive
          * 
          * @param path endpointType
+         * @return the dsl builder
          */
         default SparkEndpointBuilder spark(String path) {
             return SparkEndpointBuilderFactory.endpointBuilder("spark", path);
@@ -273,6 +274,7 @@ public interface SparkEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path endpointType
+         * @return the dsl builder
          */
         default SparkEndpointBuilder spark(String componentName, String path) {
             return SparkEndpointBuilderFactory.endpointBuilder(componentName, path);

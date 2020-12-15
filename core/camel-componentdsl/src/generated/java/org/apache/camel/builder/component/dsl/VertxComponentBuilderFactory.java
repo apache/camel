@@ -37,6 +37,8 @@ public interface VertxComponentBuilderFactory {
      * Category: eventbus,reactive
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-vertx
+     * 
+     * @return the dsl builder
      */
     static VertxComponentBuilder vertx() {
         return new VertxComponentBuilderImpl();
@@ -49,9 +51,12 @@ public interface VertxComponentBuilderFactory {
         /**
          * Hostname for creating an embedded clustered EventBus.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default VertxComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
@@ -60,9 +65,12 @@ public interface VertxComponentBuilderFactory {
         /**
          * Port for creating an embedded clustered EventBus.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default VertxComponentBuilder port(int port) {
             doSetProperty("port", port);
@@ -72,10 +80,13 @@ public interface VertxComponentBuilderFactory {
          * Timeout in seconds to wait for clustered Vertx EventBus to be ready.
          * The default value is 60.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 60
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default VertxComponentBuilder timeout(int timeout) {
             doSetProperty("timeout", timeout);
@@ -85,9 +96,12 @@ public interface VertxComponentBuilderFactory {
          * To use the given vertx EventBus instead of creating a new embedded
          * EventBus.
          * 
-         * The option is a: <code>io.vertx.core.Vertx</code> type.
+         * The option is a: &lt;code&gt;io.vertx.core.Vertx&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param vertx the value to set
+         * @return the dsl builder
          */
         default VertxComponentBuilder vertx(io.vertx.core.Vertx vertx) {
             doSetProperty("vertx", vertx);
@@ -96,9 +110,13 @@ public interface VertxComponentBuilderFactory {
         /**
          * Options to use for creating vertx.
          * 
-         * The option is a: <code>io.vertx.core.VertxOptions</code> type.
+         * The option is a: &lt;code&gt;io.vertx.core.VertxOptions&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param vertxOptions the value to set
+         * @return the dsl builder
          */
         default VertxComponentBuilder vertxOptions(
                 io.vertx.core.VertxOptions vertxOptions) {
@@ -114,10 +132,13 @@ public interface VertxComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default VertxComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -135,10 +156,13 @@ public interface VertxComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default VertxComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -153,10 +177,13 @@ public interface VertxComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default VertxComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -165,9 +192,13 @@ public interface VertxComponentBuilderFactory {
         /**
          * To use a custom VertxFactory implementation.
          * 
-         * The option is a: <code>io.vertx.core.spi.VertxFactory</code> type.
+         * The option is a:
+         * &lt;code&gt;io.vertx.core.spi.VertxFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param vertxFactory the value to set
+         * @return the dsl builder
          */
         default VertxComponentBuilder vertxFactory(
                 io.vertx.core.spi.VertxFactory vertxFactory) {

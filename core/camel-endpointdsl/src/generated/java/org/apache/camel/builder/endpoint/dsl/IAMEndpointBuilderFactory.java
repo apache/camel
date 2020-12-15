@@ -334,6 +334,7 @@ public interface IAMEndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default IAMEndpointBuilder awsIam(String path) {
             return IAMEndpointBuilderFactory.endpointBuilder("aws-iam", path);
@@ -354,6 +355,7 @@ public interface IAMEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default IAMEndpointBuilder awsIam(String componentName, String path) {
             return IAMEndpointBuilderFactory.endpointBuilder(componentName, path);

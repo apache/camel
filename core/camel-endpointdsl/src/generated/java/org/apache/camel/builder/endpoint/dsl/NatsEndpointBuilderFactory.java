@@ -1758,6 +1758,7 @@ public interface NatsEndpointBuilderFactory {
          * The name of topic we want to use
          * 
          * @param path topic
+         * @return the dsl builder
          */
         default NatsEndpointBuilder nats(String path) {
             return NatsEndpointBuilderFactory.endpointBuilder("nats", path);
@@ -1778,6 +1779,7 @@ public interface NatsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path topic
+         * @return the dsl builder
          */
         default NatsEndpointBuilder nats(String componentName, String path) {
             return NatsEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -1032,6 +1032,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The ServiceNow instance name
          * 
          * @param path instanceName
+         * @return the dsl builder
          */
         default ServiceNowEndpointBuilder servicenow(String path) {
             return ServiceNowEndpointBuilderFactory.endpointBuilder("servicenow", path);
@@ -1052,6 +1053,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path instanceName
+         * @return the dsl builder
          */
         default ServiceNowEndpointBuilder servicenow(
                 String componentName,

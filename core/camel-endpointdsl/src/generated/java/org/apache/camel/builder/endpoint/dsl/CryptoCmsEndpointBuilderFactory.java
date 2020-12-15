@@ -530,6 +530,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * within the camel context.
          * 
          * @param path cryptoOperation:name
+         * @return the dsl builder
          */
         @Deprecated
         default CryptoCmsEndpointBuilder cryptoCms(String path) {
@@ -560,6 +561,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cryptoOperation:name
+         * @return the dsl builder
          */
         @Deprecated
         default CryptoCmsEndpointBuilder cryptoCms(

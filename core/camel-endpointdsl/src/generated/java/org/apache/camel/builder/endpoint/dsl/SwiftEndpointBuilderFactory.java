@@ -238,6 +238,7 @@ public interface SwiftEndpointBuilderFactory {
          * OpenStack host url
          * 
          * @param path host
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder openstackSwift(String path) {
             return SwiftEndpointBuilderFactory.endpointBuilder("openstack-swift", path);
@@ -258,6 +259,7 @@ public interface SwiftEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host
+         * @return the dsl builder
          */
         default SwiftEndpointBuilder openstackSwift(
                 String componentName,

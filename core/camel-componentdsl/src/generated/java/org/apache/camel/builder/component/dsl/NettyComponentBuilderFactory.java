@@ -37,6 +37,8 @@ public interface NettyComponentBuilderFactory {
      * Category: networking,tcp,udp
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-netty
+     * 
+     * @return the dsl builder
      */
     static NettyComponentBuilder netty() {
         return new NettyComponentBuilderImpl();
@@ -51,10 +53,12 @@ public interface NettyComponentBuilderFactory {
          * endpoints.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.NettyConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.netty.NettyConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder configuration(
                 org.apache.camel.component.netty.NettyConfiguration configuration) {
@@ -65,10 +69,13 @@ public interface NettyComponentBuilderFactory {
          * Whether or not to disconnect(close) from Netty Channel right after
          * use. Can be used for both consumer and producer.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disconnect the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder disconnect(boolean disconnect) {
             doSetProperty("disconnect", disconnect);
@@ -77,10 +84,13 @@ public interface NettyComponentBuilderFactory {
         /**
          * Setting to ensure socket is not closed due to inactivity.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param keepAlive the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder keepAlive(boolean keepAlive) {
             doSetProperty("keepAlive", keepAlive);
@@ -89,10 +99,13 @@ public interface NettyComponentBuilderFactory {
         /**
          * Setting to facilitate socket multiplexing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param reuseAddress the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder reuseAddress(boolean reuseAddress) {
             doSetProperty("reuseAddress", reuseAddress);
@@ -109,10 +122,13 @@ public interface NettyComponentBuilderFactory {
          * the key NettyConstants#NETTY_CHANNEL which allows you to obtain the
          * channel during routing and use it as well.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reuseChannel the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder reuseChannel(boolean reuseChannel) {
             doSetProperty("reuseChannel", reuseChannel);
@@ -121,10 +137,13 @@ public interface NettyComponentBuilderFactory {
         /**
          * Setting to set endpoint as one-way or request-response.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param sync the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder sync(boolean sync) {
             doSetProperty("sync", sync);
@@ -133,10 +152,13 @@ public interface NettyComponentBuilderFactory {
         /**
          * Setting to improve TCP protocol performance.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param tcpNoDelay the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder tcpNoDelay(boolean tcpNoDelay) {
             doSetProperty("tcpNoDelay", tcpNoDelay);
@@ -151,10 +173,13 @@ public interface NettyComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -164,10 +189,13 @@ public interface NettyComponentBuilderFactory {
         /**
          * Setting to choose Multicast over UDP.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param broadcast the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder broadcast(boolean broadcast) {
             doSetProperty("broadcast", broadcast);
@@ -177,10 +205,13 @@ public interface NettyComponentBuilderFactory {
          * If the clientMode is true, netty consumer will connect the address as
          * a TCP client.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param clientMode the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder clientMode(boolean clientMode) {
             doSetProperty("clientMode", clientMode);
@@ -190,10 +221,13 @@ public interface NettyComponentBuilderFactory {
          * Used only in clientMode in consumer, the consumer will attempt to
          * reconnect on disconnection if this is enabled.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param reconnect the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder reconnect(boolean reconnect) {
             doSetProperty("reconnect", reconnect);
@@ -203,10 +237,13 @@ public interface NettyComponentBuilderFactory {
          * Used if reconnect and clientMode is enabled. The interval in milli
          * seconds to attempt reconnection.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: consumer
+         * 
+         * @param reconnectInterval the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder reconnectInterval(int reconnectInterval) {
             doSetProperty("reconnectInterval", reconnectInterval);
@@ -219,9 +256,12 @@ public interface NettyComponentBuilderFactory {
          * long the accept queue can be If this option is not configured, then
          * the backlog depends on OS setting.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param backlog the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder backlog(int backlog) {
             doSetProperty("backlog", backlog);
@@ -232,10 +272,13 @@ public interface NettyComponentBuilderFactory {
          * from Netty, which is 1. User can use this option to override the
          * default bossCount from Netty.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer (advanced)
+         * 
+         * @param bossCount the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder bossCount(int bossCount) {
             doSetProperty("bossCount", bossCount);
@@ -245,9 +288,13 @@ public interface NettyComponentBuilderFactory {
          * Set the BossGroup which could be used for handling the new connection
          * of the server side across the NettyEndpoint.
          * 
-         * The option is a: <code>io.netty.channel.EventLoopGroup</code> type.
+         * The option is a:
+         * &lt;code&gt;io.netty.channel.EventLoopGroup&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param bossGroup the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder bossGroup(
                 io.netty.channel.EventLoopGroup bossGroup) {
@@ -258,10 +305,13 @@ public interface NettyComponentBuilderFactory {
          * If sync is enabled then this option dictates NettyConsumer if it
          * should disconnect where there is no reply to send back.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param disconnectOnNoReply the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder disconnectOnNoReply(
                 boolean disconnectOnNoReply) {
@@ -272,9 +322,13 @@ public interface NettyComponentBuilderFactory {
          * To use the given EventExecutorGroup.
          * 
          * The option is a:
-         * <code>io.netty.util.concurrent.EventExecutorGroup</code> type.
+         * &lt;code&gt;io.netty.util.concurrent.EventExecutorGroup&lt;/code&gt;
+         * type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param executorService the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder executorService(
                 io.netty.util.concurrent.EventExecutorGroup executorService) {
@@ -292,9 +346,12 @@ public interface NettyComponentBuilderFactory {
          * some messages will block, then nettys worker threads (event loop)
          * wont be affected.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param maximumPoolSize the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder maximumPoolSize(int maximumPoolSize) {
             doSetProperty("maximumPoolSize", maximumPoolSize);
@@ -304,9 +361,12 @@ public interface NettyComponentBuilderFactory {
          * To use a custom NettyServerBootstrapFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.NettyServerBootstrapFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.NettyServerBootstrapFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param nettyServerBootstrapFactory the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder nettyServerBootstrapFactory(
                 org.apache.camel.component.netty.NettyServerBootstrapFactory nettyServerBootstrapFactory) {
@@ -317,9 +377,12 @@ public interface NettyComponentBuilderFactory {
          * When using UDP then this option can be used to specify a network
          * interface by its name, such as eth0 to join a multicast group.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param networkInterface the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder networkInterface(
                 java.lang.String networkInterface) {
@@ -330,10 +393,14 @@ public interface NettyComponentBuilderFactory {
          * If sync is enabled this option dictates NettyConsumer which logging
          * level to use when logging a there is no reply to send back.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: WARN
          * Group: consumer (advanced)
+         * 
+         * @param noReplyLogLevel the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder noReplyLogLevel(
                 org.apache.camel.LoggingLevel noReplyLogLevel) {
@@ -347,10 +414,14 @@ public interface NettyComponentBuilderFactory {
          * exceptions, as clients can disconnect abruptly and then cause a flood
          * of closed exceptions in the Netty server.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: DEBUG
          * Group: consumer (advanced)
+         * 
+         * @param serverClosedChannelExceptionCaughtLogLevel the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder serverClosedChannelExceptionCaughtLogLevel(
                 org.apache.camel.LoggingLevel serverClosedChannelExceptionCaughtLogLevel) {
@@ -361,10 +432,14 @@ public interface NettyComponentBuilderFactory {
          * If the server (NettyConsumer) catches an exception then its logged
          * using this logging level.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: WARN
          * Group: consumer (advanced)
+         * 
+         * @param serverExceptionCaughtLogLevel the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder serverExceptionCaughtLogLevel(
                 org.apache.camel.LoggingLevel serverExceptionCaughtLogLevel) {
@@ -375,9 +450,12 @@ public interface NettyComponentBuilderFactory {
          * To use a custom ServerInitializerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.ServerInitializerFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.ServerInitializerFactory&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param serverInitializerFactory the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder serverInitializerFactory(
                 org.apache.camel.component.netty.ServerInitializerFactory serverInitializerFactory) {
@@ -388,10 +466,13 @@ public interface NettyComponentBuilderFactory {
          * Whether to use ordered thread pool, to ensure events are processed
          * orderly on the same channel.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer (advanced)
+         * 
+         * @param usingExecutorService the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder usingExecutorService(
                 boolean usingExecutorService) {
@@ -402,10 +483,13 @@ public interface NettyComponentBuilderFactory {
          * Time to wait for a socket connection to be available. Value is in
          * milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: producer
+         * 
+         * @param connectTimeout the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder connectTimeout(int connectTimeout) {
             doSetProperty("connectTimeout", connectTimeout);
@@ -422,10 +506,13 @@ public interface NettyComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -438,9 +525,12 @@ public interface NettyComponentBuilderFactory {
          * seconds, so eg 30000 is 30 seconds. The requestTimeout is using
          * Netty's ReadTimeoutHandler to trigger the timeout.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder requestTimeout(long requestTimeout) {
             doSetProperty("requestTimeout", requestTimeout);
@@ -450,9 +540,12 @@ public interface NettyComponentBuilderFactory {
          * To use a custom ClientInitializerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.ClientInitializerFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.ClientInitializerFactory&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param clientInitializerFactory the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder clientInitializerFactory(
                 org.apache.camel.component.netty.ClientInitializerFactory clientInitializerFactory) {
@@ -475,9 +568,12 @@ public interface NettyComponentBuilderFactory {
          * producerPoolEnabled option for more details.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.NettyCamelStateCorrelationManager</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.NettyCamelStateCorrelationManager&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param correlationManager the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder correlationManager(
                 org.apache.camel.component.netty.NettyCamelStateCorrelationManager correlationManager) {
@@ -488,10 +584,13 @@ public interface NettyComponentBuilderFactory {
          * Channels can be lazily created to avoid exceptions, if the remote
          * server is not up and running when the Camel producer is started.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param lazyChannelCreation the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder lazyChannelCreation(
                 boolean lazyChannelCreation) {
@@ -511,10 +610,13 @@ public interface NettyComponentBuilderFactory {
          * configure it via the correlationManager option. See also the
          * correlationManager option for more details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param producerPoolEnabled the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder producerPoolEnabled(
                 boolean producerPoolEnabled) {
@@ -526,10 +628,13 @@ public interface NettyComponentBuilderFactory {
          * pool (checked out to clients, or idle awaiting checkout) at a given
          * time. Use a negative value for no limit.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxActive the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder producerPoolMaxActive(
                 int producerPoolMaxActive) {
@@ -539,10 +644,13 @@ public interface NettyComponentBuilderFactory {
         /**
          * Sets the cap on the number of idle instances in the pool.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxIdle the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder producerPoolMaxIdle(
                 int producerPoolMaxIdle) {
@@ -554,10 +662,13 @@ public interface NettyComponentBuilderFactory {
          * idle in the pool before it is eligible for eviction by the idle
          * object evictor.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 300000
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMinEvictableIdle the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder producerPoolMinEvictableIdle(
                 long producerPoolMinEvictableIdle) {
@@ -568,9 +679,12 @@ public interface NettyComponentBuilderFactory {
          * Sets the minimum number of instances allowed in the producer pool
          * before the evictor thread (if active) spawns new objects.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param producerPoolMinIdle the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder producerPoolMinIdle(
                 int producerPoolMinIdle) {
@@ -582,10 +696,13 @@ public interface NettyComponentBuilderFactory {
          * and forget. A connected udp send receive the PortUnreachableException
          * if no one is listen on the receiving port.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param udpConnectionlessSending the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder udpConnectionlessSending(
                 boolean udpConnectionlessSending) {
@@ -596,10 +713,13 @@ public interface NettyComponentBuilderFactory {
          * If the useByteBuf is true, netty producer will turn the message body
          * into ByteBuf before sending it out.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param useByteBuf the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder useByteBuf(boolean useByteBuf) {
             doSetProperty("useByteBuf", useByteBuf);
@@ -611,10 +731,13 @@ public interface NettyComponentBuilderFactory {
          * exchange. Otherwise Camel will exclude any non-serializable objects
          * and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowSerializedHeaders the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
@@ -629,10 +752,13 @@ public interface NettyComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -641,10 +767,13 @@ public interface NettyComponentBuilderFactory {
         /**
          * To use a explicit ChannelGroup.
          * 
-         * The option is a: <code>io.netty.channel.group.ChannelGroup</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.netty.channel.group.ChannelGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param channelGroup the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder channelGroup(
                 io.netty.channel.group.ChannelGroup channelGroup) {
@@ -658,10 +787,13 @@ public interface NettyComponentBuilderFactory {
          * system you are using. See more details at:
          * http://netty.io/wiki/native-transports.html.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param nativeTransport the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder nativeTransport(boolean nativeTransport) {
             doSetProperty("nativeTransport", nativeTransport);
@@ -673,10 +805,13 @@ public interface NettyComponentBuilderFactory {
          * child.keepAlive=false. See the Netty documentation for possible
          * options that can be used.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param options the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder options(
                 java.util.Map<java.lang.String, java.lang.Object> options) {
@@ -687,10 +822,13 @@ public interface NettyComponentBuilderFactory {
          * The TCP/UDP buffer sizes to be used during inbound communication.
          * Size is bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param receiveBufferSize the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder receiveBufferSize(int receiveBufferSize) {
             doSetProperty("receiveBufferSize", receiveBufferSize);
@@ -700,9 +838,12 @@ public interface NettyComponentBuilderFactory {
          * Configures the buffer size predictor. See details at Jetty
          * documentation and this mail thread.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param receiveBufferSizePredictor the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
@@ -713,10 +854,13 @@ public interface NettyComponentBuilderFactory {
          * The TCP/UDP buffer sizes to be used during outbound communication.
          * Size is bytes.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 65536
          * Group: advanced
+         * 
+         * @param sendBufferSize the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder sendBufferSize(int sendBufferSize) {
             doSetProperty("sendBufferSize", sendBufferSize);
@@ -730,10 +874,13 @@ public interface NettyComponentBuilderFactory {
          * objects are serializable. Camel will exclude any non-serializable
          * objects and log it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder transferExchange(boolean transferExchange) {
             doSetProperty("transferExchange", transferExchange);
@@ -743,10 +890,13 @@ public interface NettyComponentBuilderFactory {
          * For UDP only. If enabled the using byte array codec instead of Java
          * serialization protocol.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param udpByteArrayCodec the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder udpByteArrayCodec(
                 boolean udpByteArrayCodec) {
@@ -758,9 +908,12 @@ public interface NettyComponentBuilderFactory {
          * from Netty (which is cpu_core_threads x 2). User can use this option
          * to override the default workerCount from Netty.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerCount the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder workerCount(int workerCount) {
             doSetProperty("workerCount", workerCount);
@@ -772,9 +925,13 @@ public interface NettyComponentBuilderFactory {
          * default each consumer or producer has their own worker pool with 2 x
          * cpu count core threads.
          * 
-         * The option is a: <code>io.netty.channel.EventLoopGroup</code> type.
+         * The option is a:
+         * &lt;code&gt;io.netty.channel.EventLoopGroup&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param workerGroup the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder workerGroup(
                 io.netty.channel.EventLoopGroup workerGroup) {
@@ -787,10 +944,13 @@ public interface NettyComponentBuilderFactory {
          * prevents the netty component from installing a default codec as the
          * first element in the filter chain.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: codec
+         * 
+         * @param allowDefaultCodec the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder allowDefaultCodec(
                 boolean allowDefaultCodec) {
@@ -801,10 +961,13 @@ public interface NettyComponentBuilderFactory {
          * Whether or not to auto append missing end delimiter when sending
          * using the textline codec.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: codec
+         * 
+         * @param autoAppendDelimiter the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder autoAppendDelimiter(
                 boolean autoAppendDelimiter) {
@@ -814,10 +977,13 @@ public interface NettyComponentBuilderFactory {
         /**
          * The max line length to use for the textline codec.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1024
          * Group: codec
+         * 
+         * @param decoderMaxLineLength the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder decoderMaxLineLength(
                 int decoderMaxLineLength) {
@@ -831,10 +997,12 @@ public interface NettyComponentBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param decoders the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder decoders(
                 java.util.List<io.netty.channel.ChannelHandler> decoders) {
@@ -846,10 +1014,13 @@ public interface NettyComponentBuilderFactory {
          * and NULL.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
+         * &lt;code&gt;org.apache.camel.component.netty.TextLineDelimiter&lt;/code&gt; type.
          * 
          * Default: LINE
          * Group: codec
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder delimiter(
                 org.apache.camel.component.netty.TextLineDelimiter delimiter) {
@@ -863,10 +1034,12 @@ public interface NettyComponentBuilderFactory {
          * lookup.
          * 
          * The option is a:
-         * <code>java.util.List&lt;io.netty.channel.ChannelHandler&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;io.netty.channel.ChannelHandler&amp;gt;&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoders the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder encoders(
                 java.util.List<io.netty.channel.ChannelHandler> encoders) {
@@ -877,9 +1050,12 @@ public interface NettyComponentBuilderFactory {
          * The encoding (a charset name) to use for the textline codec. If not
          * provided, Camel will use the JVM default Charset.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: codec
+         * 
+         * @param encoding the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder encoding(java.lang.String encoding) {
             doSetProperty("encoding", encoding);
@@ -891,10 +1067,13 @@ public interface NettyComponentBuilderFactory {
          * false, then Object Serialization is assumed over TCP - however only
          * Strings are allowed to be serialized by default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: codec
+         * 
+         * @param textline the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder textline(boolean textline) {
             doSetProperty("textline", textline);
@@ -903,10 +1082,13 @@ public interface NettyComponentBuilderFactory {
         /**
          * Which protocols to enable when using SSL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: TLSv1,TLSv1.1,TLSv1.2
          * Group: security
+         * 
+         * @param enabledProtocols the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder enabledProtocols(
                 java.lang.String enabledProtocols) {
@@ -916,9 +1098,12 @@ public interface NettyComponentBuilderFactory {
         /**
          * Client side certificate keystore to be used for encryption.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder keyStoreFile(java.io.File keyStoreFile) {
             doSetProperty("keyStoreFile", keyStoreFile);
@@ -928,9 +1113,12 @@ public interface NettyComponentBuilderFactory {
          * Keystore format to be used for payload encryption. Defaults to JKS if
          * not set.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreFormat the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder keyStoreFormat(
                 java.lang.String keyStoreFormat) {
@@ -942,9 +1130,12 @@ public interface NettyComponentBuilderFactory {
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyStoreResource the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder keyStoreResource(
                 java.lang.String keyStoreResource) {
@@ -955,10 +1146,13 @@ public interface NettyComponentBuilderFactory {
          * Configures whether the server needs client authentication when using
          * SSL.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param needClientAuth the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder needClientAuth(boolean needClientAuth) {
             doSetProperty("needClientAuth", needClientAuth);
@@ -968,9 +1162,12 @@ public interface NettyComponentBuilderFactory {
          * Password setting to use in order to encrypt/decrypt payloads sent
          * using SSH.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param passphrase the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder passphrase(java.lang.String passphrase) {
             doSetProperty("passphrase", passphrase);
@@ -980,9 +1177,12 @@ public interface NettyComponentBuilderFactory {
          * Security provider to be used for payload encryption. Defaults to
          * SunX509 if not set.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param securityProvider the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder securityProvider(
                 java.lang.String securityProvider) {
@@ -993,10 +1193,13 @@ public interface NettyComponentBuilderFactory {
          * Setting to specify whether SSL encryption is applied to this
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param ssl the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder ssl(boolean ssl) {
             doSetProperty("ssl", ssl);
@@ -1008,10 +1211,13 @@ public interface NettyComponentBuilderFactory {
          * certificate such as subject name, issuer name, serial number, and the
          * valid date range.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param sslClientCertHeaders the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
@@ -1022,9 +1228,12 @@ public interface NettyComponentBuilderFactory {
          * To configure security using SSLContextParameters.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -1034,9 +1243,13 @@ public interface NettyComponentBuilderFactory {
         /**
          * Reference to a class that could be used to return an SSL Handler.
          * 
-         * The option is a: <code>io.netty.handler.ssl.SslHandler</code> type.
+         * The option is a:
+         * &lt;code&gt;io.netty.handler.ssl.SslHandler&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslHandler the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder sslHandler(
                 io.netty.handler.ssl.SslHandler sslHandler) {
@@ -1046,9 +1259,12 @@ public interface NettyComponentBuilderFactory {
         /**
          * Server side certificate keystore to be used for encryption.
          * 
-         * The option is a: <code>java.io.File</code> type.
+         * The option is a: &lt;code&gt;java.io.File&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustStoreFile the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder trustStoreFile(java.io.File trustStoreFile) {
             doSetProperty("trustStoreFile", trustStoreFile);
@@ -1059,9 +1275,12 @@ public interface NettyComponentBuilderFactory {
          * by default from classpath, but you can prefix with classpath:, file:,
          * or http: to load the resource from different systems.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param trustStoreResource the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder trustStoreResource(
                 java.lang.String trustStoreResource) {
@@ -1071,10 +1290,13 @@ public interface NettyComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default NettyComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

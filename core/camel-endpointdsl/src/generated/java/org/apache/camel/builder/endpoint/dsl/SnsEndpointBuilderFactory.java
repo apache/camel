@@ -472,6 +472,7 @@ public interface SnsEndpointBuilderFactory {
          * Topic name or ARN
          * 
          * @param path topicNameOrArn
+         * @return the dsl builder
          */
         default SnsEndpointBuilder awsSns(String path) {
             return SnsEndpointBuilderFactory.endpointBuilder("aws-sns", path);
@@ -492,6 +493,7 @@ public interface SnsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path topicNameOrArn
+         * @return the dsl builder
          */
         default SnsEndpointBuilder awsSns(String componentName, String path) {
             return SnsEndpointBuilderFactory.endpointBuilder(componentName, path);

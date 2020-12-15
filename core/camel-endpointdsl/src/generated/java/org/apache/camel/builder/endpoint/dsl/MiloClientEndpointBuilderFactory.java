@@ -1581,6 +1581,7 @@ public interface MiloClientEndpointBuilderFactory {
          * The OPC UA server endpoint
          * 
          * @param path endpointUri
+         * @return the dsl builder
          */
         default MiloClientEndpointBuilder miloClient(String path) {
             return MiloClientEndpointBuilderFactory.endpointBuilder("milo-client", path);
@@ -1602,6 +1603,7 @@ public interface MiloClientEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path endpointUri
+         * @return the dsl builder
          */
         default MiloClientEndpointBuilder miloClient(
                 String componentName,

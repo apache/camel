@@ -487,6 +487,7 @@ public interface JcloudsEndpointBuilderFactory {
          * aws-s3 or aws_ec2).
          * 
          * @param path command:providerId
+         * @return the dsl builder
          */
         default JcloudsEndpointBuilder jclouds(String path) {
             return JcloudsEndpointBuilderFactory.endpointBuilder("jclouds", path);
@@ -512,6 +513,7 @@ public interface JcloudsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path command:providerId
+         * @return the dsl builder
          */
         default JcloudsEndpointBuilder jclouds(String componentName, String path) {
             return JcloudsEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -353,6 +353,7 @@ public interface CwEndpointBuilderFactory {
          * The metric namespace
          * 
          * @param path namespace
+         * @return the dsl builder
          */
         default CwEndpointBuilder awsCw(String path) {
             return CwEndpointBuilderFactory.endpointBuilder("aws-cw", path);
@@ -373,6 +374,7 @@ public interface CwEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path namespace
+         * @return the dsl builder
          */
         default CwEndpointBuilder awsCw(String componentName, String path) {
             return CwEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -39,6 +39,8 @@ public interface CronComponentBuilderFactory {
      * Category: scheduling
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-cron
+     * 
+     * @return the dsl builder
      */
     static CronComponentBuilder cron() {
         return new CronComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface CronComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default CronComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -75,10 +80,13 @@ public interface CronComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default CronComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -88,9 +96,12 @@ public interface CronComponentBuilderFactory {
          * The id of the CamelCronService to use when multiple implementations
          * are provided.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param cronService the value to set
+         * @return the dsl builder
          */
         default CronComponentBuilder cronService(java.lang.String cronService) {
             doSetProperty("cronService", cronService);

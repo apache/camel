@@ -37,6 +37,8 @@ public interface JcacheComponentBuilderFactory {
      * Category: cache,datagrid,clustering
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-jcache
+     * 
+     * @return the dsl builder
      */
     static JcacheComponentBuilder jcache() {
         return new JcacheComponentBuilderImpl();
@@ -51,10 +53,14 @@ public interface JcacheComponentBuilderFactory {
         /**
          * A Configuration for the Cache.
          * 
-         * The option is a: <code>javax.cache.configuration.Configuration</code>
+         * The option is a:
+         * &lt;code&gt;javax.cache.configuration.Configuration&lt;/code&gt;
          * type.
          * 
          * Group: common
+         * 
+         * @param cacheConfiguration the value to set
+         * @return the dsl builder
          */
         default JcacheComponentBuilder cacheConfiguration(
                 javax.cache.configuration.Configuration cacheConfiguration) {
@@ -64,9 +70,12 @@ public interface JcacheComponentBuilderFactory {
         /**
          * Properties to configure jcache.
          * 
-         * The option is a: <code>java.util.Map</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheConfigurationProperties the value to set
+         * @return the dsl builder
          */
         default JcacheComponentBuilder cacheConfigurationProperties(
                 java.util.Map cacheConfigurationProperties) {
@@ -77,9 +86,12 @@ public interface JcacheComponentBuilderFactory {
          * References to an existing Properties or Map to lookup in the registry
          * to use for configuring jcache.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cacheConfigurationPropertiesRef the value to set
+         * @return the dsl builder
          */
         default JcacheComponentBuilder cacheConfigurationPropertiesRef(
                 java.lang.String cacheConfigurationPropertiesRef) {
@@ -90,9 +102,12 @@ public interface JcacheComponentBuilderFactory {
          * The fully qualified class name of the
          * javax.cache.spi.CachingProvider.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param cachingProvider the value to set
+         * @return the dsl builder
          */
         default JcacheComponentBuilder cachingProvider(
                 java.lang.String cachingProvider) {
@@ -102,9 +117,12 @@ public interface JcacheComponentBuilderFactory {
         /**
          * An implementation specific URI for the CacheManager.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configurationUri the value to set
+         * @return the dsl builder
          */
         default JcacheComponentBuilder configurationUri(
                 java.lang.String configurationUri) {
@@ -120,10 +138,13 @@ public interface JcacheComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JcacheComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -141,10 +162,13 @@ public interface JcacheComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JcacheComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -159,10 +183,13 @@ public interface JcacheComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default JcacheComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);

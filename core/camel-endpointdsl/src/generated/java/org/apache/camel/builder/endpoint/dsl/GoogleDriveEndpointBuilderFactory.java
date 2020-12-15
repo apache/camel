@@ -1187,6 +1187,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * update, watch
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder googleDrive(String path) {
             return GoogleDriveEndpointBuilderFactory.endpointBuilder("google-drive", path);
@@ -1217,6 +1218,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default GoogleDriveEndpointBuilder googleDrive(
                 String componentName,

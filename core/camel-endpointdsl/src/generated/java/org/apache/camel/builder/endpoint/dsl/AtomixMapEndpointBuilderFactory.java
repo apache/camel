@@ -1315,6 +1315,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The distributed resource name
          * 
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixMapEndpointBuilder atomixMap(String path) {
             return AtomixMapEndpointBuilderFactory.endpointBuilder("atomix-map", path);
@@ -1335,6 +1336,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixMapEndpointBuilder atomixMap(
                 String componentName,

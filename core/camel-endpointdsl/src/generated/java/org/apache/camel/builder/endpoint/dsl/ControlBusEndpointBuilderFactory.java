@@ -256,6 +256,7 @@ public interface ControlBusEndpointBuilderFactory {
          * simple, spel, sql, terser, tokenize, xpath, xquery, xtokenize
          * 
          * @param path command:language
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder controlbus(String path) {
             return ControlBusEndpointBuilderFactory.endpointBuilder("controlbus", path);
@@ -285,6 +286,7 @@ public interface ControlBusEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path command:language
+         * @return the dsl builder
          */
         default ControlBusEndpointBuilder controlbus(
                 String componentName,

@@ -808,6 +808,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The cache name.
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default IgniteCacheEndpointBuilder igniteCache(String path) {
             return IgniteCacheEndpointBuilderFactory.endpointBuilder("ignite-cache", path);
@@ -829,6 +830,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default IgniteCacheEndpointBuilder igniteCache(
                 String componentName,

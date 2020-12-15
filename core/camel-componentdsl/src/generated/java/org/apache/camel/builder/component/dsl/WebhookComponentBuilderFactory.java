@@ -39,6 +39,8 @@ public interface WebhookComponentBuilderFactory {
      * Category: cloud
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-webhook
+     * 
+     * @return the dsl builder
      */
     static WebhookComponentBuilder webhook() {
         return new WebhookComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface WebhookComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default WebhookComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -73,10 +78,13 @@ public interface WebhookComponentBuilderFactory {
          * Automatically register the webhook at startup and unregister it on
          * shutdown.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param webhookAutoRegister the value to set
+         * @return the dsl builder
          */
         default WebhookComponentBuilder webhookAutoRegister(
                 boolean webhookAutoRegister) {
@@ -88,9 +96,12 @@ public interface WebhookComponentBuilderFactory {
          * a good practice to set it to a random string, so that it cannot be
          * guessed by unauthorized parties.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param webhookBasePath the value to set
+         * @return the dsl builder
          */
         default WebhookComponentBuilder webhookBasePath(
                 java.lang.String webhookBasePath) {
@@ -101,9 +112,12 @@ public interface WebhookComponentBuilderFactory {
          * The Camel Rest component to use for the REST transport, such as
          * netty-http.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param webhookComponentName the value to set
+         * @return the dsl builder
          */
         default WebhookComponentBuilder webhookComponentName(
                 java.lang.String webhookComponentName) {
@@ -113,9 +127,12 @@ public interface WebhookComponentBuilderFactory {
         /**
          * The URL of the current service as seen by the webhook provider.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param webhookExternalUrl the value to set
+         * @return the dsl builder
          */
         default WebhookComponentBuilder webhookExternalUrl(
                 java.lang.String webhookExternalUrl) {
@@ -126,9 +143,12 @@ public interface WebhookComponentBuilderFactory {
          * The path where the webhook endpoint will be exposed (relative to
          * basePath, if any).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param webhookPath the value to set
+         * @return the dsl builder
          */
         default WebhookComponentBuilder webhookPath(java.lang.String webhookPath) {
             doSetProperty("webhookPath", webhookPath);
@@ -142,10 +162,13 @@ public interface WebhookComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default WebhookComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -156,10 +179,12 @@ public interface WebhookComponentBuilderFactory {
          * Set the default configuration for the webhook meta-component.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.webhook.WebhookConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.webhook.WebhookConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default WebhookComponentBuilder configuration(
                 org.apache.camel.component.webhook.WebhookConfiguration configuration) {

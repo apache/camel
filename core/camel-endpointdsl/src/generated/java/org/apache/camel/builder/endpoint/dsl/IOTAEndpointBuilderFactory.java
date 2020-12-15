@@ -249,6 +249,7 @@ public interface IOTAEndpointBuilderFactory {
          * Component name
          * 
          * @param path name
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder iota(String path) {
             return IOTAEndpointBuilderFactory.endpointBuilder("iota", path);
@@ -269,6 +270,7 @@ public interface IOTAEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default IOTAEndpointBuilder iota(String componentName, String path) {
             return IOTAEndpointBuilderFactory.endpointBuilder(componentName, path);

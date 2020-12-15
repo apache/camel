@@ -589,6 +589,7 @@ public interface CouchDbEndpointBuilderFactory {
          * Name of the database to use
          * 
          * @param path protocol:hostname:port/database
+         * @return the dsl builder
          */
         default CouchDbEndpointBuilder couchdb(String path) {
             return CouchDbEndpointBuilderFactory.endpointBuilder("couchdb", path);
@@ -622,6 +623,7 @@ public interface CouchDbEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path protocol:hostname:port/database
+         * @return the dsl builder
          */
         default CouchDbEndpointBuilder couchdb(String componentName, String path) {
             return CouchDbEndpointBuilderFactory.endpointBuilder(componentName, path);

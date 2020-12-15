@@ -37,6 +37,8 @@ public interface AvroComponentBuilderFactory {
      * Category: rpc
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-avro-rpc
+     * 
+     * @return the dsl builder
      */
     static AvroComponentBuilder avro() {
         return new AvroComponentBuilderImpl();
@@ -49,9 +51,13 @@ public interface AvroComponentBuilderFactory {
         /**
          * Avro protocol to use.
          * 
-         * The option is a: <code>org.apache.avro.Protocol</code> type.
+         * The option is a: &lt;code&gt;org.apache.avro.Protocol&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param protocol the value to set
+         * @return the dsl builder
          */
         default AvroComponentBuilder protocol(org.apache.avro.Protocol protocol) {
             doSetProperty("protocol", protocol);
@@ -60,9 +66,12 @@ public interface AvroComponentBuilderFactory {
         /**
          * Avro protocol to use defined by the FQN class name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolClassName the value to set
+         * @return the dsl builder
          */
         default AvroComponentBuilder protocolClassName(
                 java.lang.String protocolClassName) {
@@ -72,9 +81,12 @@ public interface AvroComponentBuilderFactory {
         /**
          * Avro protocol location.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param protocolLocation the value to set
+         * @return the dsl builder
          */
         default AvroComponentBuilder protocolLocation(
                 java.lang.String protocolLocation) {
@@ -86,10 +98,13 @@ public interface AvroComponentBuilderFactory {
          * only with protocol parameter because for protocolClassName protocol
          * type will be auto detected.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param reflectionProtocol the value to set
+         * @return the dsl builder
          */
         default AvroComponentBuilder reflectionProtocol(
                 boolean reflectionProtocol) {
@@ -100,10 +115,13 @@ public interface AvroComponentBuilderFactory {
          * If true, consumer parameter won't be wrapped into array. Will fail if
          * protocol specifies more then 1 parameter for the message.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param singleParameter the value to set
+         * @return the dsl builder
          */
         default AvroComponentBuilder singleParameter(boolean singleParameter) {
             doSetProperty("singleParameter", singleParameter);
@@ -112,9 +130,12 @@ public interface AvroComponentBuilderFactory {
         /**
          * Authority to use (username and password).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param uriAuthority the value to set
+         * @return the dsl builder
          */
         default AvroComponentBuilder uriAuthority(java.lang.String uriAuthority) {
             doSetProperty("uriAuthority", uriAuthority);
@@ -129,10 +150,13 @@ public interface AvroComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AvroComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -150,10 +174,13 @@ public interface AvroComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AvroComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -167,10 +194,13 @@ public interface AvroComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AvroComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -180,9 +210,12 @@ public interface AvroComponentBuilderFactory {
          * To use a shared AvroConfiguration to configure options once.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.avro.AvroConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.avro.AvroConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AvroComponentBuilder configuration(
                 org.apache.camel.component.avro.AvroConfiguration configuration) {

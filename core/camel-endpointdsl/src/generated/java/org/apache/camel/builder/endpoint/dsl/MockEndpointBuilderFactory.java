@@ -478,6 +478,7 @@ public interface MockEndpointBuilderFactory {
          * Name of mock endpoint
          * 
          * @param path name
+         * @return the dsl builder
          */
         default MockEndpointBuilder mock(String path) {
             return MockEndpointBuilderFactory.endpointBuilder("mock", path);
@@ -498,6 +499,7 @@ public interface MockEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default MockEndpointBuilder mock(String componentName, String path) {
             return MockEndpointBuilderFactory.endpointBuilder(componentName, path);

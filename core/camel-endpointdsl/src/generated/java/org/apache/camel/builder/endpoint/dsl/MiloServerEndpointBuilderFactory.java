@@ -335,6 +335,7 @@ public interface MiloServerEndpointBuilderFactory {
          * ID of the item
          * 
          * @param path itemId
+         * @return the dsl builder
          */
         default MiloServerEndpointBuilder miloServer(String path) {
             return MiloServerEndpointBuilderFactory.endpointBuilder("milo-server", path);
@@ -355,6 +356,7 @@ public interface MiloServerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path itemId
+         * @return the dsl builder
          */
         default MiloServerEndpointBuilder miloServer(
                 String componentName,

@@ -37,6 +37,8 @@ public interface GoogleBigquerySqlComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-bigquery
+     * 
+     * @return the dsl builder
      */
     static GoogleBigquerySqlComponentBuilder googleBigquerySql() {
         return new GoogleBigquerySqlComponentBuilderImpl();
@@ -53,9 +55,12 @@ public interface GoogleBigquerySqlComponentBuilderFactory {
          * provided the default one will be used.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default GoogleBigquerySqlComponentBuilder connectionFactory(
                 org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory connectionFactory) {
@@ -73,10 +78,13 @@ public interface GoogleBigquerySqlComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GoogleBigquerySqlComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -86,9 +94,12 @@ public interface GoogleBigquerySqlComponentBuilderFactory {
         /**
          * Google Cloud Project Id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param projectId the value to set
+         * @return the dsl builder
          */
         default GoogleBigquerySqlComponentBuilder projectId(
                 java.lang.String projectId) {
@@ -103,10 +114,13 @@ public interface GoogleBigquerySqlComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default GoogleBigquerySqlComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

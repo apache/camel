@@ -293,6 +293,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder freemarker(String path) {
             return FreemarkerEndpointBuilderFactory.endpointBuilder("freemarker", path);
@@ -318,6 +319,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default FreemarkerEndpointBuilder freemarker(
                 String componentName,

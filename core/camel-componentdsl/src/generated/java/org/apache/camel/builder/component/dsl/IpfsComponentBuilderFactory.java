@@ -37,6 +37,8 @@ public interface IpfsComponentBuilderFactory {
      * Category: file,ipfs
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-ipfs
+     * 
+     * @return the dsl builder
      */
     static IpfsComponentBuilder ipfs() {
         return new IpfsComponentBuilderImpl();
@@ -49,10 +51,13 @@ public interface IpfsComponentBuilderFactory {
         /**
          * The ipfs host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 127.0.0.1
          * Group: producer
+         * 
+         * @param ipfsHost the value to set
+         * @return the dsl builder
          */
         default IpfsComponentBuilder ipfsHost(java.lang.String ipfsHost) {
             doSetProperty("ipfsHost", ipfsHost);
@@ -61,10 +66,13 @@ public interface IpfsComponentBuilderFactory {
         /**
          * The ipfs port.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 5001
          * Group: producer
+         * 
+         * @param ipfsPort the value to set
+         * @return the dsl builder
          */
         default IpfsComponentBuilder ipfsPort(int ipfsPort) {
             doSetProperty("ipfsPort", ipfsPort);
@@ -81,10 +89,13 @@ public interface IpfsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default IpfsComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -98,10 +109,13 @@ public interface IpfsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default IpfsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);

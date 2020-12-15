@@ -718,6 +718,7 @@ public interface ServletEndpointBuilderFactory {
          * The context-path to use
          * 
          * @param path contextPath
+         * @return the dsl builder
          */
         default ServletEndpointBuilder servlet(String path) {
             return ServletEndpointBuilderFactory.endpointBuilder("servlet", path);
@@ -738,6 +739,7 @@ public interface ServletEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path contextPath
+         * @return the dsl builder
          */
         default ServletEndpointBuilder servlet(String componentName, String path) {
             return ServletEndpointBuilderFactory.endpointBuilder(componentName, path);

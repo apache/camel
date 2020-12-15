@@ -37,6 +37,8 @@ public interface BeanstalkComponentBuilderFactory {
      * Category: messaging
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-beanstalk
+     * 
+     * @return the dsl builder
      */
     static BeanstalkComponentBuilder beanstalk() {
         return new BeanstalkComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface BeanstalkComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default BeanstalkComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface BeanstalkComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default BeanstalkComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -96,10 +104,13 @@ public interface BeanstalkComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default BeanstalkComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -113,9 +124,12 @@ public interface BeanstalkComponentBuilderFactory {
          * mock ConnectionSettings).
          * 
          * The option is a:
-         * <code>org.apache.camel.component.beanstalk.ConnectionSettingsFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.beanstalk.ConnectionSettingsFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param connectionSettingsFactory the value to set
+         * @return the dsl builder
          */
         default BeanstalkComponentBuilder connectionSettingsFactory(
                 org.apache.camel.component.beanstalk.ConnectionSettingsFactory connectionSettingsFactory) {

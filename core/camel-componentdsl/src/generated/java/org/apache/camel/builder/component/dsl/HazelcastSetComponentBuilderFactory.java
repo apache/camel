@@ -37,6 +37,8 @@ public interface HazelcastSetComponentBuilderFactory {
      * Category: cache,datagrid
      * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * @return the dsl builder
      */
     static HazelcastSetComponentBuilder hazelcastSet() {
         return new HazelcastSetComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface HazelcastSetComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default HazelcastSetComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -78,10 +83,13 @@ public interface HazelcastSetComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastSetComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -96,10 +104,13 @@ public interface HazelcastSetComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default HazelcastSetComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -111,10 +122,13 @@ public interface HazelcastSetComponentBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastSetComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
@@ -126,10 +140,13 @@ public interface HazelcastSetComponentBuilderFactory {
          * If you don't specify the mode, then the node mode will be the
          * default.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: node
          * Group: advanced
+         * 
+         * @param hazelcastMode the value to set
+         * @return the dsl builder
          */
         default HazelcastSetComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {

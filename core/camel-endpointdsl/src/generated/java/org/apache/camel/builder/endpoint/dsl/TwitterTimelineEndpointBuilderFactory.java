@@ -1516,6 +1516,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * MENTIONS, RETWEETSOFME, UNKNOWN
          * 
          * @param path timelineType
+         * @return the dsl builder
          */
         default TwitterTimelineEndpointBuilder twitterTimeline(String path) {
             return TwitterTimelineEndpointBuilderFactory.endpointBuilder("twitter-timeline", path);
@@ -1538,6 +1539,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path timelineType
+         * @return the dsl builder
          */
         default TwitterTimelineEndpointBuilder twitterTimeline(
                 String componentName,

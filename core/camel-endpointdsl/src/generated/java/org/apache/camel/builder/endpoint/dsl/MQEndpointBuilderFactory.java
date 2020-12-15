@@ -327,6 +327,7 @@ public interface MQEndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default MQEndpointBuilder awsMq(String path) {
             return MQEndpointBuilderFactory.endpointBuilder("aws-mq", path);
@@ -347,6 +348,7 @@ public interface MQEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default MQEndpointBuilder awsMq(String componentName, String path) {
             return MQEndpointBuilderFactory.endpointBuilder(componentName, path);

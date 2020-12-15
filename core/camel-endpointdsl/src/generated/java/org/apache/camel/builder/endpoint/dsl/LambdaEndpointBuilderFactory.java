@@ -345,6 +345,7 @@ public interface LambdaEndpointBuilderFactory {
          * Name of the Lambda function.
          * 
          * @param path function
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder awsLambda(String path) {
             return LambdaEndpointBuilderFactory.endpointBuilder("aws-lambda", path);
@@ -365,6 +366,7 @@ public interface LambdaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path function
+         * @return the dsl builder
          */
         default LambdaEndpointBuilder awsLambda(
                 String componentName,

@@ -352,6 +352,7 @@ public interface STS2EndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default STS2EndpointBuilder aws2Sts(String path) {
             return STS2EndpointBuilderFactory.endpointBuilder("aws2-sts", path);
@@ -372,6 +373,7 @@ public interface STS2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default STS2EndpointBuilder aws2Sts(String componentName, String path) {
             return STS2EndpointBuilderFactory.endpointBuilder(componentName, path);

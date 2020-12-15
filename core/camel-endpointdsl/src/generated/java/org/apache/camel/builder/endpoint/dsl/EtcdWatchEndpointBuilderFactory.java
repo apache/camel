@@ -356,6 +356,7 @@ public interface EtcdWatchEndpointBuilderFactory {
          * The path the endpoint refers to
          * 
          * @param path path
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder etcdWatch(String path) {
             return EtcdWatchEndpointBuilderFactory.endpointBuilder("etcd-watch", path);
@@ -376,6 +377,7 @@ public interface EtcdWatchEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path
+         * @return the dsl builder
          */
         default EtcdWatchEndpointBuilder etcdWatch(
                 String componentName,

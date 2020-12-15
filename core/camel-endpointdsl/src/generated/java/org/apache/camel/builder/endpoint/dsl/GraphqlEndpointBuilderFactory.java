@@ -247,6 +247,7 @@ public interface GraphqlEndpointBuilderFactory {
          * The GraphQL server URI.
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder graphql(String path) {
             return GraphqlEndpointBuilderFactory.endpointBuilder("graphql", path);
@@ -267,6 +268,7 @@ public interface GraphqlEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path httpUri
+         * @return the dsl builder
          */
         default GraphqlEndpointBuilder graphql(String componentName, String path) {
             return GraphqlEndpointBuilderFactory.endpointBuilder(componentName, path);

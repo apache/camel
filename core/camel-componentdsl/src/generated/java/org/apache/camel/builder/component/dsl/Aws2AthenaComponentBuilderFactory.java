@@ -37,6 +37,8 @@ public interface Aws2AthenaComponentBuilderFactory {
      * Category: cloud,database
      * Since: 3.4
      * Maven coordinates: org.apache.camel:camel-aws2-athena
+     * 
+     * @return the dsl builder
      */
     static Aws2AthenaComponentBuilder aws2Athena() {
         return new Aws2AthenaComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -63,10 +68,12 @@ public interface Aws2AthenaComponentBuilderFactory {
          * The AmazonAthena instance to use as the client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.athena.AthenaClient</code>
-         * type.
+         * &lt;code&gt;software.amazon.awssdk.services.athena.AthenaClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonAthenaClient the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder amazonAthenaClient(
                 software.amazon.awssdk.services.athena.AthenaClient amazonAthenaClient) {
@@ -77,9 +84,12 @@ public interface Aws2AthenaComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.athena.Athena2Configuration</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.athena.Athena2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder configuration(
                 org.apache.camel.component.aws2.athena.Athena2Configuration configuration) {
@@ -89,9 +99,12 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * The Athena database to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param database the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder database(java.lang.String database) {
             doSetProperty("database", database);
@@ -102,10 +115,13 @@ public interface Aws2AthenaComponentBuilderFactory {
          * section 'Waiting for Query Completion and Retrying Failed Queries' to
          * learn more.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2000
          * Group: producer
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -116,9 +132,12 @@ public interface Aws2AthenaComponentBuilderFactory {
          * SSE_S3, SSE_KMS, or CSE_KMS.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.athena.model.EncryptionOption</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.athena.model.EncryptionOption&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param encryptionOption the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder encryptionOption(
                 software.amazon.awssdk.services.athena.model.EncryptionOption encryptionOption) {
@@ -129,10 +148,13 @@ public interface Aws2AthenaComponentBuilderFactory {
          * Include useful trace information at the beginning of queries as an
          * SQL comment (prefixed with --).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param includeTrace the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder includeTrace(boolean includeTrace) {
             doSetProperty("includeTrace", includeTrace);
@@ -143,10 +165,13 @@ public interface Aws2AthenaComponentBuilderFactory {
          * the section 'Waiting for Query Completion and Retrying Failed
          * Queries' to learn more.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: producer
+         * 
+         * @param initialDelay the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder initialDelay(long initialDelay) {
             doSetProperty("initialDelay", initialDelay);
@@ -155,9 +180,12 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * For SSE-KMS and CSE-KMS, this is the KMS key ARN or ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param kmsKey the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder kmsKey(java.lang.String kmsKey) {
             doSetProperty("kmsKey", kmsKey);
@@ -174,10 +202,13 @@ public interface Aws2AthenaComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -189,10 +220,13 @@ public interface Aws2AthenaComponentBuilderFactory {
          * retries. See the section 'Waiting for Query Completion and Retrying
          * Failed Queries' to learn more.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: producer
+         * 
+         * @param maxAttempts the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder maxAttempts(int maxAttempts) {
             doSetProperty("maxAttempts", maxAttempts);
@@ -203,9 +237,12 @@ public interface Aws2AthenaComponentBuilderFactory {
          * by the Athena API endpoint). If not set, will use the Athena API
          * default for the given operation.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param maxResults the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder maxResults(
                 java.lang.Integer maxResults) {
@@ -216,9 +253,12 @@ public interface Aws2AthenaComponentBuilderFactory {
          * Pagination token to use in the case where the response from the
          * previous request was truncated.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param nextToken the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder nextToken(java.lang.String nextToken) {
             doSetProperty("nextToken", nextToken);
@@ -228,11 +268,13 @@ public interface Aws2AthenaComponentBuilderFactory {
          * The Athena API function to call.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.athena.Athena2Operations</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.athena.Athena2Operations&lt;/code&gt; type.
          * 
          * Default: startQueryExecution
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder operation(
                 org.apache.camel.component.aws2.athena.Athena2Operations operation) {
@@ -244,9 +286,12 @@ public interface Aws2AthenaComponentBuilderFactory {
          * s3://path/to/query/bucket/. Ensure this value ends with a forward
          * slash ('/').
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputLocation the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder outputLocation(
                 java.lang.String outputLocation) {
@@ -261,11 +306,13 @@ public interface Aws2AthenaComponentBuilderFactory {
          * S3Pointer (return an S3 path pointing to the results).
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.athena.Athena2OutputType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.athena.Athena2OutputType&lt;/code&gt; type.
          * 
          * Default: StreamList
          * Group: producer
+         * 
+         * @param outputType the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder outputType(
                 org.apache.camel.component.aws2.athena.Athena2OutputType outputType) {
@@ -275,9 +322,12 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the Athena client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -286,9 +336,12 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the Athena client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -297,11 +350,14 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Athena client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -311,9 +367,12 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * The unique ID identifying the query execution.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param queryExecutionId the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder queryExecutionId(
                 java.lang.String queryExecutionId) {
@@ -326,9 +385,12 @@ public interface Aws2AthenaComponentBuilderFactory {
          * Athena2Constants.QUERY_STRING to avoid having to deal with URL
          * encoding issues.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param queryString the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder queryString(
                 java.lang.String queryString) {
@@ -341,9 +403,12 @@ public interface Aws2AthenaComponentBuilderFactory {
          * region (for example ap-east-1). You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -355,10 +420,13 @@ public interface Aws2AthenaComponentBuilderFactory {
          * waitTimeout x maxAttempts. See the section 'Waiting for Query
          * Completion and Retrying Failed Queries' to learn more.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param resetWaitTimeoutOnRetry the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder resetWaitTimeoutOnRetry(
                 boolean resetWaitTimeoutOnRetry) {
@@ -375,10 +443,13 @@ public interface Aws2AthenaComponentBuilderFactory {
          * See the section 'Waiting for Query Completion and Retrying Failed
          * Queries' to learn more.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: never
          * Group: producer
+         * 
+         * @param retry the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder retry(java.lang.String retry) {
             doSetProperty("retry", retry);
@@ -387,9 +458,12 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -400,10 +474,13 @@ public interface Aws2AthenaComponentBuilderFactory {
          * completion. See the section 'Waiting for Query Completion and
          * Retrying Failed Queries' to learn more.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: producer
+         * 
+         * @param waitTimeout the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder waitTimeout(long waitTimeout) {
             doSetProperty("waitTimeout", waitTimeout);
@@ -412,9 +489,12 @@ public interface Aws2AthenaComponentBuilderFactory {
         /**
          * The workgroup to use for running the query.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param workGroup the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder workGroup(java.lang.String workGroup) {
             doSetProperty("workGroup", workGroup);
@@ -428,10 +508,13 @@ public interface Aws2AthenaComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -442,9 +525,12 @@ public interface Aws2AthenaComponentBuilderFactory {
          * A unique string to ensure issues queries are idempotent. It is
          * unlikely you will need to set this.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param clientRequestToken the value to set
+         * @return the dsl builder
          */
         default Aws2AthenaComponentBuilder clientRequestToken(
                 java.lang.String clientRequestToken) {

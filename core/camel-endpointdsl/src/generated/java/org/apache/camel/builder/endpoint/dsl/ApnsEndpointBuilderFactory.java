@@ -818,6 +818,7 @@ public interface ApnsEndpointBuilderFactory {
          * Name of the endpoint
          * 
          * @param path name
+         * @return the dsl builder
          */
         default ApnsEndpointBuilder apns(String path) {
             return ApnsEndpointBuilderFactory.endpointBuilder("apns", path);
@@ -838,6 +839,7 @@ public interface ApnsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default ApnsEndpointBuilder apns(String componentName, String path) {
             return ApnsEndpointBuilderFactory.endpointBuilder(componentName, path);

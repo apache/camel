@@ -37,6 +37,8 @@ public interface LumberjackComponentBuilderFactory {
      * Category: log
      * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-lumberjack
+     * 
+     * @return the dsl builder
      */
     static LumberjackComponentBuilder lumberjack() {
         return new LumberjackComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface LumberjackComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default LumberjackComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -75,10 +80,13 @@ public interface LumberjackComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default LumberjackComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -90,9 +98,12 @@ public interface LumberjackComponentBuilderFactory {
          * can also configure it directly at the endpoint level.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default LumberjackComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -102,10 +113,13 @@ public interface LumberjackComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default LumberjackComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

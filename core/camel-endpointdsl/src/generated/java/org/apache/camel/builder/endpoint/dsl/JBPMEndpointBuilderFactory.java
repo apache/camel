@@ -1813,6 +1813,7 @@ public interface JBPMEndpointBuilderFactory {
          * Sets the event listener type to attach to
          * 
          * @param path connectionURL
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder jbpm(String path) {
             return JBPMEndpointBuilderFactory.endpointBuilder("jbpm", path);
@@ -1836,6 +1837,7 @@ public interface JBPMEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path connectionURL
+         * @return the dsl builder
          */
         default JBPMEndpointBuilder jbpm(String componentName, String path) {
             return JBPMEndpointBuilderFactory.endpointBuilder(componentName, path);

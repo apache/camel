@@ -40,6 +40,8 @@ public interface Jt400ComponentBuilderFactory {
      * Category: messaging
      * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-jt400
+     * 
+     * @return the dsl builder
      */
     static Jt400ComponentBuilder jt400() {
         return new Jt400ComponentBuilderImpl();
@@ -58,10 +60,13 @@ public interface Jt400ComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Jt400ComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -79,10 +84,13 @@ public interface Jt400ComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Jt400ComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -97,10 +105,13 @@ public interface Jt400ComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default Jt400ComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -113,9 +124,13 @@ public interface Jt400ComponentBuilderFactory {
          * and keep an idle pool.
          * 
          * The option is a:
-         * <code>com.ibm.as400.access.AS400ConnectionPool</code> type.
+         * &lt;code&gt;com.ibm.as400.access.AS400ConnectionPool&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param connectionPool the value to set
+         * @return the dsl builder
          */
         default Jt400ComponentBuilder connectionPool(
                 com.ibm.as400.access.AS400ConnectionPool connectionPool) {

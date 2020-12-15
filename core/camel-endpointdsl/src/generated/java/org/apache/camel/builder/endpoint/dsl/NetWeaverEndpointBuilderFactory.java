@@ -233,6 +233,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Url to the SAP net-weaver gateway server.
          * 
          * @param path url
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder sapNetweaver(String path) {
             return NetWeaverEndpointBuilderFactory.endpointBuilder("sap-netweaver", path);
@@ -253,6 +254,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path url
+         * @return the dsl builder
          */
         default NetWeaverEndpointBuilder sapNetweaver(
                 String componentName,

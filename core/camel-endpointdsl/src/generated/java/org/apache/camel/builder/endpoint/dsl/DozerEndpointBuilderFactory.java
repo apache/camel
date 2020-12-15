@@ -230,6 +230,7 @@ public interface DozerEndpointBuilderFactory {
          * A human readable name of the mapping.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DozerEndpointBuilder dozer(String path) {
             return DozerEndpointBuilderFactory.endpointBuilder("dozer", path);
@@ -250,6 +251,7 @@ public interface DozerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DozerEndpointBuilder dozer(String componentName, String path) {
             return DozerEndpointBuilderFactory.endpointBuilder(componentName, path);

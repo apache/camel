@@ -509,6 +509,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * The logical name of this operation.
          * 
          * @param path cryptoOperation:name
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder crypto(String path) {
             return DigitalSignatureEndpointBuilderFactory.endpointBuilder("crypto", path);
@@ -535,6 +536,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cryptoOperation:name
+         * @return the dsl builder
          */
         default DigitalSignatureEndpointBuilder crypto(
                 String componentName,

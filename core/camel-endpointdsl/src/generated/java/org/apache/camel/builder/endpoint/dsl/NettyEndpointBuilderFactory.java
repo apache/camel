@@ -3988,6 +3988,7 @@ public interface NettyEndpointBuilderFactory {
          * The host port number
          * 
          * @param path protocol:host:port
+         * @return the dsl builder
          */
         default NettyEndpointBuilder netty(String path) {
             return NettyEndpointBuilderFactory.endpointBuilder("netty", path);
@@ -4016,6 +4017,7 @@ public interface NettyEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path protocol:host:port
+         * @return the dsl builder
          */
         default NettyEndpointBuilder netty(String componentName, String path) {
             return NettyEndpointBuilderFactory.endpointBuilder(componentName, path);

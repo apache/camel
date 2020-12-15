@@ -2527,6 +2527,7 @@ public interface S3EndpointBuilderFactory {
          * Bucket name or ARN
          * 
          * @param path //bucketNameOrArn
+         * @return the dsl builder
          */
         default S3EndpointBuilder awsS3(String path) {
             return S3EndpointBuilderFactory.endpointBuilder("aws-s3", path);
@@ -2547,6 +2548,7 @@ public interface S3EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path //bucketNameOrArn
+         * @return the dsl builder
          */
         default S3EndpointBuilder awsS3(String componentName, String path) {
             return S3EndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -2120,6 +2120,7 @@ public interface SqlEndpointBuilderFactory {
          * file: or classpath: as prefix and specify the location of the file.
          * 
          * @param path query
+         * @return the dsl builder
          */
         default SqlEndpointBuilder sql(String path) {
             return SqlEndpointBuilderFactory.endpointBuilder("sql", path);
@@ -2141,6 +2142,7 @@ public interface SqlEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path query
+         * @return the dsl builder
          */
         default SqlEndpointBuilder sql(String componentName, String path) {
             return SqlEndpointBuilderFactory.endpointBuilder(componentName, path);

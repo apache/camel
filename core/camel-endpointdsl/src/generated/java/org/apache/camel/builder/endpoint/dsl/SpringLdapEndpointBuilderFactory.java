@@ -190,6 +190,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * Name of the Spring LDAP Template bean
          * 
          * @param path templateName
+         * @return the dsl builder
          */
         default SpringLdapEndpointBuilder springLdap(String path) {
             return SpringLdapEndpointBuilderFactory.endpointBuilder("spring-ldap", path);
@@ -211,6 +212,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path templateName
+         * @return the dsl builder
          */
         default SpringLdapEndpointBuilder springLdap(
                 String componentName,

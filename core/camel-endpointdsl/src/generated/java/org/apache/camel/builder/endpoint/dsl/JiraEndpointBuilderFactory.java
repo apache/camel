@@ -750,6 +750,7 @@ public interface JiraEndpointBuilderFactory {
          * FETCHISSUE, FETCHCOMMENTS
          * 
          * @param path type
+         * @return the dsl builder
          */
         default JiraEndpointBuilder jira(String path) {
             return JiraEndpointBuilderFactory.endpointBuilder("jira", path);
@@ -776,6 +777,7 @@ public interface JiraEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path type
+         * @return the dsl builder
          */
         default JiraEndpointBuilder jira(String componentName, String path) {
             return JiraEndpointBuilderFactory.endpointBuilder(componentName, path);

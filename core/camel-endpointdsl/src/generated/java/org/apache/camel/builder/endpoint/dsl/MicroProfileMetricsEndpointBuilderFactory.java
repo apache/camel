@@ -340,6 +340,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * Metric name
          * 
          * @param path metricType:metricName
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder microprofileMetrics(
                 String path) {
@@ -366,6 +367,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path metricType:metricName
+         * @return the dsl builder
          */
         default MicroProfileMetricsEndpointBuilder microprofileMetrics(
                 String componentName,

@@ -239,6 +239,7 @@ public interface LuceneEndpointBuilderFactory {
          * There are 2 enums and the value can be one of: insert, query
          * 
          * @param path host:operation
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder lucene(String path) {
             return LuceneEndpointBuilderFactory.endpointBuilder("lucene", path);
@@ -263,6 +264,7 @@ public interface LuceneEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:operation
+         * @return the dsl builder
          */
         default LuceneEndpointBuilder lucene(String componentName, String path) {
             return LuceneEndpointBuilderFactory.endpointBuilder(componentName, path);

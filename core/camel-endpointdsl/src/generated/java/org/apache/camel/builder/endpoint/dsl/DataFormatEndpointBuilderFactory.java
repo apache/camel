@@ -140,6 +140,7 @@ public interface DataFormatEndpointBuilderFactory {
          * There are 2 enums and the value can be one of: marshal, unmarshal
          * 
          * @param path name:operation
+         * @return the dsl builder
          */
         default DataFormatEndpointBuilder dataformat(String path) {
             return DataFormatEndpointBuilderFactory.endpointBuilder("dataformat", path);
@@ -164,6 +165,7 @@ public interface DataFormatEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name:operation
+         * @return the dsl builder
          */
         default DataFormatEndpointBuilder dataformat(
                 String componentName,

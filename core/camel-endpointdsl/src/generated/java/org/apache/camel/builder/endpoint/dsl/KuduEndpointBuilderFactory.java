@@ -173,6 +173,7 @@ public interface KuduEndpointBuilderFactory {
          * Table to connect to
          * 
          * @param path host:port/tableName
+         * @return the dsl builder
          */
         default KuduEndpointBuilder kudu(String path) {
             return KuduEndpointBuilderFactory.endpointBuilder("kudu", path);
@@ -200,6 +201,7 @@ public interface KuduEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/tableName
+         * @return the dsl builder
          */
         default KuduEndpointBuilder kudu(String componentName, String path) {
             return KuduEndpointBuilderFactory.endpointBuilder(componentName, path);

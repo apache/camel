@@ -5622,6 +5622,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * Name of the queue or topic to use as destination
          * 
          * @param path destinationType:destinationName
+         * @return the dsl builder
          */
         default ActiveMQEndpointBuilder activemq(String path) {
             return ActiveMQEndpointBuilderFactory.endpointBuilder("activemq", path);
@@ -5649,6 +5650,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path destinationType:destinationName
+         * @return the dsl builder
          */
         default ActiveMQEndpointBuilder activemq(
                 String componentName,

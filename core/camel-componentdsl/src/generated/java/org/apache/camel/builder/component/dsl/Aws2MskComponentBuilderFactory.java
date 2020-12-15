@@ -37,6 +37,8 @@ public interface Aws2MskComponentBuilderFactory {
      * Category: cloud,management
      * Since: 3.1
      * Maven coordinates: org.apache.camel:camel-aws2-msk
+     * 
+     * @return the dsl builder
      */
     static Aws2MskComponentBuilder aws2Msk() {
         return new Aws2MskComponentBuilderImpl();
@@ -50,10 +52,12 @@ public interface Aws2MskComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.msk.MSK2Configuration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws2.msk.MSK2Configuration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder configuration(
                 org.apache.camel.component.aws2.msk.MSK2Configuration configuration) {
@@ -71,10 +75,13 @@ public interface Aws2MskComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -85,9 +92,12 @@ public interface Aws2MskComponentBuilderFactory {
          * To use a existing configured AWS MSK as client.
          * 
          * The option is a:
-         * <code>software.amazon.awssdk.services.kafka.KafkaClient</code> type.
+         * &lt;code&gt;software.amazon.awssdk.services.kafka.KafkaClient&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param mskClient the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder mskClient(
                 software.amazon.awssdk.services.kafka.KafkaClient mskClient) {
@@ -98,9 +108,12 @@ public interface Aws2MskComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws2.msk.MSK2Operations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws2.msk.MSK2Operations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder operation(
                 org.apache.camel.component.aws2.msk.MSK2Operations operation) {
@@ -110,10 +123,13 @@ public interface Aws2MskComponentBuilderFactory {
         /**
          * If we want to use a POJO request as body or not.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param pojoRequest the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder pojoRequest(boolean pojoRequest) {
             doSetProperty("pojoRequest", pojoRequest);
@@ -122,9 +138,12 @@ public interface Aws2MskComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the MSK client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -133,9 +152,12 @@ public interface Aws2MskComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the MSK client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -144,11 +166,14 @@ public interface Aws2MskComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the MSK client.
          * 
-         * The option is a: <code>software.amazon.awssdk.core.Protocol</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;software.amazon.awssdk.core.Protocol&lt;/code&gt; type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder proxyProtocol(
                 software.amazon.awssdk.core.Protocol proxyProtocol) {
@@ -161,9 +186,12 @@ public interface Aws2MskComponentBuilderFactory {
          * region (for example ap-east-1) You'll need to use the name
          * Region.EU_WEST_1.id().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -173,10 +201,13 @@ public interface Aws2MskComponentBuilderFactory {
          * If we want to trust all certificates in case of overriding the
          * endpoint.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param trustAllCertificates the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder trustAllCertificates(
                 boolean trustAllCertificates) {
@@ -191,10 +222,13 @@ public interface Aws2MskComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -204,9 +238,12 @@ public interface Aws2MskComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -215,9 +252,12 @@ public interface Aws2MskComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default Aws2MskComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);

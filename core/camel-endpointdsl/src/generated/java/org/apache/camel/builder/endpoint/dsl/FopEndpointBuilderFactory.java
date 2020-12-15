@@ -172,6 +172,7 @@ public interface FopEndpointBuilderFactory {
          * jpeg, svg, xml, mif, rtf, txt
          * 
          * @param path outputType
+         * @return the dsl builder
          */
         default FopEndpointBuilder fop(String path) {
             return FopEndpointBuilderFactory.endpointBuilder("fop", path);
@@ -196,6 +197,7 @@ public interface FopEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path outputType
+         * @return the dsl builder
          */
         default FopEndpointBuilder fop(String componentName, String path) {
             return FopEndpointBuilderFactory.endpointBuilder(componentName, path);

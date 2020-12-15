@@ -39,6 +39,8 @@ public interface FileWatchComponentBuilderFactory {
      * Category: file
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-file-watch
+     * 
+     * @return the dsl builder
      */
     static FileWatchComponentBuilder fileWatch() {
         return new FileWatchComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface FileWatchComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default FileWatchComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -73,10 +78,13 @@ public interface FileWatchComponentBuilderFactory {
          * The number of concurrent consumers. Increase this value, if your
          * route is slow to prevent buffering in queue.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default FileWatchComponentBuilder concurrentConsumers(
                 int concurrentConsumers) {
@@ -90,11 +98,14 @@ public interface FileWatchComponentBuilderFactory {
          * per file, use #lastModifiedTimeFileHasher. You can also provide
          * custom implementation in registry.
          * 
-         * The option is a: <code>io.methvin.watcher.hashing.FileHasher</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;io.methvin.watcher.hashing.FileHasher&lt;/code&gt; type.
          * 
          * Default: #murmur3FFileHasher
          * Group: consumer
+         * 
+         * @param fileHasher the value to set
+         * @return the dsl builder
          */
         default FileWatchComponentBuilder fileHasher(
                 io.methvin.watcher.hashing.FileHasher fileHasher) {
@@ -105,10 +116,13 @@ public interface FileWatchComponentBuilderFactory {
          * The number of threads polling WatchService. Increase this value, if
          * you see OVERFLOW messages in log.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param pollThreads the value to set
+         * @return the dsl builder
          */
         default FileWatchComponentBuilder pollThreads(int pollThreads) {
             doSetProperty("pollThreads", pollThreads);
@@ -118,10 +132,13 @@ public interface FileWatchComponentBuilderFactory {
          * Maximum size of queue between WatchService and consumer. Unbounded by
          * default.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2147483647
          * Group: consumer
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
          */
         default FileWatchComponentBuilder queueSize(int queueSize) {
             doSetProperty("queueSize", queueSize);
@@ -133,10 +150,13 @@ public interface FileWatchComponentBuilderFactory {
          * platforms and JDKs. Check java.nio.file.WatchService limitations for
          * your target platform.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param useFileHashing the value to set
+         * @return the dsl builder
          */
         default FileWatchComponentBuilder useFileHashing(boolean useFileHashing) {
             doSetProperty("useFileHashing", useFileHashing);
@@ -150,10 +170,13 @@ public interface FileWatchComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default FileWatchComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

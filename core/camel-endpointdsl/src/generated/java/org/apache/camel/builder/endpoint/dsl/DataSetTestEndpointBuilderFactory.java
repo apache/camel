@@ -583,6 +583,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * messages used for testing
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder datasetTest(String path) {
             return DataSetTestEndpointBuilderFactory.endpointBuilder("dataset-test", path);
@@ -605,6 +606,7 @@ public interface DataSetTestEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DataSetTestEndpointBuilder datasetTest(
                 String componentName,

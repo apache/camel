@@ -1510,6 +1510,7 @@ public interface SplunkEndpointBuilderFactory {
          * Name has no purpose
          * 
          * @param path name
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder splunk(String path) {
             return SplunkEndpointBuilderFactory.endpointBuilder("splunk", path);
@@ -1530,6 +1531,7 @@ public interface SplunkEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default SplunkEndpointBuilder splunk(String componentName, String path) {
             return SplunkEndpointBuilderFactory.endpointBuilder(componentName, path);

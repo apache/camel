@@ -37,6 +37,8 @@ public interface HazelcastRingbufferComponentBuilderFactory {
      * Category: cache,datagrid
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-hazelcast
+     * 
+     * @return the dsl builder
      */
     static HazelcastRingbufferComponentBuilder hazelcastRingbuffer() {
         return new HazelcastRingbufferComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface HazelcastRingbufferComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default HazelcastRingbufferComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -77,10 +82,13 @@ public interface HazelcastRingbufferComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default HazelcastRingbufferComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -92,10 +100,13 @@ public interface HazelcastRingbufferComponentBuilderFactory {
          * endpoint. If you don't specify the instance reference, camel use the
          * default hazelcast instance from the camel-hazelcast instance.
          * 
-         * The option is a: <code>com.hazelcast.core.HazelcastInstance</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.hazelcast.core.HazelcastInstance&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param hazelcastInstance the value to set
+         * @return the dsl builder
          */
         default HazelcastRingbufferComponentBuilder hazelcastInstance(
                 com.hazelcast.core.HazelcastInstance hazelcastInstance) {
@@ -107,10 +118,13 @@ public interface HazelcastRingbufferComponentBuilderFactory {
          * If you don't specify the mode, then the node mode will be the
          * default.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: node
          * Group: advanced
+         * 
+         * @param hazelcastMode the value to set
+         * @return the dsl builder
          */
         default HazelcastRingbufferComponentBuilder hazelcastMode(
                 java.lang.String hazelcastMode) {

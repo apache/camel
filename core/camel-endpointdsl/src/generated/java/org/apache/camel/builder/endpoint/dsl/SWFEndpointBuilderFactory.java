@@ -1267,6 +1267,7 @@ public interface SWFEndpointBuilderFactory {
          * There are 2 enums and the value can be one of: activity, workflow
          * 
          * @param path type
+         * @return the dsl builder
          */
         default SWFEndpointBuilder awsSwf(String path) {
             return SWFEndpointBuilderFactory.endpointBuilder("aws-swf", path);
@@ -1288,6 +1289,7 @@ public interface SWFEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path type
+         * @return the dsl builder
          */
         default SWFEndpointBuilder awsSwf(String componentName, String path) {
             return SWFEndpointBuilderFactory.endpointBuilder(componentName, path);

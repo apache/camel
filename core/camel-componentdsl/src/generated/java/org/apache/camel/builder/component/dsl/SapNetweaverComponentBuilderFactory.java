@@ -37,6 +37,8 @@ public interface SapNetweaverComponentBuilderFactory {
      * Category: sap,cloud,api
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-sap-netweaver
+     * 
+     * @return the dsl builder
      */
     static SapNetweaverComponentBuilder sapNetweaver() {
         return new SapNetweaverComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface SapNetweaverComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SapNetweaverComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -77,10 +82,13 @@ public interface SapNetweaverComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SapNetweaverComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

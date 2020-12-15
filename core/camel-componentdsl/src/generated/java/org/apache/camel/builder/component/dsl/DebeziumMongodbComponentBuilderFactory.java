@@ -37,6 +37,8 @@ public interface DebeziumMongodbComponentBuilderFactory {
      * Category: database,nosql
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-debezium-mongodb
+     * 
+     * @return the dsl builder
      */
     static DebeziumMongodbComponentBuilder debeziumMongodb() {
         return new DebeziumMongodbComponentBuilderImpl();
@@ -54,12 +56,15 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * properties needed by Debezium engine, for example setting
          * KafkaOffsetBackingStore), the properties have to be prefixed with
          * additionalProperties.. E.g:
-         * additionalProperties.transactional.id=12345&amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * additionalProperties.transactional.id=12345&amp;amp;additionalProperties.schema.registry.url=http://localhost:8811/avro.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param additionalProperties the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder additionalProperties(
                 java.util.Map<java.lang.String, java.lang.Object> additionalProperties) {
@@ -75,10 +80,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -89,9 +97,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Allow pre-configured Configurations to be set.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder configuration(
                 org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration configuration) {
@@ -102,10 +113,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * key data for offsets. The default is JSON converter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
+         * 
+         * @param internalKeyConverter the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder internalKeyConverter(
                 java.lang.String internalKeyConverter) {
@@ -116,10 +130,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The Converter class that should be used to serialize and deserialize
          * value data for offsets. The default is JSON converter.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
+         * 
+         * @param internalValueConverter the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder internalValueConverter(
                 java.lang.String internalValueConverter) {
@@ -133,11 +150,14 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * implement the interface 'OffsetCommitPolicy'. The default is a
          * periodic commit policy based upon time intervals.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default:
          * io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy
          * Group: consumer
+         * 
+         * @param offsetCommitPolicy the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder offsetCommitPolicy(
                 java.lang.String offsetCommitPolicy) {
@@ -150,10 +170,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * cancelling the process and restoring the offset data to be committed
          * in a future attempt. The default is 5 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5s
          * Group: consumer
+         * 
+         * @param offsetCommitTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder offsetCommitTimeoutMs(
                 long offsetCommitTimeoutMs) {
@@ -163,10 +186,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * Interval at which to try committing offsets. The default is 1 minute.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60s
          * Group: consumer
+         * 
+         * @param offsetFlushIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder offsetFlushIntervalMs(
                 long offsetFlushIntervalMs) {
@@ -177,10 +203,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The name of the Java class that is responsible for persistence of
          * connector offsets.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
          * Group: consumer
+         * 
+         * @param offsetStorage the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder offsetStorage(
                 java.lang.String offsetStorage) {
@@ -191,9 +220,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Path to file where offsets are to be stored. Required when
          * offset.storage is set to the FileOffsetBackingStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageFileName the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder offsetStorageFileName(
                 java.lang.String offsetStorageFileName) {
@@ -204,9 +236,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The number of partitions used when creating the offset storage topic.
          * Required when offset.storage is set to the 'KafkaOffsetBackingStore'.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStoragePartitions the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder offsetStoragePartitions(
                 int offsetStoragePartitions) {
@@ -217,9 +252,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Replication factor used when creating the offset storage topic.
          * Required when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageReplicationFactor the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder offsetStorageReplicationFactor(
                 int offsetStorageReplicationFactor) {
@@ -230,9 +268,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The name of the Kafka topic where offsets are to be stored. Required
          * when offset.storage is set to the KafkaOffsetBackingStore.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param offsetStorageTopic the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder offsetStorageTopic(
                 java.lang.String offsetStorageTopic) {
@@ -247,10 +288,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -261,9 +305,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * A comma-separated list of regular expressions that match the
          * collection names for which changes are to be excluded.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param collectionExcludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder collectionExcludeList(
                 java.lang.String collectionExcludeList) {
@@ -274,9 +321,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * A comma-separated list of regular expressions that match the
          * collection names for which changes are to be captured.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param collectionIncludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder collectionIncludeList(
                 java.lang.String collectionIncludeList) {
@@ -288,10 +338,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * connection cannot be made or when no primary is available. Defaults
          * to 1 second (1000 ms).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1s
          * Group: mongodb
+         * 
+         * @param connectBackoffInitialDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder connectBackoffInitialDelayMs(
                 long connectBackoffInitialDelayMs) {
@@ -303,10 +356,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * connection cannot be made or when no primary is available. Defaults
          * to 120 second (120,000 ms).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 2m
          * Group: mongodb
+         * 
+         * @param connectBackoffMaxDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder connectBackoffMaxDelayMs(
                 long connectBackoffMaxDelayMs) {
@@ -320,10 +376,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * 'connect.backoff.max.delay.ms' results in just over 20 minutes of
          * attempts before failing.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 16
          * Group: mongodb
+         * 
+         * @param connectMaxAttempts the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder connectMaxAttempts(
                 int connectMaxAttempts) {
@@ -335,9 +394,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param converters the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder converters(
                 java.lang.String converters) {
@@ -348,9 +410,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * A comma-separated list of regular expressions that match the database
          * names for which changes are to be excluded.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param databaseExcludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder databaseExcludeList(
                 java.lang.String databaseExcludeList) {
@@ -361,9 +426,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The path to the file that will be used to record the database
          * history.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param databaseHistoryFileFilename the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder databaseHistoryFileFilename(
                 java.lang.String databaseHistoryFileFilename) {
@@ -374,9 +442,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * A comma-separated list of regular expressions that match the database
          * names for which changes are to be captured.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param databaseIncludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder databaseIncludeList(
                 java.lang.String databaseIncludeList) {
@@ -391,10 +462,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * problematic event and its position will be logged and the event will
          * be skipped;'ignore' the problematic event will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: fail
          * Group: mongodb
+         * 
+         * @param eventProcessingFailureHandlingMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder eventProcessingFailureHandlingMode(
                 java.lang.String eventProcessingFailureHandlingMode) {
@@ -405,9 +479,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * A comma-separated list of the fully-qualified names of fields that
          * should be excluded from change event message values.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param fieldExcludeList the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder fieldExcludeList(
                 java.lang.String fieldExcludeList) {
@@ -418,9 +495,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Description is not available here, please check Debezium website for
          * corresponding key 'field.renames' description.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param fieldRenames the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder fieldRenames(
                 java.lang.String fieldRenames) {
@@ -432,10 +512,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * periodically sends heartbeat messages to a heartbeat topic. Use 0 to
          * disable heartbeat messages. Disabled by default.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: mongodb
+         * 
+         * @param heartbeatIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder heartbeatIntervalMs(
                 int heartbeatIntervalMs) {
@@ -446,10 +529,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The prefix that is used to name heartbeat topics.Defaults to
          * __debezium-heartbeat.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: __debezium-heartbeat
          * Group: mongodb
+         * 
+         * @param heartbeatTopicsPrefix the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder heartbeatTopicsPrefix(
                 java.lang.String heartbeatTopicsPrefix) {
@@ -460,10 +546,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Maximum number of threads used to perform an initial sync of the
          * collections in a replica set. Defaults to 1.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: mongodb
+         * 
+         * @param initialSyncMaxThreads the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder initialSyncMaxThreads(
                 int initialSyncMaxThreads) {
@@ -473,10 +562,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 2048
          * Group: mongodb
+         * 
+         * @param maxBatchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder maxBatchSize(int maxBatchSize) {
             doSetProperty("maxBatchSize", maxBatchSize);
@@ -487,10 +579,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * log but not yet recorded or forwarded. Defaults to 8192, and should
          * always be larger than the maximum batch size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: mongodb
+         * 
+         * @param maxQueueSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder maxQueueSize(int maxQueueSize) {
             doSetProperty("maxQueueSize", maxQueueSize);
@@ -499,10 +594,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * Database containing user credentials.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: admin
          * Group: mongodb
+         * 
+         * @param mongodbAuthsource the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbAuthsource(
                 java.lang.String mongodbAuthsource) {
@@ -512,10 +610,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * The connection timeout in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: mongodb
+         * 
+         * @param mongodbConnectTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbConnectTimeoutMs(
                 int mongodbConnectTimeoutMs) {
@@ -526,9 +627,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The hostname and port pairs (in the form 'host' or 'host:port') of
          * the MongoDB server(s) in the replica set.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param mongodbHosts the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbHosts(
                 java.lang.String mongodbHosts) {
@@ -541,10 +645,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * or whether the address(es) in 'hosts' should be used as is ('false').
          * The default is 'true'.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: mongodb
+         * 
+         * @param mongodbMembersAutoDiscover the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbMembersAutoDiscover(
                 boolean mongodbMembersAutoDiscover) {
@@ -557,9 +664,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * topics. Each distinct MongoDB installation should have a separate
          * namespace and monitored by at most one Debezium connector.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param mongodbName the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbName(
                 java.lang.String mongodbName) {
@@ -569,9 +679,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * Password to be used when connecting to MongoDB, if necessary.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param mongodbPassword the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbPassword(
                 java.lang.String mongodbPassword) {
@@ -582,10 +695,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Frequency in milliseconds to look for new, removed, or changed
          * replica sets. Defaults to 30000 milliseconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: mongodb
+         * 
+         * @param mongodbPollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbPollIntervalMs(
                 long mongodbPollIntervalMs) {
@@ -595,10 +711,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * The server selection timeout in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 30s
          * Group: mongodb
+         * 
+         * @param mongodbServerSelectionTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbServerSelectionTimeoutMs(
                 int mongodbServerSelectionTimeoutMs) {
@@ -608,10 +727,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * The socket timeout in milliseconds.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: mongodb
+         * 
+         * @param mongodbSocketTimeoutMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbSocketTimeoutMs(
                 int mongodbSocketTimeoutMs) {
@@ -621,10 +743,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * Should connector use SSL to connect to MongoDB instances.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param mongodbSslEnabled the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbSslEnabled(
                 boolean mongodbSslEnabled) {
@@ -635,10 +760,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Whether invalid host names are allowed when using SSL. If true the
          * connection will not prevent man-in-the-middle attacks.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param mongodbSslInvalidHostnameAllowed the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbSslInvalidHostnameAllowed(
                 boolean mongodbSslInvalidHostnameAllowed) {
@@ -648,9 +776,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * Database user for connecting to MongoDB, if necessary.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param mongodbUser the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder mongodbUser(
                 java.lang.String mongodbUser) {
@@ -661,10 +792,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Frequency in milliseconds to wait for new change events to appear
          * after receiving no events. Defaults to 500ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 500ms
          * Group: mongodb
+         * 
+         * @param pollIntervalMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder pollIntervalMs(
                 long pollIntervalMs) {
@@ -674,10 +808,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * Enables transaction metadata extraction together with event counting.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param provideTransactionMetadata the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder provideTransactionMetadata(
                 boolean provideTransactionMetadata) {
@@ -688,10 +825,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * streaming. A value of 0 uses the default JDBC fetch size.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 0
          * Group: mongodb
+         * 
+         * @param queryFetchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder queryFetchSize(
                 int queryFetchSize) {
@@ -702,10 +842,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Time to wait before restarting connector after retriable exception
          * occurs. Defaults to 10000ms.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10s
          * Group: mongodb
+         * 
+         * @param retriableRestartConnectorWaitMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder retriableRestartConnectorWaitMs(
                 long retriableRestartConnectorWaitMs) {
@@ -715,10 +858,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * Whether field names will be sanitized to Avro naming conventions.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param sanitizeFieldNames the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder sanitizeFieldNames(
                 boolean sanitizeFieldNames) {
@@ -730,9 +876,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By
          * default, no operations will be skipped.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param skippedOperations the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder skippedOperations(
                 java.lang.String skippedOperations) {
@@ -742,10 +891,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
         /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 0ms
          * Group: mongodb
+         * 
+         * @param snapshotDelayMs the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder snapshotDelayMs(
                 long snapshotDelayMs) {
@@ -756,9 +908,12 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: mongodb
+         * 
+         * @param snapshotFetchSize the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder snapshotFetchSize(
                 int snapshotFetchSize) {
@@ -771,10 +926,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * should always perform an initial sync when required; 'never' to
          * specify the connector should never perform an initial sync.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: initial
          * Group: mongodb
+         * 
+         * @param snapshotMode the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder snapshotMode(
                 java.lang.String snapshotMode) {
@@ -785,10 +943,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * A version of the format of the publicly visible source part in the
          * message.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: v2
          * Group: mongodb
+         * 
+         * @param sourceStructVersion the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder sourceStructVersion(
                 java.lang.String sourceStructVersion) {
@@ -802,10 +963,13 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * completely delete all events pertaining to the given key once the
          * source record got deleted.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: mongodb
+         * 
+         * @param tombstonesOnDelete the value to set
+         * @return the dsl builder
          */
         default DebeziumMongodbComponentBuilder tombstonesOnDelete(
                 boolean tombstonesOnDelete) {

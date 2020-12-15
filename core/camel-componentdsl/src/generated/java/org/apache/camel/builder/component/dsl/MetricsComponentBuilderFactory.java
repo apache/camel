@@ -39,6 +39,8 @@ public interface MetricsComponentBuilderFactory {
      * Category: monitoring
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-metrics
+     * 
+     * @return the dsl builder
      */
     static MetricsComponentBuilder metrics() {
         return new MetricsComponentBuilderImpl();
@@ -61,10 +63,13 @@ public interface MetricsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MetricsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -79,10 +84,13 @@ public interface MetricsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default MetricsComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -92,10 +100,13 @@ public interface MetricsComponentBuilderFactory {
         /**
          * To use a custom configured MetricRegistry.
          * 
-         * The option is a: <code>com.codahale.metrics.MetricRegistry</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;com.codahale.metrics.MetricRegistry&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param metricRegistry the value to set
+         * @return the dsl builder
          */
         default MetricsComponentBuilder metricRegistry(
                 com.codahale.metrics.MetricRegistry metricRegistry) {

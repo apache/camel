@@ -1338,6 +1338,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The distributed resource name
          * 
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixMessagingEndpointBuilder atomixMessaging(String path) {
             return AtomixMessagingEndpointBuilderFactory.endpointBuilder("atomix-messaging", path);
@@ -1358,6 +1359,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixMessagingEndpointBuilder atomixMessaging(
                 String componentName,

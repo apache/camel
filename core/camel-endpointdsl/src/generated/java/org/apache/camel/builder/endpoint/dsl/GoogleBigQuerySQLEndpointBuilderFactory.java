@@ -169,6 +169,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * Google Cloud Project Id
          * 
          * @param path projectId:query
+         * @return the dsl builder
          */
         default GoogleBigQuerySQLEndpointBuilder googleBigquerySql(String path) {
             return GoogleBigQuerySQLEndpointBuilderFactory.endpointBuilder("google-bigquery-sql", path);
@@ -192,6 +193,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path projectId:query
+         * @return the dsl builder
          */
         default GoogleBigQuerySQLEndpointBuilder googleBigquerySql(
                 String componentName,

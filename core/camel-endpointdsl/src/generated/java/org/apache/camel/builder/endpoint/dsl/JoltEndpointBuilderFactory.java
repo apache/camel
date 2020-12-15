@@ -332,6 +332,7 @@ public interface JoltEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JoltEndpointBuilder jolt(String path) {
             return JoltEndpointBuilderFactory.endpointBuilder("jolt", path);
@@ -357,6 +358,7 @@ public interface JoltEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default JoltEndpointBuilder jolt(String componentName, String path) {
             return JoltEndpointBuilderFactory.endpointBuilder(componentName, path);

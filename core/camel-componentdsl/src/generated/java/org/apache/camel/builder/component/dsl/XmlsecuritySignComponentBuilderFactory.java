@@ -37,6 +37,8 @@ public interface XmlsecuritySignComponentBuilderFactory {
      * Category: security,transformation
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-xmlsecurity
+     * 
+     * @return the dsl builder
      */
     static XmlsecuritySignComponentBuilder xmlsecuritySign() {
         return new XmlsecuritySignComponentBuilderImpl();
@@ -54,10 +56,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * signature value. The default value is true. Only relevant when a
          * KeyInfo is returned by KeyAccessor. and KeyInfo#getId() is not null.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param addKeyInfoReference the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder addKeyInfoReference(
                 java.lang.Boolean addKeyInfoReference) {
@@ -68,9 +73,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * You can set a base URI which is used in the URI dereferencing.
          * Relative URIs are then concatenated with the base URI.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param baseUri the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder baseUri(java.lang.String baseUri) {
             doSetProperty("baseUri", baseUri);
@@ -83,10 +91,14 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * getCanonicalizationMethod(String algorithm, List
          * inclusiveNamespacePrefixes) to create a canonicalization method.
          * 
-         * The option is a: <code>javax.xml.crypto.AlgorithmMethod</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.crypto.AlgorithmMethod&lt;/code&gt; type.
          * 
          * Default: http://www.w3.org/TR/2001/REC-xml-c14n-20010315
          * Group: producer
+         * 
+         * @param canonicalizationMethod the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder canonicalizationMethod(
                 javax.xml.crypto.AlgorithmMethod canonicalizationMethod) {
@@ -97,10 +109,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * Determines if the XML signature specific headers be cleared after
          * signing and verification. Defaults to true.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param clearHeaders the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder clearHeaders(
                 java.lang.Boolean clearHeaders) {
@@ -112,9 +127,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * generated. If you set the null value, then a new UUID will be
          * generated. Only used in the enveloping case.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param contentObjectId the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder contentObjectId(
                 java.lang.String contentObjectId) {
@@ -126,9 +144,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * can be overwritten by the header
          * XmlSignatureConstants#HEADER_CONTENT_REFERENCE_TYPE.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param contentReferenceType the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder contentReferenceType(
                 java.lang.String contentReferenceType) {
@@ -143,9 +164,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * attributes are ID attributes. Will be ignored in the enveloping or
          * detached case.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param contentReferenceUri the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder contentReferenceUri(
                 java.lang.String contentReferenceUri) {
@@ -162,10 +186,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * org.jcp.xml.dsig.validateManifests
          * javax.xml.crypto.dsig.cacheReference.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param cryptoContextProperties the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder cryptoContextProperties(
                 java.util.Map<java.lang.String, java.lang.Object> cryptoContextProperties) {
@@ -179,9 +206,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * from the signature algorithm. Example:
          * http://www.w3.org/2001/04/xmlenc#sha256.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param digestAlgorithm the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder digestAlgorithm(
                 java.lang.String digestAlgorithm) {
@@ -192,10 +222,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * Disallows that the incoming XML document contains DTD DOCTYPE
          * declaration. The default value is Boolean#TRUE.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param disallowDoctypeDecl the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder disallowDoctypeDecl(
                 java.lang.Boolean disallowDoctypeDecl) {
@@ -211,10 +244,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * from a Java keystore.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xmlsecurity.api.KeyAccessor</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.KeyAccessor&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param keyAccessor the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder keyAccessor(
                 org.apache.camel.component.xmlsecurity.api.KeyAccessor keyAccessor) {
@@ -232,10 +267,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -247,10 +285,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * should be omitted. Default value is false. Can be overwritten by the
          * header XmlSignatureConstants#HEADER_OMIT_XML_DECLARATION.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param omitXmlDeclaration the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder omitXmlDeclaration(
                 java.lang.Boolean omitXmlDeclaration) {
@@ -261,9 +302,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * The character encoding of the resulting signed XML document. If null
          * then the encoding of the original XML document is used.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param outputXmlEncoding the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder outputXmlEncoding(
                 java.lang.String outputXmlEncoding) {
@@ -283,9 +327,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * parentLocalName are specified in the same configuration then an
          * exception is thrown.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param parentLocalName the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder parentLocalName(
                 java.lang.String parentLocalName) {
@@ -296,9 +343,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * Namespace of the parent element to which the XML signature element
          * will be added.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param parentNamespace the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder parentNamespace(
                 java.lang.String parentNamespace) {
@@ -315,10 +365,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * configuration then an exception is thrown.
          * 
          * The option is a:
-         * <code>javax.xml.crypto.dsig.spec.XPathFilterParameterSpec</code>
-         * type.
+         * &lt;code&gt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param parentXpath the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder parentXpath(
                 javax.xml.crypto.dsig.spec.XPathFilterParameterSpec parentXpath) {
@@ -331,10 +383,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * value can be overwritten by the header
          * XmlSignatureConstants#HEADER_MESSAGE_IS_PLAIN_TEXT.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param plainText the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder plainText(
                 java.lang.Boolean plainText) {
@@ -345,10 +400,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * Encoding of the plain text. Only relevant if the message body is
          * plain text (see parameter plainText. Default value is UTF-8.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: UTF-8
          * Group: producer
+         * 
+         * @param plainTextEncoding the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder plainTextEncoding(
                 java.lang.String plainTextEncoding) {
@@ -363,10 +421,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * http://www.w3.org/TR/xmldsig-bestpractices/#signing-xml-
          * without-namespaces.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: ds
          * Group: producer
+         * 
+         * @param prefixForXmlSignatureNamespace the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder prefixForXmlSignatureNamespace(
                 java.lang.String prefixForXmlSignatureNamespace) {
@@ -379,9 +440,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * implements the XmlSignatureProperties interface.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties</code> type.
+         * &lt;code&gt;org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param properties the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder properties(
                 org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties properties) {
@@ -396,9 +460,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * be overwritten by the header
          * XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param schemaResourceUri the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder schemaResourceUri(
                 java.lang.String schemaResourceUri) {
@@ -409,10 +476,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * Signature algorithm. Default value is
          * http://www.w3.org/2000/09/xmldsig#rsa-sha1.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
          * Group: producer
+         * 
+         * @param signatureAlgorithm the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder signatureAlgorithm(
                 java.lang.String signatureAlgorithm) {
@@ -425,9 +495,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * parameter is set to (empty string) then no Id attribute is created in
          * the signature element.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param signatureId the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder signatureId(
                 java.lang.String signatureId) {
@@ -443,10 +516,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * the transform methods.
          * 
          * The option is a:
-         * <code>java.util.List&lt;javax.xml.crypto.AlgorithmMethod&gt;</code>
-         * type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.xml.crypto.AlgorithmMethod&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param transformMethods the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder transformMethods(
                 java.util.List<javax.xml.crypto.AlgorithmMethod> transformMethods) {
@@ -468,9 +543,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * configuration.
          * 
          * The option is a:
-         * <code>java.util.List&lt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&gt;</code> type.
+         * &lt;code&gt;java.util.List&amp;lt;javax.xml.crypto.dsig.spec.XPathFilterParameterSpec&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param xpathsToIdAttributes the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder xpathsToIdAttributes(
                 java.util.List<javax.xml.crypto.dsig.spec.XPathFilterParameterSpec> xpathsToIdAttributes) {
@@ -485,10 +563,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -500,9 +581,12 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * for configuring endpoints.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param signerConfiguration the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder signerConfiguration(
                 org.apache.camel.component.xmlsecurity.processor.XmlSignerConfiguration signerConfiguration) {
@@ -516,9 +600,13 @@ public interface XmlsecuritySignComponentBuilderFactory {
          * file and XPpointer URIs. Attention: The implementation is provider
          * dependent!.
          * 
-         * The option is a: <code>javax.xml.crypto.URIDereferencer</code> type.
+         * The option is a:
+         * &lt;code&gt;javax.xml.crypto.URIDereferencer&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param uriDereferencer the value to set
+         * @return the dsl builder
          */
         default XmlsecuritySignComponentBuilder uriDereferencer(
                 javax.xml.crypto.URIDereferencer uriDereferencer) {

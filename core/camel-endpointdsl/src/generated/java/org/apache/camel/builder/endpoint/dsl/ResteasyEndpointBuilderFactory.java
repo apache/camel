@@ -2055,6 +2055,7 @@ public interface ResteasyEndpointBuilderFactory {
          * The url of the HTTP endpoint to call.
          * 
          * @param path httpUri
+         * @return the dsl builder
          */
         default ResteasyEndpointBuilder resteasy(String path) {
             return ResteasyEndpointBuilderFactory.endpointBuilder("resteasy", path);
@@ -2075,6 +2076,7 @@ public interface ResteasyEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path httpUri
+         * @return the dsl builder
          */
         default ResteasyEndpointBuilder resteasy(
                 String componentName,

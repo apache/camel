@@ -1497,6 +1497,7 @@ public interface UndertowEndpointBuilderFactory {
          * The url of the HTTP endpoint to use.
          * 
          * @param path httpURI
+         * @return the dsl builder
          */
         default UndertowEndpointBuilder undertow(String path) {
             return UndertowEndpointBuilderFactory.endpointBuilder("undertow", path);
@@ -1518,6 +1519,7 @@ public interface UndertowEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path httpURI
+         * @return the dsl builder
          */
         default UndertowEndpointBuilder undertow(
                 String componentName,

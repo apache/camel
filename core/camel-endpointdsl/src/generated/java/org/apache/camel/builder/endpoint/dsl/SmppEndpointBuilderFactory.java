@@ -2046,6 +2046,7 @@ public interface SmppEndpointBuilderFactory {
          * Default value: 2775
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default SmppEndpointBuilder smpp(String path) {
             return SmppEndpointBuilderFactory.endpointBuilder("smpp", path);
@@ -2072,6 +2073,7 @@ public interface SmppEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port
+         * @return the dsl builder
          */
         default SmppEndpointBuilder smpp(String componentName, String path) {
             return SmppEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -2096,6 +2098,7 @@ public interface SmppEndpointBuilderFactory {
          * Default value: 2775
          * 
          * @param path host:port
+         * @return the dsl builder
          */
         default SmppEndpointBuilder smpps(String path) {
             return SmppEndpointBuilderFactory.endpointBuilder("smpps", path);

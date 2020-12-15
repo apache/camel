@@ -39,6 +39,8 @@ public interface AzureStorageQueueComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 3.3
      * Maven coordinates: org.apache.camel:camel-azure-storage-queue
+     * 
+     * @return the dsl builder
      */
     static AzureStorageQueueComponentBuilder azureStorageQueue() {
         return new AzureStorageQueueComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -69,9 +74,12 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * The component configurations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.queue.QueueConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.storage.queue.QueueConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder configuration(
                 org.apache.camel.component.azure.storage.queue.QueueConfiguration configuration) {
@@ -89,9 +97,13 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * the account, and retrieving statistics of the account.
          * 
          * The option is a:
-         * <code>com.azure.storage.queue.QueueServiceClient</code> type.
+         * &lt;code&gt;com.azure.storage.queue.QueueServiceClient&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param serviceClient the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder serviceClient(
                 com.azure.storage.queue.QueueServiceClient serviceClient) {
@@ -107,10 +119,13 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -121,10 +136,13 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * When is set to true, the queue will be automatically created when
          * sending messages to the queue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param createQueue the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder createQueue(
                 boolean createQueue) {
@@ -142,10 +160,13 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -156,9 +177,12 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * Queue service operation hint to the producer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.azure.storage.queue.QueueOperationDefinition</code> type.
+         * &lt;code&gt;org.apache.camel.component.azure.storage.queue.QueueOperationDefinition&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder operation(
                 org.apache.camel.component.azure.storage.queue.QueueOperationDefinition operation) {
@@ -173,10 +197,13 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -189,10 +216,13 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * left empty only 1 message will be retrieved, the allowed range is 1
          * to 32 messages.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: queue
+         * 
+         * @param maxMessages the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder maxMessages(
                 java.lang.Integer maxMessages) {
@@ -202,9 +232,12 @@ public interface AzureStorageQueueComponentBuilderFactory {
         /**
          * The ID of the message to be deleted or updated.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param messageId the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder messageId(
                 java.lang.String messageId) {
@@ -215,9 +248,12 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * Unique identifier that must match for the message to be deleted or
          * updated.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param popReceipt the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder popReceipt(
                 java.lang.String popReceipt) {
@@ -229,9 +265,12 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * returned before the timeout concludes a RuntimeException will be
          * thrown.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder timeout(
                 java.time.Duration timeout) {
@@ -247,9 +286,12 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder timeToLive(
                 java.time.Duration timeToLive) {
@@ -264,9 +306,12 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * using EndpointDsl/ComponentDsl, you can do something like
          * Duration.ofSeconds() since these Java APIs are typesafe.
          * 
-         * The option is a: <code>java.time.Duration</code> type.
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
          * 
          * Group: queue
+         * 
+         * @param visibilityTimeout the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder visibilityTimeout(
                 java.time.Duration visibilityTimeout) {
@@ -277,9 +322,12 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * Access key for the associated azure account name to be used for
          * authentication with azure queue services.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder accessKey(
                 java.lang.String accessKey) {
@@ -291,10 +339,12 @@ public interface AzureStorageQueueComponentBuilderFactory {
          * client, this holds the important authentication information.
          * 
          * The option is a:
-         * <code>com.azure.storage.common.StorageSharedKeyCredential</code>
-         * type.
+         * &lt;code&gt;com.azure.storage.common.StorageSharedKeyCredential&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param credentials the value to set
+         * @return the dsl builder
          */
         default AzureStorageQueueComponentBuilder credentials(
                 com.azure.storage.common.StorageSharedKeyCredential credentials) {

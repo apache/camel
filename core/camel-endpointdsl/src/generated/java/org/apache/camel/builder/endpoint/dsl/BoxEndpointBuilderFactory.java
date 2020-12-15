@@ -1088,6 +1088,7 @@ public interface BoxEndpointBuilderFactory {
          * What sub operation to use for the selected operation
          * 
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default BoxEndpointBuilder box(String path) {
             return BoxEndpointBuilderFactory.endpointBuilder("box", path);
@@ -1115,6 +1116,7 @@ public interface BoxEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path apiName/methodName
+         * @return the dsl builder
          */
         default BoxEndpointBuilder box(String componentName, String path) {
             return BoxEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -397,6 +397,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesSecretsEndpointBuilder kubernetesSecrets(String path) {
             return KubernetesSecretsEndpointBuilderFactory.endpointBuilder("kubernetes-secrets", path);
@@ -417,6 +418,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesSecretsEndpointBuilder kubernetesSecrets(
                 String componentName,

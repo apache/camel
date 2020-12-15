@@ -276,6 +276,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Sets the StoredProcedure template to perform
          * 
          * @param path template
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder sqlStored(String path) {
             return SqlStoredEndpointBuilderFactory.endpointBuilder("sql-stored", path);
@@ -296,6 +297,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path template
+         * @return the dsl builder
          */
         default SqlStoredEndpointBuilder sqlStored(
                 String componentName,

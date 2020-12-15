@@ -352,6 +352,7 @@ public interface MQ2EndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default MQ2EndpointBuilder aws2Mq(String path) {
             return MQ2EndpointBuilderFactory.endpointBuilder("aws2-mq", path);
@@ -372,6 +373,7 @@ public interface MQ2EndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default MQ2EndpointBuilder aws2Mq(String componentName, String path) {
             return MQ2EndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -179,6 +179,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * Name of the Bot in CS to converse with
          * 
          * @param path host:port/botName
+         * @return the dsl builder
          */
         default ChatScriptEndpointBuilder chatscript(String path) {
             return ChatScriptEndpointBuilderFactory.endpointBuilder("chatscript", path);
@@ -206,6 +207,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host:port/botName
+         * @return the dsl builder
          */
         default ChatScriptEndpointBuilder chatscript(
                 String componentName,

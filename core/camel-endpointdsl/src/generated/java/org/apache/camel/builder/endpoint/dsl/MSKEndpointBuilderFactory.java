@@ -325,6 +325,7 @@ public interface MSKEndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default MSKEndpointBuilder awsMsk(String path) {
             return MSKEndpointBuilderFactory.endpointBuilder("aws-msk", path);
@@ -345,6 +346,7 @@ public interface MSKEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default MSKEndpointBuilder awsMsk(String componentName, String path) {
             return MSKEndpointBuilderFactory.endpointBuilder(componentName, path);

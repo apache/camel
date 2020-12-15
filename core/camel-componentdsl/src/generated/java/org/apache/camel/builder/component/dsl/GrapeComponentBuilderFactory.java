@@ -39,6 +39,8 @@ public interface GrapeComponentBuilderFactory {
      * Category: management,deployment
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-grape
+     * 
+     * @return the dsl builder
      */
     static GrapeComponentBuilder grape() {
         return new GrapeComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface GrapeComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default GrapeComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -77,10 +82,13 @@ public interface GrapeComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default GrapeComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -91,9 +99,12 @@ public interface GrapeComponentBuilderFactory {
          * by default: FilePatchesRepository.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.grape.PatchesRepository</code> type.
+         * &lt;code&gt;org.apache.camel.component.grape.PatchesRepository&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param patchesRepository the value to set
+         * @return the dsl builder
          */
         default GrapeComponentBuilder patchesRepository(
                 org.apache.camel.component.grape.PatchesRepository patchesRepository) {

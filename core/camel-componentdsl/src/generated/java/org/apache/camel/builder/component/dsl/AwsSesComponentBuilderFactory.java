@@ -37,6 +37,8 @@ public interface AwsSesComponentBuilderFactory {
      * Category: cloud,mail
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-aws-ses
+     * 
+     * @return the dsl builder
      */
     static AwsSesComponentBuilder awsSes() {
         return new AwsSesComponentBuilderImpl();
@@ -50,9 +52,12 @@ public interface AwsSesComponentBuilderFactory {
          * To use the AmazonSimpleEmailService as the client.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.simpleemail.AmazonSimpleEmailService</code> type.
+         * &lt;code&gt;com.amazonaws.services.simpleemail.AmazonSimpleEmailService&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param amazonSESClient the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder amazonSESClient(
                 com.amazonaws.services.simpleemail.AmazonSimpleEmailService amazonSESClient) {
@@ -64,10 +69,13 @@ public interface AwsSesComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -78,10 +86,12 @@ public interface AwsSesComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.ses.SesConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws.ses.SesConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder configuration(
                 org.apache.camel.component.aws.ses.SesConfiguration configuration) {
@@ -99,10 +109,13 @@ public interface AwsSesComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -112,9 +125,12 @@ public interface AwsSesComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the SES client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -123,9 +139,12 @@ public interface AwsSesComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the SES client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -134,10 +153,14 @@ public interface AwsSesComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the SES client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder proxyProtocol(
                 com.amazonaws.Protocol proxyProtocol) {
@@ -150,9 +173,12 @@ public interface AwsSesComponentBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -162,10 +188,13 @@ public interface AwsSesComponentBuilderFactory {
          * List of reply-to email address(es) for the message, override it using
          * 'CamelAwsSesReplyToAddresses' header.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param replyToAddresses the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder replyToAddresses(
                 java.util.List<java.lang.String> replyToAddresses) {
@@ -176,9 +205,12 @@ public interface AwsSesComponentBuilderFactory {
          * The email address to which bounce notifications are to be forwarded,
          * override it using 'CamelAwsSesReturnPath' header.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param returnPath the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder returnPath(java.lang.String returnPath) {
             doSetProperty("returnPath", returnPath);
@@ -188,9 +220,12 @@ public interface AwsSesComponentBuilderFactory {
          * The subject which is used if the message header 'CamelAwsSesSubject'
          * is not present.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param subject the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder subject(java.lang.String subject) {
             doSetProperty("subject", subject);
@@ -200,10 +235,13 @@ public interface AwsSesComponentBuilderFactory {
          * List of destination email address. Can be overriden with
          * 'CamelAwsSesTo' header.
          * 
-         * The option is a: <code>java.util.List&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.List&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param to the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder to(java.util.List<java.lang.String> to) {
             doSetProperty("to", to);
@@ -217,10 +255,13 @@ public interface AwsSesComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -229,9 +270,12 @@ public interface AwsSesComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -240,9 +284,12 @@ public interface AwsSesComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsSesComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);

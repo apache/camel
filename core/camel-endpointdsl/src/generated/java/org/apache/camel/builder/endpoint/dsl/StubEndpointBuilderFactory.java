@@ -865,6 +865,7 @@ public interface StubEndpointBuilderFactory {
          * Name of queue
          * 
          * @param path name
+         * @return the dsl builder
          */
         default StubEndpointBuilder stub(String path) {
             return StubEndpointBuilderFactory.endpointBuilder("stub", path);
@@ -885,6 +886,7 @@ public interface StubEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default StubEndpointBuilder stub(String componentName, String path) {
             return StubEndpointBuilderFactory.endpointBuilder(componentName, path);

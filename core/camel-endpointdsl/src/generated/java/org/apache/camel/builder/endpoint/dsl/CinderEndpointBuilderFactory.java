@@ -239,6 +239,7 @@ public interface CinderEndpointBuilderFactory {
          * OpenStack host url
          * 
          * @param path host
+         * @return the dsl builder
          */
         default CinderEndpointBuilder openstackCinder(String path) {
             return CinderEndpointBuilderFactory.endpointBuilder("openstack-cinder", path);
@@ -259,6 +260,7 @@ public interface CinderEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host
+         * @return the dsl builder
          */
         default CinderEndpointBuilder openstackCinder(
                 String componentName,

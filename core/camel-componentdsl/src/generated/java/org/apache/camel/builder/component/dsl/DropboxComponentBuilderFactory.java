@@ -39,6 +39,8 @@ public interface DropboxComponentBuilderFactory {
      * Category: cloud,file,api
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-dropbox
+     * 
+     * @return the dsl builder
      */
     static DropboxComponentBuilder dropbox() {
         return new DropboxComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface DropboxComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DropboxComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -80,10 +85,13 @@ public interface DropboxComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DropboxComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -98,10 +106,13 @@ public interface DropboxComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default DropboxComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

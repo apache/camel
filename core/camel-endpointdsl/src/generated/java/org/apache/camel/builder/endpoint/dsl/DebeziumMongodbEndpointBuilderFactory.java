@@ -1292,6 +1292,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * same name will fail.
          * 
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder debeziumMongodb(String path) {
             return DebeziumMongodbEndpointBuilderFactory.endpointBuilder("debezium-mongodb", path);
@@ -1313,6 +1314,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default DebeziumMongodbEndpointBuilder debeziumMongodb(
                 String componentName,

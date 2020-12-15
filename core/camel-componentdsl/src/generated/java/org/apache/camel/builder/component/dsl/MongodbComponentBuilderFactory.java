@@ -37,6 +37,8 @@ public interface MongodbComponentBuilderFactory {
      * Category: database,nosql
      * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-mongodb
+     * 
+     * @return the dsl builder
      */
     static MongodbComponentBuilder mongodb() {
         return new MongodbComponentBuilderImpl();
@@ -52,9 +54,13 @@ public interface MongodbComponentBuilderFactory {
          * Shared client used for connection. All endpoints generated from the
          * component will share this connection client.
          * 
-         * The option is a: <code>com.mongodb.client.MongoClient</code> type.
+         * The option is a:
+         * &lt;code&gt;com.mongodb.client.MongoClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param mongoConnection the value to set
+         * @return the dsl builder
          */
         default MongodbComponentBuilder mongoConnection(
                 com.mongodb.client.MongoClient mongoConnection) {
@@ -70,10 +76,13 @@ public interface MongodbComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default MongodbComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -91,10 +100,13 @@ public interface MongodbComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default MongodbComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -109,10 +121,13 @@ public interface MongodbComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default MongodbComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

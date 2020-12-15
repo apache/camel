@@ -325,6 +325,7 @@ public interface EKSEndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default EKSEndpointBuilder awsEks(String path) {
             return EKSEndpointBuilderFactory.endpointBuilder("aws-eks", path);
@@ -345,6 +346,7 @@ public interface EKSEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default EKSEndpointBuilder awsEks(String componentName, String path) {
             return EKSEndpointBuilderFactory.endpointBuilder(componentName, path);

@@ -37,6 +37,8 @@ public interface AmqpComponentBuilderFactory {
      * Category: messaging
      * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-amqp
+     * 
+     * @return the dsl builder
      */
     static AmqpComponentBuilder amqp() {
         return new AmqpComponentBuilderImpl();
@@ -53,9 +55,12 @@ public interface AmqpComponentBuilderFactory {
          * subscriptions. If using Apache ActiveMQ you may prefer to use Virtual
          * Topics instead.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
@@ -65,9 +70,13 @@ public interface AmqpComponentBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a: <code>javax.jms.ConnectionFactory</code> type.
+         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder connectionFactory(
                 javax.jms.ConnectionFactory connectionFactory) {
@@ -84,10 +93,13 @@ public interface AmqpComponentBuilderFactory {
          * to use Camel as a proxy between different message brokers and you
          * want to route message from one system to another.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param disableReplyTo the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder disableReplyTo(boolean disableReplyTo) {
             doSetProperty("disableReplyTo", disableReplyTo);
@@ -97,9 +109,12 @@ public interface AmqpComponentBuilderFactory {
          * The durable subscriber name for specifying durable topic
          * subscriptions. The clientId option must be configured as well.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param durableSubscriptionName the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder durableSubscriptionName(
                 java.lang.String durableSubscriptionName) {
@@ -112,10 +127,13 @@ public interface AmqpComponentBuilderFactory {
          * contain a JMS_AMQP_MA_ prefix to message headers. Due to limitations
          * in Apache Qpid JMS API, currently delivery annotations are ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param includeAmqpAnnotations the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder includeAmqpAnnotations(
                 boolean includeAmqpAnnotations) {
@@ -130,9 +148,12 @@ public interface AmqpComponentBuilderFactory {
          * to specify it.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jms.JmsMessageType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jms.JmsMessageType&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param jmsMessageType the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder jmsMessageType(
                 org.apache.camel.component.jms.JmsMessageType jmsMessageType) {
@@ -143,9 +164,12 @@ public interface AmqpComponentBuilderFactory {
          * Provides an explicit ReplyTo destination (overrides any incoming
          * value of Message.getJMSReplyTo() in consumer).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param replyTo the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder replyTo(java.lang.String replyTo) {
             doSetProperty("replyTo", replyTo);
@@ -158,10 +182,13 @@ public interface AmqpComponentBuilderFactory {
          * Camel throws an exception on startup. This ensures that Camel is not
          * started with failed connections. The JMS producers is tested as well.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
@@ -172,10 +199,13 @@ public interface AmqpComponentBuilderFactory {
          * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED,
          * CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: AUTO_ACKNOWLEDGE
          * Group: consumer
+         * 
+         * @param acknowledgementModeName the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder acknowledgementModeName(
                 java.lang.String acknowledgementModeName) {
@@ -194,10 +224,13 @@ public interface AmqpComponentBuilderFactory {
          * transaction must be executed synchronously (Camel 3.0 may support
          * async transactions).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param asyncConsumer the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder asyncConsumer(boolean asyncConsumer) {
             doSetProperty("asyncConsumer", asyncConsumer);
@@ -206,10 +239,13 @@ public interface AmqpComponentBuilderFactory {
         /**
          * Specifies whether the consumer container should auto-startup.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param autoStartup the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder autoStartup(boolean autoStartup) {
             doSetProperty("autoStartup", autoStartup);
@@ -219,9 +255,12 @@ public interface AmqpComponentBuilderFactory {
          * Sets the cache level by ID for the underlying JMS resources. See
          * cacheLevelName option for more details.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param cacheLevel the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder cacheLevel(int cacheLevel) {
             doSetProperty("cacheLevel", cacheLevel);
@@ -234,10 +273,13 @@ public interface AmqpComponentBuilderFactory {
          * the Spring documentation and Transactions Cache Levels for more
          * information.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: CACHE_AUTO
          * Group: consumer
+         * 
+         * @param cacheLevelName the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder cacheLevelName(
                 java.lang.String cacheLevelName) {
@@ -252,10 +294,13 @@ public interface AmqpComponentBuilderFactory {
          * replyToConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder concurrentConsumers(int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
@@ -269,9 +314,12 @@ public interface AmqpComponentBuilderFactory {
          * replyToMaxConcurrentConsumers is used to control number of concurrent
          * consumers on the reply message listener.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param maxConcurrentConsumers the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
@@ -281,10 +329,13 @@ public interface AmqpComponentBuilderFactory {
         /**
          * Specifies whether to use persistent delivery by default for replies.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: consumer
+         * 
+         * @param replyToDeliveryPersistent the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder replyToDeliveryPersistent(
                 boolean replyToDeliveryPersistent) {
@@ -294,9 +345,12 @@ public interface AmqpComponentBuilderFactory {
         /**
          * Sets the JMS selector to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param selector the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder selector(java.lang.String selector) {
             doSetProperty("selector", selector);
@@ -312,10 +366,13 @@ public interface AmqpComponentBuilderFactory {
          * a topic (pub-sub domain), therefore this method switches the
          * pubSubDomain flag as well.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param subscriptionDurable the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder subscriptionDurable(
                 boolean subscriptionDurable) {
@@ -331,9 +388,12 @@ public interface AmqpComponentBuilderFactory {
          * message listener container) is allowed for each subscription, except
          * for a shared subscription (which requires JMS 2.0).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param subscriptionName the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder subscriptionName(
                 java.lang.String subscriptionName) {
@@ -353,10 +413,13 @@ public interface AmqpComponentBuilderFactory {
          * pubSubDomain flag as well. Requires a JMS 2.0 compatible message
          * broker.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param subscriptionShared the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder subscriptionShared(
                 boolean subscriptionShared) {
@@ -373,10 +436,13 @@ public interface AmqpComponentBuilderFactory {
          * message may be moved at a dead letter queue on the JMS broker. To
          * avoid this its recommended to enable this option.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param acceptMessagesWhileStopping the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder acceptMessagesWhileStopping(
                 boolean acceptMessagesWhileStopping) {
@@ -392,10 +458,13 @@ public interface AmqpComponentBuilderFactory {
          * stop ability is enabled by default in the regular JMS consumers but
          * to enable for reply managers you must enable this flag.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param allowReplyManagerQuickStop the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder allowReplyManagerQuickStop(
                 boolean allowReplyManagerQuickStop) {
@@ -415,10 +484,14 @@ public interface AmqpComponentBuilderFactory {
          * use.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jms.ConsumerType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jms.ConsumerType&lt;/code&gt;
+         * type.
          * 
          * Default: Default
          * Group: consumer (advanced)
+         * 
+         * @param consumerType the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder consumerType(
                 org.apache.camel.component.jms.ConsumerType consumerType) {
@@ -438,10 +511,12 @@ public interface AmqpComponentBuilderFactory {
          * decreasing concurrent consumers.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jms.DefaultTaskExecutorType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.jms.DefaultTaskExecutorType&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param defaultTaskExecutorType the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder defaultTaskExecutorType(
                 org.apache.camel.component.jms.DefaultTaskExecutorType defaultTaskExecutorType) {
@@ -455,10 +530,13 @@ public interface AmqpComponentBuilderFactory {
          * issues with the underlying JMS provider and the use of JMS
          * properties. See also the option eagerPoisonBody.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param eagerLoadingOfProperties the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder eagerLoadingOfProperties(
                 boolean eagerLoadingOfProperties) {
@@ -473,10 +551,13 @@ public interface AmqpComponentBuilderFactory {
          * the Exchange). This can be turned off by setting
          * eagerPoisonBody=false. See also the option eagerLoadingOfProperties.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: Poison JMS message due to ${exception.message}
          * Group: consumer (advanced)
+         * 
+         * @param eagerPoisonBody the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder eagerPoisonBody(
                 java.lang.String eagerPoisonBody) {
@@ -487,10 +568,13 @@ public interface AmqpComponentBuilderFactory {
          * Specifies whether the listener session should be exposed when
          * consuming messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param exposeListenerSession the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder exposeListenerSession(
                 boolean exposeListenerSession) {
@@ -503,10 +587,13 @@ public interface AmqpComponentBuilderFactory {
          * an endless loop by consuming and sending back the same message to
          * itself.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer (advanced)
+         * 
+         * @param replyToSameDestinationAllowed the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder replyToSameDestinationAllowed(
                 boolean replyToSameDestinationAllowed) {
@@ -517,9 +604,13 @@ public interface AmqpComponentBuilderFactory {
          * Allows you to specify a custom task executor for consuming messages.
          * 
          * The option is a:
-         * <code>org.springframework.core.task.TaskExecutor</code> type.
+         * &lt;code&gt;org.springframework.core.task.TaskExecutor&lt;/code&gt;
+         * type.
          * 
          * Group: consumer (advanced)
+         * 
+         * @param taskExecutor the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder taskExecutor(
                 org.springframework.core.task.TaskExecutor taskExecutor) {
@@ -530,10 +621,13 @@ public interface AmqpComponentBuilderFactory {
          * Sets delivery delay to use for send calls for JMS. This option
          * requires JMS 2.0 compliant broker.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param deliveryDelay the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder deliveryDelay(long deliveryDelay) {
             doSetProperty("deliveryDelay", deliveryDelay);
@@ -544,9 +638,12 @@ public interface AmqpComponentBuilderFactory {
          * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
          * = 2.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param deliveryMode the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder deliveryMode(java.lang.Integer deliveryMode) {
             doSetProperty("deliveryMode", deliveryMode);
@@ -555,10 +652,13 @@ public interface AmqpComponentBuilderFactory {
         /**
          * Specifies whether persistent delivery is used by default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer
+         * 
+         * @param deliveryPersistent the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder deliveryPersistent(
                 boolean deliveryPersistent) {
@@ -573,10 +673,13 @@ public interface AmqpComponentBuilderFactory {
          * preserveMessageQos option, which operates at message granularity,
          * reading QoS properties exclusively from the Camel In message headers.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param explicitQosEnabled the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder explicitQosEnabled(
                 java.lang.Boolean explicitQosEnabled) {
@@ -587,10 +690,13 @@ public interface AmqpComponentBuilderFactory {
          * Sets whether JMS date properties should be formatted according to the
          * ISO 8601 standard.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param formatDateHeadersToIso8601 the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder formatDateHeadersToIso8601(
                 boolean formatDateHeadersToIso8601) {
@@ -608,10 +714,13 @@ public interface AmqpComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -628,10 +737,13 @@ public interface AmqpComponentBuilderFactory {
          * by contrast, will only use options set on the endpoint, and not
          * values from the message header.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param preserveMessageQos the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder preserveMessageQos(
                 boolean preserveMessageQos) {
@@ -644,10 +756,13 @@ public interface AmqpComponentBuilderFactory {
          * explicitQosEnabled option must also be enabled in order for this
          * option to have any effect.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 4
          * Group: producer
+         * 
+         * @param priority the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder priority(int priority) {
             doSetProperty("priority", priority);
@@ -658,10 +773,13 @@ public interface AmqpComponentBuilderFactory {
          * request/reply over JMS. See also the maxMessagesPerTask option to
          * control dynamic scaling up/down of threads.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: producer
+         * 
+         * @param replyToConcurrentConsumers the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder replyToConcurrentConsumers(
                 int replyToConcurrentConsumers) {
@@ -673,9 +791,12 @@ public interface AmqpComponentBuilderFactory {
          * request/reply over JMS. See also the maxMessagesPerTask option to
          * control dynamic scaling up/down of threads.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param replyToMaxConcurrentConsumers the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder replyToMaxConcurrentConsumers(
                 int replyToMaxConcurrentConsumers) {
@@ -686,10 +807,13 @@ public interface AmqpComponentBuilderFactory {
          * Specifies the maximum number of concurrent consumers for continue
          * routing when timeout occurred when using request/reply over JMS.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: producer
+         * 
+         * @param replyToOnTimeoutMaxConcurrentConsumers the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder replyToOnTimeoutMaxConcurrentConsumers(
                 int replyToOnTimeoutMaxConcurrentConsumers) {
@@ -702,9 +826,12 @@ public interface AmqpComponentBuilderFactory {
          * the message to a remote Queue and receive the reply message from the
          * ReplyTo destination.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param replyToOverride the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder replyToOverride(
                 java.lang.String replyToOverride) {
@@ -723,9 +850,13 @@ public interface AmqpComponentBuilderFactory {
          * lower performance than its alternatives Temporary and Exclusive.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jms.ReplyToType</code> type.
+         * &lt;code&gt;org.apache.camel.component.jms.ReplyToType&lt;/code&gt;
+         * type.
          * 
          * Group: producer
+         * 
+         * @param replyToType the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder replyToType(
                 org.apache.camel.component.jms.ReplyToType replyToType) {
@@ -739,10 +870,13 @@ public interface AmqpComponentBuilderFactory {
          * configured timeout value, and thus have per message individual
          * timeout values. See also the requestTimeoutCheckerInterval option.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 20000
          * Group: producer
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder requestTimeout(long requestTimeout) {
             doSetProperty("requestTimeout", requestTimeout);
@@ -752,10 +886,13 @@ public interface AmqpComponentBuilderFactory {
          * When sending messages, specifies the time-to-live of the message (in
          * milliseconds).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
+         * 
+         * @param timeToLive the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder timeToLive(long timeToLive) {
             doSetProperty("timeToLive", timeToLive);
@@ -769,9 +906,12 @@ public interface AmqpComponentBuilderFactory {
          * types. You can specify multiple header names separated by comma, and
          * use as suffix for wildcard matching.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param allowAdditionalHeaders the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder allowAdditionalHeaders(
                 java.lang.String allowAdditionalHeaders) {
@@ -782,10 +922,13 @@ public interface AmqpComponentBuilderFactory {
          * Whether to allow sending messages with no body. If this option is
          * false and the message body is null, then an JMSException is thrown.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: producer (advanced)
+         * 
+         * @param allowNullBody the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder allowNullBody(boolean allowNullBody) {
             doSetProperty("allowNullBody", allowNullBody);
@@ -799,10 +942,13 @@ public interface AmqpComponentBuilderFactory {
          * the alwaysCopyMessage option to true, if a
          * replyToDestinationSelectorName is set).
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param alwaysCopyMessage the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder alwaysCopyMessage(boolean alwaysCopyMessage) {
             doSetProperty("alwaysCopyMessage", alwaysCopyMessage);
@@ -814,9 +960,12 @@ public interface AmqpComponentBuilderFactory {
          * will be correlated solely on the value of this property
          * JMSCorrelationID property will be ignored and not set by Camel.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param correlationProperty the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder correlationProperty(
                 java.lang.String correlationProperty) {
@@ -834,10 +983,13 @@ public interface AmqpComponentBuilderFactory {
          * on the receiver system. See below in section About time to live for
          * more details.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param disableTimeToLive the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder disableTimeToLive(boolean disableTimeToLive) {
             doSetProperty("disableTimeToLive", disableTimeToLive);
@@ -849,10 +1001,13 @@ public interface AmqpComponentBuilderFactory {
          * during the route. Set this option to true to force Camel to send the
          * original JMS message that was received.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param forceSendOriginalMessage the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder forceSendOriginalMessage(
                 boolean forceSendOriginalMessage) {
@@ -865,10 +1020,13 @@ public interface AmqpComponentBuilderFactory {
          * the actual JMSMessageID that was used by the JMS client when the
          * message was sent to the JMS destination.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param includeSentJMSMessageID the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder includeSentJMSMessageID(
                 boolean includeSentJMSMessageID) {
@@ -886,9 +1044,12 @@ public interface AmqpComponentBuilderFactory {
          * queues then CACHE_NONE is not allowed, and you must use a higher
          * value such as CACHE_CONSUMER or CACHE_SESSION.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param replyToCacheLevelName the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder replyToCacheLevelName(
                 java.lang.String replyToCacheLevelName) {
@@ -900,9 +1061,12 @@ public interface AmqpComponentBuilderFactory {
          * filter out your own replies from the others when using a shared queue
          * (that is, if you are not using a temporary reply queue).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer (advanced)
+         * 
+         * @param replyToDestinationSelectorName the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder replyToDestinationSelectorName(
                 java.lang.String replyToDestinationSelectorName) {
@@ -918,10 +1082,13 @@ public interface AmqpComponentBuilderFactory {
          * option the message payload is read into memory in chunks and each
          * chunk is then written to the StreamMessage until no more data.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
+         * 
+         * @param streamMessageTypeEnabled the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder streamMessageTypeEnabled(
                 boolean streamMessageTypeEnabled) {
@@ -934,10 +1101,13 @@ public interface AmqpComponentBuilderFactory {
          * ConnectionFactory is found then it will be used. This is enabled by
          * default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param allowAutoWiredConnectionFactory the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder allowAutoWiredConnectionFactory(
                 boolean allowAutoWiredConnectionFactory) {
@@ -950,10 +1120,13 @@ public interface AmqpComponentBuilderFactory {
          * DestinationResolver is found then it will be used. This is enabled by
          * default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param allowAutoWiredDestinationResolver the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder allowAutoWiredDestinationResolver(
                 boolean allowAutoWiredDestinationResolver) {
@@ -966,10 +1139,13 @@ public interface AmqpComponentBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param allowSerializedHeaders the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
@@ -979,10 +1155,13 @@ public interface AmqpComponentBuilderFactory {
         /**
          * Whether optimizing for Apache Artemis streaming mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param artemisStreamingEnabled the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder artemisStreamingEnabled(
                 boolean artemisStreamingEnabled) {
@@ -1001,10 +1180,13 @@ public interface AmqpComponentBuilderFactory {
          * logged at WARN level, and the consumer will not be able to receive
          * messages; You can then restart the route to retry.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param asyncStartListener the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder asyncStartListener(
                 boolean asyncStartListener) {
@@ -1015,10 +1197,13 @@ public interface AmqpComponentBuilderFactory {
          * Whether to stop the JmsConsumer message listener asynchronously, when
          * stopping a route.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param asyncStopListener the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder asyncStopListener(boolean asyncStopListener) {
             doSetProperty("asyncStopListener", asyncStopListener);
@@ -1032,10 +1217,13 @@ public interface AmqpComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -1045,9 +1233,12 @@ public interface AmqpComponentBuilderFactory {
          * To use a shared JMS configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jms.JmsConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.jms.JmsConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder configuration(
                 org.apache.camel.component.jms.JmsConfiguration configuration) {
@@ -1061,9 +1252,12 @@ public interface AmqpComponentBuilderFactory {
          * destination in a JNDI registry).
          * 
          * The option is a:
-         * <code>org.springframework.jms.support.destination.DestinationResolver</code> type.
+         * &lt;code&gt;org.springframework.jms.support.destination.DestinationResolver&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param destinationResolver the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder destinationResolver(
                 org.springframework.jms.support.destination.DestinationResolver destinationResolver) {
@@ -1079,10 +1273,13 @@ public interface AmqpComponentBuilderFactory {
          * and errorHandlerLogStackTrace options. This makes it much easier to
          * configure, than having to code a custom errorHandler.
          * 
-         * The option is a: <code>org.springframework.util.ErrorHandler</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.springframework.util.ErrorHandler&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param errorHandler the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder errorHandler(
                 org.springframework.util.ErrorHandler errorHandler) {
@@ -1093,9 +1290,13 @@ public interface AmqpComponentBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a: <code>javax.jms.ExceptionListener</code> type.
+         * The option is a: &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param exceptionListener the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder exceptionListener(
                 javax.jms.ExceptionListener exceptionListener) {
@@ -1106,10 +1307,13 @@ public interface AmqpComponentBuilderFactory {
          * Specify the limit for the number of consumers that are allowed to be
          * idle at any given time.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: advanced
+         * 
+         * @param idleConsumerLimit the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder idleConsumerLimit(int idleConsumerLimit) {
             doSetProperty("idleConsumerLimit", idleConsumerLimit);
@@ -1122,10 +1326,13 @@ public interface AmqpComponentBuilderFactory {
          * (in the case of dynamic scheduling; see the maxConcurrentConsumers
          * setting). There is additional doc available from Spring.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: advanced
+         * 
+         * @param idleTaskExecutionLimit the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
@@ -1138,10 +1345,13 @@ public interface AmqpComponentBuilderFactory {
          * JMSXAppID, and JMSXUserID etc. Note: If you are using a custom
          * headerFilterStrategy then this option does not apply.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param includeAllJMSXProperties the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
@@ -1160,10 +1370,12 @@ public interface AmqpComponentBuilderFactory {
          * using the # notation.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jms.JmsKeyFormatStrategy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.jms.JmsKeyFormatStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param jmsKeyFormatStrategy the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder jmsKeyFormatStrategy(
                 org.apache.camel.component.jms.JmsKeyFormatStrategy jmsKeyFormatStrategy) {
@@ -1174,10 +1386,13 @@ public interface AmqpComponentBuilderFactory {
          * Specifies whether Camel should auto map the received JMS message to a
          * suited payload type, such as javax.jms.TextMessage to a String etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param mapJmsMessage the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder mapJmsMessage(boolean mapJmsMessage) {
             doSetProperty("mapJmsMessage", mapJmsMessage);
@@ -1189,10 +1404,13 @@ public interface AmqpComponentBuilderFactory {
          * to set a value to eg 100 to control how fast the consumers will
          * shrink when less work is required.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: advanced
+         * 
+         * @param maxMessagesPerTask the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder maxMessagesPerTask(int maxMessagesPerTask) {
             doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
@@ -1204,9 +1422,12 @@ public interface AmqpComponentBuilderFactory {
          * be in control how to map to/from a javax.jms.Message.
          * 
          * The option is a:
-         * <code>org.springframework.jms.support.converter.MessageConverter</code> type.
+         * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageConverter the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder messageConverter(
                 org.springframework.jms.support.converter.MessageConverter messageConverter) {
@@ -1219,10 +1440,12 @@ public interface AmqpComponentBuilderFactory {
          * sending a JMS message.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jms.MessageCreatedStrategy</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.jms.MessageCreatedStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageCreatedStrategy the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder messageCreatedStrategy(
                 org.apache.camel.component.jms.MessageCreatedStrategy messageCreatedStrategy) {
@@ -1236,10 +1459,13 @@ public interface AmqpComponentBuilderFactory {
          * provider ignores the hint, the message ID must be set to its normal
          * unique value.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param messageIdEnabled the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder messageIdEnabled(boolean messageIdEnabled) {
             doSetProperty("messageIdEnabled", messageIdEnabled);
@@ -1253,9 +1479,12 @@ public interface AmqpComponentBuilderFactory {
          * consumerType to Custom.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jms.MessageListenerContainerFactory</code> type.
+         * &lt;code&gt;org.apache.camel.component.jms.MessageListenerContainerFactory&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param messageListenerContainerFactory the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder messageListenerContainerFactory(
                 org.apache.camel.component.jms.MessageListenerContainerFactory messageListenerContainerFactory) {
@@ -1269,10 +1498,13 @@ public interface AmqpComponentBuilderFactory {
          * zero; if the provider ignores the hint the timestamp must be set to
          * its normal value.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param messageTimestampEnabled the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
@@ -1283,10 +1515,13 @@ public interface AmqpComponentBuilderFactory {
          * Specifies whether to inhibit the delivery of messages published by
          * its own connection.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param pubSubNoLocal the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder pubSubNoLocal(boolean pubSubNoLocal) {
             doSetProperty("pubSubNoLocal", pubSubNoLocal);
@@ -1296,9 +1531,12 @@ public interface AmqpComponentBuilderFactory {
          * To use a custom QueueBrowseStrategy when browsing queues.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.jms.QueueBrowseStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.component.jms.QueueBrowseStrategy&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param queueBrowseStrategy the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder queueBrowseStrategy(
                 org.apache.camel.component.jms.QueueBrowseStrategy queueBrowseStrategy) {
@@ -1308,10 +1546,13 @@ public interface AmqpComponentBuilderFactory {
         /**
          * The timeout for receiving messages (in milliseconds).
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: advanced
+         * 
+         * @param receiveTimeout the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder receiveTimeout(long receiveTimeout) {
             doSetProperty("receiveTimeout", receiveTimeout);
@@ -1322,10 +1563,13 @@ public interface AmqpComponentBuilderFactory {
          * connection is being refreshed, in milliseconds. The default is 5000
          * ms, that is, 5 seconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: advanced
+         * 
+         * @param recoveryInterval the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder recoveryInterval(long recoveryInterval) {
             doSetProperty("recoveryInterval", recoveryInterval);
@@ -1338,10 +1582,13 @@ public interface AmqpComponentBuilderFactory {
          * can lower this interval, to check more frequently. The timeout is
          * determined by the option requestTimeout.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: advanced
+         * 
+         * @param requestTimeoutCheckerInterval the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
@@ -1364,10 +1611,13 @@ public interface AmqpComponentBuilderFactory {
          * level, which forces a strong coupling between the producers and
          * consumer!.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder transferException(boolean transferException) {
             doSetProperty("transferException", transferException);
@@ -1387,10 +1637,13 @@ public interface AmqpComponentBuilderFactory {
          * between the producers and consumer having to use compatible Camel
          * versions!.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param transferExchange the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder transferExchange(boolean transferExchange) {
             doSetProperty("transferExchange", transferExchange);
@@ -1400,10 +1653,13 @@ public interface AmqpComponentBuilderFactory {
          * Specifies whether JMSMessageID should always be used as
          * JMSCorrelationID for InOut messages.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param useMessageIDAsCorrelationID the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
@@ -1415,10 +1671,13 @@ public interface AmqpComponentBuilderFactory {
          * to the actual correlation id when doing request/reply over JMS and
          * when the option useMessageIDAsCorrelationID is enabled.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 50
          * Group: advanced
+         * 
+         * @param waitForProvisionCorrelationToBeUpdatedCounter the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
@@ -1429,10 +1688,14 @@ public interface AmqpComponentBuilderFactory {
          * Interval in millis to sleep each time while waiting for provisional
          * correlation id to be updated.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: advanced
+         * 
+         * @param waitForProvisionCorrelationToBeUpdatedThreadSleepingTime the
+         * value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
@@ -1444,9 +1707,13 @@ public interface AmqpComponentBuilderFactory {
          * header to and from Camel message.
          * 
          * The option is a:
-         * <code>org.apache.camel.spi.HeaderFilterStrategy</code> type.
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
          * 
          * Group: filter
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder headerFilterStrategy(
                 org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
@@ -1457,10 +1724,14 @@ public interface AmqpComponentBuilderFactory {
          * Allows to configure the default errorHandler logging level for
          * logging uncaught exceptions.
          * 
-         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
          * 
          * Default: WARN
          * Group: logging
+         * 
+         * @param errorHandlerLoggingLevel the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder errorHandlerLoggingLevel(
                 org.apache.camel.LoggingLevel errorHandlerLoggingLevel) {
@@ -1471,10 +1742,13 @@ public interface AmqpComponentBuilderFactory {
          * Allows to control whether stacktraces should be logged or not, by the
          * default errorHandler.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: logging
+         * 
+         * @param errorHandlerLogStackTrace the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
@@ -1485,9 +1759,12 @@ public interface AmqpComponentBuilderFactory {
          * Password to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -1497,9 +1774,12 @@ public interface AmqpComponentBuilderFactory {
          * Username to use with the ConnectionFactory. You can also configure
          * username/password directly on the ConnectionFactory.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);
@@ -1508,10 +1788,13 @@ public interface AmqpComponentBuilderFactory {
         /**
          * Specifies whether to use transacted mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: transaction
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder transacted(boolean transacted) {
             doSetProperty("transacted", transacted);
@@ -1536,10 +1819,13 @@ public interface AmqpComponentBuilderFactory {
          * be a native JDBC transaction), with the JMS transaction committing
          * right after the main transaction.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: transaction
+         * 
+         * @param transactedInOut the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder transactedInOut(boolean transactedInOut) {
             doSetProperty("transactedInOut", transactedInOut);
@@ -1549,10 +1835,13 @@ public interface AmqpComponentBuilderFactory {
          * If true, Camel will create a JmsTransactionManager, if there is no
          * transactionManager injected when option transacted=true.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: transaction (advanced)
+         * 
+         * @param lazyCreateTransactionManager the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
@@ -1563,9 +1852,12 @@ public interface AmqpComponentBuilderFactory {
          * The Spring transaction manager to use.
          * 
          * The option is a:
-         * <code>org.springframework.transaction.PlatformTransactionManager</code> type.
+         * &lt;code&gt;org.springframework.transaction.PlatformTransactionManager&lt;/code&gt; type.
          * 
          * Group: transaction (advanced)
+         * 
+         * @param transactionManager the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder transactionManager(
                 org.springframework.transaction.PlatformTransactionManager transactionManager) {
@@ -1575,9 +1867,12 @@ public interface AmqpComponentBuilderFactory {
         /**
          * The name of the transaction to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: transaction (advanced)
+         * 
+         * @param transactionName the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder transactionName(
                 java.lang.String transactionName) {
@@ -1588,10 +1883,13 @@ public interface AmqpComponentBuilderFactory {
          * The timeout value of the transaction (in seconds), if using
          * transacted mode.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: transaction (advanced)
+         * 
+         * @param transactionTimeout the value to set
+         * @return the dsl builder
          */
         default AmqpComponentBuilder transactionTimeout(int transactionTimeout) {
             doSetProperty("transactionTimeout", transactionTimeout);

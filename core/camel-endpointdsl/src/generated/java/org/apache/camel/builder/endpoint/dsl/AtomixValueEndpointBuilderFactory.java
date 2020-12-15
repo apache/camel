@@ -1237,6 +1237,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The distributed resource name
          * 
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder atomixValue(String path) {
             return AtomixValueEndpointBuilderFactory.endpointBuilder("atomix-value", path);
@@ -1257,6 +1258,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceName
+         * @return the dsl builder
          */
         default AtomixValueEndpointBuilder atomixValue(
                 String componentName,

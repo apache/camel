@@ -238,6 +238,7 @@ public interface MvelEndpointBuilderFactory {
          * bean:myBean.myMethod.
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default MvelEndpointBuilder mvel(String path) {
             return MvelEndpointBuilderFactory.endpointBuilder("mvel", path);
@@ -263,6 +264,7 @@ public interface MvelEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default MvelEndpointBuilder mvel(String componentName, String path) {
             return MvelEndpointBuilderFactory.endpointBuilder(componentName, path);

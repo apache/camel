@@ -37,6 +37,8 @@ public interface LogComponentBuilderFactory {
      * Category: core,monitoring
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-log
+     * 
+     * @return the dsl builder
      */
     static LogComponentBuilder log() {
         return new LogComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface LogComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default LogComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -74,10 +79,13 @@ public interface LogComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default LogComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -88,10 +96,13 @@ public interface LogComponentBuilderFactory {
          * suitable for logging. If not specified, we default to
          * DefaultExchangeFormatter.
          * 
-         * The option is a: <code>org.apache.camel.spi.ExchangeFormatter</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.ExchangeFormatter&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param exchangeFormatter the value to set
+         * @return the dsl builder
          */
         default LogComponentBuilder exchangeFormatter(
                 org.apache.camel.spi.ExchangeFormatter exchangeFormatter) {

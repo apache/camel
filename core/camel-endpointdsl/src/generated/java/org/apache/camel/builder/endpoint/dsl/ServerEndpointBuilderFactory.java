@@ -1625,6 +1625,7 @@ public interface ServerEndpointBuilderFactory {
          * The object information address
          * 
          * @param path uriPath
+         * @return the dsl builder
          */
         default ServerEndpointBuilder iec60870Server(String path) {
             return ServerEndpointBuilderFactory.endpointBuilder("iec60870-server", path);
@@ -1646,6 +1647,7 @@ public interface ServerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path uriPath
+         * @return the dsl builder
          */
         default ServerEndpointBuilder iec60870Server(
                 String componentName,

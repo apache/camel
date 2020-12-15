@@ -37,6 +37,8 @@ public interface YammerComponentBuilderFactory {
      * Category: social,cloud,api
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-yammer
+     * 
+     * @return the dsl builder
      */
     static YammerComponentBuilder yammer() {
         return new YammerComponentBuilderImpl();
@@ -52,10 +54,13 @@ public interface YammerComponentBuilderFactory {
          * Set to true if you want to use raw JSON rather than converting to
          * POJOs.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param useJson the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder useJson(boolean useJson) {
             doSetProperty("useJson", useJson);
@@ -70,10 +75,13 @@ public interface YammerComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -83,10 +91,13 @@ public interface YammerComponentBuilderFactory {
         /**
          * Delay between polling in millis.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 5000
          * Group: consumer
+         * 
+         * @param delay the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder delay(long delay) {
             doSetProperty("delay", delay);
@@ -96,10 +107,13 @@ public interface YammerComponentBuilderFactory {
          * Return only the specified number of messages. Works for threaded set
          * to true and threaded set to extended.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder limit(int limit) {
             doSetProperty("limit", limit);
@@ -113,10 +127,13 @@ public interface YammerComponentBuilderFactory {
          * ensure that you do not get duplicate copies of messages already on
          * your page.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param newerThan the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder newerThan(long newerThan) {
             doSetProperty("newerThan", newerThan);
@@ -129,10 +146,13 @@ public interface YammerComponentBuilderFactory {
          * you could append olderThan equals to 2912 to your request to get the
          * 20 messages prior to those you're seeing.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: consumer
+         * 
+         * @param olderThan the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder olderThan(long olderThan) {
             doSetProperty("olderThan", olderThan);
@@ -146,9 +166,12 @@ public interface YammerComponentBuilderFactory {
          * most recent messages, as they are viewed in the default view on the
          * Yammer web interface.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param threaded the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder threaded(java.lang.String threaded) {
             doSetProperty("threaded", threaded);
@@ -157,9 +180,12 @@ public interface YammerComponentBuilderFactory {
         /**
          * The user id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param userId the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder userId(java.lang.String userId) {
             doSetProperty("userId", userId);
@@ -176,10 +202,13 @@ public interface YammerComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -194,10 +223,13 @@ public interface YammerComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -207,10 +239,12 @@ public interface YammerComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.yammer.YammerConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.yammer.YammerConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder configuration(
                 org.apache.camel.component.yammer.YammerConfiguration configuration) {
@@ -221,9 +255,12 @@ public interface YammerComponentBuilderFactory {
          * To use a specific requester to communicate with Yammer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.yammer.ApiRequestor</code> type.
+         * &lt;code&gt;org.apache.camel.component.yammer.ApiRequestor&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param requestor the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder requestor(
                 org.apache.camel.component.yammer.ApiRequestor requestor) {
@@ -233,9 +270,12 @@ public interface YammerComponentBuilderFactory {
         /**
          * The access token.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessToken the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder accessToken(java.lang.String accessToken) {
             doSetProperty("accessToken", accessToken);
@@ -244,9 +284,12 @@ public interface YammerComponentBuilderFactory {
         /**
          * The consumer key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param consumerKey the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder consumerKey(java.lang.String consumerKey) {
             doSetProperty("consumerKey", consumerKey);
@@ -255,9 +298,12 @@ public interface YammerComponentBuilderFactory {
         /**
          * The consumer secret.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param consumerSecret the value to set
+         * @return the dsl builder
          */
         default YammerComponentBuilder consumerSecret(
                 java.lang.String consumerSecret) {

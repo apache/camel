@@ -37,6 +37,8 @@ public interface TwilioComponentBuilderFactory {
      * Category: api,messaging,cloud
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-twilio
+     * 
+     * @return the dsl builder
      */
     static TwilioComponentBuilder twilio() {
         return new TwilioComponentBuilderImpl();
@@ -52,10 +54,12 @@ public interface TwilioComponentBuilderFactory {
          * To use the shared configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.twilio.TwilioConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.twilio.TwilioConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder configuration(
                 org.apache.camel.component.twilio.TwilioConfiguration configuration) {
@@ -71,10 +75,13 @@ public interface TwilioComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -92,10 +99,13 @@ public interface TwilioComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -110,10 +120,13 @@ public interface TwilioComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -122,9 +135,13 @@ public interface TwilioComponentBuilderFactory {
         /**
          * To use the shared REST client.
          * 
-         * The option is a: <code>com.twilio.http.TwilioRestClient</code> type.
+         * The option is a:
+         * &lt;code&gt;com.twilio.http.TwilioRestClient&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param restClient the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder restClient(
                 com.twilio.http.TwilioRestClient restClient) {
@@ -134,9 +151,12 @@ public interface TwilioComponentBuilderFactory {
         /**
          * The account SID to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accountSid the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder accountSid(java.lang.String accountSid) {
             doSetProperty("accountSid", accountSid);
@@ -145,9 +165,12 @@ public interface TwilioComponentBuilderFactory {
         /**
          * Auth token for the account.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -156,9 +179,12 @@ public interface TwilioComponentBuilderFactory {
         /**
          * The account to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default TwilioComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);

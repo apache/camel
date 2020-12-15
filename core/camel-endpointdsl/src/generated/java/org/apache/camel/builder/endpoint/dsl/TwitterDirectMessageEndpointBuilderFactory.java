@@ -1491,6 +1491,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * consumer.
          * 
          * @param path user
+         * @return the dsl builder
          */
         default TwitterDirectMessageEndpointBuilder twitterDirectmessage(
                 String path) {
@@ -1513,6 +1514,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path user
+         * @return the dsl builder
          */
         default TwitterDirectMessageEndpointBuilder twitterDirectmessage(
                 String componentName,

@@ -37,6 +37,8 @@ public interface JsonValidatorComponentBuilderFactory {
      * Category: validation
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-json-validator
+     * 
+     * @return the dsl builder
      */
     static JsonValidatorComponentBuilder jsonValidator() {
         return new JsonValidatorComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface JsonValidatorComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JsonValidatorComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -77,10 +82,13 @@ public interface JsonValidatorComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default JsonValidatorComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

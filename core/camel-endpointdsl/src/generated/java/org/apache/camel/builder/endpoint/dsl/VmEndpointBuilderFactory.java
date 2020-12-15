@@ -861,6 +861,7 @@ public interface VmEndpointBuilderFactory {
          * Name of queue
          * 
          * @param path name
+         * @return the dsl builder
          */
         default VmEndpointBuilder vm(String path) {
             return VmEndpointBuilderFactory.endpointBuilder("vm", path);
@@ -881,6 +882,7 @@ public interface VmEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default VmEndpointBuilder vm(String componentName, String path) {
             return VmEndpointBuilderFactory.endpointBuilder(componentName, path);

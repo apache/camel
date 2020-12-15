@@ -1259,6 +1259,7 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
          * Kubernetes Master url
          * 
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
                 String path) {
@@ -1281,6 +1282,7 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path masterUrl
+         * @return the dsl builder
          */
         default KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
                 String componentName,

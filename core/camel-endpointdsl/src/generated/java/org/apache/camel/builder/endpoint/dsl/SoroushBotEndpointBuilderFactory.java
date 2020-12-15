@@ -1259,6 +1259,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * getMessage, uploadFile, downloadFile
          * 
          * @param path action
+         * @return the dsl builder
          */
         default SoroushBotEndpointBuilder soroush(String path) {
             return SoroushBotEndpointBuilderFactory.endpointBuilder("soroush", path);
@@ -1281,6 +1282,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path action
+         * @return the dsl builder
          */
         default SoroushBotEndpointBuilder soroush(
                 String componentName,

@@ -366,6 +366,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * The name of the JGroupsraft cluster the component should connect to.
          * 
          * @param path clusterName
+         * @return the dsl builder
          */
         default JGroupsRaftEndpointBuilder jgroupsRaft(String path) {
             return JGroupsRaftEndpointBuilderFactory.endpointBuilder("jgroups-raft", path);
@@ -386,6 +387,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path clusterName
+         * @return the dsl builder
          */
         default JGroupsRaftEndpointBuilder jgroupsRaft(
                 String componentName,

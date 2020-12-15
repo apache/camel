@@ -2660,6 +2660,7 @@ public interface SalesforceEndpointBuilderFactory {
          * The name of the topic/channel to use
          * 
          * @param path operationName:topicName
+         * @return the dsl builder
          */
         default SalesforceEndpointBuilder salesforce(String path) {
             return SalesforceEndpointBuilderFactory.endpointBuilder("salesforce", path);
@@ -2694,6 +2695,7 @@ public interface SalesforceEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path operationName:topicName
+         * @return the dsl builder
          */
         default SalesforceEndpointBuilder salesforce(
                 String componentName,

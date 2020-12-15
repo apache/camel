@@ -2219,6 +2219,7 @@ public interface MinioEndpointBuilderFactory {
          * Bucket name
          * 
          * @param path bucketName
+         * @return the dsl builder
          */
         default MinioEndpointBuilder minio(String path) {
             return MinioEndpointBuilderFactory.endpointBuilder("minio", path);
@@ -2240,6 +2241,7 @@ public interface MinioEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path bucketName
+         * @return the dsl builder
          */
         default MinioEndpointBuilder minio(String componentName, String path) {
             return MinioEndpointBuilderFactory.endpointBuilder(componentName, path);

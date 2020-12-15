@@ -1213,6 +1213,7 @@ public interface IronMQEndpointBuilderFactory {
          * The name of the IronMQ queue
          * 
          * @param path queueName
+         * @return the dsl builder
          */
         default IronMQEndpointBuilder ironmq(String path) {
             return IronMQEndpointBuilderFactory.endpointBuilder("ironmq", path);
@@ -1234,6 +1235,7 @@ public interface IronMQEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path queueName
+         * @return the dsl builder
          */
         default IronMQEndpointBuilder ironmq(String componentName, String path) {
             return IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);

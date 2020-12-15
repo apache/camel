@@ -1831,6 +1831,7 @@ public interface JpaEndpointBuilderFactory {
          * Entity class name
          * 
          * @param path entityType
+         * @return the dsl builder
          */
         default JpaEndpointBuilder jpa(String path) {
             return JpaEndpointBuilderFactory.endpointBuilder("jpa", path);
@@ -1852,6 +1853,7 @@ public interface JpaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path entityType
+         * @return the dsl builder
          */
         default JpaEndpointBuilder jpa(String componentName, String path) {
             return JpaEndpointBuilderFactory.endpointBuilder(componentName, path);

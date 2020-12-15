@@ -2302,6 +2302,7 @@ public interface HdfsEndpointBuilderFactory {
          * The directory path to use
          * 
          * @param path hostName:port/path
+         * @return the dsl builder
          */
         default HdfsEndpointBuilder hdfs(String path) {
             return HdfsEndpointBuilderFactory.endpointBuilder("hdfs", path);
@@ -2329,6 +2330,7 @@ public interface HdfsEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path hostName:port/path
+         * @return the dsl builder
          */
         default HdfsEndpointBuilder hdfs(String componentName, String path) {
             return HdfsEndpointBuilderFactory.endpointBuilder(componentName, path);

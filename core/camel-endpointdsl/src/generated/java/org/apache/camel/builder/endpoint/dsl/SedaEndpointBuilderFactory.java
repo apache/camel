@@ -866,6 +866,7 @@ public interface SedaEndpointBuilderFactory {
          * Name of queue
          * 
          * @param path name
+         * @return the dsl builder
          */
         default SedaEndpointBuilder seda(String path) {
             return SedaEndpointBuilderFactory.endpointBuilder("seda", path);
@@ -887,6 +888,7 @@ public interface SedaEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path name
+         * @return the dsl builder
          */
         default SedaEndpointBuilder seda(String componentName, String path) {
             return SedaEndpointBuilderFactory.endpointBuilder(componentName, path);

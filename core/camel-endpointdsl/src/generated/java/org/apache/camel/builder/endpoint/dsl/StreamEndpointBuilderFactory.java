@@ -812,6 +812,7 @@ public interface StreamEndpointBuilderFactory {
          * file
          * 
          * @param path kind
+         * @return the dsl builder
          */
         default StreamEndpointBuilder stream(String path) {
             return StreamEndpointBuilderFactory.endpointBuilder("stream", path);
@@ -834,6 +835,7 @@ public interface StreamEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path kind
+         * @return the dsl builder
          */
         default StreamEndpointBuilder stream(String componentName, String path) {
             return StreamEndpointBuilderFactory.endpointBuilder(componentName, path);

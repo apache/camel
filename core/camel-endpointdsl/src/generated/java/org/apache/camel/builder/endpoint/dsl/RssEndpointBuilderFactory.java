@@ -802,6 +802,7 @@ public interface RssEndpointBuilderFactory {
          * The URI to the feed to poll.
          * 
          * @param path feedUri
+         * @return the dsl builder
          */
         default RssEndpointBuilder rss(String path) {
             return RssEndpointBuilderFactory.endpointBuilder("rss", path);
@@ -822,6 +823,7 @@ public interface RssEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path feedUri
+         * @return the dsl builder
          */
         default RssEndpointBuilder rss(String componentName, String path) {
             return RssEndpointBuilderFactory.endpointBuilder(componentName, path);

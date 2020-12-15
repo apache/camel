@@ -37,6 +37,8 @@ public interface AwsKinesisComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-aws-kinesis
+     * 
+     * @return the dsl builder
      */
     static AwsKinesisComponentBuilder awsKinesis() {
         return new AwsKinesisComponentBuilderImpl();
@@ -52,9 +54,13 @@ public interface AwsKinesisComponentBuilderFactory {
          * Amazon Kinesis client to use for all requests for this endpoint.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.kinesis.AmazonKinesis</code> type.
+         * &lt;code&gt;com.amazonaws.services.kinesis.AmazonKinesis&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param amazonKinesisClient the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder amazonKinesisClient(
                 com.amazonaws.services.kinesis.AmazonKinesis amazonKinesisClient) {
@@ -66,10 +72,13 @@ public interface AwsKinesisComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -80,9 +89,12 @@ public interface AwsKinesisComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.kinesis.KinesisConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.kinesis.KinesisConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder configuration(
                 org.apache.camel.component.aws.kinesis.KinesisConfiguration configuration) {
@@ -92,9 +104,12 @@ public interface AwsKinesisComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the Kinesis client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -103,9 +118,12 @@ public interface AwsKinesisComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the Kinesis client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -114,10 +132,14 @@ public interface AwsKinesisComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Kinesis client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: common
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder proxyProtocol(
                 com.amazonaws.Protocol proxyProtocol) {
@@ -130,9 +152,12 @@ public interface AwsKinesisComponentBuilderFactory {
          * region (for example AP_EAST_1)You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -147,10 +172,13 @@ public interface AwsKinesisComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -161,11 +189,13 @@ public interface AwsKinesisComponentBuilderFactory {
          * Defines where in the Kinesis stream to start getting records.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.kinesis.model.ShardIteratorType</code>
-         * type.
+         * &lt;code&gt;com.amazonaws.services.kinesis.model.ShardIteratorType&lt;/code&gt; type.
          * 
          * Default: TRIM_HORIZON
          * Group: consumer
+         * 
+         * @param iteratorType the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder iteratorType(
                 com.amazonaws.services.kinesis.model.ShardIteratorType iteratorType) {
@@ -175,10 +205,13 @@ public interface AwsKinesisComponentBuilderFactory {
         /**
          * Maximum number of records that will be fetched in each poll.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param maxResultsPerRequest the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder maxResultsPerRequest(
                 int maxResultsPerRequest) {
@@ -189,9 +222,12 @@ public interface AwsKinesisComponentBuilderFactory {
          * The sequence number to start polling from. Required if iteratorType
          * is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param sequenceNumber the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder sequenceNumber(
                 java.lang.String sequenceNumber) {
@@ -207,10 +243,13 @@ public interface AwsKinesisComponentBuilderFactory {
          * raised.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum&lt;/code&gt; type.
          * 
          * Default: ignore
          * Group: consumer
+         * 
+         * @param shardClosed the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder shardClosed(
                 org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum shardClosed) {
@@ -220,9 +259,12 @@ public interface AwsKinesisComponentBuilderFactory {
         /**
          * Defines which shardId in the Kinesis stream to get records from.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param shardId the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder shardId(java.lang.String shardId) {
             doSetProperty("shardId", shardId);
@@ -239,10 +281,13 @@ public interface AwsKinesisComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -257,10 +302,13 @@ public interface AwsKinesisComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -270,9 +318,12 @@ public interface AwsKinesisComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -281,9 +332,12 @@ public interface AwsKinesisComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsKinesisComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);

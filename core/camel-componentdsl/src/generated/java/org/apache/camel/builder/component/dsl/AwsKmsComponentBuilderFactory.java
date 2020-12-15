@@ -37,6 +37,8 @@ public interface AwsKmsComponentBuilderFactory {
      * Category: cloud,messaging
      * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-aws-kms
+     * 
+     * @return the dsl builder
      */
     static AwsKmsComponentBuilder awsKms() {
         return new AwsKmsComponentBuilderImpl();
@@ -51,10 +53,13 @@ public interface AwsKmsComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -64,9 +69,12 @@ public interface AwsKmsComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder accessKey(java.lang.String accessKey) {
             doSetProperty("accessKey", accessKey);
@@ -76,10 +84,12 @@ public interface AwsKmsComponentBuilderFactory {
          * The Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.kms.KMSConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.aws.kms.KMSConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder configuration(
                 org.apache.camel.component.aws.kms.KMSConfiguration configuration) {
@@ -89,9 +99,13 @@ public interface AwsKmsComponentBuilderFactory {
         /**
          * To use a existing configured AWS KMS as client.
          * 
-         * The option is a: <code>com.amazonaws.services.kms.AWSKMS</code> type.
+         * The option is a:
+         * &lt;code&gt;com.amazonaws.services.kms.AWSKMS&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param kmsClient the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder kmsClient(
                 com.amazonaws.services.kms.AWSKMS kmsClient) {
@@ -109,10 +123,13 @@ public interface AwsKmsComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -123,9 +140,12 @@ public interface AwsKmsComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.kms.KMSOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.kms.KMSOperations&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder operation(
                 org.apache.camel.component.aws.kms.KMSOperations operation) {
@@ -135,9 +155,12 @@ public interface AwsKmsComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the KMS client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder proxyHost(java.lang.String proxyHost) {
             doSetProperty("proxyHost", proxyHost);
@@ -146,9 +169,12 @@ public interface AwsKmsComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the KMS client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder proxyPort(java.lang.Integer proxyPort) {
             doSetProperty("proxyPort", proxyPort);
@@ -157,10 +183,14 @@ public interface AwsKmsComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the KMS client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder proxyProtocol(
                 com.amazonaws.Protocol proxyProtocol) {
@@ -173,9 +203,12 @@ public interface AwsKmsComponentBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -184,9 +217,12 @@ public interface AwsKmsComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder secretKey(java.lang.String secretKey) {
             doSetProperty("secretKey", secretKey);
@@ -200,10 +236,13 @@ public interface AwsKmsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AwsKmsComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);

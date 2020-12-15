@@ -37,6 +37,8 @@ public interface AwsTranslateComponentBuilderFactory {
      * Category: cloud,management
      * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-aws-translate
+     * 
+     * @return the dsl builder
      */
     static AwsTranslateComponentBuilder awsTranslate() {
         return new AwsTranslateComponentBuilderImpl();
@@ -53,10 +55,13 @@ public interface AwsTranslateComponentBuilderFactory {
          * look for a client instance in the registry automatically otherwise it
          * will skip that checking.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: common
+         * 
+         * @param autoDiscoverClient the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder autoDiscoverClient(
                 boolean autoDiscoverClient) {
@@ -66,9 +71,12 @@ public interface AwsTranslateComponentBuilderFactory {
         /**
          * Amazon AWS Access Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param accessKey the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder accessKey(
                 java.lang.String accessKey) {
@@ -78,10 +86,13 @@ public interface AwsTranslateComponentBuilderFactory {
         /**
          * Being able to autodetect the source language.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param autodetectSourceLanguage the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder autodetectSourceLanguage(
                 boolean autodetectSourceLanguage) {
@@ -92,9 +103,12 @@ public interface AwsTranslateComponentBuilderFactory {
          * The component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.translate.TranslateConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.translate.TranslateConfiguration&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder configuration(
                 org.apache.camel.component.aws.translate.TranslateConfiguration configuration) {
@@ -112,10 +126,13 @@ public interface AwsTranslateComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -126,10 +143,13 @@ public interface AwsTranslateComponentBuilderFactory {
          * The operation to perform.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.aws.translate.TranslateOperations</code> type.
+         * &lt;code&gt;org.apache.camel.component.aws.translate.TranslateOperations&lt;/code&gt; type.
          * 
          * Default: translateText
          * Group: producer
+         * 
+         * @param operation the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder operation(
                 org.apache.camel.component.aws.translate.TranslateOperations operation) {
@@ -139,9 +159,12 @@ public interface AwsTranslateComponentBuilderFactory {
         /**
          * To define a proxy host when instantiating the Translate client.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyHost the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder proxyHost(
                 java.lang.String proxyHost) {
@@ -151,9 +174,12 @@ public interface AwsTranslateComponentBuilderFactory {
         /**
          * To define a proxy port when instantiating the Translate client.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param proxyPort the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder proxyPort(
                 java.lang.Integer proxyPort) {
@@ -163,10 +189,14 @@ public interface AwsTranslateComponentBuilderFactory {
         /**
          * To define a proxy protocol when instantiating the Translate client.
          * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * The option is a: &lt;code&gt;com.amazonaws.Protocol&lt;/code&gt;
+         * type.
          * 
          * Default: HTTPS
          * Group: producer
+         * 
+         * @param proxyProtocol the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder proxyProtocol(
                 com.amazonaws.Protocol proxyProtocol) {
@@ -179,9 +209,12 @@ public interface AwsTranslateComponentBuilderFactory {
          * region (for example AP_EAST_1) You'll need to use the name
          * Regions.EU_WEST_1.name().
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param region the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder region(java.lang.String region) {
             doSetProperty("region", region);
@@ -190,9 +223,12 @@ public interface AwsTranslateComponentBuilderFactory {
         /**
          * Amazon AWS Secret Key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param secretKey the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder secretKey(
                 java.lang.String secretKey) {
@@ -202,9 +238,12 @@ public interface AwsTranslateComponentBuilderFactory {
         /**
          * Source language to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param sourceLanguage the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder sourceLanguage(
                 java.lang.String sourceLanguage) {
@@ -214,9 +253,12 @@ public interface AwsTranslateComponentBuilderFactory {
         /**
          * Target language to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param targetLanguage the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder targetLanguage(
                 java.lang.String targetLanguage) {
@@ -227,9 +269,12 @@ public interface AwsTranslateComponentBuilderFactory {
          * To use a existing configured AWS Translate as client.
          * 
          * The option is a:
-         * <code>com.amazonaws.services.translate.AmazonTranslate</code> type.
+         * &lt;code&gt;com.amazonaws.services.translate.AmazonTranslate&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param translateClient the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder translateClient(
                 com.amazonaws.services.translate.AmazonTranslate translateClient) {
@@ -244,10 +289,13 @@ public interface AwsTranslateComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default AwsTranslateComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

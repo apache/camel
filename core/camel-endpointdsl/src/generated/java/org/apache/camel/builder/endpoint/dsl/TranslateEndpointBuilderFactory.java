@@ -375,6 +375,7 @@ public interface TranslateEndpointBuilderFactory {
          * Logical name
          * 
          * @param path label
+         * @return the dsl builder
          */
         default TranslateEndpointBuilder awsTranslate(String path) {
             return TranslateEndpointBuilderFactory.endpointBuilder("aws-translate", path);
@@ -395,6 +396,7 @@ public interface TranslateEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path label
+         * @return the dsl builder
          */
         default TranslateEndpointBuilder awsTranslate(
                 String componentName,

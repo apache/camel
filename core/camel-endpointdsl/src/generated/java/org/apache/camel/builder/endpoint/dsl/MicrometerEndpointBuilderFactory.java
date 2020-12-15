@@ -190,6 +190,7 @@ public interface MicrometerEndpointBuilderFactory {
          * Tags of metrics
          * 
          * @param path metricsType:metricsName
+         * @return the dsl builder
          */
         default MicrometerEndpointBuilder micrometer(String path) {
             return MicrometerEndpointBuilderFactory.endpointBuilder("micrometer", path);
@@ -219,6 +220,7 @@ public interface MicrometerEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path metricsType:metricsName
+         * @return the dsl builder
          */
         default MicrometerEndpointBuilder micrometer(
                 String componentName,

@@ -37,6 +37,8 @@ public interface IgniteEventsComponentBuilderFactory {
      * Category: messaging,eventbus
      * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
+     * 
+     * @return the dsl builder
      */
     static IgniteEventsComponentBuilder igniteEvents() {
         return new IgniteEventsComponentBuilderImpl();
@@ -57,10 +59,13 @@ public interface IgniteEventsComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default IgniteEventsComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -71,9 +76,12 @@ public interface IgniteEventsComponentBuilderFactory {
          * The resource from where to load the configuration. It can be a: URL,
          * String or InputStream type.
          * 
-         * The option is a: <code>java.lang.Object</code> type.
+         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param configurationResource the value to set
+         * @return the dsl builder
          */
         default IgniteEventsComponentBuilder configurationResource(
                 java.lang.Object configurationResource) {
@@ -83,9 +91,13 @@ public interface IgniteEventsComponentBuilderFactory {
         /**
          * To use an existing Ignite instance.
          * 
-         * The option is a: <code>org.apache.ignite.Ignite</code> type.
+         * The option is a: &lt;code&gt;org.apache.ignite.Ignite&lt;/code&gt;
+         * type.
          * 
          * Group: consumer
+         * 
+         * @param ignite the value to set
+         * @return the dsl builder
          */
         default IgniteEventsComponentBuilder ignite(
                 org.apache.ignite.Ignite ignite) {
@@ -96,10 +108,12 @@ public interface IgniteEventsComponentBuilderFactory {
          * Allows the user to set a programmatic ignite configuration.
          * 
          * The option is a:
-         * <code>org.apache.ignite.configuration.IgniteConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.ignite.configuration.IgniteConfiguration&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param igniteConfiguration the value to set
+         * @return the dsl builder
          */
         default IgniteEventsComponentBuilder igniteConfiguration(
                 org.apache.ignite.configuration.IgniteConfiguration igniteConfiguration) {
@@ -114,10 +128,13 @@ public interface IgniteEventsComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default IgniteEventsComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

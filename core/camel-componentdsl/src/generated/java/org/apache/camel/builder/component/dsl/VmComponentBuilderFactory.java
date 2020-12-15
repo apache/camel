@@ -37,6 +37,8 @@ public interface VmComponentBuilderFactory {
      * Category: core,endpoint
      * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-vm
+     * 
+     * @return the dsl builder
      */
     static VmComponentBuilder vm() {
         return new VmComponentBuilderImpl();
@@ -55,10 +57,13 @@ public interface VmComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default VmComponentBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
             doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
@@ -67,10 +72,13 @@ public interface VmComponentBuilderFactory {
         /**
          * Sets the default number of concurrent threads processing exchanges.
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
+         * 
+         * @param concurrentConsumers the value to set
+         * @return the dsl builder
          */
         default VmComponentBuilder concurrentConsumers(int concurrentConsumers) {
             doSetProperty("concurrentConsumers", concurrentConsumers);
@@ -83,10 +91,13 @@ public interface VmComponentBuilderFactory {
          * this option, the calling thread will instead block and wait until the
          * message can be accepted.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param defaultBlockWhenFull the value to set
+         * @return the dsl builder
          */
         default VmComponentBuilder defaultBlockWhenFull(
                 boolean defaultBlockWhenFull) {
@@ -100,10 +111,13 @@ public interface VmComponentBuilderFactory {
          * up sending and continue, meaning that the message was not sent to the
          * SEDA queue.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param defaultDiscardWhenFull the value to set
+         * @return the dsl builder
          */
         default VmComponentBuilder defaultDiscardWhenFull(
                 boolean defaultDiscardWhenFull) {
@@ -118,9 +132,12 @@ public interface VmComponentBuilderFactory {
          * case. Utilizing the .offer(timeout) method of the underlining java
          * queue.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param defaultOfferTimeout the value to set
+         * @return the dsl builder
          */
         default VmComponentBuilder defaultOfferTimeout(long defaultOfferTimeout) {
             doSetProperty("defaultOfferTimeout", defaultOfferTimeout);
@@ -137,10 +154,13 @@ public interface VmComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default VmComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -154,10 +174,13 @@ public interface VmComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default VmComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -167,9 +190,12 @@ public interface VmComponentBuilderFactory {
          * Sets the default queue factory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.seda.BlockingQueueFactory&lt;org.apache.camel.Exchange&gt;</code> type.
+         * &lt;code&gt;org.apache.camel.component.seda.BlockingQueueFactory&amp;lt;org.apache.camel.Exchange&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param defaultQueueFactory the value to set
+         * @return the dsl builder
          */
         default VmComponentBuilder defaultQueueFactory(
                 org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> defaultQueueFactory) {
@@ -180,10 +206,13 @@ public interface VmComponentBuilderFactory {
          * Sets the default maximum capacity of the SEDA queue (i.e., the number
          * of messages it can hold).
          * 
-         * The option is a: <code>int</code> type.
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: advanced
+         * 
+         * @param queueSize the value to set
+         * @return the dsl builder
          */
         default VmComponentBuilder queueSize(int queueSize) {
             doSetProperty("queueSize", queueSize);

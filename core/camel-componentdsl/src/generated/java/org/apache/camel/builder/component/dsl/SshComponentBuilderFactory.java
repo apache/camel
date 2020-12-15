@@ -37,6 +37,8 @@ public interface SshComponentBuilderFactory {
      * Category: file
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-ssh
+     * 
+     * @return the dsl builder
      */
     static SshComponentBuilder ssh() {
         return new SshComponentBuilderImpl();
@@ -50,10 +52,13 @@ public interface SshComponentBuilderFactory {
          * Specifies whether a connection to an unknown host should fail or not.
          * This value is only checked when the property knownHosts is set.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param failOnUnknownHost the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder failOnUnknownHost(boolean failOnUnknownHost) {
             doSetProperty("failOnUnknownHost", failOnUnknownHost);
@@ -62,9 +67,12 @@ public interface SshComponentBuilderFactory {
         /**
          * Sets the resource path for a known_hosts file.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param knownHostsResource the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder knownHostsResource(
                 java.lang.String knownHostsResource) {
@@ -75,10 +83,13 @@ public interface SshComponentBuilderFactory {
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param timeout the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder timeout(long timeout) {
             doSetProperty("timeout", timeout);
@@ -93,10 +104,13 @@ public interface SshComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -109,9 +123,12 @@ public interface SshComponentBuilderFactory {
          * consumer, i.e. from(ssh://...) You may need to end your command with
          * a newline, and that must be URL encoded %0A.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
+         * 
+         * @param pollCommand the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder pollCommand(java.lang.String pollCommand) {
             doSetProperty("pollCommand", pollCommand);
@@ -128,10 +145,13 @@ public interface SshComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder lazyStartProducer(boolean lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
@@ -145,10 +165,13 @@ public interface SshComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -158,10 +181,13 @@ public interface SshComponentBuilderFactory {
          * Sets the channel type to pass to the Channel as part of command
          * execution. Defaults to exec.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: exec
          * Group: advanced
+         * 
+         * @param channelType the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder channelType(java.lang.String channelType) {
             doSetProperty("channelType", channelType);
@@ -171,9 +197,12 @@ public interface SshComponentBuilderFactory {
          * Component configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.ssh.SshConfiguration</code> type.
+         * &lt;code&gt;org.apache.camel.component.ssh.SshConfiguration&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder configuration(
                 org.apache.camel.component.ssh.SshConfiguration configuration) {
@@ -184,9 +213,12 @@ public interface SshComponentBuilderFactory {
          * Sets the shellPrompt to be dropped when response is read after
          * command execution.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param shellPrompt the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder shellPrompt(java.lang.String shellPrompt) {
             doSetProperty("shellPrompt", shellPrompt);
@@ -196,10 +228,13 @@ public interface SshComponentBuilderFactory {
          * Sets the sleep period in milliseconds to wait reading response from
          * shell prompt. Defaults to 100 milliseconds.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: advanced
+         * 
+         * @param sleepForShellPrompt the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder sleepForShellPrompt(long sleepForShellPrompt) {
             doSetProperty("sleepForShellPrompt", sleepForShellPrompt);
@@ -210,9 +245,12 @@ public interface SshComponentBuilderFactory {
          * Will use ResourceHelperKeyPairProvider to resolve file based
          * certificate, and depends on keyType setting.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param certResource the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder certResource(java.lang.String certResource) {
             doSetProperty("certResource", certResource);
@@ -222,9 +260,12 @@ public interface SshComponentBuilderFactory {
          * Sets the password to use in loading certResource, if certResource is
          * an encrypted key.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param certResourcePassword the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder certResourcePassword(
                 java.lang.String certResourcePassword) {
@@ -236,9 +277,12 @@ public interface SshComponentBuilderFactory {
          * Certificates to the remote SSH Server.
          * 
          * The option is a:
-         * <code>org.apache.sshd.common.keyprovider.KeyPairProvider</code> type.
+         * &lt;code&gt;org.apache.sshd.common.keyprovider.KeyPairProvider&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyPairProvider the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder keyPairProvider(
                 org.apache.sshd.common.keyprovider.KeyPairProvider keyPairProvider) {
@@ -252,9 +296,12 @@ public interface SshComponentBuilderFactory {
          * first available KeyPair that is loaded. Prior to this, a KeyType of
          * 'ssh-rsa' was enforced by default.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keyType the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder keyType(java.lang.String keyType) {
             doSetProperty("keyType", keyType);
@@ -264,9 +311,12 @@ public interface SshComponentBuilderFactory {
          * Sets the password to use in connecting to remote SSH server. Requires
          * keyPairProvider to be set to null.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -275,9 +325,12 @@ public interface SshComponentBuilderFactory {
         /**
          * Sets the username to use in logging into the remote SSH server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default SshComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);

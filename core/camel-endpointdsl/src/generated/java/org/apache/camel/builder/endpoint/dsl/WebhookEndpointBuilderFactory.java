@@ -268,6 +268,7 @@ public interface WebhookEndpointBuilderFactory {
          * The delegate uri. Must belong to a component that supports webhooks.
          * 
          * @param path endpointUri
+         * @return the dsl builder
          */
         default WebhookEndpointBuilder webhook(String path) {
             return WebhookEndpointBuilderFactory.endpointBuilder("webhook", path);
@@ -289,6 +290,7 @@ public interface WebhookEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path endpointUri
+         * @return the dsl builder
          */
         default WebhookEndpointBuilder webhook(String componentName, String path) {
             return WebhookEndpointBuilderFactory.endpointBuilder(componentName, path);

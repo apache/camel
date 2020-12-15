@@ -928,6 +928,7 @@ public interface JooqEndpointBuilderFactory {
          * JOOQ entity class
          * 
          * @param path entityType
+         * @return the dsl builder
          */
         default JooqEndpointBuilder jooq(String path) {
             return JooqEndpointBuilderFactory.endpointBuilder("jooq", path);
@@ -948,6 +949,7 @@ public interface JooqEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path entityType
+         * @return the dsl builder
          */
         default JooqEndpointBuilder jooq(String componentName, String path) {
             return JooqEndpointBuilderFactory.endpointBuilder(componentName, path);

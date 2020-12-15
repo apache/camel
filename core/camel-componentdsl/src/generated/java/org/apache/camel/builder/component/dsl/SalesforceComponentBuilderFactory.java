@@ -37,6 +37,8 @@ public interface SalesforceComponentBuilderFactory {
      * Category: cloud,api,crm
      * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-salesforce
+     * 
+     * @return the dsl builder
      */
     static SalesforceComponentBuilder salesforce() {
         return new SalesforceComponentBuilderImpl();
@@ -51,9 +53,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * APEX method name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param apexMethod the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder apexMethod(
                 java.lang.String apexMethod) {
@@ -63,10 +68,13 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Query params for APEX method.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param apexQueryParams the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder apexQueryParams(
                 java.util.Map<java.lang.String, java.lang.Object> apexQueryParams) {
@@ -76,10 +84,13 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Salesforce API version.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: 50.0
          * Group: common
+         * 
+         * @param apiVersion the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder apiVersion(
                 java.lang.String apiVersion) {
@@ -90,10 +101,13 @@ public interface SalesforceComponentBuilderFactory {
          * Backoff interval increment for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 1000
          * Group: common
+         * 
+         * @param backoffIncrement the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder backoffIncrement(
                 long backoffIncrement) {
@@ -103,9 +117,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Bulk API Batch ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param batchId the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder batchId(java.lang.String batchId) {
             doSetProperty("batchId", batchId);
@@ -115,9 +132,12 @@ public interface SalesforceComponentBuilderFactory {
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.salesforce.api.dto.bulk.ContentType</code> type.
+         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.bulk.ContentType&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param contentType the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder contentType(
                 org.apache.camel.component.salesforce.api.dto.bulk.ContentType contentType) {
@@ -127,10 +147,13 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Default replayId setting if no value is found in initialReplayIdMap.
          * 
-         * The option is a: <code>java.lang.Long</code> type.
+         * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: common
+         * 
+         * @param defaultReplayId the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder defaultReplayId(
                 java.lang.Long defaultReplayId) {
@@ -142,9 +165,12 @@ public interface SalesforceComponentBuilderFactory {
          * defaults to JSON.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.salesforce.internal.PayloadFormat</code> type.
+         * &lt;code&gt;org.apache.camel.component.salesforce.internal.PayloadFormat&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param format the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder format(
                 org.apache.camel.component.salesforce.internal.PayloadFormat format) {
@@ -155,9 +181,12 @@ public interface SalesforceComponentBuilderFactory {
          * Custom Jetty Http Client to use to connect to Salesforce.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.salesforce.SalesforceHttpClient</code> type.
+         * &lt;code&gt;org.apache.camel.component.salesforce.SalesforceHttpClient&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param httpClient the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpClient(
                 org.apache.camel.component.salesforce.SalesforceHttpClient httpClient) {
@@ -168,10 +197,13 @@ public interface SalesforceComponentBuilderFactory {
          * Connection timeout used by the HttpClient when connecting to the
          * Salesforce server.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 60000
          * Group: common
+         * 
+         * @param httpClientConnectionTimeout the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpClientConnectionTimeout(
                 long httpClientConnectionTimeout) {
@@ -182,10 +214,13 @@ public interface SalesforceComponentBuilderFactory {
          * Timeout used by the HttpClient when waiting for response from the
          * Salesforce server.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 10000
          * Group: common
+         * 
+         * @param httpClientIdleTimeout the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpClientIdleTimeout(
                 long httpClientIdleTimeout) {
@@ -195,9 +230,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Max content length of an HTTP response.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param httpMaxContentLength the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpMaxContentLength(
                 java.lang.Integer httpMaxContentLength) {
@@ -208,10 +246,13 @@ public interface SalesforceComponentBuilderFactory {
          * HTTP request buffer size. May need to be increased for large SOQL
          * queries.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 8192
          * Group: common
+         * 
+         * @param httpRequestBufferSize the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpRequestBufferSize(
                 java.lang.Integer httpRequestBufferSize) {
@@ -221,9 +262,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Include details in Salesforce1 Analytics report, defaults to false.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param includeDetails the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder includeDetails(
                 java.lang.Boolean includeDetails) {
@@ -233,10 +277,13 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Replay IDs to start from per channel name.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Long&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Long&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param initialReplayIdMap the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder initialReplayIdMap(
                 java.util.Map<java.lang.String, java.lang.Long> initialReplayIdMap) {
@@ -246,9 +293,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Salesforce1 Analytics report execution instance ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param instanceId the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder instanceId(
                 java.lang.String instanceId) {
@@ -258,9 +308,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Bulk API Job ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param jobId the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder jobId(java.lang.String jobId) {
             doSetProperty("jobId", jobId);
@@ -270,9 +323,12 @@ public interface SalesforceComponentBuilderFactory {
          * Limit on number of returned records. Applicable to some of the API,
          * check the Salesforce documentation.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param limit the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder limit(java.lang.Integer limit) {
             doSetProperty("limit", limit);
@@ -282,10 +338,13 @@ public interface SalesforceComponentBuilderFactory {
          * Maximum backoff interval for Streaming connection restart attempts
          * for failures beyond CometD auto-reconnect.
          * 
-         * The option is a: <code>long</code> type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: 30000
          * Group: common
+         * 
+         * @param maxBackoff the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder maxBackoff(long maxBackoff) {
             doSetProperty("maxBackoff", maxBackoff);
@@ -298,11 +357,13 @@ public interface SalesforceComponentBuilderFactory {
          * the default.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.salesforce.NotFoundBehaviour</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.salesforce.NotFoundBehaviour&lt;/code&gt; type.
          * 
          * Default: EXCEPTION
          * Group: common
+         * 
+         * @param notFoundBehaviour the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder notFoundBehaviour(
                 org.apache.camel.component.salesforce.NotFoundBehaviour notFoundBehaviour) {
@@ -313,9 +374,12 @@ public interface SalesforceComponentBuilderFactory {
          * Notify for fields, options are ALL, REFERENCED, SELECT, WHERE.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum</code> type.
+         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param notifyForFields the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder notifyForFields(
                 org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum notifyForFields) {
@@ -325,9 +389,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Notify for create operation, defaults to false (API version = 29.0).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param notifyForOperationCreate the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder notifyForOperationCreate(
                 java.lang.Boolean notifyForOperationCreate) {
@@ -337,9 +404,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Notify for delete operation, defaults to false (API version = 29.0).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param notifyForOperationDelete the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder notifyForOperationDelete(
                 java.lang.Boolean notifyForOperationDelete) {
@@ -351,9 +421,12 @@ public interface SalesforceComponentBuilderFactory {
          * version 29.0).
          * 
          * The option is a:
-         * <code>org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum</code> type.
+         * &lt;code&gt;org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param notifyForOperations the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder notifyForOperations(
                 org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum notifyForOperations) {
@@ -364,9 +437,12 @@ public interface SalesforceComponentBuilderFactory {
          * Notify for un-delete operation, defaults to false (API version =
          * 29.0).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param notifyForOperationUndelete the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder notifyForOperationUndelete(
                 java.lang.Boolean notifyForOperationUndelete) {
@@ -376,9 +452,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Notify for update operation, defaults to false (API version = 29.0).
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param notifyForOperationUpdate the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder notifyForOperationUpdate(
                 java.lang.Boolean notifyForOperationUpdate) {
@@ -390,9 +469,13 @@ public interface SalesforceComponentBuilderFactory {
          * Salesforce objects.
          * 
          * The option is a:
-         * <code>com.fasterxml.jackson.databind.ObjectMapper</code> type.
+         * &lt;code&gt;com.fasterxml.jackson.databind.ObjectMapper&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param objectMapper the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder objectMapper(
                 com.fasterxml.jackson.databind.ObjectMapper objectMapper) {
@@ -406,9 +489,12 @@ public interface SalesforceComponentBuilderFactory {
          * to gain the benefit of using short SObject names in parameters/header
          * values. Multiple packages can be separated by comma.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param packages the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder packages(java.lang.String packages) {
             doSetProperty("packages", packages);
@@ -418,10 +504,13 @@ public interface SalesforceComponentBuilderFactory {
          * Use raw payload String for request and response (either JSON or XML
          * depending on format), instead of DTOs, false by default.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param rawPayload the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder rawPayload(boolean rawPayload) {
             doSetProperty("rawPayload", rawPayload);
@@ -430,9 +519,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Salesforce1 Analytics report Id.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reportId the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder reportId(java.lang.String reportId) {
             doSetProperty("reportId", reportId);
@@ -442,9 +534,12 @@ public interface SalesforceComponentBuilderFactory {
          * Salesforce1 Analytics report metadata for filtering.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata</code> type.
+         * &lt;code&gt;org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param reportMetadata the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder reportMetadata(
                 org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata reportMetadata) {
@@ -454,9 +549,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Bulk API Result ID.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param resultId the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder resultId(java.lang.String resultId) {
             doSetProperty("resultId", resultId);
@@ -465,9 +563,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * SObject blob field name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sObjectBlobFieldName the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder sObjectBlobFieldName(
                 java.lang.String sObjectBlobFieldName) {
@@ -478,9 +579,12 @@ public interface SalesforceComponentBuilderFactory {
          * Fully qualified SObject class name, usually generated using
          * camel-salesforce-maven-plugin.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sObjectClass the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder sObjectClass(
                 java.lang.String sObjectClass) {
@@ -490,9 +594,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * SObject fields to retrieve.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sObjectFields the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder sObjectFields(
                 java.lang.String sObjectFields) {
@@ -502,9 +609,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * SObject ID if required by API.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sObjectId the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder sObjectId(java.lang.String sObjectId) {
             doSetProperty("sObjectId", sObjectId);
@@ -513,9 +623,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * SObject external ID field name.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sObjectIdName the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder sObjectIdName(
                 java.lang.String sObjectIdName) {
@@ -525,9 +638,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * SObject external ID field value.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sObjectIdValue the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder sObjectIdValue(
                 java.lang.String sObjectIdValue) {
@@ -537,9 +653,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * SObject name if required or supported by API.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sObjectName the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder sObjectName(
                 java.lang.String sObjectName) {
@@ -549,9 +668,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Salesforce SOQL query string.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sObjectQuery the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder sObjectQuery(
                 java.lang.String sObjectQuery) {
@@ -561,9 +683,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Salesforce SOSL search string.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param sObjectSearch the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder sObjectSearch(
                 java.lang.String sObjectSearch) {
@@ -574,10 +699,13 @@ public interface SalesforceComponentBuilderFactory {
          * Whether to update an existing Push Topic when using the Streaming
          * API, defaults to false.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: common
+         * 
+         * @param updateTopic the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder updateTopic(boolean updateTopic) {
             doSetProperty("updateTopic", updateTopic);
@@ -588,9 +716,12 @@ public interface SalesforceComponentBuilderFactory {
          * all endpoints.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.salesforce.SalesforceEndpointConfig</code> type.
+         * &lt;code&gt;org.apache.camel.component.salesforce.SalesforceEndpointConfig&lt;/code&gt; type.
          * 
          * Group: common (advanced)
+         * 
+         * @param config the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder config(
                 org.apache.camel.component.salesforce.SalesforceEndpointConfig config) {
@@ -602,10 +733,13 @@ public interface SalesforceComponentBuilderFactory {
          * HTTP client. Have a look at properties of SalesforceHttpClient and
          * the Jetty HttpClient for all available options.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common (advanced)
+         * 
+         * @param httpClientProperties the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpClientProperties(
                 java.util.Map<java.lang.String, java.lang.Object> httpClientProperties) {
@@ -617,10 +751,13 @@ public interface SalesforceComponentBuilderFactory {
          * LongPollingTransport used by the BayeuxClient (CometD) used by the
          * streaming api.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: common (advanced)
+         * 
+         * @param longPollingTransportProperties the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder longPollingTransportProperties(
                 java.util.Map<java.lang.String, java.lang.Object> longPollingTransportProperties) {
@@ -636,10 +773,13 @@ public interface SalesforceComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -649,9 +789,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * APEX method URL.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param apexUrl the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder apexUrl(java.lang.String apexUrl) {
             doSetProperty("apexUrl", apexUrl);
@@ -660,9 +803,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Composite (raw) method.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param compositeMethod the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder compositeMethod(
                 java.lang.String compositeMethod) {
@@ -680,10 +826,13 @@ public interface SalesforceComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -698,10 +847,13 @@ public interface SalesforceComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -711,10 +863,13 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * A list of addresses for which HTTP proxy server should not be used.
          * 
-         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyExcludedAddresses the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpProxyExcludedAddresses(
                 java.util.Set<java.lang.String> httpProxyExcludedAddresses) {
@@ -724,9 +879,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Hostname of the HTTP proxy server to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyHost the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpProxyHost(
                 java.lang.String httpProxyHost) {
@@ -736,10 +894,13 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * A list of addresses for which HTTP proxy server should be used.
          * 
-         * The option is a: <code>java.util.Set&lt;java.lang.String&gt;</code>
-         * type.
+         * The option is a:
+         * &lt;code&gt;java.util.Set&amp;lt;java.lang.String&amp;gt;&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyIncludedAddresses the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpProxyIncludedAddresses(
                 java.util.Set<java.lang.String> httpProxyIncludedAddresses) {
@@ -749,9 +910,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Port number of the HTTP proxy server to use.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: proxy
+         * 
+         * @param httpProxyPort the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpProxyPort(
                 java.lang.Integer httpProxyPort) {
@@ -762,10 +926,13 @@ public interface SalesforceComponentBuilderFactory {
          * If set to true the configures the HTTP proxy to use as a SOCKS4
          * proxy.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: proxy
+         * 
+         * @param httpProxySocks4 the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpProxySocks4(
                 boolean httpProxySocks4) {
@@ -779,10 +946,12 @@ public interface SalesforceComponentBuilderFactory {
          * property to eliminate any ambiguity.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.salesforce.AuthenticationType</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.salesforce.AuthenticationType&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param authenticationType the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder authenticationType(
                 org.apache.camel.component.salesforce.AuthenticationType authenticationType) {
@@ -794,9 +963,12 @@ public interface SalesforceComponentBuilderFactory {
          * instance setup. Typically a connected app needs to be configured but
          * one can be provided by installing a package.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder clientId(java.lang.String clientId) {
             doSetProperty("clientId", clientId);
@@ -806,9 +978,12 @@ public interface SalesforceComponentBuilderFactory {
          * OAuth Consumer Secret of the connected app configured in the
          * Salesforce instance setup.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder clientSecret(
                 java.lang.String clientSecret) {
@@ -820,9 +995,12 @@ public interface SalesforceComponentBuilderFactory {
          * the URI of the proxy server in order for the httpProxyUsername and
          * httpProxyPassword to be used for authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param httpProxyAuthUri the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpProxyAuthUri(
                 java.lang.String httpProxyAuthUri) {
@@ -832,9 +1010,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Password to use to authenticate against the HTTP proxy server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param httpProxyPassword the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpProxyPassword(
                 java.lang.String httpProxyPassword) {
@@ -845,9 +1026,12 @@ public interface SalesforceComponentBuilderFactory {
          * Realm of the proxy server, used in preemptive Basic/Digest
          * authentication methods against the HTTP proxy server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param httpProxyRealm the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpProxyRealm(
                 java.lang.String httpProxyRealm) {
@@ -858,10 +1042,13 @@ public interface SalesforceComponentBuilderFactory {
          * If set to false disables the use of TLS when accessing the HTTP
          * proxy.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: security
+         * 
+         * @param httpProxySecure the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpProxySecure(
                 boolean httpProxySecure) {
@@ -872,10 +1059,13 @@ public interface SalesforceComponentBuilderFactory {
          * If set to true Digest authentication will be used when authenticating
          * to the HTTP proxy, otherwise Basic authorization method will be used.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param httpProxyUseDigestAuth the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpProxyUseDigestAuth(
                 boolean httpProxyUseDigestAuth) {
@@ -885,9 +1075,12 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Username to use to authenticate against the HTTP proxy server.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param httpProxyUsername the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder httpProxyUsername(
                 java.lang.String httpProxyUsername) {
@@ -898,9 +1091,12 @@ public interface SalesforceComponentBuilderFactory {
          * URL of the Salesforce instance used after authentication, by default
          * received from Salesforce on successful authentication.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param instanceUrl the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder instanceUrl(
                 java.lang.String instanceUrl) {
@@ -915,9 +1111,12 @@ public interface SalesforceComponentBuilderFactory {
          * the corresponding connected app.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.KeyStoreParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.KeyStoreParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param keystore the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder keystore(
                 org.apache.camel.support.jsse.KeyStoreParameters keystore) {
@@ -930,10 +1129,13 @@ public interface SalesforceComponentBuilderFactory {
          * this to the (default) false and authenticate early and be immediately
          * aware of any authentication issues.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param lazyLogin the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder lazyLogin(boolean lazyLogin) {
             doSetProperty("lazyLogin", lazyLogin);
@@ -944,9 +1146,12 @@ public interface SalesforceComponentBuilderFactory {
          * set there can be set directly on the component as well.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.salesforce.SalesforceLoginConfig</code> type.
+         * &lt;code&gt;org.apache.camel.component.salesforce.SalesforceLoginConfig&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param loginConfig the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder loginConfig(
                 org.apache.camel.component.salesforce.SalesforceLoginConfig loginConfig) {
@@ -957,10 +1162,13 @@ public interface SalesforceComponentBuilderFactory {
          * URL of the Salesforce instance used for authentication, by default
          * set to https://login.salesforce.com.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://login.salesforce.com
          * Group: security
+         * 
+         * @param loginUrl the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder loginUrl(java.lang.String loginUrl) {
             doSetProperty("loginUrl", loginUrl);
@@ -972,9 +1180,12 @@ public interface SalesforceComponentBuilderFactory {
          * avoid it as it is deemed less secure than other flows. Make sure that
          * you append security token to the end of the password if using one.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -990,9 +1201,12 @@ public interface SalesforceComponentBuilderFactory {
          * development organizations Salesforce allows hosting the callback web
          * application at localhost.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param refreshToken the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder refreshToken(
                 java.lang.String refreshToken) {
@@ -1004,9 +1218,12 @@ public interface SalesforceComponentBuilderFactory {
          * available options.
          * 
          * The option is a:
-         * <code>org.apache.camel.support.jsse.SSLContextParameters</code> type.
+         * &lt;code&gt;org.apache.camel.support.jsse.SSLContextParameters&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param sslContextParameters the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder sslContextParameters(
                 org.apache.camel.support.jsse.SSLContextParameters sslContextParameters) {
@@ -1016,10 +1233,13 @@ public interface SalesforceComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {
@@ -1031,9 +1251,12 @@ public interface SalesforceComponentBuilderFactory {
          * to get started with password OAuth flow, but in general one should
          * avoid it as it is deemed less secure than other flows.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param userName the value to set
+         * @return the dsl builder
          */
         default SalesforceComponentBuilder userName(java.lang.String userName) {
             doSetProperty("userName", userName);

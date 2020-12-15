@@ -209,6 +209,7 @@ public interface SchematronEndpointBuilderFactory {
          * location in the file system.
          * 
          * @param path path
+         * @return the dsl builder
          */
         default SchematronEndpointBuilder schematron(String path) {
             return SchematronEndpointBuilderFactory.endpointBuilder("schematron", path);
@@ -230,6 +231,7 @@ public interface SchematronEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path path
+         * @return the dsl builder
          */
         default SchematronEndpointBuilder schematron(
                 String componentName,

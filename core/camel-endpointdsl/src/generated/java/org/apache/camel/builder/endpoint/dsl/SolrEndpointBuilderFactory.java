@@ -406,6 +406,7 @@ public interface SolrEndpointBuilderFactory {
          * Hostname and port for the solr server
          * 
          * @param path url
+         * @return the dsl builder
          */
         default SolrEndpointBuilder solr(String path) {
             return SolrEndpointBuilderFactory.endpointBuilder("solr", path);
@@ -426,6 +427,7 @@ public interface SolrEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path url
+         * @return the dsl builder
          */
         default SolrEndpointBuilder solr(String componentName, String path) {
             return SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
@@ -444,6 +446,7 @@ public interface SolrEndpointBuilderFactory {
          * Hostname and port for the solr server
          * 
          * @param path url
+         * @return the dsl builder
          */
         default SolrEndpointBuilder solrCloud(String path) {
             return SolrEndpointBuilderFactory.endpointBuilder("solrCloud", path);
@@ -462,6 +465,7 @@ public interface SolrEndpointBuilderFactory {
          * Hostname and port for the solr server
          * 
          * @param path url
+         * @return the dsl builder
          */
         default SolrEndpointBuilder solrs(String path) {
             return SolrEndpointBuilderFactory.endpointBuilder("solrs", path);

@@ -37,6 +37,8 @@ public interface JgroupsRaftComponentBuilderFactory {
      * Category: clustering,messaging
      * Since: 2.24
      * Maven coordinates: org.apache.camel:camel-jgroups-raft
+     * 
+     * @return the dsl builder
      */
     static JgroupsRaftComponentBuilder jgroupsRaft() {
         return new JgroupsRaftComponentBuilderImpl();
@@ -52,10 +54,13 @@ public interface JgroupsRaftComponentBuilderFactory {
          * Specifies configuration properties of the RaftHandle JChannel used by
          * the endpoint (ignored if raftHandle ref is provided).
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: raft.xml
          * Group: common
+         * 
+         * @param channelProperties the value to set
+         * @return the dsl builder
          */
         default JgroupsRaftComponentBuilder channelProperties(
                 java.lang.String channelProperties) {
@@ -65,9 +70,13 @@ public interface JgroupsRaftComponentBuilderFactory {
         /**
          * RaftHandle to use.
          * 
-         * The option is a: <code>org.jgroups.raft.RaftHandle</code> type.
+         * The option is a: &lt;code&gt;org.jgroups.raft.RaftHandle&lt;/code&gt;
+         * type.
          * 
          * Group: common
+         * 
+         * @param raftHandle the value to set
+         * @return the dsl builder
          */
         default JgroupsRaftComponentBuilder raftHandle(
                 org.jgroups.raft.RaftHandle raftHandle) {
@@ -77,9 +86,12 @@ public interface JgroupsRaftComponentBuilderFactory {
         /**
          * Unique raftId to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param raftId the value to set
+         * @return the dsl builder
          */
         default JgroupsRaftComponentBuilder raftId(java.lang.String raftId) {
             doSetProperty("raftId", raftId);
@@ -88,11 +100,15 @@ public interface JgroupsRaftComponentBuilderFactory {
         /**
          * StateMachine to use.
          * 
-         * The option is a: <code>org.jgroups.protocols.raft.StateMachine</code>
+         * The option is a:
+         * &lt;code&gt;org.jgroups.protocols.raft.StateMachine&lt;/code&gt;
          * type.
          * 
          * Default: NopStateMachine
          * Group: common
+         * 
+         * @param stateMachine the value to set
+         * @return the dsl builder
          */
         default JgroupsRaftComponentBuilder stateMachine(
                 org.jgroups.protocols.raft.StateMachine stateMachine) {
@@ -108,10 +124,13 @@ public interface JgroupsRaftComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default JgroupsRaftComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -129,10 +148,13 @@ public interface JgroupsRaftComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default JgroupsRaftComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -147,10 +169,13 @@ public interface JgroupsRaftComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default JgroupsRaftComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

@@ -574,6 +574,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * bean:myBean.myMethod
          * 
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XsltSaxonEndpointBuilder xsltSaxon(String path) {
             return XsltSaxonEndpointBuilderFactory.endpointBuilder("xslt-saxon", path);
@@ -600,6 +601,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path resourceUri
+         * @return the dsl builder
          */
         default XsltSaxonEndpointBuilder xsltSaxon(
                 String componentName,

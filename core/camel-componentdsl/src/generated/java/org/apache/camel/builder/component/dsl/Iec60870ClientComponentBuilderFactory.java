@@ -39,6 +39,8 @@ public interface Iec60870ClientComponentBuilderFactory {
      * Category: iot
      * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-iec60870
+     * 
+     * @return the dsl builder
      */
     static Iec60870ClientComponentBuilder iec60870Client() {
         return new Iec60870ClientComponentBuilderImpl();
@@ -54,10 +56,12 @@ public interface Iec60870ClientComponentBuilderFactory {
          * Default connection options.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.iec60870.client.ClientOptions</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.iec60870.client.ClientOptions&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param defaultConnectionOptions the value to set
+         * @return the dsl builder
          */
         default Iec60870ClientComponentBuilder defaultConnectionOptions(
                 org.apache.camel.component.iec60870.client.ClientOptions defaultConnectionOptions) {
@@ -73,10 +77,13 @@ public interface Iec60870ClientComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default Iec60870ClientComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -94,10 +101,13 @@ public interface Iec60870ClientComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default Iec60870ClientComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -112,10 +122,13 @@ public interface Iec60870ClientComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default Iec60870ClientComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

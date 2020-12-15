@@ -39,6 +39,8 @@ public interface VertxWebsocketComponentBuilderFactory {
      * Category: websocket
      * Since: 3.5
      * Maven coordinates: org.apache.camel:camel-vertx-websocket
+     * 
+     * @return the dsl builder
      */
     static VertxWebsocketComponentBuilder vertxWebsocket() {
         return new VertxWebsocketComponentBuilderImpl();
@@ -59,10 +61,13 @@ public interface VertxWebsocketComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -80,10 +85,13 @@ public interface VertxWebsocketComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -98,10 +106,13 @@ public interface VertxWebsocketComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {
@@ -111,9 +122,13 @@ public interface VertxWebsocketComponentBuilderFactory {
         /**
          * To provide a custom vertx router to use on the WebSocket server.
          * 
-         * The option is a: <code>io.vertx.ext.web.Router</code> type.
+         * The option is a: &lt;code&gt;io.vertx.ext.web.Router&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param router the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketComponentBuilder router(
                 io.vertx.ext.web.Router router) {
@@ -123,9 +138,12 @@ public interface VertxWebsocketComponentBuilderFactory {
         /**
          * To use an existing vertx instead of creating a new instance.
          * 
-         * The option is a: <code>io.vertx.core.Vertx</code> type.
+         * The option is a: &lt;code&gt;io.vertx.core.Vertx&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param vertx the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketComponentBuilder vertx(io.vertx.core.Vertx vertx) {
             doSetProperty("vertx", vertx);
@@ -134,9 +152,13 @@ public interface VertxWebsocketComponentBuilderFactory {
         /**
          * To provide a custom set of vertx options for configuring vertx.
          * 
-         * The option is a: <code>io.vertx.core.VertxOptions</code> type.
+         * The option is a: &lt;code&gt;io.vertx.core.VertxOptions&lt;/code&gt;
+         * type.
          * 
          * Group: advanced
+         * 
+         * @param vertxOptions the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketComponentBuilder vertxOptions(
                 io.vertx.core.VertxOptions vertxOptions) {
@@ -146,10 +168,13 @@ public interface VertxWebsocketComponentBuilderFactory {
         /**
          * Enable usage of global SSL context parameters.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param useGlobalSslContextParameters the value to set
+         * @return the dsl builder
          */
         default VertxWebsocketComponentBuilder useGlobalSslContextParameters(
                 boolean useGlobalSslContextParameters) {

@@ -193,6 +193,7 @@ public interface MasterEndpointBuilderFactory {
          * The endpoint uri to use in master/slave mode
          * 
          * @param path namespace:delegateUri
+         * @return the dsl builder
          */
         default MasterEndpointBuilder master(String path) {
             return MasterEndpointBuilderFactory.endpointBuilder("master", path);
@@ -217,6 +218,7 @@ public interface MasterEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path namespace:delegateUri
+         * @return the dsl builder
          */
         default MasterEndpointBuilder master(String componentName, String path) {
             return MasterEndpointBuilderFactory.endpointBuilder(componentName, path);

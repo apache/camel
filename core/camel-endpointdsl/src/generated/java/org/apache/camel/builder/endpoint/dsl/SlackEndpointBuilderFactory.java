@@ -868,6 +868,7 @@ public interface SlackEndpointBuilderFactory {
          * send a message directly to an user.
          * 
          * @param path channel
+         * @return the dsl builder
          */
         default SlackEndpointBuilder slack(String path) {
             return SlackEndpointBuilderFactory.endpointBuilder("slack", path);
@@ -889,6 +890,7 @@ public interface SlackEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path channel
+         * @return the dsl builder
          */
         default SlackEndpointBuilder slack(String componentName, String path) {
             return SlackEndpointBuilderFactory.endpointBuilder(componentName, path);

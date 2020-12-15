@@ -37,6 +37,8 @@ public interface SpringBatchComponentBuilderFactory {
      * Category: spring,batch,scheduling
      * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-spring-batch
+     * 
+     * @return the dsl builder
      */
     static SpringBatchComponentBuilder springBatch() {
         return new SpringBatchComponentBuilderImpl();
@@ -52,9 +54,12 @@ public interface SpringBatchComponentBuilderFactory {
          * Explicitly specifies a JobLauncher to be used.
          * 
          * The option is a:
-         * <code>org.springframework.batch.core.launch.JobLauncher</code> type.
+         * &lt;code&gt;org.springframework.batch.core.launch.JobLauncher&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param jobLauncher the value to set
+         * @return the dsl builder
          */
         default SpringBatchComponentBuilder jobLauncher(
                 org.springframework.batch.core.launch.JobLauncher jobLauncher) {
@@ -65,10 +70,12 @@ public interface SpringBatchComponentBuilderFactory {
          * Explicitly specifies a JobRegistry to be used.
          * 
          * The option is a:
-         * <code>org.springframework.batch.core.configuration.JobRegistry</code>
-         * type.
+         * &lt;code&gt;org.springframework.batch.core.configuration.JobRegistry&lt;/code&gt; type.
          * 
          * Group: producer
+         * 
+         * @param jobRegistry the value to set
+         * @return the dsl builder
          */
         default SpringBatchComponentBuilder jobRegistry(
                 org.springframework.batch.core.configuration.JobRegistry jobRegistry) {
@@ -86,10 +93,13 @@ public interface SpringBatchComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default SpringBatchComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -104,10 +114,13 @@ public interface SpringBatchComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default SpringBatchComponentBuilder autowiredEnabled(
                 boolean autowiredEnabled) {

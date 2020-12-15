@@ -85,10 +85,23 @@ public final class ComponentsBuilderFactoryGenerator {
     }
 
     private void setJavaDoc() {
-        final String doc
-                = "Component entry DSL builder. You can build a component like this: ComponentBuilderFactory.kafka().setBrokers(\"{{host:port}}\").build()"
-                  + "\n\n"
-                  + AbstractGeneratorMojo.GENERATED_MSG;
+        final String doc = "Component DSL builder."
+                           + "\n"
+                           + "\nYou can build a component as follows:"
+                           + "\n<pre>"
+                           + "\n    KafkaComponent kafka = ComponentBuilderFactory.kafka().setBrokers(\"{{host:port}}\").build();"
+                           + "\n</pre>"
+                           + "\nThis creates a new Kafka component, but often you want to register the component to CamelContext, which can be done as follows:"
+                           + "\n<pre>"
+                           + "\n    ComponentBuilderFactory.kafka().setBrokers(\"{{host:port}}\").register(camelContext, \"kafka\");"
+                           + "\n</pre>"
+                           + "\nThis configures and registers the component to CamelContext with the name kafka. If you have separate Kafka brokers you can register more components with their own name:"
+                           + "\n<pre>"
+                           + "\n    ComponentBuilderFactory.kafka().setBrokers(\"{{host2:port}}\").register(camelContext, \"kafka2\");"
+                           + "\n</pre>"
+                           + "\n"
+                           + "\n"
+                           + AbstractGeneratorMojo.GENERATED_MSG;
         javaClass.getJavaDoc().setText(doc);
     }
 
@@ -125,6 +138,7 @@ public final class ComponentsBuilderFactoryGenerator {
             String doc = DslHelper.getMainDescriptionWithoutPathOptions(componentModel);
             // must xml encode description as in some rare cases it contains & chars which is invalid javadoc
             doc = JavadocHelper.xmlEncode(doc);
+            doc += "\n\n@return the dsl builder\n";
             componentEntryMethod.getJavaDoc().setText(doc);
         });
     }

@@ -37,6 +37,8 @@ public interface DockerComponentBuilderFactory {
      * Category: cloud,container,paas
      * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-docker
+     * 
+     * @return the dsl builder
      */
     static DockerComponentBuilder docker() {
         return new DockerComponentBuilderImpl();
@@ -52,10 +54,12 @@ public interface DockerComponentBuilderFactory {
          * To use the shared docker configuration.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.docker.DockerConfiguration</code>
-         * type.
+         * &lt;code&gt;org.apache.camel.component.docker.DockerConfiguration&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param configuration the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder configuration(
                 org.apache.camel.component.docker.DockerConfiguration configuration) {
@@ -65,9 +69,12 @@ public interface DockerComponentBuilderFactory {
         /**
          * Email address associated with the user.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param email the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder email(java.lang.String email) {
             doSetProperty("email", email);
@@ -76,10 +83,13 @@ public interface DockerComponentBuilderFactory {
         /**
          * Docker host.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: localhost
          * Group: common
+         * 
+         * @param host the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder host(java.lang.String host) {
             doSetProperty("host", host);
@@ -88,10 +98,13 @@ public interface DockerComponentBuilderFactory {
         /**
          * Docker port.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 2375
          * Group: common
+         * 
+         * @param port the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder port(java.lang.Integer port) {
             doSetProperty("port", port);
@@ -100,9 +113,12 @@ public interface DockerComponentBuilderFactory {
         /**
          * Request timeout for response (in seconds).
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Group: common
+         * 
+         * @param requestTimeout the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder requestTimeout(
                 java.lang.Integer requestTimeout) {
@@ -118,10 +134,13 @@ public interface DockerComponentBuilderFactory {
          * with exceptions, that will be logged at WARN or ERROR level and
          * ignored.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: consumer
+         * 
+         * @param bridgeErrorHandler the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
@@ -139,10 +158,13 @@ public interface DockerComponentBuilderFactory {
          * producer may take a little time and prolong the total processing time
          * of the processing.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer
+         * 
+         * @param lazyStartProducer the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
@@ -157,10 +179,13 @@ public interface DockerComponentBuilderFactory {
          * automatic configuring JDBC data sources, JMS connection factories,
          * AWS Clients, etc.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param autowiredEnabled the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder autowiredEnabled(boolean autowiredEnabled) {
             doSetProperty("autowiredEnabled", autowiredEnabled);
@@ -170,10 +195,13 @@ public interface DockerComponentBuilderFactory {
          * The fully qualified class name of the DockerCmdExecFactory
          * implementation to use.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: com.github.dockerjava.netty.NettyDockerCmdExecFactory
          * Group: advanced
+         * 
+         * @param cmdExecFactory the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder cmdExecFactory(
                 java.lang.String cmdExecFactory) {
@@ -183,10 +211,13 @@ public interface DockerComponentBuilderFactory {
         /**
          * Whether to follow redirect filter.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param followRedirectFilter the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder followRedirectFilter(
                 boolean followRedirectFilter) {
@@ -196,10 +227,13 @@ public interface DockerComponentBuilderFactory {
         /**
          * Whether to use logging filter.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: advanced
+         * 
+         * @param loggingFilter the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder loggingFilter(boolean loggingFilter) {
             doSetProperty("loggingFilter", loggingFilter);
@@ -208,10 +242,13 @@ public interface DockerComponentBuilderFactory {
         /**
          * Maximum route connections.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: advanced
+         * 
+         * @param maxPerRouteConnections the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder maxPerRouteConnections(
                 java.lang.Integer maxPerRouteConnections) {
@@ -221,10 +258,13 @@ public interface DockerComponentBuilderFactory {
         /**
          * Maximum total connections.
          * 
-         * The option is a: <code>java.lang.Integer</code> type.
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
          * Default: 100
          * Group: advanced
+         * 
+         * @param maxTotalConnections the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder maxTotalConnections(
                 java.lang.Integer maxTotalConnections) {
@@ -234,10 +274,13 @@ public interface DockerComponentBuilderFactory {
         /**
          * Additional configuration parameters as key/value pairs.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.Object&amp;gt;&lt;/code&gt; type.
          * 
          * Group: advanced
+         * 
+         * @param parameters the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder parameters(
                 java.util.Map<java.lang.String, java.lang.Object> parameters) {
@@ -247,10 +290,13 @@ public interface DockerComponentBuilderFactory {
         /**
          * Server address for docker registry.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Default: https://index.docker.io/v1/
          * Group: advanced
+         * 
+         * @param serverAddress the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder serverAddress(
                 java.lang.String serverAddress) {
@@ -260,10 +306,13 @@ public interface DockerComponentBuilderFactory {
         /**
          * Socket connection mode.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: true
          * Group: advanced
+         * 
+         * @param socket the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder socket(boolean socket) {
             doSetProperty("socket", socket);
@@ -272,9 +321,12 @@ public interface DockerComponentBuilderFactory {
         /**
          * Location containing the SSL certificate chain.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param certPath the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder certPath(java.lang.String certPath) {
             doSetProperty("certPath", certPath);
@@ -283,9 +335,12 @@ public interface DockerComponentBuilderFactory {
         /**
          * Password to authenticate with.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder password(java.lang.String password) {
             doSetProperty("password", password);
@@ -294,10 +349,13 @@ public interface DockerComponentBuilderFactory {
         /**
          * Use HTTPS communication.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param secure the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder secure(boolean secure) {
             doSetProperty("secure", secure);
@@ -306,10 +364,13 @@ public interface DockerComponentBuilderFactory {
         /**
          * Check TLS.
          * 
-         * The option is a: <code>boolean</code> type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: security
+         * 
+         * @param tlsVerify the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder tlsVerify(boolean tlsVerify) {
             doSetProperty("tlsVerify", tlsVerify);
@@ -318,9 +379,12 @@ public interface DockerComponentBuilderFactory {
         /**
          * User name to authenticate with.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
          */
         default DockerComponentBuilder username(java.lang.String username) {
             doSetProperty("username", username);

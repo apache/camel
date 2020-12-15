@@ -22,6 +22,9 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 
+/**
+ * Base class for component builders.
+ */
 public abstract class AbstractComponentBuilder<C extends Component> {
     private final Map<String, Object> properties = new LinkedHashMap<>();
 

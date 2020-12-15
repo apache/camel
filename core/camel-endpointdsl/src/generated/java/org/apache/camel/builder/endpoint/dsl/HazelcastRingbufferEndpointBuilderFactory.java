@@ -253,6 +253,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * The name of the cache
          * 
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(
                 String path) {
@@ -274,6 +275,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path cacheName
+         * @return the dsl builder
          */
         default HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(
                 String componentName,

@@ -218,6 +218,7 @@ public interface DrillEndpointBuilderFactory {
          * Host name or IP address
          * 
          * @param path host
+         * @return the dsl builder
          */
         default DrillEndpointBuilder drill(String path) {
             return DrillEndpointBuilderFactory.endpointBuilder("drill", path);
@@ -238,6 +239,7 @@ public interface DrillEndpointBuilderFactory {
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
          * @param path host
+         * @return the dsl builder
          */
         default DrillEndpointBuilder drill(String componentName, String path) {
             return DrillEndpointBuilderFactory.endpointBuilder(componentName, path);
