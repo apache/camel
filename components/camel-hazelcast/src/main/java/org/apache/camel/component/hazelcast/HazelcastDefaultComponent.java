@@ -193,7 +193,7 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
 
         // Check if an already created instance is given then just get instance by its name.
         if (hzInstance == null && parameters.get(HAZELCAST_INSTANCE_NAME_PARAM) != null) {
-            hzInstance = Hazelcast.getHazelcastInstanceByName((String) parameters.get(HAZELCAST_INSTANCE_NAME_PARAM));
+            hzInstance = HazelcastClient.getHazelcastClientByName((String) parameters.get(HAZELCAST_INSTANCE_NAME_PARAM));
         }
 
         // If instance neither supplied nor found by name, try to lookup its config
