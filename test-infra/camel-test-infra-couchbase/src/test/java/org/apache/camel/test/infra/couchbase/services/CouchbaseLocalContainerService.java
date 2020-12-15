@@ -17,13 +17,14 @@
 
 package org.apache.camel.test.infra.couchbase.services;
 
+import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.couchbase.common.CouchbaseProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.couchbase.BucketDefinition;
 import org.testcontainers.couchbase.CouchbaseContainer;
 
-public class CouchbaseLocalContainerService implements CouchbaseService {
+public class CouchbaseLocalContainerService implements CouchbaseService, ContainerService<CouchbaseContainer> {
 
     /*
      * Couchbase container uses a dynamic port for the KV service. The configuration
@@ -33,8 +34,22 @@ public class CouchbaseLocalContainerService implements CouchbaseService {
      */
     private class CustomCouchbaseContainer extends CouchbaseContainer {
         public CustomCouchbaseContainer() {
+            super("couchbase/server:6.5.1");
+
             final int kvPort = 11210;
             addFixedExposedPort(kvPort, kvPort);
+
+            final int managementPort = 8091;
+            addFixedExposedPort(managementPort, managementPort);
+
+            final int viewPort = 8092;
+            addFixedExposedPort(viewPort, viewPort);
+
+            final int queryPort = 8093;
+            addFixedExposedPort(queryPort, queryPort);
+
+            final int searchPort = 8094;
+            addFixedExposedPort(searchPort, searchPort);
         }
     }
 
@@ -96,5 +111,10 @@ public class CouchbaseLocalContainerService implements CouchbaseService {
     @Override
     public void shutdown() {
         container.stop();
+    }
+
+    @Override
+    public CouchbaseContainer getContainer() {
+        return container;
     }
 }
