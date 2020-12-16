@@ -460,9 +460,11 @@ public class CamelCdiTest {
     // that is automatically added to the Camel context
     static class TestRoute extends RouteBuilder {
 
-    @Override
-    public void configure() {
-        from("direct:out").routeId("test").to("mock:out");
+        @Override
+        public void configure() {
+            from("direct:out").routeId("test").to("mock:out");
+        }
+    
     }
 
     // And retrieve the MockEndpoint for further assertions
