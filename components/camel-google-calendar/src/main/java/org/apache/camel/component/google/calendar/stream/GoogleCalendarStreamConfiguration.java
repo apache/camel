@@ -40,6 +40,8 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     private List<String> scopes = DEFAULT_SCOPES;
     @UriParam
     private String clientId;
+    @UriParam
+    private String emailAddress;
     @UriParam(label = "security", secret = true)
     private String clientSecret;
     @UriParam(label = "security", secret = true)
@@ -48,6 +50,10 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
     private String refreshToken;
     @UriParam
     private String applicationName;
+    @UriParam
+    private String p12FileName;
+    @UriParam
+    private String user;
     @UriParam
     private String query;
     @UriParam(defaultValue = "10")
@@ -68,6 +74,17 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
      */
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    /**
+     * The emailAddress of the Google Service Account.
+     */
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     public String getClientSecret() {
@@ -136,6 +153,28 @@ public class GoogleCalendarStreamConfiguration implements Cloneable {
      */
     public void setIndex(String index) {
         this.index = index;
+    }
+
+    public String getP12FileName() {
+        return p12FileName;
+    }
+
+    /**
+     * The name of the p12 file which has the private key to use with the Google Service Account.
+     */
+    public void setP12FileName(String p12FileName) {
+        this.p12FileName = p12FileName;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    /**
+     * The email address of the user the application is trying to impersonate in the service account flow.
+     */
+    public void setUser(String user) {
+        this.user = user;
     }
 
     public String getQuery() {
