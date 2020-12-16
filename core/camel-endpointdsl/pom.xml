@@ -61,6 +61,23 @@
                     <groupId>org.apache.camel</groupId>
                     <artifactId>camel-threadpoolfactory-vertx</artifactId>
                 </exclusion>
+                <!-- exclude javax.annotation packages as they cause javadoc WARN on java8 vs java11 -->
+                <exclusion>
+                    <groupId>javax.annotation</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.jboss.spec.javax.annotation</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>jakarta.annotation</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.drill.exec</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
