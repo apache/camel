@@ -615,7 +615,11 @@ To bridge Spring and Camel you must define a single bean as shown below:
 
 [source,xml]
 ----
-include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/components/properties/CamelSpringPropertyPlaceholderConfigurerTest.xml[tags=e1]
+  <!-- bridge spring property placeholder with Camel -->
+  <!-- you must NOT use the <context:property-placeholder at the same time, only this bridge bean -->
+  <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+    <property name="location" value="classpath:org/apache/camel/component/properties/cheese.properties"/>
+  </bean>
 ----
 
 You *must not* use the spring `<context:property-placeholder>` namespace
@@ -627,7 +631,20 @@ as shown below:
 
 [source,xml]
 ----
-include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/components/properties/CamelSpringPropertyPlaceholderConfigurerTest.xml[tags=e2]
+  <!-- a bean that uses Spring property placeholder -->
+  <!-- the ${hi} is a spring property placeholder -->
+  <bean id="hello" class="org.apache.camel.component.properties.HelloBean">
+    <property name="greeting" value="${hi}"/>
+  </bean>
+
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <!-- in this route we use Camels property placeholder {{ }} style -->
+    <route>
+      <from uri="direct:{{cool.bar}}"/>
+      <bean ref="hello"/>
+      <to uri="{{cool.end}}"/>
+    </route>
+  </camelContext>
 ----
 
 Notice how the hello bean is using pure Spring property placeholders
