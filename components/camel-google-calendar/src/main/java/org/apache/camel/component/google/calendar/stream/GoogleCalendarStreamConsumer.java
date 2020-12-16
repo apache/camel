@@ -88,7 +88,10 @@ public class GoogleCalendarStreamConsumer extends ScheduledBatchPollingConsumer 
             for (Event event : list) {
                 Exchange exchange = getEndpoint().createExchange(getEndpoint().getExchangePattern(), event);
                 answer.add(exchange);
-                dateList.add(new Date(event.getUpdated().getValue()));
+                DateTime updated = event.getUpdated();
+                if (updated != null) {
+                    dateList.add(new Date(updated.getValue()));
+                }
             }
         }
 
