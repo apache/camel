@@ -127,18 +127,18 @@ public class SubscriptionHelperIntegrationTest {
 
         server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/connect",
                 req -> req.contains("\"timeout\":0"), "[\n"
-                                                        + "  {\n"
-                                                        + "    \"clientId\": \"1f0agp5a95yiaeb1kifib37r5z4g\",\n"
-                                                        + "    \"advice\": {\n"
-                                                        + "      \"interval\": 0,\n"
-                                                        + "      \"timeout\": 110000,\n"
-                                                        + "      \"reconnect\": \"retry\"\n"
-                                                        + "    },\n"
-                                                        + "    \"channel\": \"/meta/connect\",\n"
-                                                        + "    \"id\": \"$id\",\n"
-                                                        + "    \"successful\": true\n"
-                                                        + "  }\n"
-                                                        + "]");
+                                                      + "  {\n"
+                                                      + "    \"clientId\": \"1f0agp5a95yiaeb1kifib37r5z4g\",\n"
+                                                      + "    \"advice\": {\n"
+                                                      + "      \"interval\": 0,\n"
+                                                      + "      \"timeout\": 110000,\n"
+                                                      + "      \"reconnect\": \"retry\"\n"
+                                                      + "    },\n"
+                                                      + "    \"channel\": \"/meta/connect\",\n"
+                                                      + "    \"id\": \"$id\",\n"
+                                                      + "    \"successful\": true\n"
+                                                      + "  }\n"
+                                                      + "]");
 
         server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/connect", messages);
 
