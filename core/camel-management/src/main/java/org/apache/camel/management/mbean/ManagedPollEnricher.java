@@ -65,6 +65,11 @@ public class ManagedPollEnricher extends ManagedProcessor implements ManagedPoll
     }
 
     @Override
+    public Boolean getSupportExtendedInformation() {
+        return true;
+    }
+
+    @Override
     public PollEnrichDefinition getDefinition() {
         return (PollEnrichDefinition) super.getDefinition();
     }
