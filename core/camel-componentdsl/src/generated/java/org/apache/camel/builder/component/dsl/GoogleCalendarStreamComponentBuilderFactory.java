@@ -169,21 +169,6 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
-         * The emailAddress of the Google Service Account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param emailAddress the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarStreamComponentBuilder emailAddress(
-                java.lang.String emailAddress) {
-            doSetProperty("emailAddress", emailAddress);
-            return this;
-        }
-        /**
          * Max results to be returned.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -196,22 +181,6 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
          */
         default GoogleCalendarStreamComponentBuilder maxResults(int maxResults) {
             doSetProperty("maxResults", maxResults);
-            return this;
-        }
-        /**
-         * The name of the p12 file which has the private key to use with the
-         * Google Service Account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param p12FileName the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarStreamComponentBuilder p12FileName(
-                java.lang.String p12FileName) {
-            doSetProperty("p12FileName", p12FileName);
             return this;
         }
         /**
@@ -245,21 +214,6 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         default GoogleCalendarStreamComponentBuilder scopes(
                 java.util.List<java.lang.String> scopes) {
             doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * The email address of the user the application is trying to
-         * impersonate in the service account flow.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param user the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarStreamComponentBuilder user(java.lang.String user) {
-            doSetProperty("user", user);
             return this;
         }
         /**
@@ -331,6 +285,37 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             return this;
         }
         /**
+         * The emailAddress of the Google Service Account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param emailAddress the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamComponentBuilder emailAddress(
+                java.lang.String emailAddress) {
+            doSetProperty("emailAddress", emailAddress);
+            return this;
+        }
+        /**
+         * The name of the p12 file which has the private key to use with the
+         * Google Service Account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param p12FileName the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamComponentBuilder p12FileName(
+                java.lang.String p12FileName) {
+            doSetProperty("p12FileName", p12FileName);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -345,6 +330,21 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
         default GoogleCalendarStreamComponentBuilder refreshToken(
                 java.lang.String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * The email address of the user the application is trying to
+         * impersonate in the service account flow.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarStreamComponentBuilder user(java.lang.String user) {
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -378,17 +378,17 @@ public interface GoogleCalendarStreamComponentBuilderFactory {
             case "configuration": ((GoogleCalendarStreamComponent) component).setConfiguration((org.apache.camel.component.google.calendar.stream.GoogleCalendarStreamConfiguration) value); return true;
             case "considerLastUpdate": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setConsiderLastUpdate((boolean) value); return true;
             case "consumeFromNow": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setConsumeFromNow((boolean) value); return true;
-            case "emailAddress": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setEmailAddress((java.lang.String) value); return true;
             case "maxResults": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setMaxResults((int) value); return true;
-            case "p12FileName": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setP12FileName((java.lang.String) value); return true;
             case "query": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setQuery((java.lang.String) value); return true;
             case "scopes": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setScopes((java.util.List) value); return true;
-            case "user": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setUser((java.lang.String) value); return true;
             case "autowiredEnabled": ((GoogleCalendarStreamComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "clientFactory": ((GoogleCalendarStreamComponent) component).setClientFactory((org.apache.camel.component.google.calendar.GoogleCalendarClientFactory) value); return true;
             case "accessToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setAccessToken((java.lang.String) value); return true;
             case "clientSecret": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "emailAddress": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setEmailAddress((java.lang.String) value); return true;
+            case "p12FileName": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setP12FileName((java.lang.String) value); return true;
             case "refreshToken": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setRefreshToken((java.lang.String) value); return true;
+            case "user": getOrCreateConfiguration((GoogleCalendarStreamComponent) component).setUser((java.lang.String) value); return true;
             default: return false;
             }
         }

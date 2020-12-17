@@ -23,17 +23,17 @@ public class GoogleCalendarComponentConfigurer extends PropertyConfigurerSupport
         map.put("applicationName", java.lang.String.class);
         map.put("clientId", java.lang.String.class);
         map.put("configuration", org.apache.camel.component.google.calendar.GoogleCalendarConfiguration.class);
-        map.put("emailAddress", java.lang.String.class);
-        map.put("p12FileName", java.lang.String.class);
         map.put("scopes", java.lang.String.class);
-        map.put("user", java.lang.String.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("autowiredEnabled", boolean.class);
         map.put("clientFactory", org.apache.camel.component.google.calendar.GoogleCalendarClientFactory.class);
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
+        map.put("emailAddress", java.lang.String.class);
+        map.put("p12FileName", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
+        map.put("user", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 

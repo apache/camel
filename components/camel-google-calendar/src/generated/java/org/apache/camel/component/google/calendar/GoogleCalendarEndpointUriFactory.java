@@ -59,13 +59,16 @@ public class GoogleCalendarEndpointUriFactory extends org.apache.camel.support.c
         props.add("startScheduler");
         props.add("scopes");
         props.add("inBody");
-        props.add("user");
         props.add("exceptionHandler");
+        props.add("user");
         props.add("refreshToken");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        Set<String> secretProps = new HashSet<>(3);
+        Set<String> secretProps = new HashSet<>(6);
+        secretProps.add("emailAddress");
+        secretProps.add("p12FileName");
         secretProps.add("clientSecret");
         secretProps.add("accessToken");
+        secretProps.add("user");
         secretProps.add("refreshToken");
         SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
     }

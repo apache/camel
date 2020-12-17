@@ -42,6 +42,8 @@ public class GoogleCalendarConfiguration {
     @UriParam
     private String clientId;
     @UriParam
+    private String applicationName;
+    @UriParam(label = "security", secret = true)
     private String emailAddress;
     @UriParam(label = "security", secret = true)
     private String clientSecret;
@@ -49,11 +51,9 @@ public class GoogleCalendarConfiguration {
     private String accessToken;
     @UriParam(label = "security", secret = true)
     private String refreshToken;
-    @UriParam
-    private String applicationName;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String p12FileName;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String user;
 
     public GoogleCalendarApiName getApiName() {

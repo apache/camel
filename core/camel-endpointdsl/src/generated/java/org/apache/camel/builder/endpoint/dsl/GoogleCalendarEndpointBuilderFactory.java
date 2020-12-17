@@ -77,21 +77,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
         /**
-         * The emailAddress of the Google Service Account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param emailAddress the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointConsumerBuilder emailAddress(
-                String emailAddress) {
-            doSetProperty("emailAddress", emailAddress);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -103,22 +88,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * The name of the p12 file which has the private key to use with the
-         * Google Service Account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param p12FileName the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointConsumerBuilder p12FileName(
-                String p12FileName) {
-            doSetProperty("p12FileName", p12FileName);
             return this;
         }
         /**
@@ -137,21 +106,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * The email address of the user the application is trying to
-         * impersonate in the service account flow.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param user the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointConsumerBuilder user(String user) {
-            doSetProperty("user", user);
             return this;
         }
         /**
@@ -748,6 +702,37 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
         /**
+         * The emailAddress of the Google Service Account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param emailAddress the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointConsumerBuilder emailAddress(
+                String emailAddress) {
+            doSetProperty("emailAddress", emailAddress);
+            return this;
+        }
+        /**
+         * The name of the p12 file which has the private key to use with the
+         * Google Service Account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param p12FileName the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointConsumerBuilder p12FileName(
+                String p12FileName) {
+            doSetProperty("p12FileName", p12FileName);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -762,6 +747,21 @@ public interface GoogleCalendarEndpointBuilderFactory {
         default GoogleCalendarEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * The email address of the user the application is trying to
+         * impersonate in the service account flow.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointConsumerBuilder user(String user) {
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -961,21 +961,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
         /**
-         * The emailAddress of the Google Service Account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param emailAddress the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointProducerBuilder emailAddress(
-                String emailAddress) {
-            doSetProperty("emailAddress", emailAddress);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -987,22 +972,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * The name of the p12 file which has the private key to use with the
-         * Google Service Account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param p12FileName the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointProducerBuilder p12FileName(
-                String p12FileName) {
-            doSetProperty("p12FileName", p12FileName);
             return this;
         }
         /**
@@ -1021,21 +990,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * The email address of the user the application is trying to
-         * impersonate in the service account flow.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param user the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointProducerBuilder user(String user) {
-            doSetProperty("user", user);
             return this;
         }
         /**
@@ -1119,6 +1073,37 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
         /**
+         * The emailAddress of the Google Service Account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param emailAddress the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointProducerBuilder emailAddress(
+                String emailAddress) {
+            doSetProperty("emailAddress", emailAddress);
+            return this;
+        }
+        /**
+         * The name of the p12 file which has the private key to use with the
+         * Google Service Account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param p12FileName the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointProducerBuilder p12FileName(
+                String p12FileName) {
+            doSetProperty("p12FileName", p12FileName);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -1133,6 +1118,21 @@ public interface GoogleCalendarEndpointBuilderFactory {
         default GoogleCalendarEndpointProducerBuilder refreshToken(
                 String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * The email address of the user the application is trying to
+         * impersonate in the service account flow.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointProducerBuilder user(String user) {
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -1225,20 +1225,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
         /**
-         * The emailAddress of the Google Service Account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param emailAddress the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointBuilder emailAddress(String emailAddress) {
-            doSetProperty("emailAddress", emailAddress);
-            return this;
-        }
-        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1250,21 +1236,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointBuilder inBody(String inBody) {
             doSetProperty("inBody", inBody);
-            return this;
-        }
-        /**
-         * The name of the p12 file which has the private key to use with the
-         * Google Service Account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param p12FileName the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointBuilder p12FileName(String p12FileName) {
-            doSetProperty("p12FileName", p12FileName);
             return this;
         }
         /**
@@ -1283,21 +1254,6 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointBuilder scopes(String scopes) {
             doSetProperty("scopes", scopes);
-            return this;
-        }
-        /**
-         * The email address of the user the application is trying to
-         * impersonate in the service account flow.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param user the value to set
-         * @return the dsl builder
-         */
-        default GoogleCalendarEndpointBuilder user(String user) {
-            doSetProperty("user", user);
             return this;
         }
         /**
@@ -1330,6 +1286,35 @@ public interface GoogleCalendarEndpointBuilderFactory {
             return this;
         }
         /**
+         * The emailAddress of the Google Service Account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param emailAddress the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointBuilder emailAddress(String emailAddress) {
+            doSetProperty("emailAddress", emailAddress);
+            return this;
+        }
+        /**
+         * The name of the p12 file which has the private key to use with the
+         * Google Service Account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param p12FileName the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointBuilder p12FileName(String p12FileName) {
+            doSetProperty("p12FileName", p12FileName);
+            return this;
+        }
+        /**
          * OAuth 2 refresh token. Using this, the Google Calendar component can
          * obtain a new accessToken whenever the current one expires - a
          * necessity if the application is long-lived.
@@ -1343,6 +1328,21 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointBuilder refreshToken(String refreshToken) {
             doSetProperty("refreshToken", refreshToken);
+            return this;
+        }
+        /**
+         * The email address of the user the application is trying to
+         * impersonate in the service account flow.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param user the value to set
+         * @return the dsl builder
+         */
+        default GoogleCalendarEndpointBuilder user(String user) {
+            doSetProperty("user", user);
             return this;
         }
     }

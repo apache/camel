@@ -24,11 +24,8 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         map.put("methodName", java.lang.String.class);
         map.put("applicationName", java.lang.String.class);
         map.put("clientId", java.lang.String.class);
-        map.put("emailAddress", java.lang.String.class);
         map.put("inBody", java.lang.String.class);
-        map.put("p12FileName", java.lang.String.class);
         map.put("scopes", java.lang.String.class);
-        map.put("user", java.lang.String.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("sendEmptyMessageWhenIdle", boolean.class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
@@ -52,7 +49,10 @@ public class GoogleCalendarEndpointConfigurer extends PropertyConfigurerSupport 
         map.put("useFixedDelay", boolean.class);
         map.put("accessToken", java.lang.String.class);
         map.put("clientSecret", java.lang.String.class);
+        map.put("emailAddress", java.lang.String.class);
+        map.put("p12FileName", java.lang.String.class);
         map.put("refreshToken", java.lang.String.class);
+        map.put("user", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
