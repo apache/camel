@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-atomix",
-    "version": "3.7.0-SNAPSHOT",
+    "version": "3.8.0-SNAPSHOT",
     "scheme": "atomix-value",
     "extendsScheme": "",
     "syntax": "atomix-value:resourceName",
