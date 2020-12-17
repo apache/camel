@@ -343,7 +343,7 @@ Once you get the chat ID, you can use the following sample route to push message
 ---------------------------------------------------------
 from("timer:tick")
 .setBody().constant("Hello")
-to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere?chatId=123456")
+to("telegram:bots?authorizationToken=123456789:insertYourAuthorizationTokenHere&chatId=123456")
 ---------------------------------------------------------
 
 Note that the corresponding URI parameter is simply `chatId`.
