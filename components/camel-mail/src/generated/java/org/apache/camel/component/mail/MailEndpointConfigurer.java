@@ -51,6 +51,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "copyTo": target.getConfiguration().setCopyTo(property(camelContext, java.lang.String.class, value)); return true;
         case "debugmode":
         case "debugMode": target.getConfiguration().setDebugMode(property(camelContext, boolean.class, value)); return true;
+        case "decodefilename":
+        case "decodeFilename": target.getConfiguration().setDecodeFilename(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "delete": target.getConfiguration().setDelete(property(camelContext, boolean.class, value)); return true;
         case "disconnect": target.getConfiguration().setDisconnect(property(camelContext, boolean.class, value)); return true;
@@ -172,6 +174,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "copyTo": return java.lang.String.class;
         case "debugmode":
         case "debugMode": return boolean.class;
+        case "decodefilename":
+        case "decodeFilename": return boolean.class;
         case "delay": return long.class;
         case "delete": return boolean.class;
         case "disconnect": return boolean.class;
@@ -294,6 +298,8 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "copyTo": return target.getConfiguration().getCopyTo();
         case "debugmode":
         case "debugMode": return target.getConfiguration().isDebugMode();
+        case "decodefilename":
+        case "decodeFilename": return target.getConfiguration().isDecodeFilename();
         case "delay": return target.getDelay();
         case "delete": return target.getConfiguration().isDelete();
         case "disconnect": return target.getConfiguration().isDisconnect();

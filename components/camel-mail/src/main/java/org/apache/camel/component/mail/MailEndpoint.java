@@ -138,7 +138,8 @@ public class MailEndpoint extends ScheduledPollEndpoint implements HeaderFilterS
 
     public MailBinding getBinding() {
         if (binding == null) {
-            binding = new MailBinding(headerFilterStrategy, contentTypeResolver);
+            boolean decode = getConfiguration() != null && getConfiguration().isDecodeFilename();
+            binding = new MailBinding(headerFilterStrategy, contentTypeResolver, decode);
         }
         return binding;
     }

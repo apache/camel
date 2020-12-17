@@ -54,6 +54,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyTo": getOrCreateConfiguration(target).setCopyTo(property(camelContext, java.lang.String.class, value)); return true;
         case "debugmode":
         case "debugMode": getOrCreateConfiguration(target).setDebugMode(property(camelContext, boolean.class, value)); return true;
+        case "decodefilename":
+        case "decodeFilename": getOrCreateConfiguration(target).setDecodeFilename(property(camelContext, boolean.class, value)); return true;
         case "delete": getOrCreateConfiguration(target).setDelete(property(camelContext, boolean.class, value)); return true;
         case "disconnect": getOrCreateConfiguration(target).setDisconnect(property(camelContext, boolean.class, value)); return true;
         case "fetchsize":
@@ -131,6 +133,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyTo": return java.lang.String.class;
         case "debugmode":
         case "debugMode": return boolean.class;
+        case "decodefilename":
+        case "decodeFilename": return boolean.class;
         case "delete": return boolean.class;
         case "disconnect": return boolean.class;
         case "fetchsize":
@@ -209,6 +213,8 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "copyTo": return getOrCreateConfiguration(target).getCopyTo();
         case "debugmode":
         case "debugMode": return getOrCreateConfiguration(target).isDebugMode();
+        case "decodefilename":
+        case "decodeFilename": return getOrCreateConfiguration(target).isDecodeFilename();
         case "delete": return getOrCreateConfiguration(target).isDelete();
         case "disconnect": return getOrCreateConfiguration(target).isDisconnect();
         case "fetchsize":

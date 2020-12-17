@@ -70,14 +70,17 @@ public class MailBinding {
     private static final Logger LOG = LoggerFactory.getLogger(MailBinding.class);
     private HeaderFilterStrategy headerFilterStrategy;
     private ContentTypeResolver contentTypeResolver;
+    private boolean decodeFilename;
 
     public MailBinding() {
         headerFilterStrategy = new DefaultHeaderFilterStrategy();
     }
 
-    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver) {
+    public MailBinding(HeaderFilterStrategy headerFilterStrategy, ContentTypeResolver contentTypeResolver,
+                       boolean decodeFilename) {
         this.headerFilterStrategy = headerFilterStrategy;
         this.contentTypeResolver = contentTypeResolver;
+        this.decodeFilename = decodeFilename;
     }
 
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
@@ -322,7 +325,13 @@ public class MailBinding {
                 extractAttachmentsFromMultipart((Multipart) part.getContent(), map);
             } else {
                 String disposition = part.getDisposition();
-                String fileName = FileUtil.stripPath(part.getFileName());
+                String fileName = part.getFileName();
+                if (fileName != null && decodeFilename) {
+                    fileName = MimeUtility.decodeText(fileName);
+                }
+                if (fileName != null) {
+                    fileName = FileUtil.stripPath(fileName);
+                }
 
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Part #{}: Disposition: {}", i, disposition);

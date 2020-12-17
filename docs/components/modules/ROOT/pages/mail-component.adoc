@@ -100,7 +100,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mail component supports 42 options, which are listed below.
+The Mail component supports 43 options, which are listed below.
 
 
 
@@ -110,6 +110,7 @@ The Mail component supports 42 options, which are listed below.
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *closeFolder* (consumer) | Whether the consumer should close the folder after polling. Setting this option to false and having disconnect=false as well, then the consumer keep the folder open between polls. | true | boolean
 | *copyTo* (consumer) | After processing a mail message, it can be copied to a mail folder with the given name. You can override this configuration value, with a header with the key copyTo, allowing you to copy messages to folder names configured at runtime. |  | String
+| *decodeFilename* (consumer) | If set to true, the MimeUtility.decodeText method will be used to decode the filename. This is similar to setting JVM system property mail.mime.encodefilename. | false | boolean
 | *delete* (consumer) | Deletes the messages after they have been processed. This is done by setting the DELETED flag on the mail message. If false, the SEEN flag is set instead. As of Camel 2.10 you can override this configuration option by setting a header with the key delete to determine if the mail should be deleted or not. | false | boolean
 | *disconnect* (consumer) | Whether the consumer should disconnect after polling. If enabled this forces Camel to connect on each poll. | false | boolean
 | *handleFailedMessage* (consumer) | If the mail consumer cannot retrieve a given mail message, then this option allows to handle the caused exception by the consumer's error handler. By enable the bridge error handler on the consumer, then the Camel routing error handler can handle the exception instead. The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel. | false | boolean
@@ -177,7 +178,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (66 parameters):
+=== Query Parameters (67 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -186,6 +187,7 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *closeFolder* (consumer) | Whether the consumer should close the folder after polling. Setting this option to false and having disconnect=false as well, then the consumer keep the folder open between polls. | true | boolean
 | *copyTo* (consumer) | After processing a mail message, it can be copied to a mail folder with the given name. You can override this configuration value, with a header with the key copyTo, allowing you to copy messages to folder names configured at runtime. |  | String
+| *decodeFilename* (consumer) | If set to true, the MimeUtility.decodeText method will be used to decode the filename. This is similar to setting JVM system property mail.mime.encodefilename. | false | boolean
 | *delete* (consumer) | Deletes the messages after they have been processed. This is done by setting the DELETED flag on the mail message. If false, the SEEN flag is set instead. As of Camel 2.10 you can override this configuration option by setting a header with the key delete to determine if the mail should be deleted or not. | false | boolean
 | *disconnect* (consumer) | Whether the consumer should disconnect after polling. If enabled this forces Camel to connect on each poll. | false | boolean
 | *handleFailedMessage* (consumer) | If the mail consumer cannot retrieve a given mail message, then this option allows to handle the caused exception by the consumer's error handler. By enable the bridge error handler on the consumer, then the Camel routing error handler can handle the exception instead. The default behavior would be the consumer throws an exception and no mails from the batch would be able to be routed by Camel. | false | boolean

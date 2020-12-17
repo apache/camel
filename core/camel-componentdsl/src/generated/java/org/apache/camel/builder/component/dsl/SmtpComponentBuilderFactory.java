@@ -105,6 +105,23 @@ public interface SmtpComponentBuilderFactory {
             return this;
         }
         /**
+         * If set to true, the MimeUtility.decodeText method will be used to
+         * decode the filename. This is similar to setting JVM system property
+         * mail.mime.encodefilename.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param decodeFilename the value to set
+         * @return the dsl builder
+         */
+        default SmtpComponentBuilder decodeFilename(boolean decodeFilename) {
+            doSetProperty("decodeFilename", decodeFilename);
+            return this;
+        }
+        /**
          * Deletes the messages after they have been processed. This is done by
          * setting the DELETED flag on the mail message. If false, the SEEN flag
          * is set instead. As of Camel 2.10 you can override this configuration
@@ -796,6 +813,7 @@ public interface SmtpComponentBuilderFactory {
             case "bridgeErrorHandler": ((MailComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "closeFolder": getOrCreateConfiguration((MailComponent) component).setCloseFolder((boolean) value); return true;
             case "copyTo": getOrCreateConfiguration((MailComponent) component).setCopyTo((java.lang.String) value); return true;
+            case "decodeFilename": getOrCreateConfiguration((MailComponent) component).setDecodeFilename((boolean) value); return true;
             case "delete": getOrCreateConfiguration((MailComponent) component).setDelete((boolean) value); return true;
             case "disconnect": getOrCreateConfiguration((MailComponent) component).setDisconnect((boolean) value); return true;
             case "handleFailedMessage": getOrCreateConfiguration((MailComponent) component).setHandleFailedMessage((boolean) value); return true;

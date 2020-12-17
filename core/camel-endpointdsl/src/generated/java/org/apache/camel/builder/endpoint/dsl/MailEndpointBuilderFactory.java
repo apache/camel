@@ -147,6 +147,42 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
+         * If set to true, the MimeUtility.decodeText method will be used to
+         * decode the filename. This is similar to setting JVM system property
+         * mail.mime.encodefilename.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param decodeFilename the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointConsumerBuilder decodeFilename(
+                boolean decodeFilename) {
+            doSetProperty("decodeFilename", decodeFilename);
+            return this;
+        }
+        /**
+         * If set to true, the MimeUtility.decodeText method will be used to
+         * decode the filename. This is similar to setting JVM system property
+         * mail.mime.encodefilename.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param decodeFilename the value to set
+         * @return the dsl builder
+         */
+        default MailEndpointConsumerBuilder decodeFilename(String decodeFilename) {
+            doSetProperty("decodeFilename", decodeFilename);
+            return this;
+        }
+        /**
          * Deletes the messages after they have been processed. This is done by
          * setting the DELETED flag on the mail message. If false, the SEEN flag
          * is set instead. As of Camel 2.10 you can override this configuration

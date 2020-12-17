@@ -126,6 +126,8 @@ public class MailConfiguration implements Cloneable {
     @UriParam(defaultValue = "false")
     @Metadata(label = "consumer")
     private boolean mimeDecodeHeaders;
+    @UriParam(label = "consumer")
+    private boolean decodeFilename;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "advanced", prefix = "mail.", multiValue = true)
@@ -813,5 +815,17 @@ public class MailConfiguration implements Cloneable {
 
     public boolean isMimeDecodeHeaders() {
         return mimeDecodeHeaders;
+    }
+
+    public boolean isDecodeFilename() {
+        return decodeFilename;
+    }
+
+    /**
+     * If set to true, the MimeUtility.decodeText method will be used to decode the filename. This is similar to setting
+     * JVM system property mail.mime.encodefilename.
+     */
+    public void setDecodeFilename(boolean decodeFilename) {
+        this.decodeFilename = decodeFilename;
     }
 }
