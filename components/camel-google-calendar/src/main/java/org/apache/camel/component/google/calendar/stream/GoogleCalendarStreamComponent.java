@@ -49,10 +49,11 @@ public class GoogleCalendarStreamComponent extends DefaultComponent {
 
     public Calendar getClient(GoogleCalendarStreamConfiguration endpointConfiguration) {
         if (client == null) {
-            client = getClientFactory().makeClient(endpointConfiguration.getClientId(), endpointConfiguration.getClientSecret(),
-                    endpointConfiguration.getScopes(),
+            client = getClientFactory().makeClient(endpointConfiguration.getClientId(),
+                    endpointConfiguration.getClientSecret(), endpointConfiguration.getScopes(),
                     endpointConfiguration.getApplicationName(), endpointConfiguration.getRefreshToken(),
-                    endpointConfiguration.getAccessToken(), null, null, "me");
+                    endpointConfiguration.getAccessToken(), endpointConfiguration.getEmailAddress(),
+                    endpointConfiguration.getP12FileName(), endpointConfiguration.getUser());
         }
         return client;
     }

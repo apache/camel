@@ -44,6 +44,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "consumefromnow":
         case "consumeFromNow": target.getConfiguration().setConsumeFromNow(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
+        case "emailaddress":
+        case "emailAddress": target.getConfiguration().setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -53,6 +55,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "initialDelay": target.setInitialDelay(property(camelContext, long.class, value)); return true;
         case "maxresults":
         case "maxResults": target.getConfiguration().setMaxResults(property(camelContext, int.class, value)); return true;
+        case "p12filename":
+        case "p12FileName": target.getConfiguration().setP12FileName(property(camelContext, java.lang.String.class, value)); return true;
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "query": target.getConfiguration().setQuery(property(camelContext, java.lang.String.class, value)); return true;
@@ -77,6 +81,7 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "user": target.getConfiguration().setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -107,6 +112,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "consumefromnow":
         case "consumeFromNow": return boolean.class;
         case "delay": return long.class;
+        case "emailaddress":
+        case "emailAddress": return java.lang.String.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -116,6 +123,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "initialDelay": return long.class;
         case "maxresults":
         case "maxResults": return int.class;
+        case "p12filename":
+        case "p12FileName": return java.lang.String.class;
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "query": return java.lang.String.class;
@@ -140,6 +149,7 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "user": return java.lang.String.class;
         default: return null;
         }
     }
@@ -171,6 +181,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "consumefromnow":
         case "consumeFromNow": return target.getConfiguration().isConsumeFromNow();
         case "delay": return target.getDelay();
+        case "emailaddress":
+        case "emailAddress": return target.getConfiguration().getEmailAddress();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
@@ -180,6 +192,8 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "initialDelay": return target.getInitialDelay();
         case "maxresults":
         case "maxResults": return target.getConfiguration().getMaxResults();
+        case "p12filename":
+        case "p12FileName": return target.getConfiguration().getP12FileName();
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "query": return target.getConfiguration().getQuery();
@@ -204,6 +218,7 @@ public class GoogleCalendarStreamEndpointConfigurer extends PropertyConfigurerSu
         case "timeUnit": return target.getTimeUnit();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "user": return target.getConfiguration().getUser();
         default: return null;
         }
     }

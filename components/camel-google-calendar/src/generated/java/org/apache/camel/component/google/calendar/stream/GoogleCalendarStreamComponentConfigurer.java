@@ -49,12 +49,17 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "considerLastUpdate": getOrCreateConfiguration(target).setConsiderLastUpdate(property(camelContext, boolean.class, value)); return true;
         case "consumefromnow":
         case "consumeFromNow": getOrCreateConfiguration(target).setConsumeFromNow(property(camelContext, boolean.class, value)); return true;
+        case "emailaddress":
+        case "emailAddress": getOrCreateConfiguration(target).setEmailAddress(property(camelContext, java.lang.String.class, value)); return true;
         case "maxresults":
         case "maxResults": getOrCreateConfiguration(target).setMaxResults(property(camelContext, int.class, value)); return true;
+        case "p12filename":
+        case "p12FileName": getOrCreateConfiguration(target).setP12FileName(property(camelContext, java.lang.String.class, value)); return true;
         case "query": getOrCreateConfiguration(target).setQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": getOrCreateConfiguration(target).setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
         case "scopes": getOrCreateConfiguration(target).setScopes(property(camelContext, java.util.List.class, value)); return true;
+        case "user": getOrCreateConfiguration(target).setUser(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -83,12 +88,17 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "considerLastUpdate": return boolean.class;
         case "consumefromnow":
         case "consumeFromNow": return boolean.class;
+        case "emailaddress":
+        case "emailAddress": return java.lang.String.class;
         case "maxresults":
         case "maxResults": return int.class;
+        case "p12filename":
+        case "p12FileName": return java.lang.String.class;
         case "query": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
         case "scopes": return java.util.List.class;
+        case "user": return java.lang.String.class;
         default: return null;
         }
     }
@@ -118,12 +128,17 @@ public class GoogleCalendarStreamComponentConfigurer extends PropertyConfigurerS
         case "considerLastUpdate": return getOrCreateConfiguration(target).isConsiderLastUpdate();
         case "consumefromnow":
         case "consumeFromNow": return getOrCreateConfiguration(target).isConsumeFromNow();
+        case "emailaddress":
+        case "emailAddress": return getOrCreateConfiguration(target).getEmailAddress();
         case "maxresults":
         case "maxResults": return getOrCreateConfiguration(target).getMaxResults();
+        case "p12filename":
+        case "p12FileName": return getOrCreateConfiguration(target).getP12FileName();
         case "query": return getOrCreateConfiguration(target).getQuery();
         case "refreshtoken":
         case "refreshToken": return getOrCreateConfiguration(target).getRefreshToken();
         case "scopes": return getOrCreateConfiguration(target).getScopes();
+        case "user": return getOrCreateConfiguration(target).getUser();
         default: return null;
         }
     }

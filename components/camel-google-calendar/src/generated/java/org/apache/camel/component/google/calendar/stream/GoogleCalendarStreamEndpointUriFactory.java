@@ -20,7 +20,7 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(39);
+        Set<String> props = new HashSet<>(42);
         props.add("backoffMultiplier");
         props.add("synchronous");
         props.add("destination");
@@ -29,6 +29,7 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
         props.add("content");
         props.add("setting");
         props.add("scheduler");
+        props.add("emailAddress");
         props.add("bridgeErrorHandler");
         props.add("useFixedDelay");
         props.add("runLoggingLevel");
@@ -43,6 +44,7 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
         props.add("repeatCount");
         props.add("timeUnit");
         props.add("eventId");
+        props.add("p12FileName");
         props.add("clientId");
         props.add("considerLastUpdate");
         props.add("query");
@@ -58,6 +60,7 @@ public class GoogleCalendarStreamEndpointUriFactory extends org.apache.camel.sup
         props.add("pollStrategy");
         props.add("startScheduler");
         props.add("scopes");
+        props.add("user");
         props.add("exceptionHandler");
         props.add("refreshToken");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
