@@ -443,10 +443,12 @@ public abstract class AbstractCamelContext extends BaseService
         return vetoed != null;
     }
 
+    @Deprecated
     public Initialization getInitialization() {
         return initialization;
     }
 
+    @Deprecated
     public void setInitialization(Initialization initialization) {
         this.initialization = initialization;
     }
@@ -4462,6 +4464,7 @@ public abstract class AbstractCamelContext extends BaseService
         return getUriFactoryResolver().resolveFactory(scheme, this);
     }
 
+    @Deprecated
     public enum Initialization {
         Eager,
         Default,
