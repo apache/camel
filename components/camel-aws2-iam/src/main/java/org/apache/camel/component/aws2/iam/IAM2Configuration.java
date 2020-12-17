@@ -39,7 +39,6 @@ public class IAM2Configuration implements Cloneable {
     @UriParam(label = "security", secret = true)
     private String secretKey;
     @UriParam
-    @Metadata(required = true)
     private IAM2Operations operation;
     @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
@@ -92,7 +91,10 @@ public class IAM2Configuration implements Cloneable {
     }
 
     /**
-     * The operation to perform
+     * The operation to perform.
+     *
+     * You can configure a default operation on the component level, or the operation as part of the endpoint, or via a
+     * message header with the key CamelAwsIAMOperation.
      */
     public void setOperation(IAM2Operations operation) {
         this.operation = operation;

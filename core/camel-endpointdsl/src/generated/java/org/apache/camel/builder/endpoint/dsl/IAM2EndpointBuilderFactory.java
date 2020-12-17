@@ -116,12 +116,13 @@ public interface IAM2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation to perform. You can configure a default operation on
+         * the component level, or the operation as part of the endpoint, or via
+         * a message header with the key CamelAwsIAMOperation.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.aws2.iam.IAM2Operations&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param operation the value to set
@@ -132,12 +133,13 @@ public interface IAM2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The operation to perform.
+         * The operation to perform. You can configure a default operation on
+         * the component level, or the operation as part of the endpoint, or via
+         * a message header with the key CamelAwsIAMOperation.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.aws2.iam.IAM2Operations&lt;/code&gt; type.
          * 
-         * Required: true
          * Group: producer
          * 
          * @param operation the value to set

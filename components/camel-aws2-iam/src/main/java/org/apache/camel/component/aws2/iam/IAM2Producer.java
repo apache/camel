@@ -69,7 +69,12 @@ public class IAM2Producer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        switch (determineOperation(exchange)) {
+        IAM2Operations operation = determineOperation(exchange);
+        if (operation == null) {
+            throw new IllegalArgumentException("Operation must be provided");
+        }
+
+        switch (operation) {
             case listAccessKeys:
                 listAccessKeys(getEndpoint().getIamClient(), exchange);
                 break;
@@ -110,7 +115,7 @@ public class IAM2Producer extends DefaultProducer {
                 removeUserFromGroup(getEndpoint().getIamClient(), exchange);
                 break;
             default:
-                throw new IllegalArgumentException("Unsupported operation");
+                throw new IllegalArgumentException("Unsupported operation: " + operation);
         }
     }
 
