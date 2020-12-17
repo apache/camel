@@ -58,11 +58,11 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (value instanceof java.io.File) {
                 return org.apache.camel.converter.IOConverter.toByteArray((java.io.File) value);
             }
-            if (value instanceof java.io.Reader) {
-                return org.apache.camel.converter.IOConverter.toByteArray((java.io.Reader) value, exchange);
-            }
             if (value instanceof java.io.BufferedReader) {
                 return org.apache.camel.converter.IOConverter.toByteArray((java.io.BufferedReader) value, exchange);
+            }
+            if (value instanceof java.io.Reader) {
+                return org.apache.camel.converter.IOConverter.toByteArray((java.io.Reader) value, exchange);
             }
             if (value instanceof java.lang.String) {
                 return org.apache.camel.converter.IOConverter.toByteArray((java.lang.String) value, exchange);
@@ -438,10 +438,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             if (from == java.io.File.class) {
                 return this;
             }
-            if (from == java.io.Reader.class) {
+            if (from == java.io.BufferedReader.class) {
                 return this;
             }
-            if (from == java.io.BufferedReader.class) {
+            if (from == java.io.Reader.class) {
                 return this;
             }
             if (from == java.lang.String.class) {

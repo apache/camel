@@ -165,8 +165,9 @@ public final class IOConverter {
     }
 
     @Converter(order = 19)
-    public static byte[] toByteArray(Reader reader, Exchange exchange) throws IOException {
-        return toByteArray(IOHelper.buffered(reader), exchange);
+    public static byte[] toByteArray(BufferedReader reader, Exchange exchange) throws IOException {
+        String s = toString(reader);
+        return toByteArray(s, exchange);
     }
 
     @Converter(order = 20)
@@ -190,9 +191,8 @@ public final class IOConverter {
     }
 
     @Converter(order = 23)
-    public static byte[] toByteArray(BufferedReader reader, Exchange exchange) throws IOException {
-        String s = toString(reader);
-        return toByteArray(s, exchange);
+    public static byte[] toByteArray(Reader reader, Exchange exchange) throws IOException {
+        return toByteArray(IOHelper.buffered(reader), exchange);
     }
 
     @Converter(order = 24)
