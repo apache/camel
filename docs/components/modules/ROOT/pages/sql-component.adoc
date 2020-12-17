@@ -238,7 +238,7 @@ allows to use the message body as the SQL statement, and then the SQL
 parameters must be provided in a header with the
 key `SqlConstants.SQL_PARAMETERS`. This allows the SQL component to work
 more dynamically as the SQL query is from the message body. Use
-xref:latest@manual::templating.adoc[Camel templating]
+xref:manual::templating.adoc[Camel templating]
 for conditional processing, e.g. to include or exclude `where` clauses
 depending on the presence of query parameters.
 
