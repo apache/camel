@@ -108,8 +108,7 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         Sns2Component component = context.getComponent("aws2-sns", Sns2Component.class);
         Sns2Endpoint endpoint = (Sns2Endpoint) component
                 .createEndpoint("aws2-sns://MyTopic?amazonSNSClient=#amazonSNSClient&accessKey=xxx&secretKey=yyy"
-                                + "&policy=%7B%22Version%22%3A%222008-10-17%22,%22Statement%22%3A%5B%7B%22Sid%22%3A%221%22,%22Effect%22%3A%22Allow%22,%22Principal%22%3A%7B%22AWS%22%3A%5B%22*%22%5D%7D,"
-                                + "%22Action%22%3A%5B%22sns%3ASubscribe%22%5D%7D%5D%7D&subject=The+subject+message");
+                                + "&policy=file:src/test/resources/org/apache/camel/component/aws2/sns/policy.txt&subject=The+subject+message");
 
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -118,8 +117,9 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getConfiguration().getAmazonSNSClient());
         assertEquals("The subject message", endpoint.getConfiguration().getSubject());
         assertEquals(
-                "{\"Version\":\"2008-10-17\",\"Statement\":[{\"Sid\":\"1\",\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"*\"]},\"Action\":[\"sns:Subscribe\"]}]}",
+                "file:src/test/resources/org/apache/camel/component/aws2/sns/policy.txt",
                 endpoint.getConfiguration().getPolicy());
+        endpoint.start();
     }
 
     @Test
