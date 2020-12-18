@@ -151,7 +151,7 @@
     <commons-jexl2-version>2.1.1</commons-jexl2-version>
     <commons-jxpath-version>1.3</commons-jxpath-version>
     <commons-lang-version>2.6</commons-lang-version>
-    <commons-lang3-version>3.8.1</commons-lang3-version>
+    <commons-lang3-version>3.11</commons-lang3-version>
     <commons-logging-version>1.2</commons-logging-version>
     <commons-math-version>2.2</commons-math-version>
     <commons-math3-version>3.6.1</commons-math3-version>
@@ -446,7 +446,7 @@
     <kafka-version>2.1.0</kafka-version>
     <kafka-bundle-version>2.1.0_1</kafka-bundle-version>
     <karaf2-version>2.4.4</karaf2-version>
-    <karaf4-version>4.2.1</karaf4-version>
+    <karaf4-version>4.2.10</karaf4-version>
     <kie-version>7.14.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kubernetes-client-version>4.1.1</kubernetes-client-version>
@@ -682,6 +682,7 @@
     <swagger-ui-version>2.2.10</swagger-ui-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
+    <stax2v4-api-bundle-version>4.2</stax2v4-api-bundle-version>
     <stringtemplate-bundle-version>4.0.8_1</stringtemplate-bundle-version>
     <stringtemplate-version>4.0.8</stringtemplate-version>
     <tagsoup-bundle-version>1.2.1_1</tagsoup-bundle-version>
