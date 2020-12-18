@@ -10,3 +10,7 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 The policy option now expects a file, since the policy are going to be complex. It can be from classpath:, http: or file: etc.
 
+=== Camel-AWS2-SQS
+
+The policy option now expects a file, since the policy are going to be complex. It can be from classpath:, http: or file: etc.
+
