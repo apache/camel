@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Processor;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
+import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
@@ -45,6 +46,8 @@ import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
+import org.apache.camel.model.dataformat.LZFDataFormat;
+import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
@@ -87,6 +90,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         @XmlElement(required = false, name = "asn1", type = ASN1DataFormat.class),
         @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
         @XmlElement(required = false, name = "base64", type = Base64DataFormat.class),
+        @XmlElement(required = false, name = "barcode", type = BarcodeDataFormat.class),
         @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
         @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
         @XmlElement(required = false, name = "boon", type = BoonDataFormat.class),
@@ -105,9 +109,11 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
         @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
         @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
+        @XmlElement(required = false, name = "lzf", type = LZFDataFormat.class),
+        @XmlElement(required = false, name = "mime-multipart", type = MimeMultipartDataFormat.class),
+        @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
         @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),
         @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
-        @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
         @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
         @XmlElement(required = false, name = "soapjaxb", type = SoapJaxbDataFormat.class),
         @XmlElement(required = false, name = "string", type = StringDataFormat.class),
@@ -121,8 +127,8 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
         @XmlElement(required = false, name = "xmljson", type = XmlJsonDataFormat.class),
         @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
+        @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
         @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
-        @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
         @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
         @XmlElement(required = false, name = "zip", type = ZipDataFormat.class),
         @XmlElement(required = false, name = "zipFile", type = ZipFileDataFormat.class)}
