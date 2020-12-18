@@ -89,6 +89,12 @@ public final class CxfHeaderHelper {
                 return;
             }
 
+            // drop this header as we do not want to propagate the http method/path into the CXF request message
+            if (Exchange.HTTP_METHOD.equalsIgnoreCase(entry.getKey())
+                    || Exchange.HTTP_PATH.equalsIgnoreCase(entry.getKey())) {
+                return;
+            }
+
             // we need to make sure the entry value is not null
             if (entry.getValue() == null) {
                 LOG.trace("Drop Camel header: {}={}", entry.getKey(), entry.getValue());
