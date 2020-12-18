@@ -30,6 +30,7 @@ public final class CXFTestSupport {
     static final int PORT4 = AvailablePortFinder.getNextAvailable();
     static final int PORT5 = AvailablePortFinder.getNextAvailable();
     static final int PORT6 = AvailablePortFinder.getNextAvailable();
+    static final int PORT7 = AvailablePortFinder.getNextAvailable();
     static final int SSL_PORT = AvailablePortFinder.getNextAvailable();
 
     static {
@@ -41,6 +42,7 @@ public final class CXFTestSupport {
         System.setProperty("CXFTestSupport.port4", Integer.toString(PORT4));
         System.setProperty("CXFTestSupport.port5", Integer.toString(PORT5));
         System.setProperty("CXFTestSupport.port6", Integer.toString(PORT6));
+        System.setProperty("CXFTestSupport.port7", Integer.toString(PORT7));
         System.setProperty("CXFTestSupport.sslPort", Integer.toString(SSL_PORT));
         System.setProperty("org.apache.cxf.transports.http_jetty.DontClosePort", "true");
     }
@@ -76,6 +78,10 @@ public final class CXFTestSupport {
 
     public static int getPort6() {
         return PORT6;
+    }
+
+    public static int getPort7() {
+        return PORT7;
     }
 
     public static int getSslPort() {
