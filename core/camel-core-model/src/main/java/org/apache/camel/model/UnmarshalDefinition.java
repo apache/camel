@@ -71,7 +71,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "dataformat,transformation")
 @XmlRootElement(name = "unmarshal")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> {
+public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition> implements DataFormatDefinitionAware {
 
     @XmlElements({
             @XmlElement(required = false, name = "any23", type = Any23DataFormat.class),
@@ -147,6 +147,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
         return "unmarshal[" + description() + "]";
     }
 
+    @Override
     public DataFormatDefinition getDataFormatType() {
         return dataFormatType;
     }
@@ -154,6 +155,7 @@ public class UnmarshalDefinition extends NoOutputDefinition<UnmarshalDefinition>
     /**
      * The data format to be used
      */
+    @Override
     public void setDataFormatType(DataFormatDefinition dataFormatType) {
         this.dataFormatType = dataFormatType;
     }
