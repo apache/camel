@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,9 +38,11 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.regions.Region;
@@ -211,7 +216,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         }
     }
 
-    protected void createQueue(SqsClient client) {
+    protected void createQueue(SqsClient client) throws IOException {
         if (queueExists(client)) {
             return;
         }
@@ -239,7 +244,10 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                     String.valueOf(getConfiguration().getMessageRetentionPeriod()));
         }
         if (getConfiguration().getPolicy() != null) {
-            attributes.put(QueueAttributeName.POLICY, String.valueOf(getConfiguration().getPolicy()));
+            InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getCamelContext(),
+                    getConfiguration().getPolicy());
+            String policy = IOUtils.toString(s, Charset.defaultCharset());
+            attributes.put(QueueAttributeName.POLICY, policy);
         }
         if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
             attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS,
@@ -278,7 +286,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         LOG.trace("Queue created and available at: {}", queueUrl);
     }
 
-    private void updateQueueAttributes(SqsClient client) {
+    private void updateQueueAttributes(SqsClient client) throws IOException {
         SetQueueAttributesRequest.Builder request = SetQueueAttributesRequest.builder().queueUrl(queueUrl);
         Map<QueueAttributeName, String> attributes = new HashMap<QueueAttributeName, String>();
         if (getConfiguration().getDefaultVisibilityTimeout() != null) {
@@ -293,7 +301,10 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
                     String.valueOf(getConfiguration().getMessageRetentionPeriod()));
         }
         if (getConfiguration().getPolicy() != null) {
-            attributes.put(QueueAttributeName.POLICY, String.valueOf(getConfiguration().getPolicy()));
+            InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getCamelContext(),
+                    getConfiguration().getPolicy());
+            String policy = IOUtils.toString(s, Charset.defaultCharset());
+            attributes.put(QueueAttributeName.POLICY, policy);
         }
         if (getConfiguration().getReceiveMessageWaitTimeSeconds() != null) {
             attributes.put(QueueAttributeName.RECEIVE_MESSAGE_WAIT_TIME_SECONDS,
