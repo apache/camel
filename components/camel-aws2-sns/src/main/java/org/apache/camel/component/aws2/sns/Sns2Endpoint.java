@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.sns;
 
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +34,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -156,8 +160,12 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (ObjectHelper.isNotEmpty(configuration.getPolicy())) {
             LOG.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
 
+            InputStream s = ResourceHelper.resolveMandatoryResourceAsInputStream(this.getCamelContext(),
+                    getConfiguration().getPolicy());
+            String policy = IOUtils.toString(s, Charset.defaultCharset());
+
             snsClient.setTopicAttributes(SetTopicAttributesRequest.builder().topicArn(configuration.getTopicArn())
-                    .attributeName("Policy").attributeValue(configuration.getPolicy())
+                    .attributeName("Policy").attributeValue(policy)
                     .build());
 
             LOG.trace("Topic policy updated");
