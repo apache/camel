@@ -903,7 +903,9 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The policy for this queue.
+         * The policy for this queue. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2248,7 +2250,9 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The policy for this queue.
+         * The policy for this queue. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2818,7 +2822,9 @@ public interface Sqs2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The policy for this queue.
+         * The policy for this queue. It can be loaded by default from
+         * classpath, but you can prefix with classpath:, file:, or http: to
+         * load the resource from different systems.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

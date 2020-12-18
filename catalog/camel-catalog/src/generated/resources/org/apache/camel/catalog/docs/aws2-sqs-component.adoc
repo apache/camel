@@ -85,7 +85,7 @@ The AWS 2 Simple Queue Service (SQS) component supports 40 options, which are li
 | *proxyPort* (proxy) | To define a proxy port when instantiating the SQS client |  | Integer
 | *maximumMessageSize* (queue) | The maximumMessageSize (in bytes) an SQS message can contain for this queue. |  | Integer
 | *messageRetentionPeriod* (queue) | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue. |  | Integer
-| *policy* (queue) | The policy for this queue |  | String
+| *policy* (queue) | The policy for this queue. It can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
 | *receiveMessageWaitTimeSeconds* (queue) | If you do not specify WaitTimeSeconds in the request, the queue attribute ReceiveMessageWaitTimeSeconds is used to determine how long to wait. |  | Integer
 | *redrivePolicy* (queue) | Specify the policy that send message to DeadLetter queue. See detail at Amazon docs. |  | String
 | *accessKey* (security) | Amazon AWS Access Key |  | String
@@ -165,7 +165,7 @@ with the following path and query parameters:
 | *proxyPort* (proxy) | To define a proxy port when instantiating the SQS client |  | Integer
 | *maximumMessageSize* (queue) | The maximumMessageSize (in bytes) an SQS message can contain for this queue. |  | Integer
 | *messageRetentionPeriod* (queue) | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue. |  | Integer
-| *policy* (queue) | The policy for this queue |  | String
+| *policy* (queue) | The policy for this queue. It can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems. |  | String
 | *receiveMessageWaitTimeSeconds* (queue) | If you do not specify WaitTimeSeconds in the request, the queue attribute ReceiveMessageWaitTimeSeconds is used to determine how long to wait. |  | Integer
 | *redrivePolicy* (queue) | Specify the policy that send message to DeadLetter queue. See detail at Amazon docs. |  | String
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
