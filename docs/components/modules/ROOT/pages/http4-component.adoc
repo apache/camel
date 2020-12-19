@@ -38,12 +38,6 @@ http4:hostname[:port][/resourceUri][?options]
 
 Will by default use port 80 for HTTP and 443 for HTTPS.
 
-In the case of calling an HTTPS endpoint, you can use the following:
-[source,java]
----------------------------------------------
-https4:hostname[:port][/resourceUri][?options]
----------------------------------------------
-
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
