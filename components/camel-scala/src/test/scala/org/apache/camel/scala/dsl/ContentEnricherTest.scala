@@ -40,15 +40,6 @@ class ContentEnricherTest extends ScalaTestSupport {
     "mock:b" assert()
   }
   
-  @Test
-  def testContentEnricherWithVelocity() {
-    "mock:c" expect { _.received ("<hello>James</hello>", 
-                                  "<hello>Hadrian</hello>",
-                                  "<hello>Willem</hello>")}
-    "direct:c" ! ("James", "Hadrian", "Willem")
-    "mock:c" assert()
-  }
-
   val builder = new RouteBuilder {
     // START SNIPPET: simple
     "direct:a" process(_.in += " says hello") to ("mock:a")
