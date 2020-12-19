@@ -77,7 +77,7 @@ public class XmppProducerConcurrentTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .to("xmpp://localhost:" + embeddedXmppTestServer.getXmppPort()
-                            + "?connectionConfig=#customConnectionConfig&user=camel_consumer&password=secret&serviceName=apache.camel")
+                            + "?connectionConfig=#customConnectionConfig&room=camel-test&user=camel_consumer&password=secret&serviceName=apache.camel")
                     .to("mock:result");
             }
         };
