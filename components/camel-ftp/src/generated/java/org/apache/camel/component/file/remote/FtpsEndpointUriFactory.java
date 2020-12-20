@@ -20,7 +20,7 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(120);
+        Set<String> props = new HashSet<>(122);
         props.add("disconnect");
         props.add("moveExistingFileStrategy");
         props.add("fileName");
@@ -54,6 +54,7 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("stepwise");
         props.add("sslContextParameters");
         props.add("autoCreate");
+        props.add("includeExt");
         props.add("recursive");
         props.add("antExclude");
         props.add("keepLastModified");
@@ -77,6 +78,7 @@ public class FtpsEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("filterFile");
         props.add("pollStrategy");
         props.add("shuffle");
+        props.add("excludeExt");
         props.add("antInclude");
         props.add("moveExisting");
         props.add("throwExceptionOnConnectFailed");

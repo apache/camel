@@ -35,6 +35,7 @@ import org.apache.camel.support.EmptyAsyncCallback;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -58,6 +59,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected volatile boolean prepareOnStartup;
     private final Pattern includePattern;
     private final Pattern excludePattern;
+    private final String[] includeExt;
+    private final String[] excludeExt;
 
     public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations,
                                GenericFileProcessStrategy<T> processStrategy) {
@@ -68,6 +71,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         this.includePattern = endpoint.getIncludePattern();
         this.excludePattern = endpoint.getExcludePattern();
+        this.includeExt = endpoint.getIncludeExt() != null ? endpoint.getIncludeExt().split(",") : null;
+        this.excludeExt = endpoint.getExcludeExt() != null ? endpoint.getExcludeExt().split(",") : null;
     }
 
     public Processor getCustomProcessor() {
@@ -666,8 +671,26 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 return false;
             }
         }
+        if (excludeExt != null) {
+            String ext = FileUtil.onlyExt(file.getFileName());
+            for (String exclude : excludeExt) {
+                if (exclude.equalsIgnoreCase(ext)) {
+                    return false;
+                }
+            }
+        }
         if (includePattern != null) {
             if (!includePattern.matcher(name).matches()) {
+                return false;
+            }
+        }
+        if (includeExt != null) {
+            String ext = FileUtil.onlyExt(file.getFileName());
+            boolean any = false;
+            for (String include : includeExt) {
+                any |= include.equalsIgnoreCase(ext);
+            }
+            if (!any) {
                 return false;
             }
         }

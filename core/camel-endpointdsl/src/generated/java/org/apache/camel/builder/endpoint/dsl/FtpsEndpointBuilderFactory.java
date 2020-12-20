@@ -901,6 +901,23 @@ public interface FtpsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Is used to exclude files matching file extension name (case
+         * insensitive). For example to exclude bak files, then use
+         * excludeExt=bak. Multiple extensions can be separated by comma, for
+         * example to exclude bak and dat files, use excludeExt=bak,dat.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: filter
+         * 
+         * @param excludeExt the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointConsumerBuilder excludeExt(String excludeExt) {
+            doSetProperty("excludeExt", excludeExt);
+            return this;
+        }
+        /**
          * Pluggable filter as a
          * org.apache.camel.component.file.GenericFileFilter class. Will skip
          * files if filter returns false in its accept() method.
@@ -1130,6 +1147,23 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder include(String include) {
             doSetProperty("include", include);
+            return this;
+        }
+        /**
+         * Is used to include files matching file extension name (case
+         * insensitive). For example to include txt files, then use
+         * includeExt=txt. Multiple extensions can be separated by comma, for
+         * example to include txt and xml files, use includeExt=txt,xml.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: filter
+         * 
+         * @param includeExt the value to set
+         * @return the dsl builder
+         */
+        default FtpsEndpointConsumerBuilder includeExt(String includeExt) {
+            doSetProperty("includeExt", includeExt);
             return this;
         }
         /**
