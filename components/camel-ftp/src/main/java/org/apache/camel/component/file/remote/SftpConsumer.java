@@ -142,11 +142,11 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
                 }
             } else {
                 // we cannot use the LIST command(s) so we can only poll a named
-                // file
-                // so created a pseudo file with that name
-                fileExpressionResult = evaluateFileExpression();
-                if (fileExpressionResult != null) {
-                    SftpRemoteFile file = new SftpRemoteFileSingle(fileExpressionResult);
+                // file so created a pseudo file with that name
+                Exchange dummy = endpoint.createExchange();
+                String name = evaluateFileExpression(dummy);
+                if (name != null) {
+                    SftpRemoteFile file = new SftpRemoteFileSingle(name);
                     files = new ArrayList<>(1);
                     files.add(file);
                 }

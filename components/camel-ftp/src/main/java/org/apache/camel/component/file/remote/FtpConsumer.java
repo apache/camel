@@ -150,13 +150,13 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 }
             } else {
                 // we cannot use the LIST command(s) so we can only poll a named
-                // file
-                // so created a pseudo file with that name
-                FTPFile file = new FTPFile();
-                file.setType(FTPFile.FILE_TYPE);
-                fileExpressionResult = evaluateFileExpression();
-                if (fileExpressionResult != null) {
-                    file.setName(fileExpressionResult);
+                // file so created a pseudo file with that name
+                Exchange dummy = endpoint.createExchange();
+                String name = evaluateFileExpression(dummy);
+                if (name != null) {
+                    FTPFile file = new FTPFile();
+                    file.setType(FTPFile.FILE_TYPE);
+                    file.setName(name);
                     files = new ArrayList<>(1);
                     files.add(file);
                 }

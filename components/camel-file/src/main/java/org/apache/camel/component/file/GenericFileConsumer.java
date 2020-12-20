@@ -51,7 +51,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
     protected GenericFileProcessStrategy<T> processStrategy;
-    protected String fileExpressionResult;
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
     protected Processor customProcessor;
@@ -110,7 +109,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
 
         // must reset for each poll
-        fileExpressionResult = null;
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
@@ -674,19 +672,19 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             }
         }
 
-        // use file expression for a simple dynamic file filter
         if (endpoint.getFileName() != null) {
-            fileExpressionResult = evaluateFileExpression();
-            if (fileExpressionResult != null) {
-                if (!name.equals(fileExpressionResult)) {
+            // create a dummy exchange as Exchange is needed for expression evaluation
+            Exchange dummy = endpoint.createExchange(file);
+            String result = evaluateFileExpression(dummy);
+            if (result != null) {
+                if (!name.equals(result)) {
                     return false;
                 }
             }
         }
 
         if (endpoint.getFilterFile() != null) {
-            // create a dummy exchange as Exchange is needed for expression
-            // evaluation
+            // create a dummy exchange as Exchange is needed for expression evaluation
             Exchange dummy = endpoint.createExchange(file);
             boolean matches = endpoint.getFilterFile().matches(dummy);
             if (!matches) {
@@ -725,17 +723,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      */
     protected abstract boolean isMatched(GenericFile<T> file, String doneFileName, List<T> files);
 
-    protected String evaluateFileExpression() {
-        if (fileExpressionResult == null && endpoint.getFileName() != null) {
-            // create a dummy exchange as Exchange is needed for expression
-            // evaluation
-            Exchange dummy = endpoint.createExchange();
-            fileExpressionResult = endpoint.getFileName().evaluate(dummy, String.class);
-            if (dummy.getException() != null) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(dummy.getException());
-            }
+    protected String evaluateFileExpression(Exchange exchange) {
+        String result = endpoint.getFileName().evaluate(exchange, String.class);
+        if (exchange.getException() != null) {
+            throw RuntimeCamelException.wrapRuntimeCamelException(exchange.getException());
         }
-        return fileExpressionResult;
+        return result;
     }
 
     @SuppressWarnings("unchecked")
