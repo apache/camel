@@ -60,6 +60,11 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
     }
 
     @Override
+    public boolean resolveRawParameterValues() {
+        return true;
+    }
+
+    @Override
     protected void doInit() throws Exception {
         if (isOnlyDynamicQueryParameters()) {
             // optimize to eager load the list of known properties
@@ -79,6 +84,12 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
             // optimize as we know its only query parameters that can be dynamic
             Map<String, Object> map = URISupport.parseQuery(URISupport.extractQuery(uri));
             if (map != null && !map.isEmpty() && isLenientProperties()) {
+                if (resolveRawParameterValues()) {
+                    // parameters using raw syntax: RAW(value)
+                    // should have the token removed, so its only the value we have in parameters, as we are about to create
+                    // an endpoint and want to have the parameter values without the RAW tokens
+                    URISupport.resolveRawParameterValues(map);
+                }
                 // okay so only add the known properties as they are the non lenient properties
                 properties = new LinkedHashMap<>();
                 map.forEach((k, v) -> {
@@ -101,6 +112,12 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
             // optimize as we know its only query parameters that can be dynamic
             Map<String, Object> map = URISupport.parseQuery(URISupport.extractQuery(uri));
             if (map != null && !map.isEmpty()) {
+                if (resolveRawParameterValues()) {
+                    // parameters using raw syntax: RAW(value)
+                    // should have the token removed, so its only the value we have in parameters, as we are about to create
+                    // an endpoint and want to have the parameter values without the RAW tokens
+                    URISupport.resolveRawParameterValues(map);
+                }
                 properties = new LinkedHashMap<>();
                 map.forEach((k, v) -> {
                     if (!knownProperties.contains(k)) {
