@@ -47,6 +47,11 @@ public class BarSendDynamicAware extends SendDynamicAwareSupport {
     }
 
     @Override
+    public boolean resolveRawParameterValues() {
+        return true;
+    }
+
+    @Override
     public boolean isLenientProperties() {
         return false;
     }
