@@ -287,9 +287,9 @@ supported and can be set via the `apiVersion` component option.
 The `packages` option must be set if using the XML `format` option. This change is a result of 
 adopting XStream's Security Framework.
 
-CAMEL-15890 fixed a bug in which values for External Ids that contained spaces would have spaces converted to "+". This has been fixed. 
+CAMEL-15890 fixed a bug in which values for External Ids that contained spaces would have spaces converted to "{plus}". This has been fixed. 
 However, any such values that now have the plus sign in salesforce will no longer match as Camel will now preserve the space. Therefore
-you may need to have a transformation that explicitly converts spaces to "+" if you need to preserve the old behavior.
+you may need to have a transformation that explicitly converts spaces to "{plus}" if you need to preserve the old behavior.
 
 === camel-google-bigquery
 
