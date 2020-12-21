@@ -100,6 +100,12 @@ public class LoopDefinition extends OutputExpressionNode {
         return this;
     }
 
+    /**
+     * If the breakOnShutdown attribute is true, then the loop will not iterate until it reaches the end when Camel is
+     * shut down.
+     *
+     * @param breakOnShutdown a Boolean-parsable String
+     */
     public void setBreakOnShutdown(String breakOnShutdown) {
         this.breakOnShutdown = breakOnShutdown;
     }
