@@ -2,8 +2,8 @@
   "component": {
     "kind": "component",
     "name": "jsonata",
-    "title": "JSONATA",
-    "description": "JSON to JSON transformation using JSONATA.",
+    "title": "JSONata",
+    "description": "Transforms JSON payload using JSONata transformation.",
     "deprecated": false,
     "firstVersion": "3.5.0",
     "label": "transformation",

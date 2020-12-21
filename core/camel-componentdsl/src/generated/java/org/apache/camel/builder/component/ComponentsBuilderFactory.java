@@ -2691,8 +2691,8 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.JsonValidatorComponentBuilderFactory.jsonValidator();
     }
     /**
-     * JSONATA (camel-jsonata)
-     * JSON to JSON transformation using JSONATA.
+     * JSONata (camel-jsonata)
+     * Transforms JSON payload using JSONata transformation.
      * 
      * Category: transformation
      * Since: 3.5

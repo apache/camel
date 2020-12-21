@@ -1,10 +1,10 @@
 [[jsonata-component]]
-= JSONATA Component
+= JSONata Component
 //THIS FILE IS COPIED: EDIT THE SOURCE FILE:
 :page-source: components/camel-jsonata/src/main/docs/jsonata-component.adoc
-:docTitle: JSONATA
+:docTitle: JSONata
 :artifactId: camel-jsonata
-:description: JSON to JSON transformation using JSONATA.
+:description: Transforms JSON payload using JSONata transformation.
 :since: 3.5
 :supportLevel: Stable
 :component-header: Only producer is supported
@@ -52,7 +52,7 @@ format, `?option=value&option=value&...`
 
 
 // component options: START
-The JSONATA component supports 2 options, which are listed below.
+The JSONata component supports 2 options, which are listed below.
 
 
 
@@ -66,7 +66,7 @@ The JSONATA component supports 2 options, which are listed below.
 
 
 // endpoint options: START
-The JSONATA endpoint is configured using URI syntax:
+The JSONata endpoint is configured using URI syntax:
 
 ----
 jsonata:resourceUri

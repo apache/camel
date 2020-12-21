@@ -9036,8 +9036,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.JsltEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * JSONATA (camel-jsonata)
-     * JSON to JSON transformation using JSONATA.
+     * JSONata (camel-jsonata)
+     * Transforms JSON payload using JSONata transformation.
      * 
      * Category: transformation
      * Since: 3.5
@@ -9060,8 +9060,8 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.JsonataEndpointBuilderFactory.endpointBuilder("jsonata", path);
     }
     /**
-     * JSONATA (camel-jsonata)
-     * JSON to JSON transformation using JSONATA.
+     * JSONata (camel-jsonata)
+     * Transforms JSON payload using JSONata transformation.
      * 
      * Category: transformation
      * Since: 3.5
