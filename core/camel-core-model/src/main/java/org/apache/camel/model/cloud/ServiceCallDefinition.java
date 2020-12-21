@@ -32,6 +32,7 @@ import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceLoadBalancer;
 import org.apache.camel.model.NoOutputDefinition;
+import org.apache.camel.model.language.RefExpression;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -99,10 +100,14 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallServiceLoadBalancerConfiguration.class) })
     private ServiceCallServiceLoadBalancerConfiguration loadBalancerConfiguration;
 
-    @XmlElements({ @XmlElement(name = "expressionConfiguration", type = ServiceCallExpressionConfiguration.class) })
+    @XmlElement(name = "expression")
     private ServiceCallExpressionConfiguration expressionConfiguration;
 
     public ServiceCallDefinition() {
+    }
+
+    public ServiceCallDefinition(String name) {
+        this.name = name;
     }
 
     @Override
@@ -276,7 +281,11 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
      * Set a reference to a custom {@link Expression} to use.
      */
     public void setExpressionRef(String expressionRef) {
-        this.expressionRef = expressionRef;
+        if (this.expressionConfiguration == null) {
+            this.expressionConfiguration = new ServiceCallExpressionConfiguration();
+        }
+
+        this.expressionConfiguration.expressionType(new RefExpression(expressionRef));
     }
 
     public Expression getExpression() {
@@ -453,7 +462,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
      * Sets a reference to a custom {@link Expression} to use.
      */
     public ServiceCallDefinition expression(String expressionRef) {
-        setExpressionRef(loadBalancerRef);
+        setExpressionRef(expressionRef);
         return this;
     }
 
