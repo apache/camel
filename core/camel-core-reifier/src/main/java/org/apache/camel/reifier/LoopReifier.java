@@ -35,6 +35,7 @@ public class LoopReifier extends ExpressionReifier<LoopDefinition> {
         Processor output = this.createChildProcessor(true);
         boolean isCopy = parseBoolean(definition.getCopy(), false);
         boolean isWhile = parseBoolean(definition.getDoWhile(), false);
+        boolean isBreakOnShutdown = parseBoolean(definition.getBreakOnShutdown(), false);
 
         Predicate predicate = null;
         Expression expression = null;
@@ -43,7 +44,7 @@ public class LoopReifier extends ExpressionReifier<LoopDefinition> {
         } else {
             expression = createExpression(definition.getExpression());
         }
-        return new LoopProcessor(camelContext, output, expression, predicate, isCopy);
+        return new LoopProcessor(camelContext, output, expression, predicate, isCopy, isBreakOnShutdown);
     }
 
 }

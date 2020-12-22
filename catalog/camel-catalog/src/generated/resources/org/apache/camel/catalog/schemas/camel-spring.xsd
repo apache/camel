@@ -5586,6 +5586,14 @@ null. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="breakOnShutdown" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If the breakOnShutdown attribute is true, then the loop will not iterate until
+it reaches the end when Camel is shut down. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

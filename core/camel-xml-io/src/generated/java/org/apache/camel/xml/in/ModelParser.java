@@ -573,6 +573,7 @@ public class ModelParser extends BaseParser {
     protected LoopDefinition doParseLoopDefinition() throws IOException, XmlPullParserException {
         return doParse(new LoopDefinition(), (def, key, val) -> {
             switch (key) {
+                case "breakOnShutdown": def.setBreakOnShutdown(val); break;
                 case "copy": def.setCopy(val); break;
                 case "doWhile": def.setDoWhile(val); break;
                 default: return processorDefinitionAttributeHandler().accept(def, key, val);
