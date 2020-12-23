@@ -116,7 +116,7 @@ public class FhirMetaIT extends AbstractFhirTestSupport {
         // parameter type is Class
         headers.put("CamelFhir.metaType", Meta.class);
         // parameter type is String
-        headers.put("CamelFhir.theResourceName", "Patient");
+        headers.put("CamelFhir.resourceType", "Patient");
 
         IBaseMetaType result = requestBodyAndHeaders("direct://GET_FROM_TYPE", null, headers);
 
@@ -130,7 +130,7 @@ public class FhirMetaIT extends AbstractFhirTestSupport {
         // parameter type is Class
         headers.put("CamelFhir.metaType", Meta.class);
         // parameter type is String
-        headers.put("CamelFhir.theResourceName", "Patient");
+        headers.put("CamelFhir.resourceType", "Patient");
         headers.put(ExtraParameters.PREFER_RESPONSE_TYPE.getHeaderName(), Patient.class);
 
         Meta result = requestBodyAndHeaders("direct://GET_FROM_TYPE", null, headers);
