@@ -36,9 +36,18 @@ public class ResilienceManagementTest extends CamelTestSupport {
 
     @Test
     public void testResilience() throws Exception {
+        test("start", "myResilience");
+    }
+
+    @Test
+    public void testResilienceWithTimeOut() throws Exception {
+        test("start.with.timeout.enabled", "myResilienceWithTimeout");
+    }
+
+    public void test(String routId, String circuitBreakerName) throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:"+ routId, "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -50,11 +59,11 @@ public class ResilienceManagementTest extends CamelTestSupport {
         String name = context.getManagementName();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"myResilience\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + name + ",type=processors,name=\"" + circuitBreakerName + "\"");
 
         // should be on start
-        String routeId = (String)mbeanServer.getAttribute(on, "RouteId");
-        assertEquals("start", routeId);
+        String currentRouteId = (String)mbeanServer.getAttribute(on, "RouteId");
+        assertEquals(routId, currentRouteId);
 
         Integer num = (Integer)mbeanServer.getAttribute(on, "CircuitBreakerMinimumNumberOfCalls");
         assertEquals("100", num.toString());
@@ -80,6 +89,10 @@ public class ResilienceManagementTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start").routeId("start").circuitBreaker().id("myResilience").to("direct:foo").onFallback().transform().constant("Fallback message").end()
                     .to("mock:result");
+
+                from("direct:start.with.timeout.enabled").routeId("start.with.timeout.enabled").circuitBreaker().id("myResilienceWithTimeout").resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
+                        .to("direct:foo").onFallback().transform().constant("Fallback message").end()
+                        .to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }

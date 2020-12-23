@@ -47,13 +47,22 @@ public class ResilienceRouteOkTest extends CamelTestSupport {
 
     @Test
     public void testResilience() throws Exception {
+        test("direct:start");
+    }
+
+    @Test
+    public void testResilienceWithTimeOut() throws Exception {
+        test("direct:start.with.timeout.enabled");
+    }
+
+    private void test(String endPointUri) throws Exception {
         assertEquals(0, bi.getInvokedCounter());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, true);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, false);
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody(endPointUri, "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -66,6 +75,8 @@ public class ResilienceRouteOkTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").circuitBreaker().to("direct:foo").to("log:foo").onFallback().transform().constant("Fallback message").end().to("log:result").to("mock:result");
+
+                from("direct:start.with.timeout.enabled").circuitBreaker().resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end().to("direct:foo").to("log:foo").onFallback().transform().constant("Fallback message").end().to("log:result").to("mock:result");
 
                 from("direct:foo").transform().constant("Bye World");
             }
