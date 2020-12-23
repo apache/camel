@@ -671,6 +671,7 @@ public final class URISupport {
                             sort = true;
                             break;
                         }
+                        prev = key;
                     }
                 }
                 if (sort) {
