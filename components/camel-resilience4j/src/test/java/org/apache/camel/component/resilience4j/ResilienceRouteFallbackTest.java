@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.resilience4j;
 
+import java.util.concurrent.TimeoutException;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.CircuitBreakerConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -25,11 +27,20 @@ public class ResilienceRouteFallbackTest extends CamelTestSupport {
 
     @Test
     public void testResilience() throws Exception {
+        test("direct:start");
+    }
+
+    @Test
+    public void testResilienceWithTimeOut() throws Exception {
+        test("direct:start.with.timeout.enabled");
+    }
+
+    private void test(String endPointUri) throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody(endPointUri, "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -40,6 +51,12 @@ public class ResilienceRouteFallbackTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("log:start").circuitBreaker().throwException(new IllegalArgumentException("Forced"))
+                        .onFallback().transform().constant("Fallback message")
+                        .end().to("log:result").to("mock:result");
+
+                from("direct:start.with.timeout.enabled").to("log:start.with.timeout.enabled").circuitBreaker()
+                        .resilience4jConfiguration().timeoutEnabled(true).timeoutDuration(2000).end()
+                        .throwException(new TimeoutException("Forced"))
                         .onFallback().transform().constant("Fallback message")
                         .end().to("log:result").to("mock:result");
             }
