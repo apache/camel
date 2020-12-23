@@ -310,6 +310,27 @@ public final class StringHelper {
     }
 
     /**
+     * Replaces the first from token in the given input string.
+     * <p/>
+     * This implementation is not recursive, not does it check for tokens in the replacement string.
+     *
+     * @param  input                    the input string
+     * @param  from                     the from string, must <b>not</b> be <tt>null</tt> or empty
+     * @param  to                       the replacement string, must <b>not</b> be empty
+     * @return                          the replaced string, or the input string if no replacement was needed
+     * @throws IllegalArgumentException if the input arguments is invalid
+     */
+    public static String replaceFirst(String input, String from, String to) {
+        int pos = input.indexOf(from);
+        if (pos != -1) {
+            int len = from.length();
+            return input.substring(0, pos) + to + input.substring(pos + len);
+        } else {
+            return input;
+        }
+    }
+
+    /**
      * Creates a json tuple with the given name/value pair.
      *
      * @param  name  the name
