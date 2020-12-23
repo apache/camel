@@ -378,7 +378,7 @@ camelContext.addRoutes(new RouteBuilder() {
     }
 });
 ----
- 
+
 
 === Producing messages to Kafka
 
@@ -580,3 +580,22 @@ from("kafka:my_topic?headerFilterStrategy=#myStrategy")
 `myStrategy` object should be subclass of `HeaderFilterStrategy` and must be placed in the Camel registry, either manually or by registration as a bean in Spring/Blueprint, as it is `CamelContext` aware.
 
 include::camel-spring-boot::page$kafka-starter.adoc[]
+
+== Consuming Avro messages from Kafka using the schema-registry
+*Since Camel 3.0.0*
+
+This route applies the schema and converts the Avro messages to POJOs for further processing:
+
+[source,java]
+----
+from(kafka("avro-events")
+    .brokers("localhost:9092")
+    .schemaRegistryURL("http://localhost:8081")
+    .specificAvroReader(true)
+    .valueDeserializer("io.confluent.kafka.serializers.KafkaAvroDeserializer")
+    .log("Avro Message: ${body}")
+----
+
+For this to work, you need to use `avro-maven-plugin` to generate the Java sources of your POJOs from your schema
+files. Put your `.avsc` files in the `src/main/avro` directory of your project where the plugin looks for them
+by default.
