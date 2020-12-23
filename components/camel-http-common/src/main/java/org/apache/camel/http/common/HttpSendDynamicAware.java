@@ -97,8 +97,10 @@ public class HttpSendDynamicAware implements SendDynamicAware {
         String path = hostAndPath[1];
         String query = null;
         if (!entry.getLenientProperties().isEmpty()) {
+            Map<String, Object> lenientProperties = new LinkedHashMap<>(entry.getLenientProperties());
+            URISupport.resolveRawParameterValues(lenientProperties);
             // all lenient properties can be dynamic and provided in the HTTP_QUERY header
-            query = URISupport.createQueryString(new LinkedHashMap<>(entry.getLenientProperties()));
+            query = URISupport.createQueryString(lenientProperties);
         }
 
         if (query == null && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(Exchange.HTTP_QUERY))) {
@@ -166,5 +168,5 @@ public class HttpSendDynamicAware implements SendDynamicAware {
         // no context path
         return new String[]{u, null};
     }
-    
+
 }
