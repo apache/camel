@@ -34,11 +34,20 @@ public class SpringResilienceRouteFallbackTest extends CamelSpringTestSupport {
 
     @Test
     public void testResilience() throws Exception {
+        test("direct:start");
+    }
+
+    @Test
+    public void testResilienceWithTimeOut() throws Exception {
+        test("direct:start.with.timeout.enabled");
+    }
+
+    private void test(String endPointUri) throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Fallback message");
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_SUCCESSFUL_EXECUTION, false);
         getMockEndpoint("mock:result").expectedPropertyReceived(CircuitBreakerConstants.RESPONSE_FROM_FALLBACK, true);
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody(endPointUri, "Hello World");
 
         assertMockEndpointsSatisfied();
     }
