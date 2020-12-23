@@ -6,6 +6,10 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.7 to 3.8
 
+=== camel-activemq and camel-jms
+
+The JMS and ActiveMQ component now supports optimized toD EIP pattern by using a single endpoint/producer for dynamic destination names.
+
 === Camel-AWS2-SNS
 
 The policy option now expects a file, since the policy are going to be complex. It can be from classpath:, http: or file: etc.
