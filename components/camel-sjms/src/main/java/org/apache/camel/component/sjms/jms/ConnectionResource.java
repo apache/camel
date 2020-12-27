@@ -43,8 +43,7 @@ public interface ConnectionResource {
     /**
      * Returns the {@link Connection} to the connection pool.
      *
-     * @param  connection the borrowed {@link Connection}
-     * @throws Exception
+     * @param connection the borrowed {@link Connection}
      */
     void returnConnection(Connection connection) throws Exception;
 

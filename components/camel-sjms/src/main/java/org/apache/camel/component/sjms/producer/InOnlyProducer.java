@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.sjms.producer;
 
+import javax.jms.Destination;
+import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
@@ -47,8 +51,7 @@ public class InOnlyProducer extends SjmsProducer {
     @Override
     public void sendMessage(
             final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer,
-            final ReleaseProducerCallback releaseProducerCallback)
-            throws Exception {
+            final ReleaseProducerCallback releaseProducerCallback) {
         try {
             Message message = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
             producer.getMessageProducer().send(message);
@@ -58,6 +61,33 @@ public class InOnlyProducer extends SjmsProducer {
             releaseProducerCallback.release(producer);
             callback.done(isSynchronous());
         }
+    }
+
+    @Override
+    public void sendMessage(Exchange exchange, AsyncCallback callback, Session session, String destinationName) {
+        MessageProducer producer = null;
+        try {
+            Destination destination = resolveDestinationName(session, destinationName);
+            Message message = getEndpoint().getBinding().makeJmsMessage(exchange, session);
+            producer = session.createProducer(destination);
+            producer.send(message);
+        } catch (Exception e) {
+            exchange.setException(new CamelExchangeException("Unable to complete sending the JMS message", exchange, e));
+        } finally {
+            try {
+                if (producer != null) {
+                    producer.close();
+                }
+            } catch (Throwable e) {
+                // ignore
+            }
+            callback.done(isSynchronous());
+        }
+    }
+
+    protected Destination resolveDestinationName(Session session, String destinationName) throws JMSException {
+        return getEndpoint().getDestinationCreationStrategy().createDestination(session,
+                destinationName, getEndpoint().isTopic());
     }
 
 }

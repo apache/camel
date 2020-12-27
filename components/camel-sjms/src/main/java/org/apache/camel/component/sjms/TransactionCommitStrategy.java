@@ -28,9 +28,8 @@ public interface TransactionCommitStrategy {
      * Should returns true to allow the commit to proceed. If false, the commit will be skipped. The default should
      * always be true to avoid messages remaining uncommitted.
      *
-     * @param  exchange  {@link org.apache.camel.Exchange}
-     * @return           true if the {@link javax.jms.Session} should be committed, otherwise false
-     * @throws Exception
+     * @param  exchange {@link org.apache.camel.Exchange}
+     * @return          true if the {@link javax.jms.Session} should be committed, otherwise false
      */
     boolean commit(Exchange exchange) throws Exception;
 
@@ -38,9 +37,8 @@ public interface TransactionCommitStrategy {
      * Should returns true to allow the commit to proceed. If false, the commit will be skipped. The default should
      * always be true to avoid messages remaining uncommitted.
      *
-     * @param  exchange  {@link org.apache.camel.Exchange}
-     * @return           true if the {@link javax.jms.Session} should be committed, otherwise false
-     * @throws Exception
+     * @param  exchange {@link org.apache.camel.Exchange}
+     * @return          true if the {@link javax.jms.Session} should be committed, otherwise false
      */
     boolean rollback(Exchange exchange) throws Exception;
 }

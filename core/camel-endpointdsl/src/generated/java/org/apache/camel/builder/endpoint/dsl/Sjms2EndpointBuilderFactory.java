@@ -1337,6 +1337,37 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether to use transacted mode.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: transaction
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointProducerBuilder transacted(boolean transacted) {
+            doSetProperty("transacted", transacted);
+            return this;
+        }
+        /**
+         * Specifies whether to use transacted mode.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: transaction
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointProducerBuilder transacted(String transacted) {
+            doSetProperty("transacted", transacted);
+            return this;
+        }
+        /**
          * Sets the commit strategy.
          * 
          * The option is a:
@@ -2015,6 +2046,37 @@ public interface Sjms2EndpointBuilderFactory {
         default Sjms2EndpointBuilder acknowledgementMode(
                 String acknowledgementMode) {
             doSetProperty("acknowledgementMode", acknowledgementMode);
+            return this;
+        }
+        /**
+         * Specifies whether to use transacted mode.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: transaction
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointBuilder transacted(boolean transacted) {
+            doSetProperty("transacted", transacted);
+            return this;
+        }
+        /**
+         * Specifies whether to use transacted mode.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: transaction
+         * 
+         * @param transacted the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointBuilder transacted(String transacted) {
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**

@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms;
+package org.apache.camel.component.sjms2;
 
-public interface SjmsConstants {
+import org.apache.camel.component.sjms.SjmsSendDynamicAware;
+import org.apache.camel.spi.annotations.SendDynamic;
 
-    String JMS_MESSAGE_TYPE = "CamelJmsMessageType";
-    String JMS_SESSION = "CamelJMSSession";
-    String JMS_DESTINATION_NAME = "CamelJMSDestinationName";
+@SendDynamic("sjms2")
+public class Sjms2SendDynamicAware extends SjmsSendDynamicAware {
 
 }

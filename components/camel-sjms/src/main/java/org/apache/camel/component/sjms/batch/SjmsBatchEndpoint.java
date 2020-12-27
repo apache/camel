@@ -22,6 +22,7 @@ import javax.jms.Message;
 import javax.jms.Session;
 
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -47,7 +48,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Highly performant and transactional batch consumption of messages from a JMS queue.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "sjms-batch", title = "Simple JMS Batch", syntax = "sjms-batch:destinationName",
-             label = "messaging", consumerOnly = true)
+             category = { Category.MESSAGING }, consumerOnly = true)
 public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     public static final int DEFAULT_COMPLETION_SIZE = 200; // the default dispatch queue size in ActiveMQ
@@ -104,13 +105,12 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     public SjmsBatchEndpoint(String endpointUri, Component component, String remaining) {
         super(endpointUri, component);
 
-        DestinationNameParser parser = new DestinationNameParser();
-        if (parser.isTopic(remaining)) {
+        if (DestinationNameParser.isTopic(remaining)) {
             throw new IllegalArgumentException(
                     "Only batch consumption from queues is supported. For topics you "
                                                + "should use a regular JMS consumer with an aggregator.");
         }
-        this.destinationName = parser.getShortName(remaining);
+        this.destinationName = DestinationNameParser.getShortName(remaining);
     }
 
     @Override

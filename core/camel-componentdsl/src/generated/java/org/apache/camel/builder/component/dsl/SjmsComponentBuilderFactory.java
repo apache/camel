@@ -234,8 +234,7 @@ public interface SjmsComponentBuilderFactory {
         /**
          * When using the default
          * org.apache.camel.component.sjms.jms.ConnectionFactoryResource then
-         * should each javax.jms.Connection be tested (calling start) before
-         * returned from the pool.
+         * should each javax.jms.Connection be tested before being used.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 

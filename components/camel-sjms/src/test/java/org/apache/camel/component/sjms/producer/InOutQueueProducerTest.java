@@ -28,6 +28,7 @@ import javax.jms.TextMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +61,22 @@ public class InOutQueueProducerTest extends JmsTestSupport {
         assertTrue(responseObject instanceof String);
         assertEquals(responseText, responseObject);
         mc.close();
+    }
 
+    @Test
+    public void testInOutQueueProducerHeader() throws Exception {
+        MessageConsumer mc = createQueueConsumer("foo");
+        assertNotNull(mc);
+        final String requestText = "Hello World!";
+        final String responseText = "How are you";
+        mc.setMessageListener(new MyMessageListener(requestText, responseText));
+
+        Object responseObject
+                = template.requestBodyAndHeader("direct:start", requestText, SjmsConstants.JMS_DESTINATION_NAME, "foo");
+        assertNotNull(responseObject);
+        assertTrue(responseObject instanceof String);
+        assertEquals(responseText, responseObject);
+        mc.close();
     }
 
     @Test

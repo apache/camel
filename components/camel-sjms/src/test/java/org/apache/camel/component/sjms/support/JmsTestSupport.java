@@ -68,10 +68,6 @@ public class JmsTestSupport extends CamelTestSupport {
 
     /**
      * Set up the Broker
-     *
-     * @see              org.apache.camel.test.junit5.CamelTestSupport#doPreSetup()
-     *
-     * @throws Exception
      */
     @Override
     protected void doPreSetup() throws Exception {
@@ -145,11 +141,6 @@ public class JmsTestSupport extends CamelTestSupport {
         }
     }
 
-    /*
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
-     * @return
-     * @throws Exception
-     */
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();

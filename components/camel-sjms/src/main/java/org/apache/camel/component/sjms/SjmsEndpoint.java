@@ -54,6 +54,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +89,7 @@ public class SjmsEndpoint extends DefaultEndpoint
               description = "Whether to include all JMSXxxx properties when mapping from JMS to Camel Message."
                             + " Setting this to true will include properties such as JMSXAppID, and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply.")
     private boolean includeAllJMSXProperties;
-    @UriParam(label = "consumer,transaction",
+    @UriParam(label = "transaction",
               description = "Specifies whether to use transacted mode")
     private boolean transacted;
     @UriParam(label = "transaction,advanced", defaultValue = "true",
@@ -205,9 +206,9 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     public SjmsEndpoint(String uri, Component component, String remaining) {
         super(uri, component);
-        DestinationNameParser parser = new DestinationNameParser();
-        this.topic = parser.isTopic(remaining);
-        this.destinationName = parser.getShortName(remaining);
+        // TODO: optimize for dynamic destination name via toD (eg ${ } somewhere)
+        this.topic = DestinationNameParser.isTopic(remaining);
+        this.destinationName = DestinationNameParser.getShortName(remaining);
     }
 
     @Override
@@ -252,6 +253,10 @@ public class SjmsEndpoint extends DefaultEndpoint
             producer = new InOnlyProducer(this);
         } else {
             producer = new InOutProducer(this);
+        }
+        // are we using dynamic destinations?
+        if (LanguageSupport.hasSimpleFunction(getDestinationName())) {
+            producer.disableProducers();
         }
         return producer;
     }

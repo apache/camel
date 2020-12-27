@@ -47,7 +47,7 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     private ConnectionFactory connectionFactory;
     @Metadata(label = "advanced",
               description = "A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory."
-                            + " * See Plugable Connection Resource Management for further details.")
+                            + " See Plugable Connection Resource Management for further details.")
     private ConnectionResource connectionResource;
     @Metadata(label = "advanced",
               description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
@@ -71,7 +71,7 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     private MessageCreatedStrategy messageCreatedStrategy;
     @Metadata(label = "advanced", defaultValue = "true",
               description = "When using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource"
-                            + " then should each javax.jms.Connection be tested (calling start) before returned from the pool.")
+                            + " then should each javax.jms.Connection be tested before being used.")
     private boolean connectionTestOnBorrow = true;
     @Metadata(label = "security", secret = true,
               description = "The username to use when creating javax.jms.Connection when using the"
@@ -286,7 +286,7 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
 
     /**
      * When using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource} then should each
-     * {@link javax.jms.Connection} be tested (calling start) before returned from the pool.
+     * {@link javax.jms.Connection} be tested before being used.
      */
     public void setConnectionTestOnBorrow(boolean connectionTestOnBorrow) {
         this.connectionTestOnBorrow = connectionTestOnBorrow;

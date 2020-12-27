@@ -109,7 +109,7 @@ The Simple JMS component supports 19 options, which are listed below.
 | *connectionClientId* (advanced) | The client ID to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. |  | String
 | *connectionMaxWait* (advanced) | The max wait time in millis to block and wait on free connection when the pool is exhausted when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource. | 5000 | long
 | *connectionResource* (advanced) | A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory. See Plugable Connection Resource Management for further details. |  | ConnectionResource
-| *connectionTestOnBorrow* (advanced) | When using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should each javax.jms.Connection be tested (calling start) before returned from the pool. | true | boolean
+| *connectionTestOnBorrow* (advanced) | When using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should each javax.jms.Connection be tested before being used. | true | boolean
 | *destinationCreationStrategy* (advanced) | To use a custom DestinationCreationStrategy. |  | DestinationCreationStrategy
 | *jmsKeyFormatStrategy* (advanced) | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -). Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation. |  | JmsKeyFormatStrategy
 | *messageCreatedStrategy* (advanced) | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message. |  | MessageCreatedStrategy
@@ -274,6 +274,75 @@ URI.
 from("sjms:queue:in.out.test?exchangePattern=InOut")
     .transform(constant("Bye Camel"));
 ----
+
+
+== Reuse endpoint and send to different destinations computed at runtime
+
+If you need to send messages to a lot of different JMS destinations, it
+makes sense to reuse a SJMS endpoint and specify the real destination in
+a message header. This allows Camel to reuse the same endpoint, but send
+to different destinations. This greatly reduces the number of endpoints
+created and economizes on memory and thread resources.
+
+TIP: Using xref:{eip-vc}:eips:toD-eip.adoc[toD] is easier than specifying the dynamic destination with a header
+
+You can specify the destination in the following headers:
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=====================================================================
+|Header |Type |Description
+|`CamelJmsDestinationName` |`String` |The destination name.
+|=====================================================================
+
+For example, the following route shows how you can compute a destination
+at run time and use it to override the destination appearing in the JMS
+URL:
+
+[source,java]
+--------------------------------
+from("file://inbox")
+  .to("bean:computeDestination")
+  .to("sjms:queue:dummy");
+--------------------------------
+
+The queue name, `dummy`, is just a placeholder. It must be provided as
+part of the JMS endpoint URL, but it will be ignored in this example.
+
+In the `computeDestination` bean, specify the real destination by
+setting the `CamelJmsDestinationName` header as follows:
+
+[source,java]
+-------------------------------------------------------------------------
+public void setJmsHeader(Exchange exchange) {
+   String id = ....
+   exchange.getIn().setHeader("CamelJmsDestinationName", "order:" + id");
+}
+-------------------------------------------------------------------------
+
+Then Camel will read this header and use it as the destination instead
+of the one configured on the endpoint. So, in this example Camel sends
+the message to `sjms:queue:order:2`, assuming the `id` value was 2.
+
+Keep in mind that the JMS producer removes both `CamelJmsDestinationName`
+headers from the exchange and do not propagate  them to the created JMS
+message in order to avoid the accidental loops
+in the routes (in scenarios when the message will be forwarded to the
+another JMS endpoint).
+
+== Using toD
+
+If you need to send messages to a lot of different JMS destinations, it
+makes sense to reuse a SJMS endpoint and specify the dynamic destinations
+with simple language using xref:{eip-vc}:eips:toD-eip.adoc[toD].
+
+For example suppose you need to send messages to queues with order types,
+then using toD could for example be done as follows:
+
+[source,java]
+--------------------------------
+from("direct:order")
+  .toD("sjms:order-${header.orderType}");
+--------------------------------
 
 == Advanced Usage Notes
 
