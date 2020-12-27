@@ -56,26 +56,22 @@ public class VertxKafkaProducerOperations {
     }
 
     public boolean sendEvents(final Message inMessage, final AsyncCallback callback) {
-        ObjectHelper.notNull(inMessage, "exchange cannot be null");
-        ObjectHelper.notNull(callback, "callback cannot be null");
-
         return sendEvents(inMessage, unused -> LOG.debug("Processed one event..."), callback);
     }
 
     public boolean sendEvents(
             final Message inMessage, final Consumer<List<RecordMetadata>> resultCallback, final AsyncCallback callback) {
-        ObjectHelper.notNull(inMessage, "inMessage cannot be null");
-        ObjectHelper.notNull(callback, "callback cannot be null");
-
         sendAsyncEvents(inMessage)
                 .subscribe(resultCallback, error -> {
                     // error but we continue
-                    LOG.debug("Error processing async exchange with error:" + error.getMessage());
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Error processing async exchange with error: {}", error.getMessage());
+                    }
                     inMessage.getExchange().setException(error);
                     callback.done(false);
                 }, () -> {
                     // we are done from everything, so mark it as sync done
-                    LOG.debug("All events with exchange have been sent successfully.");
+                    LOG.trace("All events with exchange have been sent successfully.");
                     callback.done(false);
                 });
 
