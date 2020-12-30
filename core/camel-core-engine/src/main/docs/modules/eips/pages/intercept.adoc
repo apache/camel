@@ -230,8 +230,8 @@ And in XML DSL:
 --------------------------------------
 
 
-[[Intercept-AdvancedusageofIntercpt]]
-== Advanced usage of Intercpt
+[[Intercept-AdvancedusageofIntercept]]
+== Advanced usage of Intercept
 
 The `interceptFrom` and `interceptSendToEndpoint` supports endpoint URI
 matching by the following rules in the given order:
