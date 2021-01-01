@@ -74,7 +74,7 @@ public class EventProcessorIT {
 
     @Test
     public void testEventProcessingWithBlobCheckpointStore() {
-        final AtomicBoolean doneAsync = new AtomicBoolean(false);
+        final AtomicBoolean doneAsync = new AtomicBoolean();
         final EventHubProducerAsyncClient producerAsyncClient
                 = EventHubsClientFactory.createEventHubProducerAsyncClient(configuration);
         final Consumer<EventContext> onEvent = eventContext -> {

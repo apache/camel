@@ -120,7 +120,7 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
         Issue issue = setPriority(issues.get(0), new Priority(
                 null, 4L, "High", null, null, null));
         reset(searchRestClient);
-        AtomicBoolean searched = new AtomicBoolean(false);
+        AtomicBoolean searched = new AtomicBoolean();
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
 
             if (!searched.get()) {
@@ -145,7 +145,7 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
                 null, 4L, "High", null, null, null));
 
         reset(searchRestClient);
-        AtomicBoolean searched = new AtomicBoolean(false);
+        AtomicBoolean searched = new AtomicBoolean();
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
             if (!searched.get()) {
                 issues.add(createIssue(4L));

@@ -68,7 +68,7 @@ class EventHubsProducerIT extends CamelTestSupport {
         final String messageBody = RandomStringUtils.randomAlphabetic(30);
         final String firstPartition = "0";
 
-        final AtomicBoolean eventExists = new AtomicBoolean(false);
+        final AtomicBoolean eventExists = new AtomicBoolean();
 
         final CompletableFuture<Exchange> resultAsync = template.asyncSend("direct:sendAsync", exchange -> {
             exchange.getIn().setHeader(EventHubsConstants.PARTITION_ID, firstPartition);

@@ -126,7 +126,7 @@ public class BackOffTimerTest {
     @Test
     public void testBackOffTimerStop() throws Exception {
         final CountDownLatch latch = new CountDownLatch(5);
-        final AtomicBoolean done = new AtomicBoolean(false);
+        final AtomicBoolean done = new AtomicBoolean();
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
         final BackOff backOff = BackOff.builder().delay(100).build();
         final BackOffTimer timer = new BackOffTimer(executor);

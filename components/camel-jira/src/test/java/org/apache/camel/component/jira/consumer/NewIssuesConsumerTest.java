@@ -119,7 +119,7 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
         Issue issue = createIssue(11);
 
         reset(searchRestClient);
-        AtomicBoolean searched = new AtomicBoolean(false);
+        AtomicBoolean searched = new AtomicBoolean();
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
             List<Issue> newIissues = new ArrayList<>();
             if (!searched.get()) {
@@ -140,7 +140,7 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
         Issue issue3 = createIssue(23);
 
         reset(searchRestClient);
-        AtomicBoolean searched = new AtomicBoolean(false);
+        AtomicBoolean searched = new AtomicBoolean();
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
             List<Issue> newIssues = new ArrayList<>();
             if (!searched.get()) {

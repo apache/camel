@@ -85,7 +85,7 @@ public class DataSetEndpointTest extends ContextTestSupport {
                 = new DataSetEndpoint("dataset://foo", context.getComponent("dataset"), new SimpleDataSet(10));
         endpoint.setInitialDelay(0);
 
-        final AtomicBoolean reported = new AtomicBoolean(false);
+        final AtomicBoolean reported = new AtomicBoolean();
         endpoint.setReporter(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 reported.set(true);
