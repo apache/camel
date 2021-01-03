@@ -91,7 +91,8 @@ public class QpidEmbeddedService implements RabbitMQService {
             systemLauncher.startup(createQpidSystemConfig());
             LOG.info("Qpid embedded service running on {}", getAmqpUrl());
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Initialization failed!", e);
+            throw new IllegalStateException(e.getMessage());
         }
     }
 
