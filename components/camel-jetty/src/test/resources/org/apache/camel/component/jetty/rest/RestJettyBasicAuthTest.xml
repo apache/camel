@@ -54,8 +54,7 @@
                        port="9444"
                        apiContextPath="api-docs"
                        apiContextListing="true"
-                       enableCORS="true"
-    >
+                       enableCORS="true">
 
       <endpointProperty key="handlers" value="securityHandler"/>
       <dataFormatProperty key="prettyPrint" value="true"/>

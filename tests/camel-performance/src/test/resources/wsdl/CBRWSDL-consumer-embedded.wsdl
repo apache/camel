@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <definitions name="EchoWSDL" targetNamespace="http://services.samples/xsd"
-    xmlns="http://schemas.xmlsoap.org/wsdl/"
-    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://services.samples/xsd" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+             xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://services.samples/xsd"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
     <types>
 	<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 		    targetNamespace="http://services.samples/xsd"
@@ -31,13 +31,13 @@
     <message name="EchoOperationResponse">
         <part name="parameters" element="tns:buyStocks"/>
     </message>
-    
+
     <portType name="buyStocksPortType">
         <operation name="buyStocksOperation">
             <input name="message" message="tns:EchoOperationRequest"/>
             <output name="message" message="tns:EchoOperationResponse"/>
         </operation>
-        
+
         <operation name="buyStocksOperation1K">
             <input name="message1K" message="tns:EchoOperationRequest"/>
             <output name="message1K" message="tns:EchoOperationResponse"/>
@@ -57,7 +57,7 @@
         <operation name="buyStocksOperation500K">
             <input name="message500K" message="tns:EchoOperationRequest"/>
             <output name="message500K" message="tns:EchoOperationResponse"/>
-        </operation>        
+        </operation>
     </portType>
     <binding name="EchoServiceSOAP11Binding" type="tns:buyStocksPortType">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
@@ -70,7 +70,7 @@
                 <soap:body use="literal"/>
             </output>
         </operation>
-        
+
         <operation name="buyStocksOperation1K">
             <soap:operation soapAction="urn:buyStocks.2" style="document"/>
             <input name="message1K">
@@ -79,7 +79,7 @@
             <output name="message1K">
                 <soap:body use="literal"/>
             </output>
-        </operation> 
+        </operation>
         <operation name="buyStocksOperation5K">
             <soap:operation soapAction="urn:buyStocks.5" style="document"/>
             <input name="message5K">
@@ -88,7 +88,7 @@
             <output name="message5K">
                 <soap:body use="literal"/>
             </output>
-        </operation> 
+        </operation>
         <operation name="buyStocksOperation10K">
             <soap:operation soapAction="urn:buyStocks.10" style="document"/>
             <input name="message10K">
@@ -97,7 +97,7 @@
             <output name="message10K">
                 <soap:body use="literal"/>
             </output>
-        </operation> 
+        </operation>
         <operation name="buyStocksOperation100K">
             <soap:operation soapAction="urn:buyStocks.100" style="document"/>
             <input name="message100K">
@@ -106,7 +106,7 @@
             <output name="message100K">
                 <soap:body use="literal"/>
             </output>
-        </operation> 
+        </operation>
         <operation name="buyStocksOperation500K">
             <soap:operation soapAction="urn:buyStocks.500" style="document"/>
             <input name="message500K">
@@ -115,7 +115,7 @@
             <output name="message500K">
                 <soap:body use="literal"/>
             </output>
-        </operation> 
+        </operation>
     </binding>
     <service name="CBRProxy">
         <port name="CBREchoServicePort" binding="tns:EchoServiceSOAP11Binding">

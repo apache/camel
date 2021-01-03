@@ -17,8 +17,7 @@
     limitations under the License.
 
 -->
-<rests xmlns="http://camel.apache.org/schema/spring"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<rests xmlns="http://camel.apache.org/schema/spring">
 
   <rest path="/users">
     <get uri="/view/{id}">
