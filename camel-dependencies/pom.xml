@@ -332,7 +332,7 @@
     <jgit-version>5.10.0.202012080955-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
-    <jgroups-raft-version>0.5.2.Final</jgroups-raft-version>
+    <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
     <jgroups-version>4.2.10.Final</jgroups-version>
     <jing-version>20030619</jing-version>
     <jira-guava-version>26.0-jre</jira-guava-version>
