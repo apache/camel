@@ -18,23 +18,23 @@ package org.apache.camel.component.redis.processor.aggregate;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.redis.services.RedisService;
+import org.apache.camel.test.infra.redis.services.RedisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * The ABC example for using the Aggregator EIP.
  * <p/>
- * This example have 4 messages send to the aggregator, by which one message is published which contains the aggregation
+ * This example have 4 messages sent to the aggregator, by which one message is published which contains the aggregation
  * of message 1,2 and 4 as they use the same correlation key.
  * <p/>
  */
-@Disabled("Requires manually testing")
 public class AggregateRedisTest extends CamelTestSupport {
 
-    // TODO: use docker test-containers for testing
-
-    private String endpoint = System.getProperty("endpoint"); //ip:port
+    @RegisterExtension
+    static RedisService service = RedisServiceFactory.createService();
 
     @Test
     public void testABC() throws Exception {
@@ -50,14 +50,14 @@ public class AggregateRedisTest extends CamelTestSupport {
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
+            public void configure() {
                 from("direct:start")
                         .log("Sending ${body} with correlation key ${header.myId}")
                         .aggregate(header("myId"), new MyAggregationStrategy())
-                        .aggregationRepository(new RedisAggregationRepository("aggregation", endpoint))
+                        .aggregationRepository(new RedisAggregationRepository("aggregation", service.getServiceAddress()))
                         .completionSize(3)
                         .log("Sending out ${body}")
                         .to("mock:result");
