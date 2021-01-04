@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.docker.consumer;
 
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.EventsCmd;
 import com.github.dockerjava.api.model.Event;
-import com.github.dockerjava.core.command.EventsResultCallback;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -82,7 +82,7 @@ public class DockerEventsConsumer extends DefaultConsumer {
         super.doStop();
     }
 
-    protected class EventsCallback extends EventsResultCallback {
+    protected class EventsCallback extends ResultCallback.Adapter<Event> {
 
         @Override
         public void onNext(Event event) {

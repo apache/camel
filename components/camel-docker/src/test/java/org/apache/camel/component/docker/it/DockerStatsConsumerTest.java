@@ -18,19 +18,23 @@ package org.apache.camel.component.docker.it;
 
 import java.util.concurrent.TimeUnit;
 
-import com.github.dockerjava.netty.NettyDockerCmdExecFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-public class DockerNettyCmdExecFactoryTestIT extends DockerITTestSupport {
-
+/**
+ * Integration test consuming statistics on Docker Platform. This is a manual test which verifies whether Camel can
+ * consume the stats from a docker instance. For this test to run you need to inform the container ID via
+ * -D=id-of-the-container, the docker host name via -Ddocker.hostname=my.host.com and the port via -Ddocker.port=2375
+ */
+@EnabledIfSystemProperty(named = "docker.test.container.id", matches = ".*", disabledReason = "Requires a running container")
+public class DockerStatsConsumerTest extends DockerITTestSupport {
     @Test
-    void testNettyCmdExecFactoryConfig() throws Exception {
+    void testDocker() throws Exception {
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-
-        template.sendBody("direct:in", "");
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
     }
@@ -39,8 +43,7 @@ public class DockerNettyCmdExecFactoryTestIT extends DockerITTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:in")
-                        .to("docker://version?cmdExecFactory=" + NettyDockerCmdExecFactory.class.getName())
+                from("docker://stats?containerId={{docker.test.container.id}}&host={{docker.hostname}}&port={{docker.port}}")
                         .log("${body}")
                         .to("mock:result");
             }

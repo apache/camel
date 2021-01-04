@@ -18,8 +18,9 @@ package org.apache.camel.component.docker.headers;
 
 import java.util.Map;
 
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.PushImageCmd;
-import com.github.dockerjava.core.command.PushImageResultCallback;
+import com.github.dockerjava.api.model.Frame;
 import org.apache.camel.component.docker.DockerClientProfile;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
@@ -42,7 +43,7 @@ public class PushImageCmdHeaderTest extends BaseDockerHeaderTest<PushImageCmd> {
     private PushImageCmd mockObject;
 
     @Mock
-    private PushImageResultCallback callback;
+    private ResultCallback.Adapter<Frame> callback;
 
     private String userName = "jdoe";
     private String password = "password";

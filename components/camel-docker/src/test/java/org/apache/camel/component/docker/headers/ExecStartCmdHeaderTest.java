@@ -18,8 +18,9 @@ package org.apache.camel.component.docker.headers;
 
 import java.util.Map;
 
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.ExecStartCmd;
-import com.github.dockerjava.core.command.ExecStartResultCallback;
+import com.github.dockerjava.api.model.Frame;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,7 @@ public class ExecStartCmdHeaderTest extends BaseDockerHeaderTest<ExecStartCmd> {
     private ExecStartCmd mockObject;
 
     @Mock
-    private ExecStartResultCallback callback;
+    private ResultCallback.Adapter<Frame> callback;
 
     @Test
     void execCreateHeaderTest() {

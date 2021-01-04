@@ -21,11 +21,14 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 /**
- * Integration test listing images on Docker Platform
+ * Integration test listing images on Docker Platform. For this test to run you need to inform the docker host name via
+ * -Ddocker.hostname=my.host.com and the port via -Ddocker.port=2375
  */
-public class DockerProducerTestIT extends DockerITTestSupport {
+@EnabledIfSystemProperty(named = "docker.hostname", matches = ".*", disabledReason = "Requires a running docker environment")
+public class DockerProducerTest extends DockerITTestSupport {
 
     @Test
     void testDocker() throws Exception {
@@ -42,7 +45,7 @@ public class DockerProducerTestIT extends DockerITTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                        .to("docker://imagelist?maxTotalConnections=10")
+                        .to("docker://imagelist?maxTotalConnections=10&host={{docker.hostname}}&port={{docker.port}}")
                         .log("${body}")
                         .to("mock:result");
             }
