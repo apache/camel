@@ -25,8 +25,6 @@ public class TransactedTopicConsumerTest extends TransactedConsumerSupport {
     /**
      * We want to verify that when consuming from a single destination with multiple routes that we are thread safe and
      * behave accordingly.
-     * 
-     * @throws Exception
      */
     @Test
     public void testRoute() throws Exception {
@@ -38,7 +36,7 @@ public class TransactedTopicConsumerTest extends TransactedConsumerSupport {
         int maxAttemptsCount = 10;
         int totalRedeliverdFalse = 20;
         int totalRedeliveredTrue = 1;
-        runTest(destinationName, routeCount, messageCount, totalRedeliverdFalse, totalRedeliveredTrue, batchCount,
+        runTest(destinationName, routeCount, messageCount, totalRedeliverdFalse, totalRedeliveredTrue,
                 consumerCount, maxAttemptsCount);
     }
 

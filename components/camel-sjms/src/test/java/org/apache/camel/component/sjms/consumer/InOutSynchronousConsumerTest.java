@@ -28,7 +28,7 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
 
     private static String beforeThreadName;
     private static String afterThreadName;
-    private String url = "sjms:queue:in?namedReplyTo=response.queue";
+    private String url = "sjms:queue:in?replyTo=response.queue";
 
     @Test
     public void testSynchronous() throws Exception {

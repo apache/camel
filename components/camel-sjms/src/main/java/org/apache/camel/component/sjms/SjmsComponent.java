@@ -29,7 +29,6 @@ import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
-import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
@@ -61,8 +60,6 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "transaction",
               description = "To configure which kind of commit strategy to use. Camel provides two implementations out of the box, default and batch.")
     private TransactionCommitStrategy transactionCommitStrategy;
-    @Metadata(label = "advanced", description = "To use a custom TimedTaskManager")
-    private TimedTaskManager timedTaskManager;
     @Metadata(label = "advanced", description = "To use a custom DestinationCreationStrategy.")
     private DestinationCreationStrategy destinationCreationStrategy;
     @Metadata(label = "advanced",
@@ -130,39 +127,24 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     }
 
     /**
-     * Helper method used to verify that when there is a namedReplyTo value we are using the InOut MEP. If namedReplyTo
-     * is defined and the MEP is InOnly the endpoint won't be expecting a reply so throw an error to alert the user.
+     * Helper method used to verify that when there is a replyTo value we are using the InOut MEP. If namedReplyTo is
+     * defined and the MEP is InOnly the endpoint won't be expecting a reply so throw an error to alert the user.
      *
      * @param  parameters {@link Endpoint} parameters
-     * @throws Exception  throws a {@link CamelException} when MEP equals InOnly and namedReplyTo is defined.
+     * @throws Exception  throws a {@link CamelException} when MEP equals InOnly and replyTo is defined.
      */
     private static void validateMepAndReplyTo(Map<String, Object> parameters) throws Exception {
-        boolean namedReplyToSet = parameters.containsKey("namedReplyTo");
+        boolean replyToSet = parameters.containsKey("replyTo");
         boolean mepSet = parameters.containsKey("exchangePattern");
-        if (namedReplyToSet && mepSet) {
+        if (replyToSet && mepSet) {
             if (!parameters.get("exchangePattern").equals(ExchangePattern.InOut.toString())) {
-                String namedReplyTo = (String) parameters.get("namedReplyTo");
+                String replyTo = (String) parameters.get("replyTo");
                 ExchangePattern mep = ExchangePattern.valueOf((String) parameters.get("exchangePattern"));
                 throw new CamelException(
-                        "Setting parameter namedReplyTo=" + namedReplyTo
+                        "Setting parameter replyTo=" + replyTo
                                          + " requires a MEP of type InOut. Parameter exchangePattern is set to " + mep);
             }
         }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        timedTaskManager = new TimedTaskManager();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        if (timedTaskManager != null) {
-            timedTaskManager.cancelTasks();
-            timedTaskManager = null;
-        }
-        super.doStop();
     }
 
     @Override
@@ -255,17 +237,6 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
      */
     public void setDestinationCreationStrategy(DestinationCreationStrategy destinationCreationStrategy) {
         this.destinationCreationStrategy = destinationCreationStrategy;
-    }
-
-    public TimedTaskManager getTimedTaskManager() {
-        return timedTaskManager;
-    }
-
-    /**
-     * To use a custom TimedTaskManager
-     */
-    public void setTimedTaskManager(TimedTaskManager timedTaskManager) {
-        this.timedTaskManager = timedTaskManager;
     }
 
     public MessageCreatedStrategy getMessageCreatedStrategy() {

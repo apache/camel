@@ -6560,28 +6560,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "SjmsBatchComponentBuilderFactory": {
-    "kind": "component",
-    "name": "sjms-batch",
-    "title": "Simple JMS Batch",
-    "description": "Highly performant and transactional batch consumption of messages from a JMS queue.",
-    "deprecated": false,
-    "firstVersion": "2.16.0",
-    "label": "messaging",
-    "javaType": "org.apache.camel.component.sjms.batch.SjmsBatchComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-sjms",
-    "version": "3.8.0-SNAPSHOT",
-    "scheme": "sjms-batch",
-    "extendsScheme": "",
-    "syntax": "sjms-batch:destinationName",
-    "async": false,
-    "api": false,
-    "consumerOnly": true,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "SjmsComponentBuilderFactory": {
     "kind": "component",
     "name": "sjms",

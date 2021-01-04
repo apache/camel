@@ -81,6 +81,67 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether Camel ignores the JMSReplyTo header in messages. If
+         * true, Camel does not send a reply back to the destination specified
+         * in the JMSReplyTo header. You can use this option if you want Camel
+         * to consume from a route and you do not want Camel to automatically
+         * send back a reply message because another component in your code
+         * handles the reply message. You can also use this option if you want
+         * to use Camel as a proxy between different message brokers and you
+         * want to route message from one system to another.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disableReplyTo the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointConsumerBuilder disableReplyTo(
+                boolean disableReplyTo) {
+            doSetProperty("disableReplyTo", disableReplyTo);
+            return this;
+        }
+        /**
+         * Specifies whether Camel ignores the JMSReplyTo header in messages. If
+         * true, Camel does not send a reply back to the destination specified
+         * in the JMSReplyTo header. You can use this option if you want Camel
+         * to consume from a route and you do not want Camel to automatically
+         * send back a reply message because another component in your code
+         * handles the reply message. You can also use this option if you want
+         * to use Camel as a proxy between different message brokers and you
+         * want to route message from one system to another.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disableReplyTo the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointConsumerBuilder disableReplyTo(String disableReplyTo) {
+            doSetProperty("disableReplyTo", disableReplyTo);
+            return this;
+        }
+        /**
+         * Provides an explicit ReplyTo destination (overrides any incoming
+         * value of Message.getJMSReplyTo() in consumer).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param replyTo the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointConsumerBuilder replyTo(String replyTo) {
+            doSetProperty("replyTo", replyTo);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -236,6 +297,39 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether to use persistent delivery by default for replies.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param replyToDeliveryPersistent the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointConsumerBuilder replyToDeliveryPersistent(
+                boolean replyToDeliveryPersistent) {
+            doSetProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
+            return this;
+        }
+        /**
+         * Specifies whether to use persistent delivery by default for replies.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param replyToDeliveryPersistent the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointConsumerBuilder replyToDeliveryPersistent(
+                String replyToDeliveryPersistent) {
+            doSetProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
+            return this;
+        }
+        /**
          * Sets whether synchronous processing should be strictly used or Camel
          * is allowed to use asynchronous processing (if supported).
          * 
@@ -368,78 +462,6 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder transacted(String transacted) {
             doSetProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If transacted sets the number of messages to process before
-         * committing a transaction.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: -1
-         * Group: transaction
-         * 
-         * @param transactionBatchCount the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default SjmsEndpointConsumerBuilder transactionBatchCount(
-                int transactionBatchCount) {
-            doSetProperty("transactionBatchCount", transactionBatchCount);
-            return this;
-        }
-        /**
-         * If transacted sets the number of messages to process before
-         * committing a transaction.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: -1
-         * Group: transaction
-         * 
-         * @param transactionBatchCount the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default SjmsEndpointConsumerBuilder transactionBatchCount(
-                String transactionBatchCount) {
-            doSetProperty("transactionBatchCount", transactionBatchCount);
-            return this;
-        }
-        /**
-         * Sets timeout (in millis) for batch transactions, the value should be
-         * 1000 or higher.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 5s
-         * Group: transaction
-         * 
-         * @param transactionBatchTimeout the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default SjmsEndpointConsumerBuilder transactionBatchTimeout(
-                long transactionBatchTimeout) {
-            doSetProperty("transactionBatchTimeout", transactionBatchTimeout);
-            return this;
-        }
-        /**
-         * Sets timeout (in millis) for batch transactions, the value should be
-         * 1000 or higher.
-         * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 5s
-         * Group: transaction
-         * 
-         * @param transactionBatchTimeout the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default SjmsEndpointConsumerBuilder transactionBatchTimeout(
-                String transactionBatchTimeout) {
-            doSetProperty("transactionBatchTimeout", transactionBatchTimeout);
             return this;
         }
         /**
@@ -666,6 +688,7 @@ public interface SjmsEndpointBuilderFactory {
          * @param connectionCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedSjmsEndpointConsumerBuilder connectionCount(
                 Integer connectionCount) {
             doSetProperty("connectionCount", connectionCount);
@@ -682,6 +705,7 @@ public interface SjmsEndpointBuilderFactory {
          * @param connectionCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedSjmsEndpointConsumerBuilder connectionCount(
                 String connectionCount) {
             doSetProperty("connectionCount", connectionCount);
@@ -1104,6 +1128,176 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether Camel ignores the JMSReplyTo header in messages. If
+         * true, Camel does not send a reply back to the destination specified
+         * in the JMSReplyTo header. You can use this option if you want Camel
+         * to consume from a route and you do not want Camel to automatically
+         * send back a reply message because another component in your code
+         * handles the reply message. You can also use this option if you want
+         * to use Camel as a proxy between different message brokers and you
+         * want to route message from one system to another.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disableReplyTo the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder disableReplyTo(
+                boolean disableReplyTo) {
+            doSetProperty("disableReplyTo", disableReplyTo);
+            return this;
+        }
+        /**
+         * Specifies whether Camel ignores the JMSReplyTo header in messages. If
+         * true, Camel does not send a reply back to the destination specified
+         * in the JMSReplyTo header. You can use this option if you want Camel
+         * to consume from a route and you do not want Camel to automatically
+         * send back a reply message because another component in your code
+         * handles the reply message. You can also use this option if you want
+         * to use Camel as a proxy between different message brokers and you
+         * want to route message from one system to another.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disableReplyTo the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder disableReplyTo(String disableReplyTo) {
+            doSetProperty("disableReplyTo", disableReplyTo);
+            return this;
+        }
+        /**
+         * Provides an explicit ReplyTo destination (overrides any incoming
+         * value of Message.getJMSReplyTo() in consumer).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param replyTo the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder replyTo(String replyTo) {
+            doSetProperty("replyTo", replyTo);
+            return this;
+        }
+        /**
+         * Specifies the delivery mode to be used. Possible values are those
+         * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
+         * = 2.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param deliveryMode the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder deliveryMode(Integer deliveryMode) {
+            doSetProperty("deliveryMode", deliveryMode);
+            return this;
+        }
+        /**
+         * Specifies the delivery mode to be used. Possible values are those
+         * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
+         * = 2.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param deliveryMode the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder deliveryMode(String deliveryMode) {
+            doSetProperty("deliveryMode", deliveryMode);
+            return this;
+        }
+        /**
+         * Specifies whether persistent delivery is used by default.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param deliveryPersistent the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder deliveryPersistent(
+                boolean deliveryPersistent) {
+            doSetProperty("deliveryPersistent", deliveryPersistent);
+            return this;
+        }
+        /**
+         * Specifies whether persistent delivery is used by default.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer
+         * 
+         * @param deliveryPersistent the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder deliveryPersistent(
+                String deliveryPersistent) {
+            doSetProperty("deliveryPersistent", deliveryPersistent);
+            return this;
+        }
+        /**
+         * Set if the deliveryMode, priority or timeToLive qualities of service
+         * should be used when sending messages. This option is based on
+         * Spring's JmsTemplate. The deliveryMode, priority and timeToLive
+         * options are applied to the current endpoint. This contrasts with the
+         * preserveMessageQos option, which operates at message granularity,
+         * reading QoS properties exclusively from the Camel In message headers.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param explicitQosEnabled the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder explicitQosEnabled(
+                Boolean explicitQosEnabled) {
+            doSetProperty("explicitQosEnabled", explicitQosEnabled);
+            return this;
+        }
+        /**
+         * Set if the deliveryMode, priority or timeToLive qualities of service
+         * should be used when sending messages. This option is based on
+         * Spring's JmsTemplate. The deliveryMode, priority and timeToLive
+         * options are applied to the current endpoint. This contrasts with the
+         * preserveMessageQos option, which operates at message granularity,
+         * reading QoS properties exclusively from the Camel In message headers.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param explicitQosEnabled the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder explicitQosEnabled(
+                String explicitQosEnabled) {
+            doSetProperty("explicitQosEnabled", explicitQosEnabled);
+            return this;
+        }
+        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1153,110 +1347,176 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the reply to destination name used for InOut producer endpoints.
-         * The type of the reply to destination can be determined by the
-         * starting prefix (topic: or queue:) in its name.
+         * Set to true, if you want to send message using the QoS settings
+         * specified on the message, instead of the QoS settings on the JMS
+         * endpoint. The following three headers are considered JMSPriority,
+         * JMSDeliveryMode, and JMSExpiration. You can provide all or only some
+         * of them. If not provided, Camel will fall back to use the values from
+         * the endpoint instead. So, when using this option, the headers
+         * override the values from the endpoint. The explicitQosEnabled option,
+         * by contrast, will only use options set on the endpoint, and not
+         * values from the message header.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param preserveMessageQos the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder preserveMessageQos(
+                boolean preserveMessageQos) {
+            doSetProperty("preserveMessageQos", preserveMessageQos);
+            return this;
+        }
+        /**
+         * Set to true, if you want to send message using the QoS settings
+         * specified on the message, instead of the QoS settings on the JMS
+         * endpoint. The following three headers are considered JMSPriority,
+         * JMSDeliveryMode, and JMSExpiration. You can provide all or only some
+         * of them. If not provided, Camel will fall back to use the values from
+         * the endpoint instead. So, when using this option, the headers
+         * override the values from the endpoint. The explicitQosEnabled option,
+         * by contrast, will only use options set on the endpoint, and not
+         * values from the message header.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param preserveMessageQos the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder preserveMessageQos(
+                String preserveMessageQos) {
+            doSetProperty("preserveMessageQos", preserveMessageQos);
+            return this;
+        }
+        /**
+         * Values greater than 1 specify the message priority when sending
+         * (where 1 is the lowest priority and 9 is the highest). The
+         * explicitQosEnabled option must also be enabled in order for this
+         * option to have any effect.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 4
+         * Group: producer
+         * 
+         * @param priority the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder priority(int priority) {
+            doSetProperty("priority", priority);
+            return this;
+        }
+        /**
+         * Values greater than 1 specify the message priority when sending
+         * (where 1 is the lowest priority and 9 is the highest). The
+         * explicitQosEnabled option must also be enabled in order for this
+         * option to have any effect.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 4
+         * Group: producer
+         * 
+         * @param priority the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder priority(String priority) {
+            doSetProperty("priority", priority);
+            return this;
+        }
+        /**
+         * Provides an explicit ReplyTo destination in the JMS message, which
+         * overrides the setting of replyTo. It is useful if you want to forward
+         * the message to a remote Queue and receive the reply message from the
+         * ReplyTo destination.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
-         * @param namedReplyTo the value to set
+         * @param replyToOverride the value to set
          * @return the dsl builder
          */
-        default SjmsEndpointProducerBuilder namedReplyTo(String namedReplyTo) {
-            doSetProperty("namedReplyTo", namedReplyTo);
+        default SjmsEndpointProducerBuilder replyToOverride(
+                String replyToOverride) {
+            doSetProperty("replyToOverride", replyToOverride);
             return this;
         }
         /**
-         * Flag used to enable/disable message persistence.
+         * The timeout for waiting for a reply when using the InOut Exchange
+         * Pattern (in milliseconds). The default is 20 seconds. You can include
+         * the header CamelJmsRequestTimeout to override this endpoint
+         * configured timeout value, and thus have per message individual
+         * timeout values. See also the requestTimeoutCheckerInterval option.
          * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: 20000
          * Group: producer
          * 
-         * @param persistent the value to set
+         * @param requestTimeout the value to set
          * @return the dsl builder
          */
-        default SjmsEndpointProducerBuilder persistent(boolean persistent) {
-            doSetProperty("persistent", persistent);
+        default SjmsEndpointProducerBuilder requestTimeout(long requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
-         * Flag used to enable/disable message persistence.
+         * The timeout for waiting for a reply when using the InOut Exchange
+         * Pattern (in milliseconds). The default is 20 seconds. You can include
+         * the header CamelJmsRequestTimeout to override this endpoint
+         * configured timeout value, and thus have per message individual
+         * timeout values. See also the requestTimeoutCheckerInterval option.
          * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: 20000
          * Group: producer
          * 
-         * @param persistent the value to set
+         * @param requestTimeout the value to set
          * @return the dsl builder
          */
-        default SjmsEndpointProducerBuilder persistent(String persistent) {
-            doSetProperty("persistent", persistent);
+        default SjmsEndpointProducerBuilder requestTimeout(String requestTimeout) {
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
-         * Sets the number of producers used for this endpoint.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: producer
-         * 
-         * @param producerCount the value to set
-         * @return the dsl builder
-         */
-        default SjmsEndpointProducerBuilder producerCount(int producerCount) {
-            doSetProperty("producerCount", producerCount);
-            return this;
-        }
-        /**
-         * Sets the number of producers used for this endpoint.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: producer
-         * 
-         * @param producerCount the value to set
-         * @return the dsl builder
-         */
-        default SjmsEndpointProducerBuilder producerCount(String producerCount) {
-            doSetProperty("producerCount", producerCount);
-            return this;
-        }
-        /**
-         * Flag used to adjust the Time To Live value of produced messages.
+         * When sending messages, specifies the time-to-live of the message (in
+         * milliseconds).
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
          * 
-         * @param ttl the value to set
+         * @param timeToLive the value to set
          * @return the dsl builder
          */
-        default SjmsEndpointProducerBuilder ttl(long ttl) {
-            doSetProperty("ttl", ttl);
+        default SjmsEndpointProducerBuilder timeToLive(long timeToLive) {
+            doSetProperty("timeToLive", timeToLive);
             return this;
         }
         /**
-         * Flag used to adjust the Time To Live value of produced messages.
+         * When sending messages, specifies the time-to-live of the message (in
+         * milliseconds).
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
          * Default: -1
          * Group: producer
          * 
-         * @param ttl the value to set
+         * @param timeToLive the value to set
          * @return the dsl builder
          */
-        default SjmsEndpointProducerBuilder ttl(String ttl) {
-            doSetProperty("ttl", ttl);
+        default SjmsEndpointProducerBuilder timeToLive(String timeToLive) {
+            doSetProperty("timeToLive", timeToLive);
             return this;
         }
         /**
@@ -1369,75 +1629,6 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to prefill the producer connection pool on startup, or create
-         * connections lazy when needed.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         * 
-         * @param prefillPool the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjmsEndpointProducerBuilder prefillPool(
-                boolean prefillPool) {
-            doSetProperty("prefillPool", prefillPool);
-            return this;
-        }
-        /**
-         * Whether to prefill the producer connection pool on startup, or create
-         * connections lazy when needed.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: producer (advanced)
-         * 
-         * @param prefillPool the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjmsEndpointProducerBuilder prefillPool(
-                String prefillPool) {
-            doSetProperty("prefillPool", prefillPool);
-            return this;
-        }
-        /**
-         * Sets the amount of time we should wait before timing out a InOut
-         * response.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 5s
-         * Group: producer (advanced)
-         * 
-         * @param responseTimeOut the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjmsEndpointProducerBuilder responseTimeOut(
-                long responseTimeOut) {
-            doSetProperty("responseTimeOut", responseTimeOut);
-            return this;
-        }
-        /**
-         * Sets the amount of time we should wait before timing out a InOut
-         * response.
-         * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 5s
-         * Group: producer (advanced)
-         * 
-         * @param responseTimeOut the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjmsEndpointProducerBuilder responseTimeOut(
-                String responseTimeOut) {
-            doSetProperty("responseTimeOut", responseTimeOut);
-            return this;
-        }
-        /**
          * Whether to startup the consumer message listener asynchronously, when
          * starting a route. For example if a JmsConsumer cannot get a
          * connection to a remote JMS broker, then it may block while retrying
@@ -1533,6 +1724,7 @@ public interface SjmsEndpointBuilderFactory {
          * @param connectionCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedSjmsEndpointProducerBuilder connectionCount(
                 Integer connectionCount) {
             doSetProperty("connectionCount", connectionCount);
@@ -1549,6 +1741,7 @@ public interface SjmsEndpointBuilderFactory {
          * @param connectionCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedSjmsEndpointProducerBuilder connectionCount(
                 String connectionCount) {
             doSetProperty("connectionCount", connectionCount);
@@ -1972,6 +2165,66 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether Camel ignores the JMSReplyTo header in messages. If
+         * true, Camel does not send a reply back to the destination specified
+         * in the JMSReplyTo header. You can use this option if you want Camel
+         * to consume from a route and you do not want Camel to automatically
+         * send back a reply message because another component in your code
+         * handles the reply message. You can also use this option if you want
+         * to use Camel as a proxy between different message brokers and you
+         * want to route message from one system to another.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disableReplyTo the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointBuilder disableReplyTo(boolean disableReplyTo) {
+            doSetProperty("disableReplyTo", disableReplyTo);
+            return this;
+        }
+        /**
+         * Specifies whether Camel ignores the JMSReplyTo header in messages. If
+         * true, Camel does not send a reply back to the destination specified
+         * in the JMSReplyTo header. You can use this option if you want Camel
+         * to consume from a route and you do not want Camel to automatically
+         * send back a reply message because another component in your code
+         * handles the reply message. You can also use this option if you want
+         * to use Camel as a proxy between different message brokers and you
+         * want to route message from one system to another.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param disableReplyTo the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointBuilder disableReplyTo(String disableReplyTo) {
+            doSetProperty("disableReplyTo", disableReplyTo);
+            return this;
+        }
+        /**
+         * Provides an explicit ReplyTo destination (overrides any incoming
+         * value of Message.getJMSReplyTo() in consumer).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param replyTo the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointBuilder replyTo(String replyTo) {
+            doSetProperty("replyTo", replyTo);
+            return this;
+        }
+        /**
          * Specifies whether to use transacted mode.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2142,6 +2395,7 @@ public interface SjmsEndpointBuilderFactory {
          * @param connectionCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedSjmsEndpointBuilder connectionCount(
                 Integer connectionCount) {
             doSetProperty("connectionCount", connectionCount);
@@ -2158,6 +2412,7 @@ public interface SjmsEndpointBuilderFactory {
          * @param connectionCount the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default AdvancedSjmsEndpointBuilder connectionCount(
                 String connectionCount) {
             doSetProperty("connectionCount", connectionCount);

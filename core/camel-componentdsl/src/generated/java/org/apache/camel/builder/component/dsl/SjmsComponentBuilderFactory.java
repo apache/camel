@@ -307,22 +307,6 @@ public interface SjmsComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom TimedTaskManager.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.taskmanager.TimedTaskManager&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param timedTaskManager the value to set
-         * @return the dsl builder
-         */
-        default SjmsComponentBuilder timedTaskManager(
-                org.apache.camel.component.sjms.taskmanager.TimedTaskManager timedTaskManager) {
-            doSetProperty("timedTaskManager", timedTaskManager);
-            return this;
-        }
-        /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * header to and from Camel message.
          * 
@@ -422,7 +406,6 @@ public interface SjmsComponentBuilderFactory {
             case "destinationCreationStrategy": ((SjmsComponent) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
             case "jmsKeyFormatStrategy": ((SjmsComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
             case "messageCreatedStrategy": ((SjmsComponent) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
-            case "timedTaskManager": ((SjmsComponent) component).setTimedTaskManager((org.apache.camel.component.sjms.taskmanager.TimedTaskManager) value); return true;
             case "headerFilterStrategy": ((SjmsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "connectionPassword": ((SjmsComponent) component).setConnectionPassword((java.lang.String) value); return true;
             case "connectionUsername": ((SjmsComponent) component).setConnectionUsername((java.lang.String) value); return true;

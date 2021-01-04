@@ -75,7 +75,7 @@ public class ReconnectInOutProducerTest extends JmsTestSupport {
             public void configure() {
                 from("direct:start")
                         .to("log:" + TEST_DESTINATION_NAME + ".in.log.1?showBody=true")
-                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?namedReplyTo="
+                        .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?replyTo="
                                                    + TEST_DESTINATION_NAME + ".response")
                         .to("log:" + TEST_DESTINATION_NAME + ".out.log.1?showBody=true");
             }

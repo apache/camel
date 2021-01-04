@@ -55,8 +55,6 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "reconnectBackOff": target.setReconnectBackOff(property(camelContext, long.class, value)); return true;
         case "reconnectonerror":
         case "reconnectOnError": target.setReconnectOnError(property(camelContext, boolean.class, value)); return true;
-        case "timedtaskmanager":
-        case "timedTaskManager": target.setTimedTaskManager(property(camelContext, org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class, value)); return true;
         case "transactioncommitstrategy":
         case "transactionCommitStrategy": target.setTransactionCommitStrategy(property(camelContext, org.apache.camel.component.sjms.TransactionCommitStrategy.class, value)); return true;
         default: return false;
@@ -105,8 +103,6 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "reconnectBackOff": return long.class;
         case "reconnectonerror":
         case "reconnectOnError": return boolean.class;
-        case "timedtaskmanager":
-        case "timedTaskManager": return org.apache.camel.component.sjms.taskmanager.TimedTaskManager.class;
         case "transactioncommitstrategy":
         case "transactionCommitStrategy": return org.apache.camel.component.sjms.TransactionCommitStrategy.class;
         default: return null;
@@ -151,8 +147,6 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "reconnectBackOff": return target.getReconnectBackOff();
         case "reconnectonerror":
         case "reconnectOnError": return target.isReconnectOnError();
-        case "timedtaskmanager":
-        case "timedTaskManager": return target.getTimedTaskManager();
         case "transactioncommitstrategy":
         case "transactionCommitStrategy": return target.getTransactionCommitStrategy();
         default: return null;

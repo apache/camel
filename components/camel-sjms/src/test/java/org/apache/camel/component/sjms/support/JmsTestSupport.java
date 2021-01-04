@@ -97,8 +97,13 @@ public class JmsTestSupport extends CamelTestSupport {
         }
     }
 
+    @Override
+    protected boolean useJmx() {
+        return false;
+    }
+
     protected void configureBroker(BrokerService broker) throws Exception {
-        broker.setUseJmx(true);
+        broker.setUseJmx(false);
         broker.setPersistent(false);
         broker.deleteAllMessages();
         broker.addConnector(brokerUri);

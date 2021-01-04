@@ -38,7 +38,7 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
 
     protected void runTest(
             String destinationName, int routeCount, int messageCount, int totalRedeliverdFalse, int totalRedeliveredTrue,
-            int batchCount, int consumerCount, int maxAttemptsCount)
+            int consumerCount, int maxAttemptsCount)
             throws Exception {
         // The CountDownLatch is used to make our final assertions await
         // unit all the messages have been processed. It is also
@@ -48,7 +48,7 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
 
         for (int i = 1; i <= routeCount; i++) {
             // We add a route here so we can pass our latch into it.
-            addRoute(destinationName, i, batchCount, consumerCount, maxAttemptsCount, latch);
+            addRoute(destinationName, i, consumerCount, maxAttemptsCount, latch);
             // Create mock endpoints for the before and after
             getMockEndpoint("mock:test.before." + i).expectedMessageCount(totalRedeliverdFalse);
             getMockEndpoint("mock:test.after." + i).expectedMessageCount(totalRedeliveredTrue);
@@ -89,7 +89,7 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
     }
 
     protected void addRoute(
-            final String destinationName, final int routeNumber, final int batchCount, final int consumerCount,
+            final String destinationName, final int routeNumber, final int consumerCount,
             final int maxAttemptsCount, final CountDownLatch latch)
             throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -103,7 +103,7 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
                 }
 
                 // Our test consumer route
-                from(destinationName + "?transacted=true&transactionBatchCount=" + batchCount + "&consumerCount="
+                from(destinationName + "?transacted=true&consumerCount="
                      + consumerCount)
                              .id("consumer.route." + routeNumber)
                              // first consume all the messages that are not redelivered

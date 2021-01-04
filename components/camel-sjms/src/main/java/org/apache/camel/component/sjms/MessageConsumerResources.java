@@ -20,6 +20,7 @@ import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 
+@Deprecated
 public class MessageConsumerResources {
 
     private final Session session;

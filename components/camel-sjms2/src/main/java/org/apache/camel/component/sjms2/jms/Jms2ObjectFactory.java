@@ -171,14 +171,24 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
         }
     }
 
+    public MessageProducer createMessageProducer(Session session, Endpoint endpoint) throws Exception {
+        Sjms2Endpoint sjms2Endpoint = (Sjms2Endpoint) endpoint;
+        return createMessageProducer(session, endpoint, sjms2Endpoint.getDestinationName());
+    }
+
     @Override
-    public MessageProducer createMessageProducer(Session session, Endpoint endpoint)
+    public MessageProducer createMessageProducer(Session session, Endpoint endpoint, String destinationName)
             throws Exception {
         Sjms2Endpoint sjms2Endpoint = (Sjms2Endpoint) endpoint;
         Destination destination = sjms2Endpoint.getDestinationCreationStrategy().createDestination(session,
-                sjms2Endpoint.getDestinationName(), sjms2Endpoint.isTopic());
+                destinationName, sjms2Endpoint.isTopic());
 
-        return createMessageProducer(session, destination, sjms2Endpoint.isPersistent(), sjms2Endpoint.getTtl());
+        boolean persistent = sjms2Endpoint.isDeliveryPersistent();
+        if (sjms2Endpoint.getDeliveryMode() != null) {
+            persistent = DeliveryMode.PERSISTENT == sjms2Endpoint.getDeliveryMode();
+        }
+
+        return createMessageProducer(session, destination, persistent, sjms2Endpoint.getTimeToLive());
     }
 
     @Override

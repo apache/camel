@@ -69,7 +69,7 @@ public class AsyncConsumerInOutTest extends CamelTestSupport {
                         .choice()
                         .when(body().contains("Camel"))
                         .to("async:camel?delay=2000")
-                        .to(ExchangePattern.InOut, "sjms:queue:in.out.test?namedReplyTo=response.queue&synchronous=false")
+                        .to(ExchangePattern.InOut, "sjms:queue:in.out.test?replyTo=response.queue&synchronous=false")
                         .to("mock:result")
                         .otherwise()
                         .to("log:other")

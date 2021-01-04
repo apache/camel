@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.tx;
 
+import javax.jms.Connection;
 import javax.jms.Session;
 
 import org.apache.camel.Exchange;
@@ -32,11 +33,16 @@ import org.slf4j.LoggerFactory;
 public class SessionTransactionSynchronization extends SynchronizationAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(SessionTransactionSynchronization.class);
 
+    private final Connection connection;
     private final Session session;
     private final TransactionCommitStrategy commitStrategy;
+    private final boolean close;
 
-    public SessionTransactionSynchronization(Session session, TransactionCommitStrategy commitStrategy) {
+    public SessionTransactionSynchronization(Connection connection, Session session, TransactionCommitStrategy commitStrategy,
+                                             boolean close) {
+        this.connection = connection;
         this.session = session;
+        this.close = close;
         if (commitStrategy == null) {
             this.commitStrategy = new DefaultTransactionCommitStrategy();
         } else {
@@ -56,6 +62,11 @@ public class SessionTransactionSynchronization extends SynchronizationAdapter {
         } catch (Exception e) {
             LOG.warn("Failed to rollback the JMS session: {}", e.getMessage());
         }
+
+        if (close) {
+            close(session);
+            close(connection);
+        }
     }
 
     @Override
@@ -71,6 +82,11 @@ public class SessionTransactionSynchronization extends SynchronizationAdapter {
             LOG.warn("Failed to commit the JMS session: {}", e.getMessage());
             exchange.setException(e);
         }
+
+        if (close) {
+            close(session);
+            close(connection);
+        }
     }
 
     @Override
@@ -78,4 +94,25 @@ public class SessionTransactionSynchronization extends SynchronizationAdapter {
         // must not handover as we should be synchronous
         return false;
     }
+
+    private static void close(Connection con) {
+        if (con != null) {
+            try {
+                con.close();
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
+    }
+
+    private static void close(Session session) {
+        if (session != null) {
+            try {
+                session.close();
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
+    }
+
 }

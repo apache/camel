@@ -297,7 +297,6 @@
 ** xref:servlet-component.adoc[Servlet]
 ** xref:sftp-component.adoc[SFTP]
 ** xref:sjms-component.adoc[Simple JMS]
-** xref:sjms-batch-component.adoc[Simple JMS Batch]
 ** xref:sjms2-component.adoc[Simple JMS2]
 ** xref:sip-component.adoc[SIP]
 ** xref:slack-component.adoc[Slack]

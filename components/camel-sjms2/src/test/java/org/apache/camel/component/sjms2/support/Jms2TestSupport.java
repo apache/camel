@@ -61,13 +61,11 @@ public class Jms2TestSupport extends CamelTestSupport {
     private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
 
-    /**
-     * Set up the Broker
-     *
-     * @see              CamelTestSupport#doPreSetup()
-     *
-     * @throws Exception
-     */
+    @Override
+    protected boolean useJmx() {
+        return false;
+    }
+
     @Override
     protected void doPreSetup() throws Exception {
         broker = new EmbeddedActiveMQ();

@@ -28,7 +28,7 @@ import static org.apache.camel.test.junit5.TestSupport.body;
 
 /**
  * Integration test that verifies the ability of SJMS to correctly process asynchronous InOut exchanges from both the
- * Producer and Consumer perspective using a namedReplyTo destination.
+ * Producer and Consumer perspective using a replyTo destination.
  */
 public class AsyncJmsInOutIT extends JmsTestSupport {
 
@@ -57,7 +57,7 @@ public class AsyncJmsInOutIT extends JmsTestSupport {
             public void configure() throws Exception {
 
                 from("seda:start")
-                        .to("sjms:queue:in.foo?synchronous=false&namedReplyTo=out.bar&exchangePattern=InOut")
+                        .to("sjms:queue:in.foo?synchronous=false&replyTo=out.bar&exchangePattern=InOut")
                         .to("mock:result");
 
                 from("sjms:queue:in.foo?synchronous=false&exchangePattern=InOut")

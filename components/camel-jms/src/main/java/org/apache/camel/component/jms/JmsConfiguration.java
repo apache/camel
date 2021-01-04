@@ -247,7 +247,7 @@ public class JmsConfiguration implements Cloneable {
                             + "the timestamp must be set to its normal value.")
     private boolean messageTimestampEnabled = true;
     @UriParam(defaultValue = "" + Message.DEFAULT_PRIORITY, enums = "1,2,3,4,5,6,7,8,9", label = "producer",
-              description = "Values greater than 1 specify the message priority when sending (where 0 is the lowest priority and 9 is the highest)."
+              description = "Values greater than 1 specify the message priority when sending (where 1 is the lowest priority and 9 is the highest)."
                             + " The explicitQosEnabled option must also be enabled in order for this option to have any effect.")
     private int priority = Message.DEFAULT_PRIORITY;
     // Transaction related configuration

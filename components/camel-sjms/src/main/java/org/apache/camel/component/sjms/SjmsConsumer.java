@@ -41,10 +41,7 @@ import org.apache.camel.component.sjms.consumer.AbstractMessageHandler;
 import org.apache.camel.component.sjms.consumer.InOnlyMessageHandler;
 import org.apache.camel.component.sjms.consumer.InOutMessageHandler;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
-import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
-import org.apache.camel.component.sjms.tx.BatchTransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
-import org.apache.camel.component.sjms.tx.SessionBatchTransactionSynchronization;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
@@ -225,24 +222,14 @@ public class SjmsConsumer extends DefaultConsumer {
      * @return         the listener
      */
     protected MessageListener createMessageHandler(Session session) {
-
         TransactionCommitStrategy commitStrategy;
         if (getTransactionCommitStrategy() != null) {
             commitStrategy = getTransactionCommitStrategy();
-        } else if (getTransactionBatchCount() > 0) {
-            commitStrategy = new BatchTransactionCommitStrategy(getTransactionBatchCount());
         } else {
             commitStrategy = new DefaultTransactionCommitStrategy();
         }
 
-        Synchronization synchronization;
-        if (commitStrategy instanceof BatchTransactionCommitStrategy) {
-            TimedTaskManager timedTaskManager = getEndpoint().getComponent().getTimedTaskManager();
-            synchronization = new SessionBatchTransactionSynchronization(
-                    timedTaskManager, session, commitStrategy, getTransactionBatchTimeout());
-        } else {
-            synchronization = new SessionTransactionSynchronization(session, commitStrategy);
-        }
+        Synchronization synchronization = new SessionTransactionSynchronization(null, session, commitStrategy, false);
 
         AbstractMessageHandler messageHandler;
         if (getEndpoint().getExchangePattern().equals(ExchangePattern.InOnly)) {
@@ -365,24 +352,6 @@ public class SjmsConsumer extends DefaultConsumer {
      */
     public TransactionCommitStrategy getTransactionCommitStrategy() {
         return getEndpoint().getTransactionCommitStrategy();
-    }
-
-    /**
-     * If transacted, returns the nubmer of messages to be processed before committing the transaction.
-     *
-     * @return the transactionBatchCount
-     */
-    public int getTransactionBatchCount() {
-        return getEndpoint().getTransactionBatchCount();
-    }
-
-    /**
-     * Returns the timeout value for batch transactions.
-     *
-     * @return long
-     */
-    public long getTransactionBatchTimeout() {
-        return getEndpoint().getTransactionBatchTimeout();
     }
 
     private boolean refillPool(BackOffTimer.Task task) {

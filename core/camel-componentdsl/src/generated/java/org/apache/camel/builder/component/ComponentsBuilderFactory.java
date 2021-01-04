@@ -3975,20 +3975,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SjmsComponentBuilderFactory.sjms();
     }
     /**
-     * Simple JMS Batch (camel-sjms)
-     * Highly performant and transactional batch consumption of messages from a
-     * JMS queue.
-     * 
-     * Category: messaging
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-sjms
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.SjmsBatchComponentBuilderFactory.SjmsBatchComponentBuilder sjmsBatch() {
-        return org.apache.camel.builder.component.dsl.SjmsBatchComponentBuilderFactory.sjmsBatch();
-    }
-    /**
      * Simple JMS2 (camel-sjms2)
      * Send and receive messages to/from a JMS Queue or Topic using plain JMS
      * 2.x API.

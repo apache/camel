@@ -16,24 +16,16 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
-import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
+public class InOnlyTopicDurableConsumerTest extends JmsTestSupport {
 
     private static final String CONNECTION_ID = "test-connection-1";
-    private static final String BROKER_URI = "vm://durable.broker?broker.persistent=false&broker.useJmx=false";
-
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
 
     @Test
     public void testDurableTopic() throws Exception {
@@ -51,24 +43,12 @@ public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    /*
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(BROKER_URI);
-        ConnectionFactoryResource connectionResource = new ConnectionFactoryResource();
-        connectionResource.setConnectionFactory(connectionFactory);
-        connectionResource.setClientId(CONNECTION_ID);
-        CamelContext camelContext = super.createCamelContext();
-        SjmsComponent component = new SjmsComponent();
-        component.setConnectionResource(connectionResource);
-        component.setConnectionCount(1);
-        camelContext.addComponent("sjms", component);
-        return camelContext;
+        CamelContext context = super.createCamelContext();
+        SjmsComponent sjms = context.getComponent("sjms", SjmsComponent.class);
+        sjms.setConnectionClientId(CONNECTION_ID);
+        return context;
     }
 
     @Override

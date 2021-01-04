@@ -3039,7 +3039,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * Values greater than 1 specify the message priority when sending
-         * (where 0 is the lowest priority and 9 is the highest). The
+         * (where 1 is the lowest priority and 9 is the highest). The
          * explicitQosEnabled option must also be enabled in order for this
          * option to have any effect.
          * 
@@ -3057,7 +3057,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * Values greater than 1 specify the message priority when sending
-         * (where 0 is the lowest priority and 9 is the highest). The
+         * (where 1 is the lowest priority and 9 is the highest). The
          * explicitQosEnabled option must also be enabled in order for this
          * option to have any effect.
          * 

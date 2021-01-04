@@ -14,42 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms.jms;
+package org.apache.camel.component.sjms;
 
-import org.apache.camel.RuntimeCamelException;
+import javax.jms.Session;
 
-/**
- * IllegalHeaderException is thrown if a header is detected that doesn't meet the JMS standard.
- */
-public class IllegalHeaderException extends RuntimeCamelException {
+@FunctionalInterface
+public interface SessionCallback<T> {
 
-    private static final long serialVersionUID = 3136304415267471091L;
-
-    /**
-     */
-    public IllegalHeaderException() {
-    }
-
-    /**
-     * @param message
-     * @param cause
-     */
-    public IllegalHeaderException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    /**
-     * @param message
-     */
-    public IllegalHeaderException(String message) {
-        super(message);
-    }
-
-    /**
-     * @param cause
-     */
-    public IllegalHeaderException(Throwable cause) {
-        super(cause);
-    }
-
+    T doInJms(Session session) throws Exception;
 }

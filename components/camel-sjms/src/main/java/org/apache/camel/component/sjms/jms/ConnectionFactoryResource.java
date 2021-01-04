@@ -27,6 +27,7 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 /**
  * The default {@link ConnectionResource} implementation for the SJMSComponent.
  */
+@Deprecated
 public class ConnectionFactoryResource extends BasePoolableObjectFactory<Connection> implements ConnectionResource {
 
     private static final long DEFAULT_WAIT_TIMEOUT = 5 * 1000;

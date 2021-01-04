@@ -22,19 +22,24 @@ import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.sjms.MessageProducerResources;
 import org.apache.camel.component.sjms.SjmsProducer;
 import org.apache.camel.component.sjms.TransactionCommitStrategy;
+import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.sjms.jms.JmsMessageHelper.isTopicPrefix;
 
 /**
  * A Camel Producer that provides the InOnly Exchange pattern.
  */
 public class InOnlyProducer extends SjmsProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(InOnlyProducer.class);
 
     public InOnlyProducer(final Endpoint endpoint) {
         super(endpoint);
@@ -49,45 +54,91 @@ public class InOnlyProducer extends SjmsProducer {
     }
 
     @Override
-    public void sendMessage(
-            final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer,
-            final ReleaseProducerCallback releaseProducerCallback) {
+    protected void sendMessage(Exchange exchange, Session session, String destinationName) {
         try {
-            Message message = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
-            producer.getMessageProducer().send(message);
-        } catch (Exception e) {
-            exchange.setException(new CamelExchangeException("Unable to complete sending the JMS message", exchange, e));
-        } finally {
-            releaseProducerCallback.release(producer);
-            callback.done(isSynchronous());
-        }
-    }
+            template.execute(session, sc -> {
+                MessageProducer producer = null;
+                try {
+                    Message answer = getEndpoint().getBinding().makeJmsMessage(exchange, sc);
 
-    @Override
-    public void sendMessage(Exchange exchange, AsyncCallback callback, Session session, String destinationName) {
-        MessageProducer producer = null;
-        try {
-            Destination destination = resolveDestinationName(session, destinationName);
-            Message message = getEndpoint().getBinding().makeJmsMessage(exchange, session);
-            producer = session.createProducer(destination);
-            producer.send(message);
-        } catch (Exception e) {
-            exchange.setException(new CamelExchangeException("Unable to complete sending the JMS message", exchange, e));
-        } finally {
-            try {
-                if (producer != null) {
-                    producer.close();
+                    // when in InOnly mode the JMSReplyTo is a bit complicated
+                    // we only want to set the JMSReplyTo on the answer if
+                    // there is a JMSReplyTo from the header/endpoint and
+                    // we have been told to preserveMessageQos
+
+                    Object jmsReplyTo = JmsMessageHelper.getJMSReplyTo(answer);
+                    if (getEndpoint().isDisableReplyTo()) {
+                        // honor disable reply to configuration
+                        LOG.trace("ReplyTo is disabled on endpoint: {}", getEndpoint());
+                        JmsMessageHelper.setJMSReplyTo(answer, null);
+                    } else {
+                        // if the binding did not create the reply to then we have to try to create it here
+                        if (jmsReplyTo == null) {
+                            // prefer reply to from header over endpoint configured
+                            jmsReplyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);
+                            if (jmsReplyTo == null) {
+                                jmsReplyTo = getEndpoint().getReplyTo();
+                            }
+                        }
+                    }
+
+                    // we must honor these special flags to preserve QoS
+                    // as we are not OUT capable and thus do not expect a reply, and therefore
+                    // the consumer of this message should not return a reply so we remove it
+                    // unless we use preserveMessageQos=true to tell that we still want to use JMSReplyTo
+                    if (jmsReplyTo != null && !(getEndpoint().isPreserveMessageQos() || getEndpoint().isExplicitQosEnabled())) {
+                        // log at debug what we are doing, as higher level may cause noise in production logs
+                        // this behavior is also documented at the camel website
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug(
+                                    "Disabling JMSReplyTo: {} for destination: {}. Use preserveMessageQos=true to force Camel to keep the JMSReplyTo on endpoint: {}",
+                                    new Object[] { jmsReplyTo, destinationName, getEndpoint() });
+                        }
+                        jmsReplyTo = null;
+                    }
+
+                    // the reply to is a String, so we need to look up its Destination instance
+                    // and if needed create the destination using the session if needed to
+                    if (jmsReplyTo instanceof String) {
+                        String replyTo = (String) jmsReplyTo;
+                        // we need to null it as we use the String to resolve it as a Destination instance
+                        jmsReplyTo = resolveOrCreateDestination(replyTo, sc);
+                    }
+
+                    // set the JMSReplyTo on the answer if we are to use it
+                    Destination replyTo = null;
+                    String replyToOverride = getEndpoint().getReplyToOverride();
+                    if (replyToOverride != null) {
+                        replyTo = resolveOrCreateDestination(replyToOverride, sc);
+                    } else if (jmsReplyTo instanceof Destination) {
+                        replyTo = (Destination) jmsReplyTo;
+                    }
+                    if (replyTo != null) {
+                        LOG.debug("Using JMSReplyTo destination: {}", replyTo);
+                        JmsMessageHelper.setJMSReplyTo(answer, replyTo);
+                    } else {
+                        // do not use JMSReplyTo
+                        LOG.trace("Not using JMSReplyTo");
+                        JmsMessageHelper.setJMSReplyTo(answer, null);
+                    }
+
+                    producer = getEndpoint().getJmsObjectFactory().createMessageProducer(sc, getEndpoint(), destinationName);
+                    template.send(producer, answer);
+                } finally {
+                    close(producer);
                 }
-            } catch (Throwable e) {
-                // ignore
-            }
-            callback.done(isSynchronous());
+                return null;
+            });
+        } catch (Exception e) {
+            exchange.setException(new CamelExchangeException("Unable to complete sending the JMS message", exchange, e));
         }
     }
 
-    protected Destination resolveDestinationName(Session session, String destinationName) throws JMSException {
-        return getEndpoint().getDestinationCreationStrategy().createDestination(session,
-                destinationName, getEndpoint().isTopic());
+    protected Destination resolveOrCreateDestination(String destinationName, Session session)
+            throws JMSException {
+        boolean isPubSub = isTopicPrefix(destinationName)
+                || (!JmsMessageHelper.isQueuePrefix(destinationName) && getEndpoint().isTopic());
+        return getEndpoint().getDestinationCreationStrategy().createDestination(session, destinationName, isPubSub);
     }
 
 }

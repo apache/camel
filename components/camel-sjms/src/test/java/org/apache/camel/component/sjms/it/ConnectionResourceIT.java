@@ -97,7 +97,7 @@ public class ConnectionResourceIT extends JmsTestSupport {
             public void configure() throws Exception {
 
                 from("seda:start")
-                        .to("sjms:queue:in.foo?namedReplyTo=out.bar&exchangePattern=InOut&producerCount=5")
+                        .to("sjms:queue:in.foo?replyTo=out.bar&exchangePattern=InOut")
                         .to("mock:result");
 
                 from("sjms:queue:in.foo?exchangePattern=InOut&consumerCount=20")

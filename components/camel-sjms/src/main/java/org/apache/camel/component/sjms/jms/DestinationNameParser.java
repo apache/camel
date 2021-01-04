@@ -28,13 +28,13 @@ public final class DestinationNameParser {
         return destinationName.startsWith("topic:");
     }
 
-    public static boolean isNamedReplyToTopic(String namedReplyTo, boolean isDestinationTopic) {
-        if (namedReplyTo == null) {
-            throw new IllegalArgumentException("namedReplyTo is null");
+    public static boolean isReplyToTopic(String replyTo, boolean isDestinationTopic) {
+        if (replyTo == null) {
+            throw new IllegalArgumentException("replyTo is null");
         }
-        if (namedReplyTo.startsWith("topic:")) {
+        if (replyTo.startsWith("topic:")) {
             return true;
-        } else if (namedReplyTo.startsWith("queue:")) {
+        } else if (replyTo.startsWith("queue:")) {
             return false;
         } else {
             return isDestinationTopic;

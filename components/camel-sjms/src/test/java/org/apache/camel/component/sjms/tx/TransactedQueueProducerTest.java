@@ -36,14 +36,6 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
     @Produce
     protected ProducerTemplate template;
 
-    public TransactedQueueProducerTest() {
-    }
-
-    @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
     @Test
     public void testRoute() throws Exception {
 
@@ -61,11 +53,6 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
         mock.assertIsSatisfied();
     }
 
-    /*
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createCamelContext()
-     * @return
-     * @throws Exception
-     */
     @Override
     protected CamelContext createCamelContext() throws Exception {
         ActiveMQConnectionFactory connectionFactory
@@ -77,11 +64,6 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
         return camelContext;
     }
 
-    /*
-     * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
-     * @return
-     * @throws Exception
-     */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

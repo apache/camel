@@ -30,6 +30,7 @@ import javax.jms.ConnectionFactory;
  * {@link ConnectionFactoryResource) implementation that is provided with SJMS as it is optimized for this component.
  * </p>
  */
+@Deprecated
 public interface ConnectionResource {
 
     /**
