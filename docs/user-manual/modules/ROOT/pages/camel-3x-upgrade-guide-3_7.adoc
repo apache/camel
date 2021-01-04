@@ -168,8 +168,8 @@ Login must be done using the `oauthToken` option.
 
 === Camel-AWS2-S3 Autowire support
 
-The camel-aws2-s3 has now support for autowiring the amazonS3Client option with S3Client instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-s3 now has support for autowiring the amazonS3Client option with a S3Client instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-S3 UseIamCredentials
 
@@ -177,79 +177,79 @@ The option useIamCredentials has been renamed to useDefaultCredentialsProvider, 
 
 === Camel-AWS2-Cloudwatch Autowire support
 
-The camel-aws2-cw has now support for autowiring the amazonCwClient option with CloudWatchClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-cw now has support for autowiring the amazonCwClient option with a CloudWatchClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-DDB Autowire support
 
-The camel-aws2-ddb has now support for autowiring the amazonDDBClient option with DynamoDbClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-ddb now has support for autowiring the amazonDDBClient option with a DynamoDbClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
-The camel-aws2-ddbstreams has now support for autowiring the amazonDynamoDbStreamsClient option with DynamoDbStreamsClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-ddbstreams now has support for autowiring the amazonDynamoDbStreamsClient option with a DynamoDbStreamsClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-EC2 Autowire support
 
-The camel-aws2-ec2 has now support for autowiring the amazonEc2Client option with Ec2Client instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-ec2 now has support for autowiring the amazonEc2Client option with a Ec2Client instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-ECS Autowire support
 
-The camel-aws2-ecs has now support for autowiring the ecsClient option with EcsClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-ecs now has support for autowiring the ecsClient option with a EcsClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-EKS Autowire support
 
-The camel-aws2-eks has now support for autowiring the eksClient option with EksClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-eks now has support for autowiring the eksClient option with a EksClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-Eventbridge Autowire support
 
-The camel-aws2-eventbridge has now support for autowiring the eventBridgeClient option with EventBridgeClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-eventbridge now has support for autowiring the eventBridgeClient option with a EventBridgeClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-IAM Autowire support
 
-The camel-aws2-iam has now support for autowiring the iamClient option with IamClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-iam now has support for autowiring the iamClient option with a IamClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-Kinesis Autowire support
 
-The camel-aws2-kinesis has now support for autowiring the amazonKinesisClient option with KinesisClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-kinesis now has support for autowiring the amazonKinesisClient option with a KinesisClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
-The camel-aws2-kinesis-firehose has now support for autowiring the amazonKinesisFirehoseClient option with FirehoseClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-kinesis-firehose now has support for autowiring the amazonKinesisFirehoseClient option with a FirehoseClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-KMS Autowire support
 
-The camel-aws2-kms has now support for autowiring the awsLambdaClient option with LambdaClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-kms now has support for autowiring the awsLambdaClient option with a LambdaClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-Lambda Autowire support
 
-The camel-aws2-kms has now support for autowiring the kmsClient option with KmsClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-kms now has support for autowiring the kmsClient option with a KmsClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-MQ Autowire support
 
-The camel-aws2-mq has now support for autowiring the amazonMqClient option with MqClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-mq now has support for autowiring the amazonMqClient option with a MqClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-MSK Autowire support
 
-The camel-aws2-msk has now support for autowiring the mskClient option with KafkaClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-msk now has support for autowiring the mskClient option with a KafkaClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-SES Autowire support
 
-The camel-aws2-ses has now support for autowiring the amazonSESClient option with SesClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-ses now has support for autowiring the amazonSESClient option with a SesClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-SNS Autowire support
 
-The camel-aws2-sns has now support for autowiring the amazonSNSClient option with SnsClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-sns now has support for autowiring the amazonSNSClient option with a SnsClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-SNS UseIamCredentials
 
@@ -257,8 +257,8 @@ The option useIamCredentials has been renamed to useDefaultCredentialsProvider, 
 
 === Camel-AWS2-SQS Autowire support
 
-The camel-aws2-sqs has now support for autowiring the amazonSQSClient option with SqsClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-sqs now has support for autowiring the amazonSQSClient option with a SqsClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-SQS UseIamCredentials
 
@@ -266,18 +266,18 @@ The option useIamCredentials has been renamed to useDefaultCredentialsProvider, 
 
 === Camel-AWS2-STS Autowire support
 
-The camel-aws2-sts has now support for autowiring the stsClient option with StsClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-sts now has support for autowiring the stsClient option with a StsClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-Translate Autowire support
 
-The camel-aws2-translate has now support for autowiring the translateClient option with TranslateClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-translate now has support for autowiring the translateClient option with a TranslateClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === Camel-AWS2-Athena Autowire support
 
-The camel-aws2-athena has now support for autowiring the amazonAthenaClient option with AthenaClient instance coming from the registry.
-In this context, it wasn't having any sense to maintain the autodiscoverClient option, which has been removed.
+The camel-aws2-athena now has support for autowiring the amazonAthenaClient option with a AthenaClient instance coming from the registry.
+In this context, it wasn't making sense to maintain the autodiscoverClient option, which has been removed.
 
 === camel-salesforce
 
