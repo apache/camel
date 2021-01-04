@@ -25,10 +25,14 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "acknowledgementMode": target.setAcknowledgementMode(property(camelContext, org.apache.camel.component.sjms.jms.SessionAcknowledgementType.class, value)); return true;
         case "allownullbody":
         case "allowNullBody": target.setAllowNullBody(property(camelContext, boolean.class, value)); return true;
+        case "asyncconsumer":
+        case "asyncConsumer": target.setAsyncConsumer(property(camelContext, boolean.class, value)); return true;
         case "asyncstartlistener":
         case "asyncStartListener": target.setAsyncStartListener(property(camelContext, boolean.class, value)); return true;
         case "asyncstoplistener":
         case "asyncStopListener": target.setAsyncStopListener(property(camelContext, boolean.class, value)); return true;
+        case "autostartup":
+        case "autoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "connectioncount":
@@ -47,8 +51,14 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "destinationCreationStrategy": target.setDestinationCreationStrategy(property(camelContext, org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class, value)); return true;
         case "disablereplyto":
         case "disableReplyTo": target.setDisableReplyTo(property(camelContext, boolean.class, value)); return true;
+        case "disabletimetolive":
+        case "disableTimeToLive": target.setDisableTimeToLive(property(camelContext, boolean.class, value)); return true;
         case "durablesubscriptionid":
         case "durableSubscriptionId": target.setDurableSubscriptionId(property(camelContext, java.lang.String.class, value)); return true;
+        case "eagerloadingofproperties":
+        case "eagerLoadingOfProperties": target.setEagerLoadingOfProperties(property(camelContext, boolean.class, value)); return true;
+        case "eagerpoisonbody":
+        case "eagerPoisonBody": target.setEagerPoisonBody(property(camelContext, java.lang.String.class, value)); return true;
         case "errorhandlerlogstacktrace":
         case "errorHandlerLogStackTrace": target.setErrorHandlerLogStackTrace(property(camelContext, boolean.class, value)); return true;
         case "errorhandlerlogginglevel":
@@ -78,26 +88,30 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "preservemessageqos":
         case "preserveMessageQos": target.setPreserveMessageQos(property(camelContext, boolean.class, value)); return true;
         case "priority": target.setPriority(property(camelContext, int.class, value)); return true;
-        case "reconnectbackoff":
-        case "reconnectBackOff": target.setReconnectBackOff(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "reconnectonerror":
-        case "reconnectOnError": target.setReconnectOnError(property(camelContext, boolean.class, value)); return true;
+        case "recoveryinterval":
+        case "recoveryInterval": target.setRecoveryInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "replyto":
         case "replyTo": target.setReplyTo(property(camelContext, java.lang.String.class, value)); return true;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": target.setReplyToDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
         case "replytooverride":
         case "replyToOverride": target.setReplyToOverride(property(camelContext, java.lang.String.class, value)); return true;
+        case "replytosamedestinationallowed":
+        case "replyToSameDestinationAllowed": target.setReplyToSameDestinationAllowed(property(camelContext, boolean.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.setRequestTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sharedjmssession":
         case "sharedJMSSession": target.setSharedJMSSession(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": target.setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
         case "timetolive":
         case "timeToLive": target.setTimeToLive(property(camelContext, long.class, value)); return true;
         case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
         case "transactioncommitstrategy":
         case "transactionCommitStrategy": target.setTransactionCommitStrategy(property(camelContext, org.apache.camel.component.sjms.TransactionCommitStrategy.class, value)); return true;
+        case "transferexception":
+        case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -109,10 +123,14 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "acknowledgementMode": return org.apache.camel.component.sjms.jms.SessionAcknowledgementType.class;
         case "allownullbody":
         case "allowNullBody": return boolean.class;
+        case "asyncconsumer":
+        case "asyncConsumer": return boolean.class;
         case "asyncstartlistener":
         case "asyncStartListener": return boolean.class;
         case "asyncstoplistener":
         case "asyncStopListener": return boolean.class;
+        case "autostartup":
+        case "autoStartup": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "connectioncount":
@@ -131,8 +149,14 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "destinationCreationStrategy": return org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class;
         case "disablereplyto":
         case "disableReplyTo": return boolean.class;
+        case "disabletimetolive":
+        case "disableTimeToLive": return boolean.class;
         case "durablesubscriptionid":
         case "durableSubscriptionId": return java.lang.String.class;
+        case "eagerloadingofproperties":
+        case "eagerLoadingOfProperties": return boolean.class;
+        case "eagerpoisonbody":
+        case "eagerPoisonBody": return java.lang.String.class;
         case "errorhandlerlogstacktrace":
         case "errorHandlerLogStackTrace": return boolean.class;
         case "errorhandlerlogginglevel":
@@ -162,26 +186,30 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "preservemessageqos":
         case "preserveMessageQos": return boolean.class;
         case "priority": return int.class;
-        case "reconnectbackoff":
-        case "reconnectBackOff": return long.class;
-        case "reconnectonerror":
-        case "reconnectOnError": return boolean.class;
+        case "recoveryinterval":
+        case "recoveryInterval": return long.class;
         case "replyto":
         case "replyTo": return java.lang.String.class;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return boolean.class;
         case "replytooverride":
         case "replyToOverride": return java.lang.String.class;
+        case "replytosamedestinationallowed":
+        case "replyToSameDestinationAllowed": return boolean.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
         case "sharedjmssession":
         case "sharedJMSSession": return boolean.class;
         case "synchronous": return boolean.class;
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": return boolean.class;
         case "timetolive":
         case "timeToLive": return long.class;
         case "transacted": return boolean.class;
         case "transactioncommitstrategy":
         case "transactionCommitStrategy": return org.apache.camel.component.sjms.TransactionCommitStrategy.class;
+        case "transferexception":
+        case "transferException": return boolean.class;
         default: return null;
         }
     }
@@ -194,10 +222,14 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "acknowledgementMode": return target.getAcknowledgementMode();
         case "allownullbody":
         case "allowNullBody": return target.isAllowNullBody();
+        case "asyncconsumer":
+        case "asyncConsumer": return target.isAsyncConsumer();
         case "asyncstartlistener":
         case "asyncStartListener": return target.isAsyncStartListener();
         case "asyncstoplistener":
         case "asyncStopListener": return target.isAsyncStopListener();
+        case "autostartup":
+        case "autoStartup": return target.isAutoStartup();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "connectioncount":
@@ -216,8 +248,14 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "destinationCreationStrategy": return target.getDestinationCreationStrategy();
         case "disablereplyto":
         case "disableReplyTo": return target.isDisableReplyTo();
+        case "disabletimetolive":
+        case "disableTimeToLive": return target.isDisableTimeToLive();
         case "durablesubscriptionid":
         case "durableSubscriptionId": return target.getDurableSubscriptionId();
+        case "eagerloadingofproperties":
+        case "eagerLoadingOfProperties": return target.isEagerLoadingOfProperties();
+        case "eagerpoisonbody":
+        case "eagerPoisonBody": return target.getEagerPoisonBody();
         case "errorhandlerlogstacktrace":
         case "errorHandlerLogStackTrace": return target.isErrorHandlerLogStackTrace();
         case "errorhandlerlogginglevel":
@@ -247,26 +285,30 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "preservemessageqos":
         case "preserveMessageQos": return target.isPreserveMessageQos();
         case "priority": return target.getPriority();
-        case "reconnectbackoff":
-        case "reconnectBackOff": return target.getReconnectBackOff();
-        case "reconnectonerror":
-        case "reconnectOnError": return target.isReconnectOnError();
+        case "recoveryinterval":
+        case "recoveryInterval": return target.getRecoveryInterval();
         case "replyto":
         case "replyTo": return target.getReplyTo();
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return target.isReplyToDeliveryPersistent();
         case "replytooverride":
         case "replyToOverride": return target.getReplyToOverride();
+        case "replytosamedestinationallowed":
+        case "replyToSameDestinationAllowed": return target.isReplyToSameDestinationAllowed();
         case "requesttimeout":
         case "requestTimeout": return target.getRequestTimeout();
         case "sharedjmssession":
         case "sharedJMSSession": return target.isSharedJMSSession();
         case "synchronous": return target.isSynchronous();
+        case "testconnectiononstartup":
+        case "testConnectionOnStartup": return target.isTestConnectionOnStartup();
         case "timetolive":
         case "timeToLive": return target.getTimeToLive();
         case "transacted": return target.isTransacted();
         case "transactioncommitstrategy":
         case "transactionCommitStrategy": return target.getTransactionCommitStrategy();
+        case "transferexception":
+        case "transferException": return target.isTransferException();
         default: return null;
         }
     }

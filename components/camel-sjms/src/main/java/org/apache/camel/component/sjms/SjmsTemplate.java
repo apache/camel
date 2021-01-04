@@ -58,6 +58,10 @@ public class SjmsTemplate {
         }
     }
 
+    public void setExplicitQosEnabled(boolean explicitQosEnabled) {
+        this.explicitQosEnabled = explicitQosEnabled;
+    }
+
     public <T> T execute(SessionCallback<T> sessionCallback) throws Exception {
         Connection con = null;
         Session session = null;

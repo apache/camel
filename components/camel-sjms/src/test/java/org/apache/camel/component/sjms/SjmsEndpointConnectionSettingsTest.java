@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.sjms;
 
-import java.util.Random;
-
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -53,17 +51,6 @@ public class SjmsEndpointConnectionSettingsTest extends CamelTestSupport {
         assertTrue(endpoint instanceof SjmsEndpoint);
         SjmsEndpoint qe = (SjmsEndpoint) endpoint;
         assertEquals(connectionResource, qe.getConnectionResource());
-    }
-
-    @Test
-    public void testConnectionCount() {
-        Random random = new Random();
-        int poolSize = random.nextInt(100);
-        Endpoint endpoint = context.getEndpoint("sjms:queue:test?connectionCount=" + poolSize);
-        assertNotNull(endpoint);
-        assertTrue(endpoint instanceof SjmsEndpoint);
-        SjmsEndpoint qe = (SjmsEndpoint) endpoint;
-        assertEquals(poolSize, qe.getConnectionCount());
     }
 
     @Override

@@ -42,6 +42,8 @@ public interface JmsObjectFactory {
 
     MessageProducer createMessageProducer(Session session, Endpoint endpoint, String destinationName) throws Exception;
 
+    MessageProducer createMessageProducer(Session session, Endpoint endpoint, Destination destination) throws Exception;
+
     MessageProducer createMessageProducer(
             Session session, Destination destination,
             boolean persistent, long ttl)

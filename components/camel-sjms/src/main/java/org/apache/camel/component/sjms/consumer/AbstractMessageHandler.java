@@ -36,6 +36,7 @@ import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
 /**
  * Abstract MessageListener
  */
+@Deprecated
 public abstract class AbstractMessageHandler implements MessageListener {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());

@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.sjms;
 
+import java.util.concurrent.ExecutorService;
+
 import javax.jms.ConnectionFactory;
+import javax.jms.DeliveryMode;
 import javax.jms.ExceptionListener;
 import javax.jms.Message;
 import javax.jms.Session;
@@ -32,6 +35,8 @@ import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.sjms.consumer.EndpointMessageListener;
+import org.apache.camel.component.sjms.consumer.SimpleMessageListenerContainer;
 import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
@@ -78,10 +83,6 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriPath(description = "DestinationName is a JMS queue or topic name. By default, the destinationName is interpreted as a queue name.")
     @Metadata(required = true)
     private String destinationName;
-    // TODO: get rid of synchronous true for consumer
-    @UriParam(label = "consumer", defaultValue = "true",
-              description = "Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).")
-    private boolean synchronous = true;
     @UriParam(label = "advanced",
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
@@ -139,6 +140,19 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(defaultValue = "true", label = "consumer",
               description = "Specifies whether to use persistent delivery by default for replies.")
     private boolean replyToDeliveryPersistent = true;
+    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message due to ${exception.message}",
+              description = "If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) is poison (cannot be read/mapped),"
+                            + " then set this text as the message body instead so the message can be processed"
+                            + " (the cause of the poison are already stored as exception on the Exchange)."
+                            + " This can be turned off by setting eagerPoisonBody=false."
+                            + " See also the option eagerLoadingOfProperties.")
+    private String eagerPoisonBody = "Poison JMS message payload: ${exception.message}";
+    @UriParam(label = "consumer,advanced",
+              description = "Enables eager loading of JMS properties and payload as soon as a message is loaded"
+                            + " which generally is inefficient as the JMS properties may not be required"
+                            + " but sometimes can catch early any issues with the underlying JMS provider"
+                            + " and the use of JMS properties. See also the option eagerPoisonBody.")
+    private boolean eagerLoadingOfProperties;
     @UriParam(enums = "1,2", label = "producer",
               description = "Specifies the delivery mode to be used."
                             + " Possible values are those defined by javax.jms.DeliveryMode."
@@ -159,6 +173,12 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(label = "consumer,advanced",
               description = "Sets the JMS Message selector syntax.")
     private String messageSelector;
+    @UriParam(description = "Specifies whether to test the connection on startup."
+                            + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
+                            + " If a connection cannot be granted then Camel throws an exception on startup."
+                            + " This ensures that Camel is not started with failed connections."
+                            + " The JMS producers is tested as well.")
+    private boolean testConnectionOnStartup;
     @UriParam(label = "advanced",
               description = "Whether to startup the consumer message listener asynchronously, when starting a route."
                             + " For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover."
@@ -169,6 +189,13 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(label = "advanced",
               description = "Whether to stop the consumer message listener asynchronously, when stopping a route.")
     private boolean asyncStopListener;
+    @UriParam(label = "consumer", defaultValue = "true",
+              description = "Specifies whether the consumer container should auto-startup.")
+    private boolean autoStartup = true;
+    @UriParam(label = "consumer,advanced",
+              description = "Whether a JMS consumer is allowed to send a reply message to the same destination that the consumer is using to"
+                            + " consume from. This prevents an endless loop by consuming and sending back the same message to itself.")
+    private boolean replyToSameDestinationAllowed;
     @UriParam(label = "producer,advanced", defaultValue = "true",
               description = "Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown.")
     private boolean allowNullBody = true;
@@ -210,14 +237,39 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(defaultValue = "true", label = "consumer,logging",
               description = "Allows to control whether stacktraces should be logged or not, by the default errorHandler.")
     private boolean errorHandlerLogStackTrace = true;
-    @UriParam(label = "consumer", description = "Try to apply reconnection logic on consumer pool", defaultValue = "true")
-    private boolean reconnectOnError = true;
-    @UriParam(label = "consumer", javaType = "java.time.Duration",
-              description = "Backoff in millis on consumer pool reconnection attempts", defaultValue = "5000")
-    private long reconnectBackOff = 5000;
-
-    @Deprecated
-    private volatile boolean closeConnectionResource;
+    @UriParam(defaultValue = "5000", label = "advanced", javaType = "java.time.Duration",
+              description = "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."
+                            + " The default is 5000 ms, that is, 5 seconds.")
+    private long recoveryInterval = 5000;
+    @UriParam(label = "advanced",
+              description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
+                            + " then the caused Exception will be send back in response as a javax.jms.ObjectMessage."
+                            + " If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge"
+                            + " in your routing - for example, using persistent queues to enable robust routing."
+                            + " Notice that if you also have transferExchange enabled, this option takes precedence."
+                            + " The caught exception is required to be serializable."
+                            + " The original Exception on the consumer side can be wrapped in an outer exception"
+                            + " such as org.apache.camel.RuntimeCamelException when returned to the producer."
+                            + " Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level, "
+                            + " which forces a strong coupling between the producers and consumer!")
+    private boolean transferException;
+    @UriParam(label = "producer,advanced",
+              description = "Use this option to force disabling time to live."
+                            + " For example when you do request/reply over JMS, then Camel will by default use the requestTimeout value"
+                            + " as time to live on the message being sent. The problem is that the sender and receiver systems have"
+                            + " to have their clocks synchronized, so they are in sync. This is not always so easy to archive."
+                            + " So you can use disableTimeToLive=true to not set a time to live value on the sent message."
+                            + " Then the message will not expire on the receiver system. See below in section About time to live for more details.")
+    private boolean disableTimeToLive;
+    @UriParam(label = "consumer",
+              description = "Whether the JmsConsumer processes the Exchange asynchronously."
+                            + " If enabled then the JmsConsumer may pickup the next message from the JMS queue,"
+                            + " while the previous message is being processed asynchronously (by the Asynchronous Routing Engine)."
+                            + " This means that messages may be processed not 100% strictly in order. If disabled (as default)"
+                            + " then the Exchange is fully processed before the JmsConsumer will pickup the next message from the JMS queue."
+                            + " Note if transacted has been enabled, then asyncConsumer=true does not run asynchronously, as transaction"
+                            + "  must be executed synchronously (Camel 3.0 may support async transactions).")
+    private boolean asyncConsumer;
 
     private JmsObjectFactory jmsObjectFactory = new Jms11ObjectFactory();
 
@@ -226,7 +278,6 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     public SjmsEndpoint(String uri, Component component, String remaining) {
         super(uri, component);
-        // TODO: optimize for dynamic destination name via toD (eg ${ } somewhere)
         this.topic = DestinationNameParser.isTopic(remaining);
         this.destinationName = DestinationNameParser.getShortName(remaining);
     }
@@ -250,9 +301,25 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        SjmsConsumer answer = new SjmsConsumer(this, processor);
-        configureConsumer(answer);
-        return answer;
+        EndpointMessageListener listener = new EndpointMessageListener(this, processor);
+        if (isDisableReplyTo()) {
+            listener.setDisableReplyTo(true);
+        }
+        if (!"false".equals(eagerPoisonBody)) {
+            listener.setEagerPoisonBody(eagerPoisonBody);
+        }
+        listener.setEagerLoadingOfProperties(eagerLoadingOfProperties);
+        if (getReplyTo() != null) {
+            listener.setReplyToDestination(getReplyTo());
+        }
+        listener.setAsync(isAsyncConsumer());
+
+        MessageListenerContainer container = createMessageListenerContainer(this);
+        container.setMessageListener(listener);
+
+        SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
@@ -298,6 +365,48 @@ public class SjmsEndpoint extends DefaultEndpoint
     }
 
     /**
+     * Factory method for creating a new template for InOnly message exchanges
+     */
+    public SjmsTemplate createInOnlyTemplate() {
+        // TODO: Add isPubSub, Destination as parameters so we can have a default destination
+        SjmsTemplate template = new SjmsTemplate(getConnectionFactory(), isTransacted(), getAcknowledgementMode().intValue());
+
+        // configure qos if enabled
+        if (isExplicitQosEnabled()) {
+            int dm = isDeliveryPersistent() ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT;
+            if (getDeliveryMode() != null) {
+                dm = getDeliveryMode();
+            }
+            template.setQoSSettings(dm, getPriority(), getTimeToLive());
+        }
+
+        return template;
+    }
+
+    /**
+     * Factory method for creating a new template for InOut message exchanges
+     */
+    public SjmsTemplate createInOutTemplate() {
+        // TODO: Add isPubSub, Destination as parameters so we can have a default destination
+        SjmsTemplate template = createInOnlyTemplate();
+        if (getRequestTimeout() > 0) {
+            template.setExplicitQosEnabled(true);
+
+            // prefer to use timeToLive over requestTimeout if both specified
+            long ttl = getTimeToLive() > 0 ? getTimeToLive() : getRequestTimeout();
+            if (!isDisableTimeToLive()) {
+                // only use TTL if not disabled
+                template.setQoSSettings(0, 0, ttl);
+            }
+        }
+        return template;
+    }
+
+    public MessageListenerContainer createMessageListenerContainer(SjmsEndpoint endpoint) throws Exception {
+        return new SimpleMessageListenerContainer(endpoint);
+    }
+
+    /**
      * When one of the QoS properties are configured such as {@link #setDeliveryPersistent(boolean)},
      * {@link #setPriority(int)} or {@link #setTimeToLive(long)} then we should auto default the setting of
      * {@link #setExplicitQosEnabled(Boolean)} if its not been configured yet
@@ -337,6 +446,15 @@ public class SjmsEndpoint extends DefaultEndpoint
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
+    }
+
+    protected ExecutorService getAsyncStartStopExecutorService() {
+        if (getComponent() == null) {
+            throw new IllegalStateException(
+                    "AsyncStartStopListener requires JmsComponent to be configured on this endpoint: " + this);
+        }
+        // use shared thread pool from component
+        return getComponent().getAsyncStartStopExecutorService();
     }
 
     /**
@@ -401,20 +519,6 @@ public class SjmsEndpoint extends DefaultEndpoint
     public void setConnectionResource(String connectionResource) {
         this.connectionResource
                 = EndpointHelper.resolveReferenceParameter(getCamelContext(), connectionResource, ConnectionResource.class);
-    }
-
-    @Override
-    public boolean isSynchronous() {
-        return synchronous;
-    }
-
-    /**
-     * Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing
-     * (if supported).
-     */
-    @Override
-    public void setSynchronous(boolean synchronous) {
-        this.synchronous = synchronous;
     }
 
     public SessionAcknowledgementType getAcknowledgementMode() {
@@ -499,6 +603,22 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     public void setReplyToDeliveryPersistent(boolean replyToDeliveryPersistent) {
         this.replyToDeliveryPersistent = replyToDeliveryPersistent;
+    }
+
+    public String getEagerPoisonBody() {
+        return eagerPoisonBody;
+    }
+
+    public boolean isEagerLoadingOfProperties() {
+        return eagerLoadingOfProperties;
+    }
+
+    public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
+        this.eagerLoadingOfProperties = eagerLoadingOfProperties;
+    }
+
+    public void setEagerPoisonBody(String eagerPoisonBody) {
+        this.eagerPoisonBody = eagerPoisonBody;
     }
 
     public Integer getDeliveryMode() {
@@ -596,6 +716,14 @@ public class SjmsEndpoint extends DefaultEndpoint
         setExchangePattern(ExchangePattern.InOut);
     }
 
+    public boolean isTestConnectionOnStartup() {
+        return testConnectionOnStartup;
+    }
+
+    public void setTestConnectionOnStartup(boolean testConnectionOnStartup) {
+        this.testConnectionOnStartup = testConnectionOnStartup;
+    }
+
     /**
      * Whether to startup the consumer message listener asynchronously, when starting a route. For example if a
      * JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying and/or failover.
@@ -623,6 +751,14 @@ public class SjmsEndpoint extends DefaultEndpoint
         return asyncStopListener;
     }
 
+    public boolean isAutoStartup() {
+        return autoStartup;
+    }
+
+    public void setAutoStartup(boolean autoStartup) {
+        this.autoStartup = autoStartup;
+    }
+
     public DestinationCreationStrategy getDestinationCreationStrategy() {
         return destinationCreationStrategy;
     }
@@ -632,6 +768,14 @@ public class SjmsEndpoint extends DefaultEndpoint
      */
     public void setDestinationCreationStrategy(DestinationCreationStrategy destinationCreationStrategy) {
         this.destinationCreationStrategy = destinationCreationStrategy;
+    }
+
+    public boolean isReplyToSameDestinationAllowed() {
+        return replyToSameDestinationAllowed;
+    }
+
+    public void setReplyToSameDestinationAllowed(boolean replyToSameDestinationAllowed) {
+        this.replyToSameDestinationAllowed = replyToSameDestinationAllowed;
     }
 
     public boolean isAllowNullBody() {
@@ -766,25 +910,35 @@ public class SjmsEndpoint extends DefaultEndpoint
         this.jmsObjectFactory = jmsObjectFactory;
     }
 
-    public boolean isReconnectOnError() {
-        return reconnectOnError;
+    public boolean isTransferException() {
+        return transferException;
     }
 
-    /**
-     * Try to apply reconnection logic on consumer pool
-     */
-    public void setReconnectOnError(boolean reconnectOnError) {
-        this.reconnectOnError = reconnectOnError;
+    public void setTransferException(boolean transferException) {
+        this.transferException = transferException;
     }
 
-    public long getReconnectBackOff() {
-        return reconnectBackOff;
+    public boolean isDisableTimeToLive() {
+        return disableTimeToLive;
     }
 
-    /**
-     * Backoff in millis on consumer pool reconnection attempts
-     */
-    public void setReconnectBackOff(long reconnectBackOff) {
-        this.reconnectBackOff = reconnectBackOff;
+    public void setDisableTimeToLive(boolean disableTimeToLive) {
+        this.disableTimeToLive = disableTimeToLive;
+    }
+
+    public long getRecoveryInterval() {
+        return recoveryInterval;
+    }
+
+    public void setRecoveryInterval(long recoveryInterval) {
+        this.recoveryInterval = recoveryInterval;
+    }
+
+    public boolean isAsyncConsumer() {
+        return asyncConsumer;
+    }
+
+    public void setAsyncConsumer(boolean asyncConsumer) {
+        this.asyncConsumer = asyncConsumer;
     }
 }

@@ -32,6 +32,7 @@ import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.sjms.SjmsHelper.closeProducer;
 import static org.apache.camel.component.sjms.jms.JmsMessageHelper.isTopicPrefix;
 
 /**
@@ -125,7 +126,7 @@ public class InOnlyProducer extends SjmsProducer {
                     producer = getEndpoint().getJmsObjectFactory().createMessageProducer(sc, getEndpoint(), destinationName);
                     template.send(producer, answer);
                 } finally {
-                    close(producer);
+                    closeProducer(producer);
                 }
                 return null;
             });

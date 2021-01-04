@@ -57,10 +57,10 @@ public class AsyncJmsInOutIT extends JmsTestSupport {
             public void configure() throws Exception {
 
                 from("seda:start")
-                        .to("sjms:queue:in.foo?synchronous=false&replyTo=out.bar&exchangePattern=InOut")
+                        .to("sjms:queue:in.foo?asyncConsumer=true&replyTo=out.bar&exchangePattern=InOut")
                         .to("mock:result");
 
-                from("sjms:queue:in.foo?synchronous=false&exchangePattern=InOut")
+                from("sjms:queue:in.foo?asyncConsumer=true")
                         .log("Using ${threadName} to process ${body}")
                         .transform(body().prepend("Bye "));
             }

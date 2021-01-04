@@ -38,11 +38,11 @@ public class InOutConsumerQueueAsyncTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("sjms:queue:start?synchronous=false")
-                        .to("sjms:queue:in.out.queue?exchangePattern=InOut&synchronous=false&replyTo=in.out.queue.response")
+                from("sjms:queue:start?asyncConsumer=true")
+                        .to("sjms:queue:in.out.queue?replyTo=in.out.queue.response")
                         .to("mock:result");
 
-                from("sjms:queue:in.out.queue?exchangePattern=InOut&synchronous=false").to("log:before")
+                from("sjms:queue:in.out.queue?asyncConsumer=true").to("log:before")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = (String) exchange.getIn().getBody();

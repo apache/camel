@@ -49,10 +49,14 @@ import org.apache.commons.pool.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.sjms.SjmsHelper.closeProducer;
+
 /**
  * A Camel Producer that provides the InOut Exchange pattern.
  */
 public class InOutProducer extends SjmsProducer {
+
+    // TODO: reply manager
 
     private static final Logger LOG = LoggerFactory.getLogger(InOutProducer.class);
 
@@ -275,7 +279,7 @@ public class InOutProducer extends SjmsProducer {
                     }
 
                 } finally {
-                    close(producer);
+                    closeProducer(producer);
                 }
                 return null;
             });

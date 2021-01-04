@@ -94,7 +94,7 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
                         assertNotNull(response);
                         assertEquals(responseText, response);
                     } catch (Exception e) {
-                        log.error("TODO Auto-generated catch block", e);
+                        log.warn("Error", e);
                     }
                 }
             };
@@ -117,7 +117,7 @@ public class InOutQueueProducerSyncLoadTest extends JmsTestSupport {
                         .to("log:" + TEST_DESTINATION_NAME + ".in.log?showBody=true")
                         .to(ExchangePattern.InOut, "sjms:queue:" + TEST_DESTINATION_NAME + ".request" + "?replyTo="
                                                    + TEST_DESTINATION_NAME
-                                                   + ".response&consumerCount=20&synchronous=true")
+                                                   + ".response&consumerCount=20")
                         .to("log:" + TEST_DESTINATION_NAME + ".out.log?showBody=true");
             }
         };

@@ -20,7 +20,6 @@ import javax.jms.Connection;
 import javax.jms.DeliveryMode;
 import javax.jms.Destination;
 import javax.jms.JMSException;
-import javax.jms.MessageProducer;
 import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
@@ -171,16 +170,6 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
             return getEndpoint().getTransactionCommitStrategy();
         }
         return null;
-    }
-
-    protected static void close(MessageProducer producer) {
-        if (producer != null) {
-            try {
-                producer.close();
-            } catch (Throwable e) {
-                // ignore
-            }
-        }
     }
 
 }

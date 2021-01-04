@@ -111,6 +111,18 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
     }
 
     @Override
+    public MessageProducer createMessageProducer(Session session, Endpoint endpoint, Destination destination) throws Exception {
+        SjmsEndpoint sjmsEndpoint = (SjmsEndpoint) endpoint;
+
+        boolean persistent = sjmsEndpoint.isDeliveryPersistent();
+        if (sjmsEndpoint.getDeliveryMode() != null) {
+            persistent = DeliveryMode.PERSISTENT == sjmsEndpoint.getDeliveryMode();
+        }
+
+        return createMessageProducer(session, destination, persistent, sjmsEndpoint.getTimeToLive());
+    }
+
+    @Override
     public MessageProducer createMessageProducer(
             Session session,
             Destination destination,

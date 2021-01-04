@@ -35,7 +35,6 @@
         <camel.osgi.private.pkg>
             org.apache.camel.component.sjms.consumer,
             org.apache.camel.component.sjms.producer,
-            org.apache.camel.component.sjms.taskmanager,
             org.apache.camel.component.sjms.tx
         </camel.osgi.private.pkg>
         <camel.osgi.import>
@@ -49,6 +48,8 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-support</artifactId>
         </dependency>
+
+        <!-- TODO: remove our own pooling -->
         <dependency>
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>

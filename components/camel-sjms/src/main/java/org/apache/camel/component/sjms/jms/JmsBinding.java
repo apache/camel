@@ -223,7 +223,7 @@ public class JmsBinding {
      * @throws JMSException if the message could not be created
      */
     public Message makeJmsMessage(Exchange exchange, Session session) throws JMSException {
-        Message answer = makeJmsMessage(exchange, exchange.getIn().getBody(), exchange.getIn().getHeaders(), session, null);
+        Message answer = makeJmsMessage(exchange, exchange.getIn(), session, null);
         if (answer != null && messageCreatedStrategy != null) {
             messageCreatedStrategy.onMessageCreated(answer, session, exchange, null);
         }
@@ -234,14 +234,13 @@ public class JmsBinding {
      * Creates a JMS message from the Camel exchange and message
      *
      * @param  exchange     the current exchange
-     * @param  body         the message body
-     * @param  headers      the message headers
+     * @param  camelMessage the body to make a javax.jms.Message as
      * @param  session      the JMS session used to create the message
      * @param  cause        optional exception occurred that should be sent as reply instead of a regular body
      * @return              a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
-    public Message makeJmsMessage(Exchange exchange, Object body, Map headers, Session session, Exception cause)
+    public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, Exception cause)
             throws JMSException {
         Message answer = null;
 
@@ -283,8 +282,9 @@ public class JmsBinding {
                 answer = createJmsMessage(cause, session);
             } else {
                 // create regular jms message using the camel message body
-                answer = createJmsMessage(exchange, body, headers, session, exchange.getContext());
-                appendJmsProperties(answer, exchange, headers);
+                answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session,
+                        exchange.getContext());
+                appendJmsProperties(answer, exchange, camelMessage.getHeaders());
             }
         }
 

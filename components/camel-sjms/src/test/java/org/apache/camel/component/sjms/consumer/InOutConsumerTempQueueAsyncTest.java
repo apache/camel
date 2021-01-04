@@ -28,8 +28,8 @@ public class InOutConsumerTempQueueAsyncTest extends JmsTestSupport {
     public void testAynchronous() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello Camel");
 
-        template.sendBody("sjms:start", "Hello Camel");
-        template.sendBody("sjms:start", "Hello World");
+        template.requestBody("sjms:start", "Hello Camel");
+        template.requestBody("sjms:start", "Hello World");
         Thread.sleep(5000);
         assertMockEndpointsSatisfied();
     }
@@ -38,11 +38,11 @@ public class InOutConsumerTempQueueAsyncTest extends JmsTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("sjms:queue:start?synchronous=false")
-                        .to("sjms:queue:in.out.temp.queue?exchangePattern=InOut&synchronous=false")
+                from("sjms:queue:start?asyncConsumer=true")
+                        .to("sjms:queue:in.out.temp.queue")
                         .to("mock:result");
 
-                from("sjms:queue:in.out.temp.queue?exchangePattern=InOut&synchronous=false").to("log:before")
+                from("sjms:queue:in.out.temp.queue?asyncConsumer=true").to("log:before")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = (String) exchange.getIn().getBody();

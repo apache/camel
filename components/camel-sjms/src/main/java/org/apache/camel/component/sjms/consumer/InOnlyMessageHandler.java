@@ -26,6 +26,7 @@ import org.apache.camel.spi.Synchronization;
 /**
  * An InOnly {@link AbstractMessageHandler}
  */
+@Deprecated
 public class InOnlyMessageHandler extends AbstractMessageHandler {
 
     public InOnlyMessageHandler(SjmsEndpoint endpoint, ExecutorService executor) {

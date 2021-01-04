@@ -107,36 +107,6 @@ public interface SjmsComponentBuilderFactory {
             return this;
         }
         /**
-         * Backoff in millis on consumer pool reconnection attempts.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 5000
-         * Group: consumer
-         * 
-         * @param reconnectBackOff the value to set
-         * @return the dsl builder
-         */
-        default SjmsComponentBuilder reconnectBackOff(long reconnectBackOff) {
-            doSetProperty("reconnectBackOff", reconnectBackOff);
-            return this;
-        }
-        /**
-         * Try to apply reconnection logic on consumer pool.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param reconnectOnError the value to set
-         * @return the dsl builder
-         */
-        default SjmsComponentBuilder reconnectOnError(boolean reconnectOnError) {
-            doSetProperty("reconnectOnError", reconnectOnError);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -307,6 +277,23 @@ public interface SjmsComponentBuilderFactory {
             return this;
         }
         /**
+         * Specifies the interval between recovery attempts, i.e. when a
+         * connection is being refreshed, in milliseconds. The default is 5000
+         * ms, that is, 5 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param recoveryInterval the value to set
+         * @return the dsl builder
+         */
+        default SjmsComponentBuilder recoveryInterval(long recoveryInterval) {
+            doSetProperty("recoveryInterval", recoveryInterval);
+            return this;
+        }
+        /**
          * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
          * header to and from Camel message.
          * 
@@ -395,8 +382,6 @@ public interface SjmsComponentBuilderFactory {
             case "connectionCount": ((SjmsComponent) component).setConnectionCount((java.lang.Integer) value); return true;
             case "connectionFactory": ((SjmsComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
             case "bridgeErrorHandler": ((SjmsComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "reconnectBackOff": ((SjmsComponent) component).setReconnectBackOff((long) value); return true;
-            case "reconnectOnError": ((SjmsComponent) component).setReconnectOnError((boolean) value); return true;
             case "lazyStartProducer": ((SjmsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SjmsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "connectionClientId": ((SjmsComponent) component).setConnectionClientId((java.lang.String) value); return true;
@@ -406,6 +391,7 @@ public interface SjmsComponentBuilderFactory {
             case "destinationCreationStrategy": ((SjmsComponent) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
             case "jmsKeyFormatStrategy": ((SjmsComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
             case "messageCreatedStrategy": ((SjmsComponent) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
+            case "recoveryInterval": ((SjmsComponent) component).setRecoveryInterval((long) value); return true;
             case "headerFilterStrategy": ((SjmsComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "connectionPassword": ((SjmsComponent) component).setConnectionPassword((java.lang.String) value); return true;
             case "connectionUsername": ((SjmsComponent) component).setConnectionUsername((java.lang.String) value); return true;

@@ -45,7 +45,7 @@ public class InOnlyConsumerAsyncTrueTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sjms:queue:in.only.consumer.async?synchronous=false").to("log:before")
+                from("sjms:queue:in.only.consumer.async?asyncConsumer=true").to("log:before")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 if (exchange.getIn().getBody(String.class).equals("Hello Camel")) {

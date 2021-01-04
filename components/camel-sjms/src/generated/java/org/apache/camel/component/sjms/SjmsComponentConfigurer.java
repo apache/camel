@@ -51,10 +51,8 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": target.setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class, value)); return true;
-        case "reconnectbackoff":
-        case "reconnectBackOff": target.setReconnectBackOff(property(camelContext, long.class, value)); return true;
-        case "reconnectonerror":
-        case "reconnectOnError": target.setReconnectOnError(property(camelContext, boolean.class, value)); return true;
+        case "recoveryinterval":
+        case "recoveryInterval": target.setRecoveryInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "transactioncommitstrategy":
         case "transactionCommitStrategy": target.setTransactionCommitStrategy(property(camelContext, org.apache.camel.component.sjms.TransactionCommitStrategy.class, value)); return true;
         default: return false;
@@ -99,10 +97,8 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return boolean.class;
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
-        case "reconnectbackoff":
-        case "reconnectBackOff": return long.class;
-        case "reconnectonerror":
-        case "reconnectOnError": return boolean.class;
+        case "recoveryinterval":
+        case "recoveryInterval": return long.class;
         case "transactioncommitstrategy":
         case "transactionCommitStrategy": return org.apache.camel.component.sjms.TransactionCommitStrategy.class;
         default: return null;
@@ -143,10 +139,8 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": return target.getMessageCreatedStrategy();
-        case "reconnectbackoff":
-        case "reconnectBackOff": return target.getReconnectBackOff();
-        case "reconnectonerror":
-        case "reconnectOnError": return target.isReconnectOnError();
+        case "recoveryinterval":
+        case "recoveryInterval": return target.getRecoveryInterval();
         case "transactioncommitstrategy":
         case "transactionCommitStrategy": return target.getTransactionCommitStrategy();
         default: return null;
