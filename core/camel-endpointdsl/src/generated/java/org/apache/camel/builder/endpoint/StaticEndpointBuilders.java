@@ -14692,6 +14692,59 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Stitch (camel-stitch)
+     * Stitch is a cloud ETL service, developer-focused platform for rapidly
+     * moving and replicates data from more than 90 applications and databases.
+     * It integrates various data sources into a central data warehouse. Stitch
+     * has integrations for many enterprise software data sources, and can
+     * receive data via WebHooks and an API (Stitch Import API) which Camel
+     * Stitch Component uses to produce the data to Stitch ETL.
+     * 
+     * Category: cloud,api,compute,bigdata
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-stitch
+     * 
+     * Syntax: <code>stitch:namespace/eventHubName</code>
+     * 
+     * Path parameter: test
+     * test
+     * 
+     * @param path namespace/eventHubName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.StitchEndpointBuilder stitch(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.endpointBuilder("stitch", path);
+    }
+    /**
+     * Stitch (camel-stitch)
+     * Stitch is a cloud ETL service, developer-focused platform for rapidly
+     * moving and replicates data from more than 90 applications and databases.
+     * It integrates various data sources into a central data warehouse. Stitch
+     * has integrations for many enterprise software data sources, and can
+     * receive data via WebHooks and an API (Stitch Import API) which Camel
+     * Stitch Component uses to produce the data to Stitch ETL.
+     * 
+     * Category: cloud,api,compute,bigdata
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-stitch
+     * 
+     * Syntax: <code>stitch:namespace/eventHubName</code>
+     * 
+     * Path parameter: test
+     * test
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path namespace/eventHubName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.StitchEndpointBuilder stitch(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Stomp (camel-stomp)
      * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
      * Protocol) compliant message brokers.

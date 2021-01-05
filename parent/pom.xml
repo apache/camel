@@ -467,6 +467,7 @@
         <rdf4j-model-version>2.4.4</rdf4j-model-version>
         <reactive-streams-version>1.0.3</reactive-streams-version>
         <reactor-version>3.2.16.RELEASE</reactor-version>
+        <reactor-netty-version>1.0.2</reactor-netty-version>
         <redisson-version>3.14.0</redisson-version>
         <rescu-version>2.0.2</rescu-version>
         <resilience4j-version>1.6.1</resilience4j-version>
@@ -2366,6 +2367,11 @@
 			<dependency>
 				<groupId>org.apache.camel</groupId>
 				<artifactId>camel-stax</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.camel</groupId>
+				<artifactId>camel-stitch</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>

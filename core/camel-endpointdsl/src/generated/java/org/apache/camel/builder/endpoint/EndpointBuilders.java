@@ -328,6 +328,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.SqsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.SshEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StAXEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StreamEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.StringTemplateEndpointBuilderFactory,

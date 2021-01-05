@@ -4305,6 +4305,24 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.StaxComponentBuilderFactory.stax();
     }
     /**
+     * Stitch (camel-stitch)
+     * Stitch is a cloud ETL service, developer-focused platform for rapidly
+     * moving and replicates data from more than 90 applications and databases.
+     * It integrates various data sources into a central data warehouse. Stitch
+     * has integrations for many enterprise software data sources, and can
+     * receive data via WebHooks and an API (Stitch Import API) which Camel
+     * Stitch Component uses to produce the data to Stitch ETL.
+     * 
+     * Category: cloud,api,compute,bigdata
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-stitch
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.StitchComponentBuilderFactory.StitchComponentBuilder stitch() {
+        return org.apache.camel.builder.component.dsl.StitchComponentBuilderFactory.stitch();
+    }
+    /**
      * Stomp (camel-stomp)
      * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
      * Protocol) compliant message brokers.
