@@ -122,7 +122,7 @@ public class RestSwaggerProcessor implements Processor {
                 }
             }
         } catch (Exception e) {
-            LOG.warn("Error rendering Swagger API due " + e.getMessage(), e);
+            LOG.warn("Error rendering Swagger API due {}", e.getMessage(), e);
         }
     }
 
