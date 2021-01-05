@@ -136,7 +136,8 @@ The Camel Git Commit consumer has been changed a bit.
 
 For each exchange now in the body you'll get the commit full message as a String and the Commit Object like before.
 
-Other information have been stored in headers declared in GitConstants class:
+Other information has been stored in headers declared in GitConstants class:
+
 - GIT_COMMIT_ID - "CamelGitCommitId" - The commit Id
 - GIT_COMMIT_AUTHOR_NAME - "CamelGitAuthorName" - The commit Author name
 - GIT_COMMIT_COMMITTER_NAME - "CamelGitCommiterName" - The commit committer name
@@ -146,7 +147,8 @@ The Camel Git Branch consumer has been changed a bit.
 
 For each exchange now in the body you'll get the branch ref name and not the full ref like before.
 
-Other information have been stored in headers declared in GitConstants class:
+Other information has been stored in headers declared in GitConstants class:
+
 - GIT_BRANCH_LEAF - "CamelGitBranchLeaf" - Leaf
 - GIT_BRANCH_OBJECT_ID - "CamelGitBranchObjectId" - Object Id
 
@@ -154,17 +156,17 @@ The Camel Git Tag consumer has been changed a bit.
 
 For each exchange now in the body you'll get the tag ref name and not the full ref like before.
 
-Other information have been stored in headers declared in GitConstants class:
+Other information has been stored in headers declared in GitConstants class:
+
 - GIT_TAG_LEAF - "CamelGitTagLeaf" - Leaf
 - GIT_TAG_OBJECT_ID - "CamelGitTagObjectId" - Object Id
 
 === camel-github
 
 Login using username and password is no longer supported by github and these options has been removed
-(https://developer.github.com/changes/2020-02-14-deprecating-password-auth/)
+(https://developer.github.com/changes/2020-02-14-deprecating-password-auth/).
 
 Login must be done using the `oauthToken` option.
-
 
 === Camel-AWS2-S3 Autowire support
 
