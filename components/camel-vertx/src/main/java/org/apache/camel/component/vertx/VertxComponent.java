@@ -150,12 +150,12 @@ public class VertxComponent extends DefaultComponent {
             if (vertxOptions == null) {
                 vertxOptions = new VertxOptions();
                 if (ObjectHelper.isNotEmpty(host)) {
-                    vertxOptions.setClusterHost(host);
-                    vertxOptions.setClustered(true);
+                    vertxOptions.getEventBusOptions().setHost(host);
+                    vertxOptions.getEventBusOptions().setClustered(true);
                 }
                 if (port > 0) {
-                    vertxOptions.setClusterPort(port);
-                    vertxOptions.setClustered(true);
+                    vertxOptions.getEventBusOptions().setPort(port);
+                    vertxOptions.getEventBusOptions().setClustered(true);
                 }
             }
 
@@ -165,8 +165,9 @@ public class VertxComponent extends DefaultComponent {
             final CountDownLatch latch = new CountDownLatch(1);
 
             // lets using a host / port if a host name is specified
-            if (vertxOptions.isClustered()) {
-                LOG.info("Creating Clustered Vertx {}:{}", vertxOptions.getClusterHost(), vertxOptions.getClusterPort());
+            if (vertxOptions.getEventBusOptions().isClustered()) {
+                LOG.info("Creating Clustered Vertx {}:{}", vertxOptions.getEventBusOptions().getHost(),
+                        vertxOptions.getEventBusOptions().getPort());
                 // use the async api as we want to wait for the eventbus to be ready before we are in started state
                 vertxFactory.clusteredVertx(vertxOptions, new Handler<AsyncResult<Vertx>>() {
                     @Override
