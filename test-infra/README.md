@@ -5,7 +5,7 @@
 One of the first steps when implementing a new test, is to identify how to simulate infrastructure required for it to 
 run. The test-infra module provides a reusable library of infrastructure that can be used for that purpose. 
 
-In general, the integration test leverages the features provided by the project https://www.testcontainers.org/[TestContainers]
+In general, the integration test leverages the features provided by the project [TestContainers](https://www.testcontainers.org/)
 and uses container images to simulate the environments. Additionally, it may also support running the tests against remote 
 environments as well as, when available, embeddable components. This varies by each component and it is recommended to 
 check the code for additional details.
@@ -21,11 +21,11 @@ latency, slow backends, etc).
 
 JUnit 5 manages the lifecycle of the services, therefore each service must be a JUnit 5 compliant extension. The exact
 extension point that a service must extend is specific to each service. The JUnit 5
-https://junit.org/junit5/docs/current/user-guide/[documentation] is the reference for the extension points.
+[documentation](https://junit.org/junit5/docs/current/user-guide/) is the reference for the extension points.
 
 In general, the services should aim to minimize the test execution time and resource usage when running. As such,
-the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/BeforeAllCallback.html[BeforeAllCallback]
-and https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/AfterAllCallback.html[AfterAllCallback]
+the [BeforeAllCallback](https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/BeforeAllCallback.html)
+and [AfterAllCallback](https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/AfterAllCallback.html)
 should be the preferred extensions whenever possible because they allow the instance of the infrastructure to be static
 throughout the test execution.
 
