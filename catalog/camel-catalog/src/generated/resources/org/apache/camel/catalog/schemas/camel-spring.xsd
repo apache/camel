@@ -4374,7 +4374,6 @@ To use a specific charset when converting.
     <xs:complexContent>
       <xs:extension base="tns:identifiedType">
         <xs:sequence/>
-        <xs:attribute name="contentTypeHeader" type="xs:string"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -5587,6 +5586,14 @@ null. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="breakOnShutdown" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+If the breakOnShutdown attribute is true, then the loop will not iterate until
+it reaches the end when Camel is shut down. Default value: false
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -6442,6 +6449,16 @@ true (which is the default).
             <xs:list itemType="xs:string"/>
           </xs:simpleType>
         </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the data format should set the Content-Type header with the type from
+the data format. For example application/xml for data formats marshalling to
+XML, or application/json for data formats marshalling to JSON. Default value:
+true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -6725,6 +6742,16 @@ enabled when desired to be used. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the data format should set the Content-Type header with the type from
+the data format. For example application/xml for data formats marshalling to
+XML, or application/json for data formats marshalling to JSON. Default value:
+true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -6881,6 +6908,16 @@ To define the location of the namespaceless schema.
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to a custom java.util.Map to lookup in the registry containing custom
 JAXB provider properties to be used with the JAXB marshaller.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the data format should set the Content-Type header with the type from
+the data format. For example application/xml for data formats marshalling to
+XML, or application/json for data formats marshalling to JSON. Default value:
+true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7063,6 +7100,16 @@ Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the data format should set the Content-Type header with the type from
+the data format. For example application/xml for data formats marshalling to
+XML, or application/json for data formats marshalling to JSON. Default value:
+true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -7174,6 +7221,16 @@ Defines a content type format in which protobuf message will be
 serialized/deserialized from(to) the Java been. The format can either be native
 or json for either native protobuf or json fields representation. The default
 value is native. Default value: native
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the data format should set the Content-Type header with the type from
+the data format. For example application/xml for data formats marshalling to
+XML, or application/json for data formats marshalling to JSON. Default value:
+true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7445,6 +7502,16 @@ Defines a content type format in which thrift message will be
 serialized/deserialized from(to) the Java been. The format can either be native
 or json for either native binary thrift, json or simple json fields
 representation. The default value is binary. Default value: binary
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the data format should set the Content-Type header with the type from
+the data format. For example application/xml for data formats marshalling to
+XML, or application/json for data formats marshalling to JSON. Default value:
+true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -7756,6 +7823,16 @@ be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver.
 Mode for dealing with duplicate references The possible values are:
 NO_REFERENCES ID_REFERENCES XPATH_RELATIVE_REFERENCES XPATH_ABSOLUTE_REFERENCES
 SINGLE_NODE_XPATH_RELATIVE_REFERENCES SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the data format should set the Content-Type header with the type from
+the data format. For example application/xml for data formats marshalling to
+XML, or application/json for data formats marshalling to JSON. Default value:
+true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -12107,7 +12184,7 @@ ServiceCallConstants.SERVICE_PORT. Default value: CamelServiceCallServicePort
             <xs:element ref="tns:ribbonLoadBalancer"/>
             <xs:element ref="tns:defaultLoadBalancer"/>
           </xs:choice>
-          <xs:element minOccurs="0" name="expressionConfiguration" type="tns:serviceCallExpressionConfiguration"/>
+          <xs:element minOccurs="0" name="expression" type="tns:serviceCallExpressionConfiguration"/>
         </xs:sequence>
         <xs:attribute name="name" type="xs:string">
           <xs:annotation>
