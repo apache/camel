@@ -19,7 +19,7 @@ package org.apache.camel.component.docker.headers;
 import java.util.Map;
 
 import com.github.dockerjava.api.command.PullImageCmd;
-import com.github.dockerjava.core.command.PullImageResultCallback;
+import com.github.dockerjava.api.command.PullImageResultCallback;
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.jupiter.api.Test;

@@ -18,22 +18,21 @@ package org.apache.camel.component.docker.it;
 
 import java.util.concurrent.TimeUnit;
 
+import com.github.dockerjava.netty.NettyDockerCmdExecFactory;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
-/**
- * Integration test consuming statistics on Docker Platform
- */
-public class DockerStatsConsumerTestIT extends DockerITTestSupport {
-
-    private static final String CONTAINER_ID = "470b9b823e6c";
+@EnabledIfSystemProperty(named = "docker.hostname", matches = ".*", disabledReason = "Requires a running docker environment")
+public class DockerNettyCmdExecFactoryTest extends DockerITTestSupport {
 
     @Test
-    void testDocker() throws Exception {
-
+    void testNettyCmdExecFactoryConfig() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
+
+        template.sendBody("direct:in", "");
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
     }
@@ -42,7 +41,9 @@ public class DockerStatsConsumerTestIT extends DockerITTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("docker://stats?containerId=%s", CONTAINER_ID)
+                from("direct:in")
+                        .toF("docker://version?host={{docker.hostname}}&port={{docker.port}}&cmdExecFactory=%s",
+                                NettyDockerCmdExecFactory.class.getName())
                         .log("${body}")
                         .to("mock:result");
             }

@@ -17,30 +17,29 @@
 package org.apache.camel.component.docker.producer;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.async.ResultCallback.Adapter;
+import com.github.dockerjava.api.async.ResultCallbackTemplate;
+import com.github.dockerjava.api.command.AsyncDockerCmd;
 import com.github.dockerjava.api.command.AttachContainerCmd;
 import com.github.dockerjava.api.command.BuildImageCmd;
+import com.github.dockerjava.api.command.BuildImageResultCallback;
 import com.github.dockerjava.api.command.ExecStartCmd;
 import com.github.dockerjava.api.command.LogContainerCmd;
 import com.github.dockerjava.api.command.PullImageCmd;
+import com.github.dockerjava.api.command.PullImageResultCallback;
 import com.github.dockerjava.api.command.PushImageCmd;
 import com.github.dockerjava.api.command.WaitContainerCmd;
+import com.github.dockerjava.api.command.WaitContainerResultCallback;
 import com.github.dockerjava.api.model.AuthConfig;
 import com.github.dockerjava.api.model.BuildResponseItem;
 import com.github.dockerjava.api.model.Frame;
 import com.github.dockerjava.api.model.PullResponseItem;
 import com.github.dockerjava.api.model.PushResponseItem;
 import com.github.dockerjava.api.model.WaitResponse;
-import com.github.dockerjava.core.command.AttachContainerResultCallback;
-import com.github.dockerjava.core.command.BuildImageResultCallback;
-import com.github.dockerjava.core.command.ExecStartResultCallback;
-import com.github.dockerjava.core.command.LogContainerResultCallback;
-import com.github.dockerjava.core.command.PullImageResultCallback;
-import com.github.dockerjava.core.command.PushImageResultCallback;
-import com.github.dockerjava.core.command.WaitContainerResultCallback;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -80,148 +79,151 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
 
             DockerOperation operation = configuration.getOperation();
 
-            Object result;
-
             switch (operation) {
 
                 /** Images **/
                 case BUILD_IMAGE:
-                    // result contain an image id value
-                    result = executeBuildImageRequest(client, message).exec(new BuildImageResultCallback() {
-                        @Override
-                        public void onNext(BuildResponseItem item) {
-                            LOG.trace("build image callback {}", item);
-                            super.onNext(item);
-                        }
-                    });
-
-                    if (result != null) {
-                        String imageId = ((BuildImageResultCallback) result).awaitImageId();
-
-                        ((BuildImageResultCallback) result).close();
-
-                        result = imageId;
-                    }
+                    runAsyncImageBuild(exchange, message, client);
 
                     break;
                 case PULL_IMAGE:
-                    result = executePullImageRequest(client, message).exec(new PullImageResultCallback() {
-                        @Override
-                        public void onNext(PullResponseItem item) {
-                            LOG.trace("pull image callback {}", item);
-                            super.onNext(item);
-                        }
-                    });
-
-                    if (result != null) {
-                        result = ((PullImageResultCallback) result).awaitCompletion();
-
-                        ((PullImageResultCallback) result).close();
-                    }
+                    runAsyncPull(message, client, exchange);
 
                     break;
                 case PUSH_IMAGE:
-                    result = executePushImageRequest(client, message).exec(new PushImageResultCallback() {
-                        @Override
-                        public void onNext(PushResponseItem item) {
-                            LOG.trace("push image callback {}", item);
-                            super.onNext(item);
-                        }
-                    });
-
-                    if (result != null) {
-                        result = ((PushImageResultCallback) result).awaitCompletion();
-
-                        ((PushImageResultCallback) result).close();
-                    }
+                    runAsyncPush(exchange, message, client);
 
                     break;
                 /** Containers **/
                 case ATTACH_CONTAINER:
-                    result = executeAttachContainerRequest(client, message).exec(new AttachContainerResultCallback() {
-                        @Override
-                        public void onNext(Frame item) {
-                            LOG.trace("attach container callback {}", item);
-                            super.onNext(item);
-                        }
-
-                    });
-
-                    if (result != null) {
-                        result = ((AttachContainerResultCallback) result).awaitCompletion();
-
-                        ((AttachContainerResultCallback) result).close();
-                    }
+                    runAsyncAttachContainer(exchange, message, client);
 
                     break;
                 case LOG_CONTAINER:
-                    result = executeLogContainerRequest(client, message).exec(new LogContainerResultCallback() {
-                        @Override
-                        public void onNext(Frame item) {
-                            LOG.trace("log container callback {}", item);
-                            super.onNext(item);
-                        }
-
-                    });
-
-                    if (result != null) {
-                        result = ((LogContainerResultCallback) result).awaitCompletion();
-
-                        ((LogContainerResultCallback) result).close();
-                    }
+                    runAsyncLogContainer(exchange, message, client);
 
                     break;
                 case WAIT_CONTAINER:
                     // result contain a status code value
-                    result = executeWaitContainerRequest(client, message).exec(new WaitContainerResultCallback() {
-                        @Override
-                        public void onNext(WaitResponse item) {
-                            LOG.trace("wait contanier callback {}", item);
-                            super.onNext(item);
-                        }
-
-                    });
-
-                    if (result != null) {
-                        Integer statusCode = ((WaitContainerResultCallback) result).awaitStatusCode();
-
-                        ((WaitContainerResultCallback) result).close();
-
-                        result = statusCode;
-                    }
+                    runAsyncWaitContainer(exchange, message, client);
 
                     break;
                 case EXEC_START:
-                    result = executeExecStartRequest(client, message).exec(new ExecStartResultCallback() {
-                        @Override
-                        public void onNext(Frame item) {
-                            LOG.trace("exec start callback {}", item);
-                            super.onNext(item);
-                        }
-
-                    });
-
-                    if (result != null) {
-                        result = ((ExecStartResultCallback) result).awaitCompletion();
-
-                        ((ExecStartResultCallback) result).close();
-                    }
+                    runAsyncExecStart(exchange, message, client);
 
                     break;
                 default:
                     throw new DockerException("Invalid operation: " + operation);
             }
 
-            // If request included a response, set as body
-            if (result != null) {
-                exchange.getIn().setBody(result);
-            }
-        } catch (DockerException | InterruptedException | IOException e) {
+        } catch (DockerException | InterruptedException e) {
             LOG.error(e.getMessage(), e);
         }
 
         callback.done(false);
         return false;
+    }
+
+    private void runAsyncImageBuild(Exchange exchange, Message message, DockerClient client)
+            throws DockerException, InterruptedException {
+        // result contain an image id value
+        BuildImageCmd cmd = executeBuildImageRequest(client, message);
+
+        BuildImageResultCallback item = cmd.exec(new BuildImageResultCallback() {
+            @Override
+            public void onNext(BuildResponseItem item) {
+                super.onNext(item);
+
+                LOG.trace("build image callback {}", item);
+
+                exchange.getIn().setBody(item.getImageId());
+            }
+        });
+
+        setResponse(exchange, item);
+    }
+
+    private void runAsyncWithFrameResponse(Exchange exchange, AsyncDockerCmd<?, Frame> cmd) throws InterruptedException {
+        Adapter<Frame> item = cmd.exec(new Adapter<Frame>() {
+            @Override
+            public void onNext(Frame item) {
+                LOG.trace("running framed callback {}", item);
+                super.onNext(item);
+            }
+
+        });
+
+        setResponse(exchange, item);
+    }
+
+    private void runAsyncExecStart(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
+        ExecStartCmd cmd = executeExecStartRequest(client, message);
+
+        runAsyncWithFrameResponse(exchange, cmd);
+    }
+
+    private void runAsyncWaitContainer(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
+        WaitContainerCmd cmd = executeWaitContainerRequest(client, message);
+        WaitContainerResultCallback item = cmd.exec(new WaitContainerResultCallback() {
+            @Override
+            public void onNext(WaitResponse item) {
+                super.onNext(item);
+
+                LOG.trace("wait container callback {}", item);
+            }
+
+        });
+
+        setResponse(exchange, item);
+    }
+
+    private void setResponse(Exchange exchange, ResultCallbackTemplate item) throws InterruptedException {
+        if (item != null) {
+            exchange.getIn().setBody(item);
+            item.awaitCompletion();
+        }
+    }
+
+    private void runAsyncLogContainer(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
+        LogContainerCmd cmd = executeLogContainerRequest(client, message);
+
+        runAsyncWithFrameResponse(exchange, cmd);
+
+    }
+
+    private void runAsyncAttachContainer(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
+        AttachContainerCmd cmd = executeAttachContainerRequest(client, message);
+        runAsyncWithFrameResponse(exchange, cmd);
+    }
+
+    private void runAsyncPush(Exchange exchange, Message message, DockerClient client) throws InterruptedException {
+        PushImageCmd cmd = executePushImageRequest(client, message);
+        Adapter<PushResponseItem> item = cmd.exec(new Adapter<PushResponseItem>() {
+            @Override
+            public void onNext(PushResponseItem item) {
+                super.onNext(item);
+
+                LOG.trace("push image callback {}", item);
+            }
+        });
+
+        setResponse(exchange, item);
+    }
+
+    private void runAsyncPull(Message message, DockerClient client, Exchange exchange) throws InterruptedException {
+        PullImageCmd cmd = executePullImageRequest(client, message);
+
+        PullImageResultCallback item = cmd.exec(new PullImageResultCallback() {
+            @Override
+            public void onNext(PullResponseItem item) {
+                super.onNext(item);
+
+                LOG.trace("pull image callback {}", item);
+
+            }
+        });
+
+        setResponse(exchange, item);
     }
 
     /**
@@ -264,7 +266,7 @@ public class AsyncDockerProducer extends DefaultAsyncProducer {
         String tag = DockerHelper.getProperty(DockerConstants.DOCKER_TAG, configuration, message, String.class);
 
         if (tag != null) {
-            buildImageCmd.withTag(tag);
+            buildImageCmd.withTags(Collections.singleton(tag));
         }
 
         return buildImageCmd;
