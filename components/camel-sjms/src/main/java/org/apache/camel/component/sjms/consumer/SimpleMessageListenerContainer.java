@@ -247,8 +247,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                 sessions = new HashSet<>(concurrentConsumers);
                 consumers = new HashSet<>(concurrentConsumers);
                 for (int i = 0; i < this.concurrentConsumers; i++) {
-                    Session session
-                            = connection.createSession(endpoint.isTransacted(), endpoint.getAcknowledgementMode().intValue());
+                    Session session = createSession(connection, endpoint);
                     MessageConsumer consumer = createMessageConsumer(session);
                     configureConsumer(consumer, session);
                     sessions.add(session);
@@ -256,6 +255,10 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                 }
             }
         }
+    }
+
+    protected Session createSession(Connection connection, SjmsEndpoint endpoint) throws Exception {
+        return connection.createSession(endpoint.isTransacted(), endpoint.getAcknowledgementMode().intValue());
     }
 
     protected MessageConsumer createMessageConsumer(Session session) throws Exception {
@@ -285,7 +288,7 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                 Connection con = null;
                 try {
                     con = endpoint.getConnectionFactory().createConnection();
-                    String cid = clientId != null ? clientId : endpoint.getComponent().getClientId();
+                    String cid = clientId != null ? clientId : endpoint.getClientId();
                     if (cid != null) {
                         con.setClientID(cid);
                     }

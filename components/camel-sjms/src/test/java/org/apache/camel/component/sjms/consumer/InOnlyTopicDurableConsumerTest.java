@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -47,7 +49,12 @@ public class InOnlyTopicDurableConsumerTest extends JmsTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         SjmsComponent sjms = context.getComponent("sjms", SjmsComponent.class);
+
+        // need to use a pooled CF so we reuse same connection for multiple client connections
+        PooledConnectionFactory pcf = new PooledConnectionFactory((ActiveMQConnectionFactory) sjms.getConnectionFactory());
+        sjms.setConnectionFactory(pcf);
         sjms.setClientId(CONNECTION_ID);
+
         return context;
     }
 
@@ -56,10 +63,10 @@ public class InOnlyTopicDurableConsumerTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sjms:topic:foo?durableSubscriptionId=bar1")
+                from("sjms:topic:foo?durableSubscriptionName=bar1")
                         .to("mock:result");
 
-                from("sjms:topic:foo?durableSubscriptionId=bar2")
+                from("sjms:topic:foo?durableSubscriptionName=bar2")
                         .to("mock:result2");
             }
         };

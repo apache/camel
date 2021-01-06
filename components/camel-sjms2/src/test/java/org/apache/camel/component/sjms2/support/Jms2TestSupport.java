@@ -130,7 +130,6 @@ public class Jms2TestSupport extends CamelTestSupport {
         connection.start();
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         Sjms2Component component = new Sjms2Component();
-        component.setConnectionCount(1);
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms2", component);
         return camelContext;

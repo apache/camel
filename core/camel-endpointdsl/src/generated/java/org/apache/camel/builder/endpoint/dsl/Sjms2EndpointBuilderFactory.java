@@ -18,7 +18,6 @@ package org.apache.camel.builder.endpoint.dsl;
 
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -78,6 +77,40 @@ public interface Sjms2EndpointBuilderFactory {
         default Sjms2EndpointConsumerBuilder acknowledgementMode(
                 String acknowledgementMode) {
             doSetProperty("acknowledgementMode", acknowledgementMode);
+            return this;
+        }
+        /**
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
+         * 
+         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder connectionFactory(
+                Object connectionFactory) {
+            doSetProperty("connectionFactory", connectionFactory);
+            return this;
+        }
+        /**
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder connectionFactory(
+                String connectionFactory) {
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -309,6 +342,24 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the JMS client ID to use. Note that this value, if specified,
+         * must be unique and can only be used by a single JMS connection
+         * instance. It is typically only required for durable topic
+         * subscriptions. If using Apache ActiveMQ you may prefer to use Virtual
+         * Topics instead.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param clientId the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder clientId(String clientId) {
+            doSetProperty("clientId", clientId);
+            return this;
+        }
+        /**
          * Specifies the default number of concurrent consumers when consuming
          * from JMS (not for request/reply over JMS). See also the
          * maxMessagesPerTask option to control dynamic scaling up/down of
@@ -382,18 +433,19 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the durable subscription Id required for durable topics.
+         * The durable subscriber name for specifying durable topic
+         * subscriptions. The clientId option must be configured as well.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
-         * @param durableSubscriptionId the value to set
+         * @param durableSubscriptionName the value to set
          * @return the dsl builder
          */
-        default Sjms2EndpointConsumerBuilder durableSubscriptionId(
-                String durableSubscriptionId) {
-            doSetProperty("durableSubscriptionId", durableSubscriptionId);
+        default Sjms2EndpointConsumerBuilder durableSubscriptionName(
+                String durableSubscriptionName) {
+            doSetProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
         }
         /**
@@ -473,77 +525,6 @@ public interface Sjms2EndpointBuilderFactory {
         default Sjms2EndpointConsumerBuilder subscriptionId(
                 String subscriptionId) {
             doSetProperty("subscriptionId", subscriptionId);
-            return this;
-        }
-        /**
-         * Allows to configure the default errorHandler logging level for
-         * logging uncaught exceptions.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
-         * 
-         * Default: WARN
-         * Group: logging
-         * 
-         * @param errorHandlerLoggingLevel the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder errorHandlerLoggingLevel(
-                LoggingLevel errorHandlerLoggingLevel) {
-            doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
-            return this;
-        }
-        /**
-         * Allows to configure the default errorHandler logging level for
-         * logging uncaught exceptions.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.LoggingLevel&lt;/code&gt; type.
-         * 
-         * Default: WARN
-         * Group: logging
-         * 
-         * @param errorHandlerLoggingLevel the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder errorHandlerLoggingLevel(
-                String errorHandlerLoggingLevel) {
-            doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
-            return this;
-        }
-        /**
-         * Allows to control whether stacktraces should be logged or not, by the
-         * default errorHandler.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: logging
-         * 
-         * @param errorHandlerLogStackTrace the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder errorHandlerLogStackTrace(
-                boolean errorHandlerLogStackTrace) {
-            doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
-            return this;
-        }
-        /**
-         * Allows to control whether stacktraces should be logged or not, by the
-         * default errorHandler.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: logging
-         * 
-         * @param errorHandlerLogStackTrace the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder errorHandlerLogStackTrace(
-                String errorHandlerLogStackTrace) {
-            doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
         }
         /**
@@ -861,73 +842,6 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The maximum number of connections available to this endpoint.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionCount the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default AdvancedSjms2EndpointConsumerBuilder connectionCount(
-                Integer connectionCount) {
-            doSetProperty("connectionCount", connectionCount);
-            return this;
-        }
-        /**
-         * The maximum number of connections available to this endpoint.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionCount the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default AdvancedSjms2EndpointConsumerBuilder connectionCount(
-                String connectionCount) {
-            doSetProperty("connectionCount", connectionCount);
-            return this;
-        }
-        /**
-         * Initializes the connectionFactory for the endpoint, which takes
-         * precedence over the component's connectionFactory, if any.
-         * 
-         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
-         * type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointConsumerBuilder connectionFactory(
-                Object connectionFactory) {
-            doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
-         * Initializes the connectionFactory for the endpoint, which takes
-         * precedence over the component's connectionFactory, if any.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointConsumerBuilder connectionFactory(
-                String connectionFactory) {
-            doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
          * To use a custom DestinationCreationStrategy.
          * 
          * The option is a:
@@ -1319,45 +1233,6 @@ public interface Sjms2EndpointBuilderFactory {
             doSetProperty("transferException", transferException);
             return this;
         }
-        /**
-         * Specifies whether to share JMS session with other SJMS endpoints.
-         * Turn this off if your route is accessing to multiple JMS providers.
-         * If you need transaction against multiple JMS providers, use jms
-         * component to leverage XA transaction.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: transaction (advanced)
-         * 
-         * @param sharedJMSSession the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointConsumerBuilder sharedJMSSession(
-                boolean sharedJMSSession) {
-            doSetProperty("sharedJMSSession", sharedJMSSession);
-            return this;
-        }
-        /**
-         * Specifies whether to share JMS session with other SJMS endpoints.
-         * Turn this off if your route is accessing to multiple JMS providers.
-         * If you need transaction against multiple JMS providers, use jms
-         * component to leverage XA transaction.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: transaction (advanced)
-         * 
-         * @param sharedJMSSession the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointConsumerBuilder sharedJMSSession(
-                String sharedJMSSession) {
-            doSetProperty("sharedJMSSession", sharedJMSSession);
-            return this;
-        }
     }
 
     /**
@@ -1403,6 +1278,40 @@ public interface Sjms2EndpointBuilderFactory {
         default Sjms2EndpointProducerBuilder acknowledgementMode(
                 String acknowledgementMode) {
             doSetProperty("acknowledgementMode", acknowledgementMode);
+            return this;
+        }
+        /**
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
+         * 
+         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointProducerBuilder connectionFactory(
+                Object connectionFactory) {
+            doSetProperty("connectionFactory", connectionFactory);
+            return this;
+        }
+        /**
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointProducerBuilder connectionFactory(
+                String connectionFactory) {
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -1575,49 +1484,6 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Set if the deliveryMode, priority or timeToLive qualities of service
-         * should be used when sending messages. This option is based on
-         * Spring's JmsTemplate. The deliveryMode, priority and timeToLive
-         * options are applied to the current endpoint. This contrasts with the
-         * preserveMessageQos option, which operates at message granularity,
-         * reading QoS properties exclusively from the Camel In message headers.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param explicitQosEnabled the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointProducerBuilder explicitQosEnabled(
-                Boolean explicitQosEnabled) {
-            doSetProperty("explicitQosEnabled", explicitQosEnabled);
-            return this;
-        }
-        /**
-         * Set if the deliveryMode, priority or timeToLive qualities of service
-         * should be used when sending messages. This option is based on
-         * Spring's JmsTemplate. The deliveryMode, priority and timeToLive
-         * options are applied to the current endpoint. This contrasts with the
-         * preserveMessageQos option, which operates at message granularity,
-         * reading QoS properties exclusively from the Camel In message headers.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param explicitQosEnabled the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointProducerBuilder explicitQosEnabled(
-                String explicitQosEnabled) {
-            doSetProperty("explicitQosEnabled", explicitQosEnabled);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -1664,55 +1530,6 @@ public interface Sjms2EndpointBuilderFactory {
         default Sjms2EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
             doSetProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * Set to true, if you want to send message using the QoS settings
-         * specified on the message, instead of the QoS settings on the JMS
-         * endpoint. The following three headers are considered JMSPriority,
-         * JMSDeliveryMode, and JMSExpiration. You can provide all or only some
-         * of them. If not provided, Camel will fall back to use the values from
-         * the endpoint instead. So, when using this option, the headers
-         * override the values from the endpoint. The explicitQosEnabled option,
-         * by contrast, will only use options set on the endpoint, and not
-         * values from the message header.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param preserveMessageQos the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointProducerBuilder preserveMessageQos(
-                boolean preserveMessageQos) {
-            doSetProperty("preserveMessageQos", preserveMessageQos);
-            return this;
-        }
-        /**
-         * Set to true, if you want to send message using the QoS settings
-         * specified on the message, instead of the QoS settings on the JMS
-         * endpoint. The following three headers are considered JMSPriority,
-         * JMSDeliveryMode, and JMSExpiration. You can provide all or only some
-         * of them. If not provided, Camel will fall back to use the values from
-         * the endpoint instead. So, when using this option, the headers
-         * override the values from the endpoint. The explicitQosEnabled option,
-         * by contrast, will only use options set on the endpoint, and not
-         * values from the message header.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param preserveMessageQos the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointProducerBuilder preserveMessageQos(
-                String preserveMessageQos) {
-            doSetProperty("preserveMessageQos", preserveMessageQos);
             return this;
         }
         /**
@@ -1808,13 +1625,9 @@ public interface Sjms2EndpointBuilderFactory {
         /**
          * Allows for explicitly specifying which kind of strategy to use for
          * replyTo queues when doing request/reply over JMS. Possible values
-         * are: Temporary, Shared, or Exclusive. By default Camel will use
-         * temporary queues. However if replyTo has been configured, then Shared
-         * is used by default. This option allows you to use exclusive queues
-         * instead of shared ones. See Camel JMS documentation for more details,
-         * and especially the notes about the implications if running in a
-         * clustered environment, and the fact that Shared reply queues has
-         * lower performance than its alternatives Temporary and Exclusive.
+         * are: Temporary or Exclusive. By default Camel will use temporary
+         * queues. However if replyTo has been configured, then Exclusive is
+         * used.
          * 
          * The option is a:
          * &lt;code&gt;org.apache.camel.component.sjms.ReplyToType&lt;/code&gt;
@@ -1832,13 +1645,9 @@ public interface Sjms2EndpointBuilderFactory {
         /**
          * Allows for explicitly specifying which kind of strategy to use for
          * replyTo queues when doing request/reply over JMS. Possible values
-         * are: Temporary, Shared, or Exclusive. By default Camel will use
-         * temporary queues. However if replyTo has been configured, then Shared
-         * is used by default. This option allows you to use exclusive queues
-         * instead of shared ones. See Camel JMS documentation for more details,
-         * and especially the notes about the implications if running in a
-         * clustered environment, and the fact that Shared reply queues has
-         * lower performance than its alternatives Temporary and Exclusive.
+         * are: Temporary or Exclusive. By default Camel will use temporary
+         * queues. However if replyTo has been configured, then Exclusive is
+         * used.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.apache.camel.component.sjms.ReplyToType&lt;/code&gt;
@@ -2051,29 +1860,82 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Only applicable when sending to JMS destination using InOnly (eg fire
-         * and forget). Enabling this option will enrich the Camel Exchange with
-         * the actual JMSMessageID that was used by the JMS client when the
-         * message was sent to the JMS destination.
+         * Set if the deliveryMode, priority or timeToLive qualities of service
+         * should be used when sending messages. This option is based on
+         * Spring's JmsTemplate. The deliveryMode, priority and timeToLive
+         * options are applied to the current endpoint. This contrasts with the
+         * preserveMessageQos option, which operates at message granularity,
+         * reading QoS properties exclusively from the Camel In message headers.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param explicitQosEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder explicitQosEnabled(
+                Boolean explicitQosEnabled) {
+            doSetProperty("explicitQosEnabled", explicitQosEnabled);
+            return this;
+        }
+        /**
+         * Set if the deliveryMode, priority or timeToLive qualities of service
+         * should be used when sending messages. This option is based on
+         * Spring's JmsTemplate. The deliveryMode, priority and timeToLive
+         * options are applied to the current endpoint. This contrasts with the
+         * preserveMessageQos option, which operates at message granularity,
+         * reading QoS properties exclusively from the Camel In message headers.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param explicitQosEnabled the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder explicitQosEnabled(
+                String explicitQosEnabled) {
+            doSetProperty("explicitQosEnabled", explicitQosEnabled);
+            return this;
+        }
+        /**
+         * Set to true, if you want to send message using the QoS settings
+         * specified on the message, instead of the QoS settings on the JMS
+         * endpoint. The following three headers are considered JMSPriority,
+         * JMSDeliveryMode, and JMSExpiration. You can provide all or only some
+         * of them. If not provided, Camel will fall back to use the values from
+         * the endpoint instead. So, when using this option, the headers
+         * override the values from the endpoint. The explicitQosEnabled option,
+         * by contrast, will only use options set on the endpoint, and not
+         * values from the message header.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
          * Default: false
          * Group: producer (advanced)
          * 
-         * @param includeSentJMSMessageID the value to set
+         * @param preserveMessageQos the value to set
          * @return the dsl builder
          */
-        default AdvancedSjms2EndpointProducerBuilder includeSentJMSMessageID(
-                boolean includeSentJMSMessageID) {
-            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
+        default AdvancedSjms2EndpointProducerBuilder preserveMessageQos(
+                boolean preserveMessageQos) {
+            doSetProperty("preserveMessageQos", preserveMessageQos);
             return this;
         }
         /**
-         * Only applicable when sending to JMS destination using InOnly (eg fire
-         * and forget). Enabling this option will enrich the Camel Exchange with
-         * the actual JMSMessageID that was used by the JMS client when the
-         * message was sent to the JMS destination.
+         * Set to true, if you want to send message using the QoS settings
+         * specified on the message, instead of the QoS settings on the JMS
+         * endpoint. The following three headers are considered JMSPriority,
+         * JMSDeliveryMode, and JMSExpiration. You can provide all or only some
+         * of them. If not provided, Camel will fall back to use the values from
+         * the endpoint instead. So, when using this option, the headers
+         * override the values from the endpoint. The explicitQosEnabled option,
+         * by contrast, will only use options set on the endpoint, and not
+         * values from the message header.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -2081,12 +1943,12 @@ public interface Sjms2EndpointBuilderFactory {
          * Default: false
          * Group: producer (advanced)
          * 
-         * @param includeSentJMSMessageID the value to set
+         * @param preserveMessageQos the value to set
          * @return the dsl builder
          */
-        default AdvancedSjms2EndpointProducerBuilder includeSentJMSMessageID(
-                String includeSentJMSMessageID) {
-            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
+        default AdvancedSjms2EndpointProducerBuilder preserveMessageQos(
+                String preserveMessageQos) {
+            doSetProperty("preserveMessageQos", preserveMessageQos);
             return this;
         }
         /**
@@ -2173,73 +2035,6 @@ public interface Sjms2EndpointBuilderFactory {
         default AdvancedSjms2EndpointProducerBuilder asyncStopListener(
                 String asyncStopListener) {
             doSetProperty("asyncStopListener", asyncStopListener);
-            return this;
-        }
-        /**
-         * The maximum number of connections available to this endpoint.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionCount the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default AdvancedSjms2EndpointProducerBuilder connectionCount(
-                Integer connectionCount) {
-            doSetProperty("connectionCount", connectionCount);
-            return this;
-        }
-        /**
-         * The maximum number of connections available to this endpoint.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionCount the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default AdvancedSjms2EndpointProducerBuilder connectionCount(
-                String connectionCount) {
-            doSetProperty("connectionCount", connectionCount);
-            return this;
-        }
-        /**
-         * Initializes the connectionFactory for the endpoint, which takes
-         * precedence over the component's connectionFactory, if any.
-         * 
-         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
-         * type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointProducerBuilder connectionFactory(
-                Object connectionFactory) {
-            doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
-         * Initializes the connectionFactory for the endpoint, which takes
-         * precedence over the component's connectionFactory, if any.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointProducerBuilder connectionFactory(
-                String connectionFactory) {
-            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -2634,45 +2429,6 @@ public interface Sjms2EndpointBuilderFactory {
             doSetProperty("transferException", transferException);
             return this;
         }
-        /**
-         * Specifies whether to share JMS session with other SJMS endpoints.
-         * Turn this off if your route is accessing to multiple JMS providers.
-         * If you need transaction against multiple JMS providers, use jms
-         * component to leverage XA transaction.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: transaction (advanced)
-         * 
-         * @param sharedJMSSession the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointProducerBuilder sharedJMSSession(
-                boolean sharedJMSSession) {
-            doSetProperty("sharedJMSSession", sharedJMSSession);
-            return this;
-        }
-        /**
-         * Specifies whether to share JMS session with other SJMS endpoints.
-         * Turn this off if your route is accessing to multiple JMS providers.
-         * If you need transaction against multiple JMS providers, use jms
-         * component to leverage XA transaction.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: transaction (advanced)
-         * 
-         * @param sharedJMSSession the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointProducerBuilder sharedJMSSession(
-                String sharedJMSSession) {
-            doSetProperty("sharedJMSSession", sharedJMSSession);
-            return this;
-        }
     }
 
     /**
@@ -2719,6 +2475,38 @@ public interface Sjms2EndpointBuilderFactory {
         default Sjms2EndpointBuilder acknowledgementMode(
                 String acknowledgementMode) {
             doSetProperty("acknowledgementMode", acknowledgementMode);
+            return this;
+        }
+        /**
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
+         * 
+         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointBuilder connectionFactory(Object connectionFactory) {
+            doSetProperty("connectionFactory", connectionFactory);
+            return this;
+        }
+        /**
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param connectionFactory the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointBuilder connectionFactory(String connectionFactory) {
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -2949,73 +2737,6 @@ public interface Sjms2EndpointBuilderFactory {
         default AdvancedSjms2EndpointBuilder asyncStopListener(
                 String asyncStopListener) {
             doSetProperty("asyncStopListener", asyncStopListener);
-            return this;
-        }
-        /**
-         * The maximum number of connections available to this endpoint.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionCount the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default AdvancedSjms2EndpointBuilder connectionCount(
-                Integer connectionCount) {
-            doSetProperty("connectionCount", connectionCount);
-            return this;
-        }
-        /**
-         * The maximum number of connections available to this endpoint.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionCount the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default AdvancedSjms2EndpointBuilder connectionCount(
-                String connectionCount) {
-            doSetProperty("connectionCount", connectionCount);
-            return this;
-        }
-        /**
-         * Initializes the connectionFactory for the endpoint, which takes
-         * precedence over the component's connectionFactory, if any.
-         * 
-         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
-         * type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointBuilder connectionFactory(
-                Object connectionFactory) {
-            doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
-         * Initializes the connectionFactory for the endpoint, which takes
-         * precedence over the component's connectionFactory, if any.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionFactory the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointBuilder connectionFactory(
-                String connectionFactory) {
-            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -3404,45 +3125,6 @@ public interface Sjms2EndpointBuilderFactory {
         default AdvancedSjms2EndpointBuilder transferException(
                 String transferException) {
             doSetProperty("transferException", transferException);
-            return this;
-        }
-        /**
-         * Specifies whether to share JMS session with other SJMS endpoints.
-         * Turn this off if your route is accessing to multiple JMS providers.
-         * If you need transaction against multiple JMS providers, use jms
-         * component to leverage XA transaction.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: transaction (advanced)
-         * 
-         * @param sharedJMSSession the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointBuilder sharedJMSSession(
-                boolean sharedJMSSession) {
-            doSetProperty("sharedJMSSession", sharedJMSSession);
-            return this;
-        }
-        /**
-         * Specifies whether to share JMS session with other SJMS endpoints.
-         * Turn this off if your route is accessing to multiple JMS providers.
-         * If you need transaction against multiple JMS providers, use jms
-         * component to leverage XA transaction.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: transaction (advanced)
-         * 
-         * @param sharedJMSSession the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointBuilder sharedJMSSession(
-                String sharedJMSSession) {
-            doSetProperty("sharedJMSSession", sharedJMSSession);
             return this;
         }
     }

@@ -29,7 +29,6 @@ import javax.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
@@ -40,14 +39,11 @@ import org.apache.camel.component.sjms.reply.ReplyManager;
 import org.apache.camel.component.sjms.reply.TemporaryQueueReplyManager;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-import static org.apache.camel.component.sjms.SjmsHelper.*;
 import static org.apache.camel.component.sjms.jms.JmsMessageHelper.*;
 
 public class SjmsProducer extends DefaultAsyncProducer {
@@ -305,14 +301,13 @@ public class SjmsProducer extends DefaultAsyncProducer {
                     throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
                 }
                 JmsMessageHelper.setJMSReplyTo(answer, replyTo);
-                replyManager.setReplyToSelectorHeader(in, answer);
 
                 String correlationId = determineCorrelationId(answer);
                 replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
 
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Using {}: {}, JMSReplyTo destination: {}, with request timeout: {} ms.",
-                            new Object[] { "JMSCorrelationID", correlationId, replyTo, timeout });
+                            "JMSCorrelationID", correlationId, replyTo, timeout);
                 }
 
                 LOG.trace("Created javax.jms.Message: {}", answer);
@@ -321,7 +316,7 @@ public class SjmsProducer extends DefaultAsyncProducer {
         };
 
         try {
-            doSend(true, destinationName, messageCreator);
+            doSend(exchange, true, destinationName, messageCreator);
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
@@ -411,22 +406,13 @@ public class SjmsProducer extends DefaultAsyncProducer {
                     JmsMessageHelper.setJMSReplyTo(answer, null);
                 }
 
-                // if transacted or client ack mode then add uow work to complete after exchange is done
-                if (isTransactionOrClientAcknowledgeMode(session)) {
-                    ExtendedExchange ecc = exchange.adapt(ExtendedExchange.class);
-                    TransactionOnCompletion toc = new TransactionOnCompletion(session, answer);
-                    if (!ecc.containsOnCompletion(toc)) {
-                        ecc.addOnCompletion(toc);
-                    }
-                }
-
                 LOG.trace("Created javax.jms.Message: {}", answer);
                 return answer;
             }
         };
 
         try {
-            doSend(false, destinationName, messageCreator);
+            doSend(exchange, false, destinationName, messageCreator);
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
@@ -515,11 +501,13 @@ public class SjmsProducer extends DefaultAsyncProducer {
     /**
      * Sends the message using the JmsTemplate.
      *
+     * @param exchange        the exchange
      * @param inOut           use inOut or inOnly template
      * @param destinationName the destination
      * @param messageCreator  the creator to create the {@link Message} to send
      */
     protected void doSend(
+            Exchange exchange,
             boolean inOut, String destinationName,
             MessageCreator messageCreator)
             throws Exception {
@@ -530,7 +518,7 @@ public class SjmsProducer extends DefaultAsyncProducer {
             LOG.trace("Using {} jms template", inOut ? "inOut" : "inOnly");
         }
 
-        template.send(destinationName, messageCreator, getEndpoint().isTopic());
+        template.send(exchange, destinationName, messageCreator, getEndpoint().isTopic());
     }
 
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.reply;
 
+import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
@@ -38,6 +39,12 @@ public class ExclusiveQueueMessageListenerContainer extends SimpleMessageListene
 
     public ExclusiveQueueMessageListenerContainer(SjmsEndpoint endpoint) {
         super(endpoint);
+    }
+
+    @Override
+    protected Session createSession(Connection connection, SjmsEndpoint endpoint) throws Exception {
+        // cannot be transacted when doing request/reply
+        return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
     }
 
     @Override

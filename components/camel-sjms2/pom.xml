@@ -45,10 +45,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-sjms</artifactId>
         </dependency>
-        <dependency>
-            <groupId>commons-pool</groupId>
-            <artifactId>commons-pool</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
@@ -89,6 +85,13 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-pool</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- artemis connection pool -->
+        <dependency>
+            <groupId>org.messaginghub</groupId>
+            <artifactId>pooled-jms</artifactId>
+            <version>1.2.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>

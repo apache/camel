@@ -25,8 +25,6 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "connectioncount":
-        case "connectionCount": target.setConnectionCount(property(camelContext, java.lang.Integer.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
         case "destinationcreationstrategy":
@@ -39,14 +37,12 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": target.setMessageCreatedStrategy(property(camelContext, org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class, value)); return true;
-        case "password": target.setPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "recoveryinterval":
         case "recoveryInterval": target.setRecoveryInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "replytoontimeoutmaxconcurrentconsumers":
         case "replyToOnTimeoutMaxConcurrentConsumers": target.setReplyToOnTimeoutMaxConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "requesttimeoutcheckerinterval":
         case "requestTimeoutCheckerInterval": target.setRequestTimeoutCheckerInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "username": target.setUsername(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -63,8 +59,6 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "connectioncount":
-        case "connectionCount": return java.lang.Integer.class;
         case "connectionfactory":
         case "connectionFactory": return javax.jms.ConnectionFactory.class;
         case "destinationcreationstrategy":
@@ -77,14 +71,12 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return boolean.class;
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": return org.apache.camel.component.sjms.jms.MessageCreatedStrategy.class;
-        case "password": return java.lang.String.class;
         case "recoveryinterval":
         case "recoveryInterval": return long.class;
         case "replytoontimeoutmaxconcurrentconsumers":
         case "replyToOnTimeoutMaxConcurrentConsumers": return int.class;
         case "requesttimeoutcheckerinterval":
         case "requestTimeoutCheckerInterval": return long.class;
-        case "username": return java.lang.String.class;
         default: return null;
         }
     }
@@ -97,8 +89,6 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "connectioncount":
-        case "connectionCount": return target.getConnectionCount();
         case "connectionfactory":
         case "connectionFactory": return target.getConnectionFactory();
         case "destinationcreationstrategy":
@@ -111,14 +101,12 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "messagecreatedstrategy":
         case "messageCreatedStrategy": return target.getMessageCreatedStrategy();
-        case "password": return target.getPassword();
         case "recoveryinterval":
         case "recoveryInterval": return target.getRecoveryInterval();
         case "replytoontimeoutmaxconcurrentconsumers":
         case "replyToOnTimeoutMaxConcurrentConsumers": return target.getReplyToOnTimeoutMaxConcurrentConsumers();
         case "requesttimeoutcheckerinterval":
         case "requestTimeoutCheckerInterval": return target.getRequestTimeoutCheckerInterval();
-        case "username": return target.getUsername();
         default: return null;
         }
     }

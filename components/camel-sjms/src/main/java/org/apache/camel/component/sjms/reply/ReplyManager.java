@@ -20,8 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -58,22 +56,9 @@ public interface ReplyManager extends SessionMessageListener {
     void setOnTimeoutExecutorService(ExecutorService executorService);
 
     /**
-     * Sets the JMS message property used for message correlation. If set message correlation will be performed on the
-     * value of this JMS property, JMSCorrelationID will be ignored.
-     */
-    @Deprecated
-    void setCorrelationProperty(String correlationProperty);
-
-    /**
      * Gets the reply to queue being used
      */
     Destination getReplyTo();
-
-    /**
-     * To be used when a reply queue is used with a custom JMS selector is being used.
-     */
-    @Deprecated
-    void setReplyToSelectorHeader(org.apache.camel.Message camelMessage, Message jmsMessage) throws JMSException;
 
     /**
      * Register a reply

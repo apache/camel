@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
+import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -31,7 +32,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.sjms.SessionCallback;
 import org.apache.camel.component.sjms.SessionMessageListener;
+import org.apache.camel.component.sjms.SjmsConstants;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsTemplate;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
@@ -240,6 +243,10 @@ public class EndpointMessageListener implements SessionMessageListener {
                 exchange.setPattern(ExchangePattern.InOut);
             }
         }
+
+        // store session on exchange as we may need it for transactions support
+        exchange.setProperty(SjmsConstants.JMS_SESSION, session);
+
         return exchange;
     }
 
@@ -252,24 +259,34 @@ public class EndpointMessageListener implements SessionMessageListener {
             return;
         }
         try {
-            getTemplate().execute(session, sc -> {
-                MessageProducer producer = null;
-                try {
-                    Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, sc, cause);
-                    final String correlationID = determineCorrelationId(message);
-                    reply.setJMSCorrelationID(correlationID);
+            SessionCallback callback = new SessionCallback() {
+                @Override
+                public void doInJms(Session session) throws Exception {
+                    MessageProducer producer = null;
+                    try {
+                        Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
+                        final String correlationID = determineCorrelationId(message);
+                        reply.setJMSCorrelationID(correlationID);
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
+                        }
+
+                        producer = endpoint.getJmsObjectFactory().createMessageProducer(session, endpoint, replyDestination);
+                        template.send(producer, reply);
+                    } finally {
+                        close(producer);
                     }
-
-                    producer = endpoint.getJmsObjectFactory().createMessageProducer(sc, endpoint, replyDestination);
-                    template.send(producer, reply);
-                } finally {
-                    close(producer);
                 }
-                return null;
-            });
+
+                @Override
+                public void onClose(Connection connection, Session session) {
+                    // do not close as we use provided session
+                }
+            };
+
+            getTemplate().execute(session, callback);
+
         } catch (Exception e) {
             exchange.setException(new CamelExchangeException("Unable to send reply JMS message", exchange, e));
         }
@@ -284,24 +301,34 @@ public class EndpointMessageListener implements SessionMessageListener {
             return;
         }
         try {
-            getTemplate().execute(session, sc -> {
-                MessageProducer producer = null;
-                try {
-                    Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, sc, cause);
-                    final String correlationID = determineCorrelationId(message);
-                    reply.setJMSCorrelationID(correlationID);
+            SessionCallback callback = new SessionCallback() {
+                @Override
+                public void doInJms(Session session) throws Exception {
+                    MessageProducer producer = null;
+                    try {
+                        Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
+                        final String correlationID = determineCorrelationId(message);
+                        reply.setJMSCorrelationID(correlationID);
 
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("{} sending reply JMS message [correlationId:{}]: {}", endpoint, correlationID, reply);
+                        }
+
+                        producer = endpoint.getJmsObjectFactory().createMessageProducer(session, endpoint, replyDestination);
+                        template.send(producer, reply);
+                    } finally {
+                        close(producer);
                     }
-
-                    producer = endpoint.getJmsObjectFactory().createMessageProducer(sc, endpoint, replyDestination);
-                    template.send(producer, reply);
-                } finally {
-                    close(producer);
                 }
-                return null;
-            });
+
+                @Override
+                public void onClose(Connection connection, Session session) {
+                    // do not close as we use provided session
+                }
+            };
+
+            getTemplate().execute(session, callback);
+
         } catch (Exception e) {
             exchange.setException(new CamelExchangeException("Unable to send reply JMS message", exchange, e));
         }

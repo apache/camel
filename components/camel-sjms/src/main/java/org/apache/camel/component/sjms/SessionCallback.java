@@ -16,10 +16,18 @@
  */
 package org.apache.camel.component.sjms;
 
+import javax.jms.Connection;
 import javax.jms.Session;
 
-@FunctionalInterface
-public interface SessionCallback<T> {
+import static org.apache.camel.component.sjms.SjmsHelper.closeConnection;
+import static org.apache.camel.component.sjms.SjmsHelper.closeSession;
 
-    T doInJms(Session session) throws Exception;
+public interface SessionCallback {
+
+    void doInJms(Session session) throws Exception;
+
+    default void onClose(Connection connection, Session session) {
+        closeSession(session);
+        closeConnection(connection);
+    }
 }

@@ -16,52 +16,51 @@
  */
 package org.apache.camel.component.sjms.tx;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
-import org.apache.camel.component.sjms.support.JmsTestSupport;
+import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class TransactedTopicProducerTest extends JmsTestSupport {
-
-    private static final String CONNECTION_ID = "test-connection-1";
+public class TransactedQueueInOutProducerTest extends CamelTestSupport {
 
     @Produce
     protected ProducerTemplate template;
 
-    public TransactedTopicProducerTest() {
-    }
-
     @Test
     public void testRoute() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World 2");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World 2");
+        getMockEndpoint("mock:result2").expectedBodiesReceived("Changed Hello World 2");
 
         try {
             template.sendBodyAndHeader("direct:start", "Hello World 1", "isfailed", true);
-            fail("Should throw exception");
+            fail("Should fail");
         } catch (Exception e) {
             // expected
         }
         template.sendBodyAndHeader("direct:start", "Hello World 2", "isfailed", false);
 
-        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        SjmsComponent sjms = context.getComponent("sjms", SjmsComponent.class);
-        sjms.setClientId(CONNECTION_ID);
-        return context;
+        ActiveMQConnectionFactory connectionFactory
+                = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+        CamelContext camelContext = super.createCamelContext();
+        SjmsComponent component = new SjmsComponent();
+        component.setConnectionFactory(connectionFactory);
+        camelContext.addComponent("sjms", component);
+        return camelContext;
     }
 
     @Override
@@ -69,15 +68,17 @@ public class TransactedTopicProducerTest extends JmsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-
                 from("direct:start")
-                        .to("sjms:topic:test.topic?transacted=true")
+                        .to("sjms:queue:test.queue?transacted=true")
+                        // request/reply is not transacted
+                        .to(ExchangePattern.InOut, "sjms:queue:test.transform")
+                        .to("sjms:queue:test.queue2?transacted=true")
                         .process(
                                 new Processor() {
                                     @Override
                                     public void process(Exchange exchange) throws Exception {
                                         if (exchange.getIn().getHeader("isfailed", Boolean.class)) {
-                                            log.info("We failed.  Should roll back.");
+                                            log.info("We failed. Should roll back.");
                                             throw new RollbackExchangeException(exchange);
                                         } else {
                                             log.info("We passed.  Should commit.");
@@ -85,9 +86,14 @@ public class TransactedTopicProducerTest extends JmsTestSupport {
                                     }
                                 });
 
-                from("sjms:topic:test.topic?durableSubscriptionName=bar&transacted=true")
+                from("sjms:queue:test.queue?transacted=true")
                         .to("mock:result");
 
+                from("sjms:queue:test.queue2?transacted=true")
+                        .to("mock:result2");
+
+                from("sjms:queue:test.transform")
+                        .transform(body().prepend("Changed "));
             }
         };
     }

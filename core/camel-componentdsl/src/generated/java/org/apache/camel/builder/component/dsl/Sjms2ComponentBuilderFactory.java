@@ -51,25 +51,8 @@ public interface Sjms2ComponentBuilderFactory {
      */
     interface Sjms2ComponentBuilder extends ComponentBuilder<Sjms2Component> {
         /**
-         * The maximum number of connections available to endpoints started
-         * under this component.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: common
-         * 
-         * @param connectionCount the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder connectionCount(
-                java.lang.Integer connectionCount) {
-            doSetProperty("connectionCount", connectionCount);
-            return this;
-        }
-        /**
-         * A ConnectionFactory is required to enable the SjmsComponent. It can
-         * be set directly or set set as part of a ConnectionResource.
+         * The connection factory to be use. A connection factory must be
+         * configured either on the component or endpoint.
          * 
          * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
          * type.
@@ -279,36 +262,6 @@ public interface Sjms2ComponentBuilderFactory {
             doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
-        /**
-         * Password to use with the ConnectionFactory. You can also configure
-         * username/password directly on the ConnectionFactory.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder password(java.lang.String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
-         * Username to use with the ConnectionFactory. You can also configure
-         * username/password directly on the ConnectionFactory.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param username the value to set
-         * @return the dsl builder
-         */
-        default Sjms2ComponentBuilder username(java.lang.String username) {
-            doSetProperty("username", username);
-            return this;
-        }
     }
 
     class Sjms2ComponentBuilderImpl
@@ -326,7 +279,6 @@ public interface Sjms2ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "connectionCount": ((Sjms2Component) component).setConnectionCount((java.lang.Integer) value); return true;
             case "connectionFactory": ((Sjms2Component) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
             case "bridgeErrorHandler": ((Sjms2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((Sjms2Component) component).setLazyStartProducer((boolean) value); return true;
@@ -338,8 +290,6 @@ public interface Sjms2ComponentBuilderFactory {
             case "replyToOnTimeoutMaxConcurrentConsumers": ((Sjms2Component) component).setReplyToOnTimeoutMaxConcurrentConsumers((int) value); return true;
             case "requestTimeoutCheckerInterval": ((Sjms2Component) component).setRequestTimeoutCheckerInterval((long) value); return true;
             case "headerFilterStrategy": ((Sjms2Component) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "password": ((Sjms2Component) component).setPassword((java.lang.String) value); return true;
-            case "username": ((Sjms2Component) component).setUsername((java.lang.String) value); return true;
             default: return false;
             }
         }

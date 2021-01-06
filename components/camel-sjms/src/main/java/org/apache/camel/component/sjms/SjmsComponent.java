@@ -24,6 +24,7 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
@@ -39,14 +40,8 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     private ExecutorService asyncStartStopExecutorService;
 
     @Metadata(label = "common", autowired = true,
-              description = "A ConnectionFactory is required to enable the SjmsComponent. It can be set directly or set set as part of a ConnectionResource.")
+              description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
     private ConnectionFactory connectionFactory;
-    @Metadata(label = "security", secret = true,
-              description = "Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.")
-    private String username;
-    @Metadata(label = "security", secret = true,
-              description = "Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.")
-    private String password;
     @UriParam(description = "Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance."
                             + " It is typically only required for durable topic subscriptions."
                             + " If using Apache ActiveMQ you may prefer to use Virtual Topics instead.")
@@ -57,11 +52,8 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
                             + " Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation"
                             + " of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
-    @Metadata(defaultValue = "1",
-              description = "The maximum number of connections available to endpoints started under this component")
-    private Integer connectionCount = 1;
     @Metadata(label = "advanced", description = "To use a custom DestinationCreationStrategy.")
-    private DestinationCreationStrategy destinationCreationStrategy;
+    private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
     @Metadata(label = "advanced",
               description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
                             + " of javax.jms.Message objects when Camel is sending a JMS message.")
@@ -88,20 +80,16 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         validateMepAndReplyTo(parameters);
+
         SjmsEndpoint endpoint = createSjmsEndpoint(uri, remaining);
-        if (endpoint.isTransacted()) {
-            endpoint.setSynchronous(true);
-        }
-        if (destinationCreationStrategy != null) {
-            endpoint.setDestinationCreationStrategy(destinationCreationStrategy);
-        }
+        endpoint.setConnectionFactory(connectionFactory);
+        endpoint.setDestinationCreationStrategy(destinationCreationStrategy);
+        endpoint.setRecoveryInterval(recoveryInterval);
+        endpoint.setMessageCreatedStrategy(messageCreatedStrategy);
+        endpoint.setClientId(clientId);
         if (getHeaderFilterStrategy() != null) {
             endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
-        if (messageCreatedStrategy != null) {
-            endpoint.setMessageCreatedStrategy(messageCreatedStrategy);
-        }
-        endpoint.setRecoveryInterval(recoveryInterval);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -158,14 +146,6 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
         return connectionFactory;
     }
 
-    public void setConnectionCount(Integer maxConnections) {
-        this.connectionCount = maxConnections;
-    }
-
-    public Integer getConnectionCount() {
-        return connectionCount;
-    }
-
     public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {
         this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
     }
@@ -188,22 +168,6 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
 
     public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
         this.messageCreatedStrategy = messageCreatedStrategy;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getClientId() {

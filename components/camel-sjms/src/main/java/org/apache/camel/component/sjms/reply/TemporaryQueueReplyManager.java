@@ -25,9 +25,7 @@ import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TemporaryQueue;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.component.sjms.MessageListenerContainer;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 
@@ -50,13 +48,6 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             log.warn("Interrupted while waiting for JMSReplyTo destination refresh", e);
         }
         return super.getReplyTo();
-    }
-
-    @Override
-    protected ReplyHandler createReplyHandler(
-            ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-            String originalCorrelationId, String correlationId, long requestTimeout) {
-        return new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
     }
 
     @Override
@@ -84,17 +75,12 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     }
 
     @Override
-    public void setReplyToSelectorHeader(org.apache.camel.Message camelMessage, Message jmsMessage) throws JMSException {
-        // noop
-    }
-
-    @Override
     protected MessageListenerContainer createListenerContainer() throws Exception {
         TemporaryQueueMessageListenerContainer answer
                 = new TemporaryQueueMessageListenerContainer(endpoint);
         answer.setMessageListener(this);
 
-        String clientId = endpoint.getComponent().getClientId();
+        String clientId = endpoint.getClientId();
         if (clientId != null) {
             clientId += ".CamelReplyManager";
             answer.setClientId(clientId);

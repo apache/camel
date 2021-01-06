@@ -161,7 +161,6 @@ public class SjmsEndpointTest extends CamelTestSupport {
         ActiveMQConnectionFactory connectionFactory
                 = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         SjmsComponent component = new SjmsComponent();
-        component.setConnectionCount(3);
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms", component);
 

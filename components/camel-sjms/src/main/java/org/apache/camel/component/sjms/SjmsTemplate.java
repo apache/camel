@@ -23,6 +23,8 @@ import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreator;
 import org.apache.camel.util.ObjectHelper;
@@ -76,39 +78,78 @@ public class SjmsTemplate {
         this.explicitQosEnabled = explicitQosEnabled;
     }
 
-    public <T> T execute(SessionCallback<T> sessionCallback) throws Exception {
+    public void execute(SessionCallback sessionCallback) throws Exception {
         Connection con = null;
         Session session = null;
         try {
             con = createConnection();
             session = createSession(con);
-            return sessionCallback.doInJms(session);
+            sessionCallback.doInJms(session);
         } finally {
-            closeSession(session);
-            closeConnection(con);
+            sessionCallback.onClose(con, session);
         }
     }
 
-    public <T> T execute(Session session, SessionCallback<T> sessionCallback) throws Exception {
+    public void execute(Session session, SessionCallback sessionCallback) throws Exception {
         if (session == null) {
-            return execute(sessionCallback);
+            execute(sessionCallback);
         } else {
-            return sessionCallback.doInJms(session);
+            try {
+                sessionCallback.doInJms(session);
+            } finally {
+                sessionCallback.onClose(null, session);
+            }
         }
     }
 
-    public void send(String destinationName, MessageCreator messageCreator, boolean isTopic) throws Exception {
-        execute(session -> {
-            Destination dest = destinationCreationStrategy.createDestination(session, destinationName, isTopic);
-            Message message = messageCreator.createMessage(session);
-            MessageProducer producer = session.createProducer(dest);
-            try {
-                send(producer, message);
-            } finally {
-                closeProducer(producer);
+    public void send(Exchange exchange, String destinationName, MessageCreator messageCreator, boolean isTopic)
+            throws Exception {
+
+        final SessionCallback callback = new SessionCallback() {
+
+            private volatile Message message;
+            private volatile boolean transacted;
+
+            @Override
+            public void doInJms(Session session) throws Exception {
+                this.transacted = isTransactionOrClientAcknowledgeMode(session);
+
+                if (transacted) {
+                    // remember current session if transactional
+                    exchange.setProperty(SjmsConstants.JMS_SESSION, session);
+                }
+
+                Destination dest = destinationCreationStrategy.createDestination(session, destinationName, isTopic);
+                this.message = messageCreator.createMessage(session);
+                MessageProducer producer = session.createProducer(dest);
+                try {
+                    send(producer, message);
+                } finally {
+                    closeProducer(producer);
+                }
             }
-            return null;
-        });
+
+            @Override
+            public void onClose(Connection connection, Session session) {
+                try {
+                    if (transacted) {
+                        // defer closing till end of UoW
+                        ExtendedExchange ecc = exchange.adapt(ExtendedExchange.class);
+                        TransactionOnCompletion toc = new TransactionOnCompletion(session, this.message);
+                        if (!ecc.containsOnCompletion(toc)) {
+                            ecc.addOnCompletion(toc);
+                        }
+                    } else {
+                        closeSession(session);
+                        closeConnection(connection);
+                    }
+                } catch (Exception e) {
+                    // ignore
+                }
+            }
+        };
+
+        execute(callback);
     }
 
     public void send(MessageProducer producer, Message message) throws Exception {

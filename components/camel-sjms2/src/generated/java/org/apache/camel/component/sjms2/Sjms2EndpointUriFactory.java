@@ -20,13 +20,11 @@ public class Sjms2EndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(53);
-        props.add("includeSentJMSMessageID");
+        Set<String> props = new HashSet<>(49);
         props.add("asyncConsumer");
         props.add("mapJmsMessage");
         props.add("synchronous");
         props.add("includeAllJMSXProperties");
-        props.add("errorHandlerLogStackTrace");
         props.add("eagerLoadingOfProperties");
         props.add("timeToLive");
         props.add("bridgeErrorHandler");
@@ -47,12 +45,9 @@ public class Sjms2EndpointUriFactory extends org.apache.camel.support.component.
         props.add("lazyStartProducer");
         props.add("replyTo");
         props.add("replyToOverride");
-        props.add("errorHandlerLoggingLevel");
-        props.add("durableSubscriptionId");
         props.add("subscriptionId");
         props.add("exceptionHandler");
         props.add("shared");
-        props.add("connectionCount");
         props.add("explicitQosEnabled");
         props.add("transacted");
         props.add("autoStartup");
@@ -66,14 +61,15 @@ public class Sjms2EndpointUriFactory extends org.apache.camel.support.component.
         props.add("allowNullBody");
         props.add("replyToDeliveryPersistent");
         props.add("disableReplyTo");
+        props.add("clientId");
         props.add("recoveryInterval");
         props.add("exchangePattern");
         props.add("preserveMessageQos");
         props.add("replyToType");
-        props.add("testConnectionOnStartup");
         props.add("connectionFactory");
+        props.add("testConnectionOnStartup");
+        props.add("durableSubscriptionName");
         props.add("replyToSameDestinationAllowed");
-        props.add("sharedJMSSession");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
     }

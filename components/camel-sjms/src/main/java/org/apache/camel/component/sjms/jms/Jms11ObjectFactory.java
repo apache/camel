@@ -39,7 +39,7 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
         Destination destination = sjmsEndpoint.getDestinationCreationStrategy().createDestination(session,
                 sjmsEndpoint.getDestinationName(), sjmsEndpoint.isTopic());
         return createMessageConsumer(session, destination, sjmsEndpoint.getMessageSelector(), sjmsEndpoint.isTopic(),
-                sjmsEndpoint.getDurableSubscriptionId(), true, false);
+                sjmsEndpoint.getDurableSubscriptionName(), true, false);
     }
 
     @Override
@@ -53,29 +53,29 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
             Destination destination,
             String messageSelector,
             boolean topic,
-            String subscriptionId,
+            String subscriptionName,
             boolean durable,
             boolean shared)
             throws Exception {
         // noLocal is default false according to JMS spec
-        return createMessageConsumer(session, destination, messageSelector, topic, subscriptionId, durable, shared, false);
+        return createMessageConsumer(session, destination, messageSelector, topic, subscriptionName, durable, shared, false);
     }
 
     @Override
     public MessageConsumer createMessageConsumer(
             Session session, Destination destination,
-            String messageSelector, boolean topic, String subscriptionId, boolean durable,
+            String messageSelector, boolean topic, String subscriptionName, boolean durable,
             boolean shared, boolean noLocal)
             throws Exception {
         MessageConsumer messageConsumer;
 
         if (topic) {
-            if (ObjectHelper.isNotEmpty(subscriptionId)) {
+            if (ObjectHelper.isNotEmpty(subscriptionName)) {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    messageConsumer = session.createDurableSubscriber((Topic) destination, subscriptionId,
+                    messageConsumer = session.createDurableSubscriber((Topic) destination, subscriptionName,
                             messageSelector, noLocal);
                 } else {
-                    messageConsumer = session.createDurableSubscriber((Topic) destination, subscriptionId);
+                    messageConsumer = session.createDurableSubscriber((Topic) destination, subscriptionName);
                 }
             } else {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {

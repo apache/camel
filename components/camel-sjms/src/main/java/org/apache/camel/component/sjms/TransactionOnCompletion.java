@@ -22,14 +22,13 @@ import javax.jms.Session;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.SynchronizationAdapter;
 
-
 import static org.apache.camel.component.sjms.SjmsHelper.*;
 
 /**
- * Completion {@link org.apache.camel.spi.Synchronization} work when
- * processing the message is complete to either commit or rollback the session.
+ * Completion {@link org.apache.camel.spi.Synchronization} work when processing the message is complete to either commit
+ * or rollback the session.
  */
-class TransactionOnCompletion extends SynchronizationAdapter implements Comparable<TransactionOnCompletion> {
+class TransactionOnCompletion extends SynchronizationAdapter {
 
     // TODO: close session, connection
 
@@ -57,12 +56,9 @@ class TransactionOnCompletion extends SynchronizationAdapter implements Comparab
     }
 
     @Override
-    public int compareTo(TransactionOnCompletion o) {
-        // same session and message
-        if (session == o.session && message == o.message) {
-            return 0;
-        } else {
-            return -1;
-        }
+    public boolean equals(Object o) {
+        TransactionOnCompletion that = (TransactionOnCompletion) o;
+        return session == that.session && message == that.message;
     }
+
 }

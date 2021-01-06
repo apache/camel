@@ -93,7 +93,6 @@ public class Sjms2EndpointTest extends CamelTestSupport {
             Sjms2Endpoint sjms = (Sjms2Endpoint) context.getEndpoint("sjms2:queue:test");
             assertNotNull(sjms);
             assertEquals(ExchangePattern.InOnly, sjms.getExchangePattern());
-            // assertTrue(sjms.createExchange().getPattern().equals(ExchangePattern.InOnly));
         } catch (Exception e) {
             fail("Exception thrown: " + e.getLocalizedMessage());
         }
@@ -149,7 +148,6 @@ public class Sjms2EndpointTest extends CamelTestSupport {
         ActiveMQConnectionFactory connectionFactory
                 = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         Sjms2Component component = new Sjms2Component();
-        component.setConnectionCount(3);
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms2", component);
 

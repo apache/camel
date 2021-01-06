@@ -35,10 +35,10 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "autoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "clientid":
+        case "clientId": target.setClientId(property(camelContext, java.lang.String.class, value)); return true;
         case "concurrentconsumers":
         case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
-        case "connectioncount":
-        case "connectionCount": target.setConnectionCount(property(camelContext, java.lang.Integer.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
         case "deliverymode":
@@ -51,16 +51,12 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "disableReplyTo": target.setDisableReplyTo(property(camelContext, boolean.class, value)); return true;
         case "disabletimetolive":
         case "disableTimeToLive": target.setDisableTimeToLive(property(camelContext, boolean.class, value)); return true;
-        case "durablesubscriptionid":
-        case "durableSubscriptionId": target.setDurableSubscriptionId(property(camelContext, java.lang.String.class, value)); return true;
+        case "durablesubscriptionname":
+        case "durableSubscriptionName": target.setDurableSubscriptionName(property(camelContext, java.lang.String.class, value)); return true;
         case "eagerloadingofproperties":
         case "eagerLoadingOfProperties": target.setEagerLoadingOfProperties(property(camelContext, boolean.class, value)); return true;
         case "eagerpoisonbody":
         case "eagerPoisonBody": target.setEagerPoisonBody(property(camelContext, java.lang.String.class, value)); return true;
-        case "errorhandlerlogstacktrace":
-        case "errorHandlerLogStackTrace": target.setErrorHandlerLogStackTrace(property(camelContext, boolean.class, value)); return true;
-        case "errorhandlerlogginglevel":
-        case "errorHandlerLoggingLevel": target.setErrorHandlerLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exceptionlistener":
@@ -73,8 +69,6 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": target.setIncludeAllJMSXProperties(property(camelContext, boolean.class, value)); return true;
-        case "includesentjmsmessageid":
-        case "includeSentJMSMessageID": target.setIncludeSentJMSMessageID(property(camelContext, boolean.class, value)); return true;
         case "jmskeyformatstrategy":
         case "jmsKeyFormatStrategy": target.setJmsKeyFormatStrategy(property(camelContext, org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class, value)); return true;
         case "lazystartproducer":
@@ -104,8 +98,6 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replyToType": target.setReplyToType(property(camelContext, org.apache.camel.component.sjms.ReplyToType.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.setRequestTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "sharedjmssession":
-        case "sharedJMSSession": target.setSharedJMSSession(property(camelContext, boolean.class, value)); return true;
         case "synchronous": target.setSynchronous(property(camelContext, boolean.class, value)); return true;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": target.setTestConnectionOnStartup(property(camelContext, boolean.class, value)); return true;
@@ -135,10 +127,10 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "autoStartup": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "clientid":
+        case "clientId": return java.lang.String.class;
         case "concurrentconsumers":
         case "concurrentConsumers": return int.class;
-        case "connectioncount":
-        case "connectionCount": return java.lang.Integer.class;
         case "connectionfactory":
         case "connectionFactory": return javax.jms.ConnectionFactory.class;
         case "deliverymode":
@@ -151,16 +143,12 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "disableReplyTo": return boolean.class;
         case "disabletimetolive":
         case "disableTimeToLive": return boolean.class;
-        case "durablesubscriptionid":
-        case "durableSubscriptionId": return java.lang.String.class;
+        case "durablesubscriptionname":
+        case "durableSubscriptionName": return java.lang.String.class;
         case "eagerloadingofproperties":
         case "eagerLoadingOfProperties": return boolean.class;
         case "eagerpoisonbody":
         case "eagerPoisonBody": return java.lang.String.class;
-        case "errorhandlerlogstacktrace":
-        case "errorHandlerLogStackTrace": return boolean.class;
-        case "errorhandlerlogginglevel":
-        case "errorHandlerLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exceptionlistener":
@@ -173,8 +161,6 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": return boolean.class;
-        case "includesentjmsmessageid":
-        case "includeSentJMSMessageID": return boolean.class;
         case "jmskeyformatstrategy":
         case "jmsKeyFormatStrategy": return org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class;
         case "lazystartproducer":
@@ -204,8 +190,6 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replyToType": return org.apache.camel.component.sjms.ReplyToType.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
-        case "sharedjmssession":
-        case "sharedJMSSession": return boolean.class;
         case "synchronous": return boolean.class;
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return boolean.class;
@@ -236,10 +220,10 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "autoStartup": return target.isAutoStartup();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "clientid":
+        case "clientId": return target.getClientId();
         case "concurrentconsumers":
         case "concurrentConsumers": return target.getConcurrentConsumers();
-        case "connectioncount":
-        case "connectionCount": return target.getConnectionCount();
         case "connectionfactory":
         case "connectionFactory": return target.getConnectionFactory();
         case "deliverymode":
@@ -252,16 +236,12 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "disableReplyTo": return target.isDisableReplyTo();
         case "disabletimetolive":
         case "disableTimeToLive": return target.isDisableTimeToLive();
-        case "durablesubscriptionid":
-        case "durableSubscriptionId": return target.getDurableSubscriptionId();
+        case "durablesubscriptionname":
+        case "durableSubscriptionName": return target.getDurableSubscriptionName();
         case "eagerloadingofproperties":
         case "eagerLoadingOfProperties": return target.isEagerLoadingOfProperties();
         case "eagerpoisonbody":
         case "eagerPoisonBody": return target.getEagerPoisonBody();
-        case "errorhandlerlogstacktrace":
-        case "errorHandlerLogStackTrace": return target.isErrorHandlerLogStackTrace();
-        case "errorhandlerlogginglevel":
-        case "errorHandlerLoggingLevel": return target.getErrorHandlerLoggingLevel();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exceptionlistener":
@@ -274,8 +254,6 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": return target.isIncludeAllJMSXProperties();
-        case "includesentjmsmessageid":
-        case "includeSentJMSMessageID": return target.isIncludeSentJMSMessageID();
         case "jmskeyformatstrategy":
         case "jmsKeyFormatStrategy": return target.getJmsKeyFormatStrategy();
         case "lazystartproducer":
@@ -305,8 +283,6 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "replyToType": return target.getReplyToType();
         case "requesttimeout":
         case "requestTimeout": return target.getRequestTimeout();
-        case "sharedjmssession":
-        case "sharedJMSSession": return target.isSharedJMSSession();
         case "synchronous": return target.isSynchronous();
         case "testconnectiononstartup":
         case "testConnectionOnStartup": return target.isTestConnectionOnStartup();

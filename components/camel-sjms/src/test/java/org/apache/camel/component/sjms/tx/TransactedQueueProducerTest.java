@@ -24,7 +24,6 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -38,9 +37,8 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
 
     @Test
     public void testRoute() throws Exception {
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World 2");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World 2");
+        getMockEndpoint("mock:result2").expectedBodiesReceived("Hello World 2");
 
         try {
             template.sendBodyAndHeader("direct:start", "Hello World 1", "isfailed", true);
@@ -50,7 +48,7 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
         }
         template.sendBodyAndHeader("direct:start", "Hello World 2", "isfailed", false);
 
-        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -69,9 +67,9 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-
                 from("direct:start")
                         .to("sjms:queue:test.queue?transacted=true")
+                        .to("sjms:queue:test.queue2?transacted=true")
                         .process(
                                 new Processor() {
                                     @Override
@@ -85,9 +83,11 @@ public class TransactedQueueProducerTest extends CamelTestSupport {
                                     }
                                 });
 
-                from("sjms:queue:test.queue?durableSubscriptionId=bar&transacted=true")
+                from("sjms:queue:test.queue?transacted=true")
                         .to("mock:result");
 
+                from("sjms:queue:test.queue2?transacted=true")
+                        .to("mock:result2");
             }
         };
     }

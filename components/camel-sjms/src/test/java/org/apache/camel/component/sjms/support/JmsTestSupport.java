@@ -156,7 +156,6 @@ public class JmsTestSupport extends CamelTestSupport {
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
         if (addSjmsComponent) {
             SjmsComponent component = new SjmsComponent();
-            component.setConnectionCount(1);
             component.setConnectionFactory(connectionFactory);
             camelContext.addComponent("sjms", component);
         }

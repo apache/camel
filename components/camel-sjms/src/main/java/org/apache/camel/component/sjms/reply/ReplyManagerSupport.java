@@ -41,6 +41,8 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.sjms.jms.JmsMessageHelper.getJMSCorrelationIDAsBytes;
+
 /**
  * Base class for {@link ReplyManager} implementations.
  */
@@ -56,7 +58,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected final CountDownLatch replyToLatch = new CountDownLatch(1);
     protected final long replyToTimeout = 10000;
     protected CorrelationTimeoutMap correlation;
-    protected String correlationProperty;
 
     public ReplyManagerSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -83,11 +84,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         this.replyTo = replyTo;
         // trigger latch as the reply to has been resolved and set
         replyToLatch.countDown();
-    }
-
-    @Override
-    public void setCorrelationProperty(final String correlationProperty) {
-        this.correlationProperty = correlationProperty;
     }
 
     @Override
@@ -129,23 +125,9 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         return correlationId;
     }
 
-    protected abstract ReplyHandler createReplyHandler(
-            ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
-            String originalCorrelationId, String correlationId, long requestTimeout);
-
     @Override
     public void onMessage(Message message, Session session) throws JMSException {
-        String correlationID = null;
-
-        try {
-            if (correlationProperty == null) {
-                correlationID = message.getJMSCorrelationID();
-            } else {
-                correlationID = message.getStringProperty(correlationProperty);
-            }
-        } catch (JMSException e) {
-            // ignore
-        }
+        String correlationID = getJMSCorrelationIDAsBytes(message);
 
         if (correlationID == null) {
             log.warn("Ignoring message with no correlationID: {}", message);
