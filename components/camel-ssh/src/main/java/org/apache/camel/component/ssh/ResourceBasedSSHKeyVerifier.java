@@ -67,7 +67,7 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
             knownHostsInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(camelContext,
                     knownHostsResource);
             List<String> possibleTokens = getKnownHostsFileTokensForSocketAddress(remoteAddress);
-            log.debug("Trying to mach PublicKey against provided known_hosts file");
+            log.debug("Trying to match PublicKey against provided known_hosts file");
             PublicKey matchingKey = findKeyForServerToken(knownHostsInputStream, possibleTokens);
             if (matchingKey != null) {
                 log.debug("Found PublicKey match for server");
