@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -62,6 +61,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.PropertiesHelper;
+import org.apache.camel.util.SensitiveUtils;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,9 +86,6 @@ public abstract class BaseMainSupport extends BaseService {
     public static final String PROPERTY_PLACEHOLDER_LOCATION = "camel.main.property-placeholder-location";
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseMainSupport.class);
-
-    private static final String SENSITIVE_KEYS
-            = "passphrase|password|secretkey|accesstoken|clientsecret|authorizationtoken|sasljaasconfig";
 
     protected volatile CamelContext camelContext;
 
@@ -434,9 +431,7 @@ public abstract class BaseMainSupport extends BaseService {
         if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
             LOG.info("Auto-configuration summary:");
             autoConfiguredProperties.forEach((k, v) -> {
-                boolean sensitive
-                        = Arrays.stream(SENSITIVE_KEYS.split("\\|")).anyMatch(s -> k.toLowerCase(Locale.ENGLISH).contains(s));
-                if (sensitive) {
+                if (SensitiveUtils.containsSensitive(k)) {
                     LOG.info("\t{}=xxxxxx", k);
                 } else {
                     LOG.info("\t{}={}", k, v);
@@ -1201,8 +1196,7 @@ public abstract class BaseMainSupport extends BaseService {
             if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
                 LOG.info("Auto-configuration component {} summary:", name);
                 autoConfiguredProperties.forEach((k, v) -> {
-                    boolean sensitive = SENSITIVE_KEYS.contains(k.toLowerCase(Locale.ENGLISH));
-                    if (sensitive) {
+                    if (SensitiveUtils.containsSensitive(k)) {
                         LOG.info("\t{}=xxxxxx", k);
                     } else {
                         LOG.info("\t{}={}", k, v);
