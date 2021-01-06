@@ -89,7 +89,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                 param.put("transitive", false);
 
                 if (log) {
-                    LOG.info("Downloading " + groupId + ":" + artifactId + ":" + version);
+                    LOG.info("Downloading {}:{}:{}", groupId, artifactId, version);
                 }
                 Grape.grab(param);
 
@@ -101,9 +101,8 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
         } catch (Exception e) {
             if (log) {
-                LOG.warn("Error during add components from artifact " + groupId + ":" + artifactId + ":"
-                         + version + " due " + e.getMessage(),
-                        e);
+                LOG.warn("Error during add components from artifact {}:{}:{} due {}", groupId, artifactId, version,
+                        e.getMessage(), e);
             }
         }
 

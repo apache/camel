@@ -116,7 +116,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
             return true;
         } catch (Exception e) {
             if (log) {
-                LOG.warn("Cannot load version " + version + " due " + e.getMessage(), e);
+                LOG.warn("Cannot load version {} due {}", version, e.getMessage(), e);
             }
             return false;
         }
@@ -146,7 +146,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
             return true;
         } catch (Exception e) {
             if (log) {
-                LOG.warn("Cannot load runtime provider version " + version + " due " + e.getMessage(), e);
+                LOG.warn("Cannot load runtime provider version {} due {}", version, e.getMessage(), e);
             }
             return false;
         }
@@ -192,7 +192,7 @@ public class MavenVersionManager implements VersionManager, Closeable {
             }
         } catch (IOException e) {
             if (log) {
-                LOG.warn("Cannot open resource " + name + " and version " + version + " due " + e.getMessage(), e);
+                LOG.warn("Cannot open resource {} and version {} due {}", name, version, e.getMessage(), e);
             }
         }
 
