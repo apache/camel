@@ -59,8 +59,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": target.setDurationMaxMessages(property(camelContext, int.class, value)); return true;
         case "durationmaxseconds":
         case "DurationMaxSeconds": target.setDurationMaxSeconds(property(camelContext, int.class, value)); return true;
-        case "endpointbasicpropertybinding":
-        case "EndpointBasicPropertyBinding": target.setEndpointBasicPropertyBinding(property(camelContext, boolean.class, value)); return true;
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": target.setEndpointBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "endpointlazystartproducer":
@@ -228,8 +226,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": return int.class;
         case "durationmaxseconds":
         case "DurationMaxSeconds": return int.class;
-        case "endpointbasicpropertybinding":
-        case "EndpointBasicPropertyBinding": return boolean.class;
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": return boolean.class;
         case "endpointlazystartproducer":
@@ -398,8 +394,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "DurationMaxMessages": return target.getDurationMaxMessages();
         case "durationmaxseconds":
         case "DurationMaxSeconds": return target.getDurationMaxSeconds();
-        case "endpointbasicpropertybinding":
-        case "EndpointBasicPropertyBinding": return target.isEndpointBasicPropertyBinding();
         case "endpointbridgeerrorhandler":
         case "EndpointBridgeErrorHandler": return target.isEndpointBridgeErrorHandler();
         case "endpointlazystartproducer":

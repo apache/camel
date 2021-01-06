@@ -66,7 +66,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean endpointRuntimeStatisticsEnabled;
     private boolean endpointLazyStartProducer;
     private boolean endpointBridgeErrorHandler;
-    private boolean endpointBasicPropertyBinding;
     private boolean useDataType;
     private boolean useBreadcrumb;
     private boolean beanPostProcessorEnabled = true;
@@ -619,20 +618,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setEndpointBridgeErrorHandler(boolean endpointBridgeErrorHandler) {
         this.endpointBridgeErrorHandler = endpointBridgeErrorHandler;
-    }
-
-    public boolean isEndpointBasicPropertyBinding() {
-        return endpointBasicPropertyBinding;
-    }
-
-    /**
-     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional
-     * capabilities.
-     *
-     * The default value is false.
-     */
-    public void setEndpointBasicPropertyBinding(boolean endpointBasicPropertyBinding) {
-        this.endpointBasicPropertyBinding = endpointBasicPropertyBinding;
     }
 
     public boolean isUseDataType() {
@@ -1488,17 +1473,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withEndpointBridgeErrorHandler(boolean endpointBridgeErrorHandler) {
         this.endpointBridgeErrorHandler = endpointBridgeErrorHandler;
-        return (T) this;
-    }
-
-    /**
-     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional
-     * capabilities.
-     *
-     * The default value is false.
-     */
-    public T withEndpointBasicPropertyBinding(boolean endpointBasicPropertyBinding) {
-        this.endpointBasicPropertyBinding = endpointBasicPropertyBinding;
         return (T) this;
     }
 
