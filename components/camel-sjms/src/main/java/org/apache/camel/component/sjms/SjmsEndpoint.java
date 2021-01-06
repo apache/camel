@@ -34,11 +34,8 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.sjms.consumer.EndpointMessageListener;
 import org.apache.camel.component.sjms.consumer.SimpleMessageListenerContainer;
-import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
-import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.DefaultDestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
@@ -46,11 +43,10 @@ import org.apache.camel.component.sjms.jms.DestinationNameParser;
 import org.apache.camel.component.sjms.jms.Jms11ObjectFactory;
 import org.apache.camel.component.sjms.jms.JmsBinding;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
+import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
-import org.apache.camel.component.sjms.producer.InOnlyProducer;
-import org.apache.camel.component.sjms.producer.InOutProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.Metadata;
@@ -59,9 +55,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.support.LoggingExceptionHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.support.SynchronousDelegateProducer;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Send and receive messages to/from a JMS Queue or Topic using plain JMS 1.x API.
@@ -72,8 +67,6 @@ import org.slf4j.LoggerFactory;
              category = { Category.MESSAGING })
 public class SjmsEndpoint extends DefaultEndpoint
         implements AsyncEndpoint, MultipleConsumersSupport, HeaderFilterStrategyAware {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SjmsEndpoint.class);
 
     private boolean topic;
     private JmsBinding binding;
@@ -100,13 +93,28 @@ public class SjmsEndpoint extends DefaultEndpoint
     @UriParam(label = "common",
               description = "Provides an explicit ReplyTo destination (overrides any incoming value of Message.getJMSReplyTo() in consumer).")
     private String replyTo;
+    @UriParam(label = "producer",
+              description = "Allows for explicitly specifying which kind of strategy to use for replyTo queues when doing request/reply over JMS."
+                            + " Possible values are: Temporary, Shared, or Exclusive."
+                            + " By default Camel will use temporary queues. However if replyTo has been configured, then Shared is used by default."
+                            + " This option allows you to use exclusive queues instead of shared ones."
+                            + " See Camel JMS documentation for more details, and especially the notes about the implications if running in a clustered environment,"
+                            + " and the fact that Shared reply queues has lower performance than its alternatives Temporary and Exclusive.")
+    private ReplyToType replyToType;
     @UriParam(defaultValue = "AUTO_ACKNOWLEDGE",
               enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE",
               description = "The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE")
     private SessionAcknowledgementType acknowledgementMode = SessionAcknowledgementType.AUTO_ACKNOWLEDGE;
-    @UriParam(label = "consumer", defaultValue = "1",
-              description = "Sets the number of consumer listeners used for this endpoint.")
-    private int consumerCount = 1;
+    @UriParam(defaultValue = "1", label = "consumer",
+              description = "Specifies the default number of concurrent consumers when consuming from JMS (not for request/reply over JMS)."
+                            + " See also the maxMessagesPerTask option to control dynamic scaling up/down of threads."
+                            + " When doing request/reply over JMS then the option replyToConcurrentConsumers is used to control number"
+                            + " of concurrent consumers on the reply message listener.")
+    private int concurrentConsumers = 1;
+    @UriParam(defaultValue = "1", label = "producer",
+              description = "Specifies the default number of concurrent consumers when doing request/reply over JMS."
+                            + " See also the maxMessagesPerTask option to control dynamic scaling up/down of threads.")
+    private int replyToConcurrentConsumers = 1;
     @UriParam(label = "producer", defaultValue = "false",
               description = "Set if the deliveryMode, priority or timeToLive qualities of service should be used when sending messages."
                             + " This option is based on Spring's JmsTemplate. The deliveryMode, priority and timeToLive options are applied to the current endpoint."
@@ -203,9 +211,6 @@ public class SjmsEndpoint extends DefaultEndpoint
               description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc."
                             + " See section about how mapping works below for more details.")
     private boolean mapJmsMessage = true;
-    @UriParam(label = "transaction",
-              description = "Sets the commit strategy.")
-    private TransactionCommitStrategy transactionCommitStrategy;
     @UriParam(label = "advanced",
               description = "To use a custom DestinationCreationStrategy.")
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
@@ -218,9 +223,6 @@ public class SjmsEndpoint extends DefaultEndpoint
                             + " The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters."
                             + " You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the # notation.")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
-    @UriParam(label = "advanced",
-              description = "Initializes the connectionResource for the endpoint, which takes precedence over the component's connectionResource, if any")
-    private ConnectionResource connectionResource;
     @UriParam(label = "advanced",
               description = "Initializes the connectionFactory for the endpoint, which takes precedence over the component's connectionFactory, if any")
     private ConnectionFactory connectionFactory;
@@ -270,6 +272,11 @@ public class SjmsEndpoint extends DefaultEndpoint
                             + " Note if transacted has been enabled, then asyncConsumer=true does not run asynchronously, as transaction"
                             + "  must be executed synchronously (Camel 3.0 may support async transactions).")
     private boolean asyncConsumer;
+    @UriParam(label = "producer,advanced",
+              description = "Only applicable when sending to JMS destination using InOnly (eg fire and forget)."
+                            + " Enabling this option will enrich the Camel Exchange with the actual JMSMessageID"
+                            + " that was used by the JMS client when the message was sent to the JMS destination.")
+    private boolean includeSentJMSMessageID;
 
     private JmsObjectFactory jmsObjectFactory = new Jms11ObjectFactory();
 
@@ -287,21 +294,48 @@ public class SjmsEndpoint extends DefaultEndpoint
         return (SjmsComponent) super.getComponent();
     }
 
+    /**
+     * Gets the destination name which was configured from the endpoint uri.
+     *
+     * @return the destination name resolved from the endpoint uri
+     */
+    public String getEndpointConfiguredDestinationName() {
+        String remainder = StringHelper.after(getEndpointKey(), "//");
+        if (remainder != null && remainder.contains("?")) {
+            // remove parameters
+            remainder = StringHelper.before(remainder, "?");
+        }
+        return JmsMessageHelper.normalizeDestinationName(remainder);
+    }
+
     @Override
     public Producer createProducer() throws Exception {
-        SjmsProducer producer;
-        // TODO: Merge inOutProducer and InOnlyProducer into one class so this can be dynamic via exchange MEP
-        if (!isDisableReplyTo() && getExchangePattern().equals(ExchangePattern.InOut)) {
-            producer = new InOutProducer(this);
-        } else {
-            producer = new InOnlyProducer(this);
+        if (isTransacted() && getExchangePattern().isOutCapable()) {
+            throw new IllegalArgumentException("SjmsProducer cannot be both transacted=true and exchangePattern=InOut");
         }
-        return producer;
+
+        Producer answer = new SjmsProducer(this);
+        if (isSynchronous()) {
+            return new SynchronousDelegateProducer(answer);
+        } else {
+            return answer;
+        }
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         EndpointMessageListener listener = new EndpointMessageListener(this, processor);
+        configureMessageListener(listener);
+
+        MessageListenerContainer container = createMessageListenerContainer(this);
+        container.setMessageListener(listener);
+
+        SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
+        configureConsumer(consumer);
+        return consumer;
+    }
+
+    public void configureMessageListener(EndpointMessageListener listener) {
         if (isDisableReplyTo()) {
             listener.setDisableReplyTo(true);
         }
@@ -313,49 +347,11 @@ public class SjmsEndpoint extends DefaultEndpoint
             listener.setReplyToDestination(getReplyTo());
         }
         listener.setAsync(isAsyncConsumer());
-
-        MessageListenerContainer container = createMessageListenerContainer(this);
-        container.setMessageListener(listener);
-
-        SjmsConsumer consumer = new SjmsConsumer(this, processor, container);
-        configureConsumer(consumer);
-        return consumer;
     }
 
     @Override
     public boolean isMultipleConsumersSupported() {
         return true;
-    }
-
-    @Deprecated
-    public ConnectionResource createConnectionResource(Object source) {
-        if (getConnectionFactory() == null) {
-            throw new IllegalArgumentException(
-                    String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));
-        }
-
-        try {
-            LOG.debug("Creating ConnectionResource with connectionCount: {} using ConnectionFactory: {}",
-                    getConnectionCount(), getConnectionFactory());
-            // We always use a connection pool, even for a pool of 1
-            ConnectionFactoryResource connections = new ConnectionFactoryResource(
-                    getConnectionCount(), getConnectionFactory(),
-                    getComponent().getConnectionUsername(), getComponent().getConnectionPassword(),
-                    getComponent().getConnectionClientId(),
-                    getComponent().getConnectionMaxWait(), getComponent().isConnectionTestOnBorrow());
-            if (exceptionListener != null) {
-                connections.setExceptionListener(exceptionListener);
-            } else {
-                // add a exception listener that logs so we can see any errors that happens
-                ExceptionListener listener = new SjmsLoggingExceptionListener(
-                        new LoggingExceptionHandler(getCamelContext(), source.getClass()), isErrorHandlerLogStackTrace());
-                connections.setExceptionListener(listener);
-            }
-            connections.fillPool();
-            return connections;
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
     }
 
     public Exchange createExchange(Message message, Session session) {
@@ -379,6 +375,7 @@ public class SjmsEndpoint extends DefaultEndpoint
             }
             template.setQoSSettings(dm, getPriority(), getTimeToLive());
         }
+        template.setDestinationCreationStrategy(getDestinationCreationStrategy());
 
         return template;
     }
@@ -399,11 +396,15 @@ public class SjmsEndpoint extends DefaultEndpoint
                 template.setQoSSettings(0, 0, ttl);
             }
         }
+        template.setDestinationCreationStrategy(getDestinationCreationStrategy());
+
         return template;
     }
 
     public MessageListenerContainer createMessageListenerContainer(SjmsEndpoint endpoint) throws Exception {
-        return new SimpleMessageListenerContainer(endpoint);
+        SimpleMessageListenerContainer answer = new SimpleMessageListenerContainer(endpoint);
+        answer.setConcurrentConsumers(concurrentConsumers);
+        return answer;
     }
 
     /**
@@ -497,30 +498,6 @@ public class SjmsEndpoint extends DefaultEndpoint
         this.includeAllJMSXProperties = includeAllJMSXProperties;
     }
 
-    public ConnectionResource getConnectionResource() {
-        ConnectionResource answer = null;
-        if (connectionResource != null) {
-            answer = connectionResource;
-        }
-        if (answer == null) {
-            answer = getComponent().getConnectionResource();
-        }
-        return answer;
-    }
-
-    /**
-     * Initializes the connectionResource for the endpoint, which takes precedence over the component's
-     * connectionResource, if any
-     */
-    public void setConnectionResource(ConnectionResource connectionResource) {
-        this.connectionResource = connectionResource;
-    }
-
-    public void setConnectionResource(String connectionResource) {
-        this.connectionResource
-                = EndpointHelper.resolveReferenceParameter(getCamelContext(), connectionResource, ConnectionResource.class);
-    }
-
     public SessionAcknowledgementType getAcknowledgementMode() {
         return acknowledgementMode;
     }
@@ -540,15 +517,20 @@ public class SjmsEndpoint extends DefaultEndpoint
         return topic;
     }
 
-    public int getConsumerCount() {
-        return consumerCount;
+    public int getConcurrentConsumers() {
+        return concurrentConsumers;
     }
 
-    /**
-     * Sets the number of consumer listeners used for this endpoint.
-     */
-    public void setConsumerCount(int consumerCount) {
-        this.consumerCount = consumerCount;
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
+
+    public int getReplyToConcurrentConsumers() {
+        return replyToConcurrentConsumers;
+    }
+
+    public void setReplyToConcurrentConsumers(int replyToConcurrentConsumers) {
+        this.replyToConcurrentConsumers = replyToConcurrentConsumers;
     }
 
     public Boolean getExplicitQosEnabled() {
@@ -669,17 +651,6 @@ public class SjmsEndpoint extends DefaultEndpoint
         this.messageSelector = messageSelector;
     }
 
-    public TransactionCommitStrategy getTransactionCommitStrategy() {
-        return transactionCommitStrategy;
-    }
-
-    /**
-     * Sets the commit strategy.
-     */
-    public void setTransactionCommitStrategy(TransactionCommitStrategy transactionCommitStrategy) {
-        this.transactionCommitStrategy = transactionCommitStrategy;
-    }
-
     public boolean isTransacted() {
         return transacted;
     }
@@ -714,6 +685,14 @@ public class SjmsEndpoint extends DefaultEndpoint
     public void setReplyTo(String replyTo) {
         this.replyTo = replyTo;
         setExchangePattern(ExchangePattern.InOut);
+    }
+
+    public ReplyToType getReplyToType() {
+        return replyToType;
+    }
+
+    public void setReplyToType(ReplyToType replyToType) {
+        this.replyToType = replyToType;
     }
 
     public boolean isTestConnectionOnStartup() {
@@ -940,5 +919,13 @@ public class SjmsEndpoint extends DefaultEndpoint
 
     public void setAsyncConsumer(boolean asyncConsumer) {
         this.asyncConsumer = asyncConsumer;
+    }
+
+    public boolean isIncludeSentJMSMessageID() {
+        return includeSentJMSMessageID;
+    }
+
+    public void setIncludeSentJMSMessageID(boolean includeSentJMSMessageID) {
+        this.includeSentJMSMessageID = includeSentJMSMessageID;
     }
 }

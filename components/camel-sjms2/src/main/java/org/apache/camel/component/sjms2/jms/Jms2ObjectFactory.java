@@ -25,6 +25,7 @@ import javax.jms.Session;
 import javax.jms.Topic;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms2.Sjms2Endpoint;
 import org.apache.camel.util.ObjectHelper;
@@ -47,6 +48,11 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
                 sjms2Endpoint.getSubscriptionId(),
                 sjms2Endpoint.isDurable(),
                 sjms2Endpoint.isShared());
+    }
+
+    @Override
+    public MessageConsumer createQueueMessageConsumer(Session session, Destination destination) throws Exception {
+        return createMessageConsumer(session, destination, null, false, null, false, false);
     }
 
     @Override
@@ -189,6 +195,18 @@ public class Jms2ObjectFactory implements JmsObjectFactory {
         }
 
         return createMessageProducer(session, destination, persistent, sjms2Endpoint.getTimeToLive());
+    }
+
+    @Override
+    public MessageProducer createMessageProducer(Session session, Endpoint endpoint, Destination destination) throws Exception {
+        SjmsEndpoint sjmsEndpoint = (SjmsEndpoint) endpoint;
+
+        boolean persistent = sjmsEndpoint.isDeliveryPersistent();
+        if (sjmsEndpoint.getDeliveryMode() != null) {
+            persistent = DeliveryMode.PERSISTENT == sjmsEndpoint.getDeliveryMode();
+        }
+
+        return createMessageProducer(session, destination, persistent, sjmsEndpoint.getTimeToLive());
     }
 
     @Override

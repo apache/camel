@@ -66,12 +66,6 @@ public class QueueProducerTest extends JmsTestSupport {
 
     }
 
-    /**
-     * @see              org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

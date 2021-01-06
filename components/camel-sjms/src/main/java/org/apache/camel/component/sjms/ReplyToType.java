@@ -16,18 +16,12 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
+/**
+ * Types for replyTo queues
+ */
+public enum ReplyToType {
 
-import org.apache.camel.AfterPropertiesConfigured;
-import org.apache.camel.Service;
-
-public interface MessageListenerContainer extends Service, AfterPropertiesConfigured {
-
-    ConnectionFactory getConnectionFactory();
-
-    void setMessageListener(SessionMessageListener messageListener);
-
-    void setExceptionListener(ExceptionListener exceptionListener);
+    Temporary,
+    Exclusive
 
 }

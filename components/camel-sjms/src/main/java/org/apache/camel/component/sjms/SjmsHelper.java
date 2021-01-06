@@ -18,6 +18,7 @@ package org.apache.camel.component.sjms;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
+import javax.jms.Message;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
@@ -80,11 +81,32 @@ public final class SjmsHelper {
         }
     }
 
-    public static void rollbackIfNecessary(Session session) throws JMSException {
-        try {
-            session.rollback();
-        } catch (javax.jms.TransactionInProgressException | javax.jms.IllegalStateException ex) {
-            // ignore
+    public static void commitIfNeeded(Session session, Message message) throws Exception {
+        if (session.getTransacted()) {
+            SjmsHelper.commitIfNecessary(session);
+        } else if (message != null && session.getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE) {
+            message.acknowledge();
         }
     }
+
+    public static void rollbackIfNeeded(Session session) throws JMSException {
+        if (session.getTransacted()) {
+            try {
+                session.rollback();
+            } catch (javax.jms.TransactionInProgressException | javax.jms.IllegalStateException ex) {
+                // ignore
+            }
+        } else if (session.getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE) {
+            try {
+                session.recover();
+            } catch (javax.jms.IllegalStateException ex) {
+                // ignore
+            }
+        }
+    }
+
+    public static boolean isTransactionOrClientAcknowledgeMode(Session session) throws JMSException {
+        return session.getTransacted() || session.getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE;
+    }
+
 }

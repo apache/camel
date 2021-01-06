@@ -32,7 +32,7 @@ import javax.jms.Session;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.sjms.SessionMessageListener;
 import org.apache.camel.component.sjms.SjmsEndpoint;
-import org.apache.camel.component.sjms.SjmsHelper;
+import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.backoff.BackOff;
 import org.apache.camel.util.backoff.BackOffTimer;
@@ -48,10 +48,11 @@ public class SimpleMessageListenerContainer extends ServiceSupport
 
     private final SjmsEndpoint endpoint;
     private SessionMessageListener messageListener;
-
-    // TODO: transaction
-    // TODO: Add concurrency later
+    private String clientId;
     private int concurrentConsumers = 1;
+    private ExceptionListener exceptionListener;
+    private String destinationName;
+    private DestinationCreationStrategy destinationCreationStrategy;
 
     private final Object connectionLock = new Object();
     private Connection connection;
@@ -59,7 +60,6 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     private final Object consumerLock = new Object();
     private Set<MessageConsumer> consumers;
     private Set<Session> sessions;
-
     private BackOffTimer.Task recoverTask;
     private ScheduledExecutorService scheduler;
 
@@ -67,8 +67,48 @@ public class SimpleMessageListenerContainer extends ServiceSupport
         this.endpoint = endpoint;
     }
 
+    public SjmsEndpoint getEndpoint() {
+        return endpoint;
+    }
+
     public void setMessageListener(SessionMessageListener messageListener) {
         this.messageListener = messageListener;
+    }
+
+    public void setExceptionListener(ExceptionListener exceptionListener) {
+        this.exceptionListener = exceptionListener;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getDestinationName() {
+        return destinationName;
+    }
+
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
+    }
+
+    public DestinationCreationStrategy getDestinationCreationStrategy() {
+        return destinationCreationStrategy;
+    }
+
+    public void setDestinationCreationStrategy(DestinationCreationStrategy destinationCreationStrategy) {
+        this.destinationCreationStrategy = destinationCreationStrategy;
+    }
+
+    public int getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
     }
 
     @Override
@@ -122,26 +162,17 @@ public class SimpleMessageListenerContainer extends ServiceSupport
             commitIfNeeded(session, message);
         }
 
-        protected void commitIfNeeded(Session session, Message message) throws Exception {
-            if (session.getTransacted()) {
-                SjmsHelper.commitIfNecessary(session);
-            } else if (message != null && session.getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE) {
-                message.acknowledge();
-            }
-        }
-
-        protected void rollbackIfNeeded(Session session) throws JMSException {
-            if (session.getTransacted()) {
-                SjmsHelper.rollbackIfNecessary(session);
-            } else if (session.getAcknowledgeMode() == Session.CLIENT_ACKNOWLEDGE) {
-                session.recover();
-            }
-        }
-
     }
 
     @Override
     public void onException(JMSException exception) {
+        if (exceptionListener != null) {
+            try {
+                exceptionListener.onException(exception);
+            } catch (Throwable e) {
+                // ignore
+            }
+        }
         if (endpoint.getExceptionListener() != null) {
             try {
                 endpoint.getExceptionListener().onException(exception);
@@ -211,18 +242,24 @@ public class SimpleMessageListenerContainer extends ServiceSupport
     protected void initConsumers() throws Exception {
         synchronized (this.consumerLock) {
             if (consumers == null) {
+                LOG.debug("Initializing {} concurrent consumers as JMS listener on destination: {}", concurrentConsumers,
+                        destinationName);
                 sessions = new HashSet<>(concurrentConsumers);
                 consumers = new HashSet<>(concurrentConsumers);
                 for (int i = 0; i < this.concurrentConsumers; i++) {
                     Session session
                             = connection.createSession(endpoint.isTransacted(), endpoint.getAcknowledgementMode().intValue());
-                    MessageConsumer consumer = endpoint.getJmsObjectFactory().createMessageConsumer(session, endpoint);
+                    MessageConsumer consumer = createMessageConsumer(session);
                     configureConsumer(consumer, session);
                     sessions.add(session);
                     consumers.add(consumer);
                 }
             }
         }
+    }
+
+    protected MessageConsumer createMessageConsumer(Session session) throws Exception {
+        return endpoint.getJmsObjectFactory().createMessageConsumer(session, endpoint);
     }
 
     protected void stopConsumers() throws Exception {
@@ -248,8 +285,9 @@ public class SimpleMessageListenerContainer extends ServiceSupport
                 Connection con = null;
                 try {
                     con = endpoint.getConnectionFactory().createConnection();
-                    if (endpoint.getComponent().getConnectionClientId() != null) {
-                        con.setClientID(endpoint.getComponent().getConnectionClientId());
+                    String cid = clientId != null ? clientId : endpoint.getComponent().getClientId();
+                    if (cid != null) {
+                        con.setClientID(cid);
                     }
                     con.setExceptionListener(this);
                 } catch (JMSException e) {

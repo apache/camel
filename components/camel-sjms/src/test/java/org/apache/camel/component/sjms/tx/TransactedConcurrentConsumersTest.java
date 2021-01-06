@@ -33,13 +33,13 @@ public class TransactedConcurrentConsumersTest extends TransactedConsumerSupport
     public void testRoute() throws Exception {
         final String destinationName = "sjms:queue:one.consumer.one.route.test";
         int routeCount = 1;
-        int consumerCount = 2;
+        int concurrentConsumers = 2;
         int messageCount = 20;
         int maxAttemptsCount = 10;
         int totalRedeliverdFalse = 20;
         int totalRedeliveredTrue = 1;
         runTest(destinationName, routeCount, messageCount, totalRedeliverdFalse, totalRedeliveredTrue,
-                consumerCount, maxAttemptsCount);
+                concurrentConsumers, maxAttemptsCount);
     }
 
     @Override

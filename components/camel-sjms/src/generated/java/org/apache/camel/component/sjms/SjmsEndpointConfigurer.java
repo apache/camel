@@ -35,14 +35,12 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "autoStartup": target.setAutoStartup(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "concurrentconsumers":
+        case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "connectioncount":
         case "connectionCount": target.setConnectionCount(property(camelContext, java.lang.Integer.class, value)); return true;
         case "connectionfactory":
         case "connectionFactory": target.setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
-        case "connectionresource":
-        case "connectionResource": target.setConnectionResource(property(camelContext, org.apache.camel.component.sjms.jms.ConnectionResource.class, value)); return true;
-        case "consumercount":
-        case "consumerCount": target.setConsumerCount(property(camelContext, int.class, value)); return true;
         case "deliverymode":
         case "deliveryMode": target.setDeliveryMode(property(camelContext, java.lang.Integer.class, value)); return true;
         case "deliverypersistent":
@@ -75,6 +73,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": target.setIncludeAllJMSXProperties(property(camelContext, boolean.class, value)); return true;
+        case "includesentjmsmessageid":
+        case "includeSentJMSMessageID": target.setIncludeSentJMSMessageID(property(camelContext, boolean.class, value)); return true;
         case "jmskeyformatstrategy":
         case "jmsKeyFormatStrategy": target.setJmsKeyFormatStrategy(property(camelContext, org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class, value)); return true;
         case "lazystartproducer":
@@ -92,12 +92,16 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "recoveryInterval": target.setRecoveryInterval(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "replyto":
         case "replyTo": target.setReplyTo(property(camelContext, java.lang.String.class, value)); return true;
+        case "replytoconcurrentconsumers":
+        case "replyToConcurrentConsumers": target.setReplyToConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": target.setReplyToDeliveryPersistent(property(camelContext, boolean.class, value)); return true;
         case "replytooverride":
         case "replyToOverride": target.setReplyToOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "replytosamedestinationallowed":
         case "replyToSameDestinationAllowed": target.setReplyToSameDestinationAllowed(property(camelContext, boolean.class, value)); return true;
+        case "replytotype":
+        case "replyToType": target.setReplyToType(property(camelContext, org.apache.camel.component.sjms.ReplyToType.class, value)); return true;
         case "requesttimeout":
         case "requestTimeout": target.setRequestTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sharedjmssession":
@@ -108,8 +112,6 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timetolive":
         case "timeToLive": target.setTimeToLive(property(camelContext, long.class, value)); return true;
         case "transacted": target.setTransacted(property(camelContext, boolean.class, value)); return true;
-        case "transactioncommitstrategy":
-        case "transactionCommitStrategy": target.setTransactionCommitStrategy(property(camelContext, org.apache.camel.component.sjms.TransactionCommitStrategy.class, value)); return true;
         case "transferexception":
         case "transferException": target.setTransferException(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -133,14 +135,12 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "autoStartup": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "concurrentconsumers":
+        case "concurrentConsumers": return int.class;
         case "connectioncount":
         case "connectionCount": return java.lang.Integer.class;
         case "connectionfactory":
         case "connectionFactory": return javax.jms.ConnectionFactory.class;
-        case "connectionresource":
-        case "connectionResource": return org.apache.camel.component.sjms.jms.ConnectionResource.class;
-        case "consumercount":
-        case "consumerCount": return int.class;
         case "deliverymode":
         case "deliveryMode": return java.lang.Integer.class;
         case "deliverypersistent":
@@ -173,6 +173,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": return boolean.class;
+        case "includesentjmsmessageid":
+        case "includeSentJMSMessageID": return boolean.class;
         case "jmskeyformatstrategy":
         case "jmsKeyFormatStrategy": return org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy.class;
         case "lazystartproducer":
@@ -190,12 +192,16 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "recoveryInterval": return long.class;
         case "replyto":
         case "replyTo": return java.lang.String.class;
+        case "replytoconcurrentconsumers":
+        case "replyToConcurrentConsumers": return int.class;
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return boolean.class;
         case "replytooverride":
         case "replyToOverride": return java.lang.String.class;
         case "replytosamedestinationallowed":
         case "replyToSameDestinationAllowed": return boolean.class;
+        case "replytotype":
+        case "replyToType": return org.apache.camel.component.sjms.ReplyToType.class;
         case "requesttimeout":
         case "requestTimeout": return long.class;
         case "sharedjmssession":
@@ -206,8 +212,6 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timetolive":
         case "timeToLive": return long.class;
         case "transacted": return boolean.class;
-        case "transactioncommitstrategy":
-        case "transactionCommitStrategy": return org.apache.camel.component.sjms.TransactionCommitStrategy.class;
         case "transferexception":
         case "transferException": return boolean.class;
         default: return null;
@@ -232,14 +236,12 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "autoStartup": return target.isAutoStartup();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "concurrentconsumers":
+        case "concurrentConsumers": return target.getConcurrentConsumers();
         case "connectioncount":
         case "connectionCount": return target.getConnectionCount();
         case "connectionfactory":
         case "connectionFactory": return target.getConnectionFactory();
-        case "connectionresource":
-        case "connectionResource": return target.getConnectionResource();
-        case "consumercount":
-        case "consumerCount": return target.getConsumerCount();
         case "deliverymode":
         case "deliveryMode": return target.getDeliveryMode();
         case "deliverypersistent":
@@ -272,6 +274,8 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "headerFilterStrategy": return target.getHeaderFilterStrategy();
         case "includealljmsxproperties":
         case "includeAllJMSXProperties": return target.isIncludeAllJMSXProperties();
+        case "includesentjmsmessageid":
+        case "includeSentJMSMessageID": return target.isIncludeSentJMSMessageID();
         case "jmskeyformatstrategy":
         case "jmsKeyFormatStrategy": return target.getJmsKeyFormatStrategy();
         case "lazystartproducer":
@@ -289,12 +293,16 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "recoveryInterval": return target.getRecoveryInterval();
         case "replyto":
         case "replyTo": return target.getReplyTo();
+        case "replytoconcurrentconsumers":
+        case "replyToConcurrentConsumers": return target.getReplyToConcurrentConsumers();
         case "replytodeliverypersistent":
         case "replyToDeliveryPersistent": return target.isReplyToDeliveryPersistent();
         case "replytooverride":
         case "replyToOverride": return target.getReplyToOverride();
         case "replytosamedestinationallowed":
         case "replyToSameDestinationAllowed": return target.isReplyToSameDestinationAllowed();
+        case "replytotype":
+        case "replyToType": return target.getReplyToType();
         case "requesttimeout":
         case "requestTimeout": return target.getRequestTimeout();
         case "sharedjmssession":
@@ -305,8 +313,6 @@ public class SjmsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "timetolive":
         case "timeToLive": return target.getTimeToLive();
         case "transacted": return target.isTransacted();
-        case "transactioncommitstrategy":
-        case "transactionCommitStrategy": return target.getTransactionCommitStrategy();
         case "transferexception":
         case "transferException": return target.isTransferException();
         default: return null;

@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms.consumer;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
@@ -25,12 +26,12 @@ import org.junit.jupiter.api.Test;
 public class InOutConsumerQueueAsyncTest extends JmsTestSupport {
 
     @Test
-    public void testAynchronous() throws Exception {
+    public void testAsync() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "Hello Camel");
 
         template.sendBody("sjms:start", "Hello Camel");
         template.sendBody("sjms:start", "Hello World");
-        Thread.sleep(4000);
+
         assertMockEndpointsSatisfied();
     }
 
@@ -39,10 +40,14 @@ public class InOutConsumerQueueAsyncTest extends JmsTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("sjms:queue:start?asyncConsumer=true")
-                        .to("sjms:queue:in.out.queue?replyTo=in.out.queue.response")
+                        .log("Requesting ${body} with thread ${threadName}")
+                        .to(ExchangePattern.InOut,
+                                "sjms:queue:in.out.queue?replyToConcurrentConsumers=2&replyTo=in.out.queue.response")
+                        .log("Result ${body} with thread ${threadName}")
                         .to("mock:result");
 
-                from("sjms:queue:in.out.queue?asyncConsumer=true").to("log:before")
+                from("sjms:queue:in.out.queue?concurrentConsumers=2").to("log:before")
+                        .log("Replying ${body} with thread ${threadName}")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = (String) exchange.getIn().getBody();

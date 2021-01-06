@@ -43,6 +43,11 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
     }
 
     @Override
+    public MessageConsumer createQueueMessageConsumer(Session session, Destination destination) throws Exception {
+        return createMessageConsumer(session, destination, null, false, null, false, false);
+    }
+
+    @Override
     public MessageConsumer createMessageConsumer(
             Session session,
             Destination destination,

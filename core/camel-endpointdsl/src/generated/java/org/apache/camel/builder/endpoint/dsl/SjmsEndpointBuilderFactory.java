@@ -308,33 +308,45 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the number of consumer listeners used for this endpoint.
+         * Specifies the default number of concurrent consumers when consuming
+         * from JMS (not for request/reply over JMS). See also the
+         * maxMessagesPerTask option to control dynamic scaling up/down of
+         * threads. When doing request/reply over JMS then the option
+         * replyToConcurrentConsumers is used to control number of concurrent
+         * consumers on the reply message listener.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
          * 
-         * @param consumerCount the value to set
+         * @param concurrentConsumers the value to set
          * @return the dsl builder
          */
-        default SjmsEndpointConsumerBuilder consumerCount(int consumerCount) {
-            doSetProperty("consumerCount", consumerCount);
+        default SjmsEndpointConsumerBuilder concurrentConsumers(
+                int concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
-         * Sets the number of consumer listeners used for this endpoint.
+         * Specifies the default number of concurrent consumers when consuming
+         * from JMS (not for request/reply over JMS). See also the
+         * maxMessagesPerTask option to control dynamic scaling up/down of
+         * threads. When doing request/reply over JMS then the option
+         * replyToConcurrentConsumers is used to control number of concurrent
+         * consumers on the reply message listener.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
          * 
-         * @param consumerCount the value to set
+         * @param concurrentConsumers the value to set
          * @return the dsl builder
          */
-        default SjmsEndpointConsumerBuilder consumerCount(String consumerCount) {
-            doSetProperty("consumerCount", consumerCount);
+        default SjmsEndpointConsumerBuilder concurrentConsumers(
+                String concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -485,38 +497,6 @@ public interface SjmsEndpointBuilderFactory {
          */
         default SjmsEndpointConsumerBuilder transacted(String transacted) {
             doSetProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default SjmsEndpointConsumerBuilder transactionCommitStrategy(
-                Object transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default SjmsEndpointConsumerBuilder transactionCommitStrategy(
-                String transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
         }
     }
@@ -867,40 +847,6 @@ public interface SjmsEndpointBuilderFactory {
         default AdvancedSjmsEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjmsEndpointConsumerBuilder connectionResource(
-                Object connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjmsEndpointConsumerBuilder connectionResource(
-                String connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -1727,6 +1673,42 @@ public interface SjmsEndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the default number of concurrent consumers when doing
+         * request/reply over JMS. See also the maxMessagesPerTask option to
+         * control dynamic scaling up/down of threads.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: producer
+         * 
+         * @param replyToConcurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder replyToConcurrentConsumers(
+                int replyToConcurrentConsumers) {
+            doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
+            return this;
+        }
+        /**
+         * Specifies the default number of concurrent consumers when doing
+         * request/reply over JMS. See also the maxMessagesPerTask option to
+         * control dynamic scaling up/down of threads.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: producer
+         * 
+         * @param replyToConcurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder replyToConcurrentConsumers(
+                String replyToConcurrentConsumers) {
+            doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
+            return this;
+        }
+        /**
          * Provides an explicit ReplyTo destination in the JMS message, which
          * overrides the setting of replyTo. It is useful if you want to forward
          * the message to a remote Queue and receive the reply message from the
@@ -1742,6 +1724,54 @@ public interface SjmsEndpointBuilderFactory {
         default SjmsEndpointProducerBuilder replyToOverride(
                 String replyToOverride) {
             doSetProperty("replyToOverride", replyToOverride);
+            return this;
+        }
+        /**
+         * Allows for explicitly specifying which kind of strategy to use for
+         * replyTo queues when doing request/reply over JMS. Possible values
+         * are: Temporary, Shared, or Exclusive. By default Camel will use
+         * temporary queues. However if replyTo has been configured, then Shared
+         * is used by default. This option allows you to use exclusive queues
+         * instead of shared ones. See Camel JMS documentation for more details,
+         * and especially the notes about the implications if running in a
+         * clustered environment, and the fact that Shared reply queues has
+         * lower performance than its alternatives Temporary and Exclusive.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.sjms.ReplyToType&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param replyToType the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder replyToType(ReplyToType replyToType) {
+            doSetProperty("replyToType", replyToType);
+            return this;
+        }
+        /**
+         * Allows for explicitly specifying which kind of strategy to use for
+         * replyTo queues when doing request/reply over JMS. Possible values
+         * are: Temporary, Shared, or Exclusive. By default Camel will use
+         * temporary queues. However if replyTo has been configured, then Shared
+         * is used by default. This option allows you to use exclusive queues
+         * instead of shared ones. See Camel JMS documentation for more details,
+         * and especially the notes about the implications if running in a
+         * clustered environment, and the fact that Shared reply queues has
+         * lower performance than its alternatives Temporary and Exclusive.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.sjms.ReplyToType&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param replyToType the value to set
+         * @return the dsl builder
+         */
+        default SjmsEndpointProducerBuilder replyToType(String replyToType) {
+            doSetProperty("replyToType", replyToType);
             return this;
         }
         /**
@@ -1845,38 +1875,6 @@ public interface SjmsEndpointBuilderFactory {
             doSetProperty("transacted", transacted);
             return this;
         }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default SjmsEndpointProducerBuilder transactionCommitStrategy(
-                Object transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default SjmsEndpointProducerBuilder transactionCommitStrategy(
-                String transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
     }
 
     /**
@@ -1970,6 +1968,45 @@ public interface SjmsEndpointBuilderFactory {
         default AdvancedSjmsEndpointProducerBuilder disableTimeToLive(
                 String disableTimeToLive) {
             doSetProperty("disableTimeToLive", disableTimeToLive);
+            return this;
+        }
+        /**
+         * Only applicable when sending to JMS destination using InOnly (eg fire
+         * and forget). Enabling this option will enrich the Camel Exchange with
+         * the actual JMSMessageID that was used by the JMS client when the
+         * message was sent to the JMS destination.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param includeSentJMSMessageID the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointProducerBuilder includeSentJMSMessageID(
+                boolean includeSentJMSMessageID) {
+            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
+            return this;
+        }
+        /**
+         * Only applicable when sending to JMS destination using InOnly (eg fire
+         * and forget). Enabling this option will enrich the Camel Exchange with
+         * the actual JMSMessageID that was used by the JMS client when the
+         * message was sent to the JMS destination.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param includeSentJMSMessageID the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjmsEndpointProducerBuilder includeSentJMSMessageID(
+                String includeSentJMSMessageID) {
+            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
         }
         /**
@@ -2123,40 +2160,6 @@ public interface SjmsEndpointBuilderFactory {
         default AdvancedSjmsEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjmsEndpointProducerBuilder connectionResource(
-                Object connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjmsEndpointProducerBuilder connectionResource(
-                String connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -2770,38 +2773,6 @@ public interface SjmsEndpointBuilderFactory {
             doSetProperty("transacted", transacted);
             return this;
         }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default SjmsEndpointBuilder transactionCommitStrategy(
-                Object transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default SjmsEndpointBuilder transactionCommitStrategy(
-                String transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
     }
 
     /**
@@ -2965,40 +2936,6 @@ public interface SjmsEndpointBuilderFactory {
         default AdvancedSjmsEndpointBuilder connectionFactory(
                 String connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjmsEndpointBuilder connectionResource(
-                Object connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjmsEndpointBuilder connectionResource(
-                String connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -3439,6 +3376,15 @@ public interface SjmsEndpointBuilderFactory {
         CLIENT_ACKNOWLEDGE,
         DUPS_OK_ACKNOWLEDGE,
         SESSION_TRANSACTED;
+    }
+
+    /**
+     * Proxy enum for <code>org.apache.camel.component.sjms.ReplyToType</code>
+     * enum.
+     */
+    enum ReplyToType {
+        Temporary,
+        Exclusive;
     }
 
     public interface SjmsBuilders {

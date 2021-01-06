@@ -14,23 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms.tx;
+package org.apache.camel.component.sjms.jms;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.component.sjms.TransactionCommitStrategy;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
 
-/**
- * The default commit strategy for all transaction.
- */
-public class DefaultTransactionCommitStrategy implements TransactionCommitStrategy {
+@FunctionalInterface
+public interface MessageCreator {
 
-    @Override
-    public boolean commit(Exchange exchange) throws Exception {
-        return true;
-    }
+    Message createMessage(Session session) throws JMSException;
 
-    @Override
-    public boolean rollback(Exchange exchange) throws Exception {
-        return true;
-    }
 }

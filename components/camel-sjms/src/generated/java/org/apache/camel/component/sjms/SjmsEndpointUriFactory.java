@@ -20,7 +20,8 @@ public class SjmsEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(49);
+        Set<String> props = new HashSet<>(50);
+        props.add("includeSentJMSMessageID");
         props.add("asyncConsumer");
         props.add("mapJmsMessage");
         props.add("synchronous");
@@ -35,21 +36,21 @@ public class SjmsEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("destinationType");
         props.add("asyncStartListener");
         props.add("eagerPoisonBody");
+        props.add("replyToConcurrentConsumers");
         props.add("destinationCreationStrategy");
         props.add("disableTimeToLive");
         props.add("messageSelector");
         props.add("deliveryPersistent");
         props.add("priority");
+        props.add("concurrentConsumers");
         props.add("acknowledgementMode");
         props.add("lazyStartProducer");
-        props.add("transactionCommitStrategy");
         props.add("replyTo");
         props.add("replyToOverride");
         props.add("errorHandlerLoggingLevel");
         props.add("durableSubscriptionId");
         props.add("exceptionHandler");
         props.add("connectionCount");
-        props.add("connectionResource");
         props.add("explicitQosEnabled");
         props.add("transacted");
         props.add("autoStartup");
@@ -62,10 +63,10 @@ public class SjmsEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("allowNullBody");
         props.add("replyToDeliveryPersistent");
         props.add("disableReplyTo");
-        props.add("consumerCount");
         props.add("recoveryInterval");
         props.add("exchangePattern");
         props.add("preserveMessageQos");
+        props.add("replyToType");
         props.add("testConnectionOnStartup");
         props.add("connectionFactory");
         props.add("replyToSameDestinationAllowed");

@@ -18,17 +18,23 @@ package org.apache.camel.component.sjms;
 
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 
+import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
+import org.apache.camel.component.sjms.jms.MessageCreator;
 import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.component.sjms.SjmsHelper.*;
 
 public class SjmsTemplate {
 
     private final ConnectionFactory connectionFactory;
     private final boolean transacted;
     private final int acknowledgeMode;
+    private DestinationCreationStrategy destinationCreationStrategy;
 
     private boolean explicitQosEnabled;
     private int deliveryMode = Message.DEFAULT_DELIVERY_MODE;
@@ -41,6 +47,14 @@ public class SjmsTemplate {
         this.connectionFactory = connectionFactory;
         this.transacted = transacted;
         this.acknowledgeMode = acknowledgeMode;
+    }
+
+    public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
+    }
+
+    public void setDestinationCreationStrategy(DestinationCreationStrategy destinationCreationStrategy) {
+        this.destinationCreationStrategy = destinationCreationStrategy;
     }
 
     public void setQoSSettings(int deliveryMode, int priority, long timeToLive) {
@@ -70,8 +84,8 @@ public class SjmsTemplate {
             session = createSession(con);
             return sessionCallback.doInJms(session);
         } finally {
-            close(session);
-            close(con);
+            closeSession(session);
+            closeConnection(con);
         }
     }
 
@@ -81,6 +95,20 @@ public class SjmsTemplate {
         } else {
             return sessionCallback.doInJms(session);
         }
+    }
+
+    public void send(String destinationName, MessageCreator messageCreator, boolean isTopic) throws Exception {
+        execute(session -> {
+            Destination dest = destinationCreationStrategy.createDestination(session, destinationName, isTopic);
+            Message message = messageCreator.createMessage(session);
+            MessageProducer producer = session.createProducer(dest);
+            try {
+                send(producer, message);
+            } finally {
+                closeProducer(producer);
+            }
+            return null;
+        });
     }
 
     public void send(MessageProducer producer, Message message) throws Exception {
@@ -99,23 +127,4 @@ public class SjmsTemplate {
         return connection.createSession(transacted, acknowledgeMode);
     }
 
-    private static void close(Connection con) {
-        if (con != null) {
-            try {
-                con.close();
-            } catch (Throwable e) {
-                // ignore
-            }
-        }
-    }
-
-    private static void close(Session session) {
-        if (session != null) {
-            try {
-                session.close();
-            } catch (Throwable e) {
-                // ignore
-            }
-        }
-    }
 }

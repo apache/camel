@@ -24,18 +24,15 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.DefaultJmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 
-/**
- * The <a href="http://camel.apache.org/sjms">Simple JMS</a> component.
- */
 @Component("sjms")
 public class SjmsComponent extends HeaderFilterStrategyComponent {
 
@@ -44,10 +41,16 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     @Metadata(label = "common", autowired = true,
               description = "A ConnectionFactory is required to enable the SjmsComponent. It can be set directly or set set as part of a ConnectionResource.")
     private ConnectionFactory connectionFactory;
-    @Metadata(label = "advanced",
-              description = "A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory."
-                            + " See Plugable Connection Resource Management for further details.")
-    private ConnectionResource connectionResource;
+    @Metadata(label = "security", secret = true,
+              description = "Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.")
+    private String username;
+    @Metadata(label = "security", secret = true,
+              description = "Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.")
+    private String password;
+    @UriParam(description = "Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance."
+                            + " It is typically only required for durable topic subscriptions."
+                            + " If using Apache ActiveMQ you may prefer to use Virtual Topics instead.")
+    private String clientId;
     @Metadata(label = "advanced",
               description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
                             + " Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -)."
@@ -57,38 +60,24 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     @Metadata(defaultValue = "1",
               description = "The maximum number of connections available to endpoints started under this component")
     private Integer connectionCount = 1;
-    @Metadata(label = "transaction",
-              description = "To configure which kind of commit strategy to use. Camel provides two implementations out of the box, default and batch.")
-    private TransactionCommitStrategy transactionCommitStrategy;
     @Metadata(label = "advanced", description = "To use a custom DestinationCreationStrategy.")
     private DestinationCreationStrategy destinationCreationStrategy;
     @Metadata(label = "advanced",
               description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
                             + " of javax.jms.Message objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
-    @Metadata(label = "advanced", defaultValue = "true",
-              description = "When using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource"
-                            + " then should each javax.jms.Connection be tested before being used.")
-    private boolean connectionTestOnBorrow = true;
-    @Metadata(label = "security", secret = true,
-              description = "The username to use when creating javax.jms.Connection when using the"
-                            + " default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.")
-    private String connectionUsername;
-    @Metadata(label = "security", secret = true,
-              description = "The password to use when creating javax.jms.Connection when using the"
-                            + " default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.")
-    private String connectionPassword;
-    @Metadata(label = "advanced", description = "The client ID to use when creating javax.jms.Connection when using the"
-                                                + " default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.")
-    private String connectionClientId;
-    @Metadata(label = "advanced", defaultValue = "5000",
-              description = "The max wait time in millis to block and wait on free connection when the pool"
-                            + " is exhausted when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.")
-    private long connectionMaxWait = 5000;
     @Metadata(defaultValue = "5000", label = "advanced", javaType = "java.time.Duration",
               description = "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."
                             + " The default is 5000 ms, that is, 5 seconds.")
     private long recoveryInterval = 5000;
+    @Metadata(defaultValue = "1000", label = "advanced", javaType = "java.time.Duration",
+              description = "Configures how often Camel should check for timed out Exchanges when doing request/reply over JMS."
+                            + " By default Camel checks once per second. But if you must react faster when a timeout occurs,"
+                            + " then you can lower this interval, to check more frequently. The timeout is determined by the option requestTimeout.")
+    private long requestTimeoutCheckerInterval = 1000L;
+    @Metadata(label = "advanced", defaultValue = "1",
+              description = "Specifies the maximum number of concurrent consumers for continue routing when timeout occurred when using request/reply over JMS.")
+    private int replyToOnTimeoutMaxConcurrentConsumers = 1;
 
     public SjmsComponent() {
     }
@@ -102,9 +91,6 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
         SjmsEndpoint endpoint = createSjmsEndpoint(uri, remaining);
         if (endpoint.isTransacted()) {
             endpoint.setSynchronous(true);
-        }
-        if (transactionCommitStrategy != null) {
-            endpoint.setTransactionCommitStrategy(transactionCommitStrategy);
         }
         if (destinationCreationStrategy != null) {
             endpoint.setDestinationCreationStrategy(destinationCreationStrategy);
@@ -164,10 +150,6 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
         return asyncStartStopExecutorService;
     }
 
-    /**
-     * A ConnectionFactory is required to enable the SjmsComponent. It can be set directly or set set as part of a
-     * ConnectionResource.
-     */
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
     }
@@ -176,21 +158,6 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
         return connectionFactory;
     }
 
-    /**
-     * A ConnectionResource is an interface that allows for customization and container control of the
-     * ConnectionFactory. See Plugable Connection Resource Management for further details.
-     */
-    public void setConnectionResource(ConnectionResource connectionResource) {
-        this.connectionResource = connectionResource;
-    }
-
-    public ConnectionResource getConnectionResource() {
-        return connectionResource;
-    }
-
-    /**
-     * The maximum number of connections available to endpoints started under this component
-     */
     public void setConnectionCount(Integer maxConnections) {
         this.connectionCount = maxConnections;
     }
@@ -199,13 +166,6 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
         return connectionCount;
     }
 
-    /**
-     * Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel
-     * provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (.
-     * and -). Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can
-     * provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using
-     * the # notation.
-     */
     public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {
         this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
     }
@@ -214,25 +174,10 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
         return jmsKeyFormatStrategy;
     }
 
-    public TransactionCommitStrategy getTransactionCommitStrategy() {
-        return transactionCommitStrategy;
-    }
-
-    /**
-     * To configure which kind of commit strategy to use. Camel provides two implementations out of the box, default and
-     * batch.
-     */
-    public void setTransactionCommitStrategy(TransactionCommitStrategy commitStrategy) {
-        this.transactionCommitStrategy = commitStrategy;
-    }
-
     public DestinationCreationStrategy getDestinationCreationStrategy() {
         return destinationCreationStrategy;
     }
 
-    /**
-     * To use a custom DestinationCreationStrategy.
-     */
     public void setDestinationCreationStrategy(DestinationCreationStrategy destinationCreationStrategy) {
         this.destinationCreationStrategy = destinationCreationStrategy;
     }
@@ -241,72 +186,32 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
         return messageCreatedStrategy;
     }
 
-    /**
-     * To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of
-     * <tt>javax.jms.Message</tt> objects when Camel is sending a JMS message.
-     */
     public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
         this.messageCreatedStrategy = messageCreatedStrategy;
     }
 
-    public boolean isConnectionTestOnBorrow() {
-        return connectionTestOnBorrow;
+    public String getUsername() {
+        return username;
     }
 
-    /**
-     * When using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource} then should each
-     * {@link javax.jms.Connection} be tested before being used.
-     */
-    public void setConnectionTestOnBorrow(boolean connectionTestOnBorrow) {
-        this.connectionTestOnBorrow = connectionTestOnBorrow;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getConnectionUsername() {
-        return connectionUsername;
+    public String getPassword() {
+        return password;
     }
 
-    /**
-     * The username to use when creating {@link javax.jms.Connection} when using the default
-     * {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.
-     */
-    public void setConnectionUsername(String connectionUsername) {
-        this.connectionUsername = connectionUsername;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public String getConnectionPassword() {
-        return connectionPassword;
+    public String getClientId() {
+        return clientId;
     }
 
-    /**
-     * The password to use when creating {@link javax.jms.Connection} when using the default
-     * {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.
-     */
-    public void setConnectionPassword(String connectionPassword) {
-        this.connectionPassword = connectionPassword;
-    }
-
-    public String getConnectionClientId() {
-        return connectionClientId;
-    }
-
-    /**
-     * The client ID to use when creating {@link javax.jms.Connection} when using the default
-     * {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.
-     */
-    public void setConnectionClientId(String connectionClientId) {
-        this.connectionClientId = connectionClientId;
-    }
-
-    public long getConnectionMaxWait() {
-        return connectionMaxWait;
-    }
-
-    /**
-     * The max wait time in millis to block and wait on free connection when the pool is exhausted when using the
-     * default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.
-     */
-    public void setConnectionMaxWait(long connectionMaxWait) {
-        this.connectionMaxWait = connectionMaxWait;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     public long getRecoveryInterval() {
@@ -315,5 +220,21 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
 
     public void setRecoveryInterval(long recoveryInterval) {
         this.recoveryInterval = recoveryInterval;
+    }
+
+    public long getRequestTimeoutCheckerInterval() {
+        return requestTimeoutCheckerInterval;
+    }
+
+    public void setRequestTimeoutCheckerInterval(long requestTimeoutCheckerInterval) {
+        this.requestTimeoutCheckerInterval = requestTimeoutCheckerInterval;
+    }
+
+    public int getReplyToOnTimeoutMaxConcurrentConsumers() {
+        return replyToOnTimeoutMaxConcurrentConsumers;
+    }
+
+    public void setReplyToOnTimeoutMaxConcurrentConsumers(int replyToOnTimeoutMaxConcurrentConsumers) {
+        this.replyToOnTimeoutMaxConcurrentConsumers = replyToOnTimeoutMaxConcurrentConsumers;
     }
 }

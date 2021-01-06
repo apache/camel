@@ -60,7 +60,7 @@ public class TransactedTopicProducerTest extends JmsTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         SjmsComponent sjms = context.getComponent("sjms", SjmsComponent.class);
-        sjms.setConnectionClientId(CONNECTION_ID);
+        sjms.setClientId(CONNECTION_ID);
         return context;
     }
 

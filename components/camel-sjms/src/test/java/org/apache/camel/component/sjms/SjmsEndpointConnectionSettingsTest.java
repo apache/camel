@@ -19,8 +19,6 @@ package org.apache.camel.component.sjms;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.sjms.jms.ConnectionFactoryResource;
-import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -33,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SjmsEndpointConnectionSettingsTest extends CamelTestSupport {
     private final ActiveMQConnectionFactory connectionFactory
             = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
-    private final ConnectionResource connectionResource = new ConnectionFactoryResource(2, connectionFactory);
 
     @Test
     public void testConnectionFactory() {
@@ -44,20 +41,10 @@ public class SjmsEndpointConnectionSettingsTest extends CamelTestSupport {
         assertEquals(connectionFactory, qe.getConnectionFactory());
     }
 
-    @Test
-    public void testConnectionResource() {
-        Endpoint endpoint = context.getEndpoint("sjms:queue:test?connectionResource=#connresource");
-        assertNotNull(endpoint);
-        assertTrue(endpoint instanceof SjmsEndpoint);
-        SjmsEndpoint qe = (SjmsEndpoint) endpoint;
-        assertEquals(connectionResource, qe.getConnectionResource());
-    }
-
     @Override
     protected CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.bind("activemq", connectionFactory);
-        registry.bind("connresource", connectionResource);
         return new DefaultCamelContext(registry);
     }
 }

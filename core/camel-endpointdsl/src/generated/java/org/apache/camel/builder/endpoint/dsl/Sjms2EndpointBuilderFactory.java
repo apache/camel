@@ -143,6 +143,127 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether to test the connection on startup. This ensures
+         * that when Camel starts that all the JMS consumers have a valid
+         * connection to the JMS broker. If a connection cannot be granted then
+         * Camel throws an exception on startup. This ensures that Camel is not
+         * started with failed connections. The JMS producers is tested as well.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder testConnectionOnStartup(
+                boolean testConnectionOnStartup) {
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
+            return this;
+        }
+        /**
+         * Specifies whether to test the connection on startup. This ensures
+         * that when Camel starts that all the JMS consumers have a valid
+         * connection to the JMS broker. If a connection cannot be granted then
+         * Camel throws an exception on startup. This ensures that Camel is not
+         * started with failed connections. The JMS producers is tested as well.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder testConnectionOnStartup(
+                String testConnectionOnStartup) {
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
+            return this;
+        }
+        /**
+         * Whether the JmsConsumer processes the Exchange asynchronously. If
+         * enabled then the JmsConsumer may pickup the next message from the JMS
+         * queue, while the previous message is being processed asynchronously
+         * (by the Asynchronous Routing Engine). This means that messages may be
+         * processed not 100% strictly in order. If disabled (as default) then
+         * the Exchange is fully processed before the JmsConsumer will pickup
+         * the next message from the JMS queue. Note if transacted has been
+         * enabled, then asyncConsumer=true does not run asynchronously, as
+         * transaction must be executed synchronously (Camel 3.0 may support
+         * async transactions).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param asyncConsumer the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder asyncConsumer(boolean asyncConsumer) {
+            doSetProperty("asyncConsumer", asyncConsumer);
+            return this;
+        }
+        /**
+         * Whether the JmsConsumer processes the Exchange asynchronously. If
+         * enabled then the JmsConsumer may pickup the next message from the JMS
+         * queue, while the previous message is being processed asynchronously
+         * (by the Asynchronous Routing Engine). This means that messages may be
+         * processed not 100% strictly in order. If disabled (as default) then
+         * the Exchange is fully processed before the JmsConsumer will pickup
+         * the next message from the JMS queue. Note if transacted has been
+         * enabled, then asyncConsumer=true does not run asynchronously, as
+         * transaction must be executed synchronously (Camel 3.0 may support
+         * async transactions).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param asyncConsumer the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder asyncConsumer(String asyncConsumer) {
+            doSetProperty("asyncConsumer", asyncConsumer);
+            return this;
+        }
+        /**
+         * Specifies whether the consumer container should auto-startup.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param autoStartup the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder autoStartup(boolean autoStartup) {
+            doSetProperty("autoStartup", autoStartup);
+            return this;
+        }
+        /**
+         * Specifies whether the consumer container should auto-startup.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param autoStartup the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointConsumerBuilder autoStartup(String autoStartup) {
+            doSetProperty("autoStartup", autoStartup);
+            return this;
+        }
+        /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
          * pickup incoming messages, or the likes, will now be processed as a
@@ -188,33 +309,45 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
-         * Sets the number of consumer listeners used for this endpoint.
+         * Specifies the default number of concurrent consumers when consuming
+         * from JMS (not for request/reply over JMS). See also the
+         * maxMessagesPerTask option to control dynamic scaling up/down of
+         * threads. When doing request/reply over JMS then the option
+         * replyToConcurrentConsumers is used to control number of concurrent
+         * consumers on the reply message listener.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
          * 
-         * @param consumerCount the value to set
+         * @param concurrentConsumers the value to set
          * @return the dsl builder
          */
-        default Sjms2EndpointConsumerBuilder consumerCount(int consumerCount) {
-            doSetProperty("consumerCount", consumerCount);
+        default Sjms2EndpointConsumerBuilder concurrentConsumers(
+                int concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
-         * Sets the number of consumer listeners used for this endpoint.
+         * Specifies the default number of concurrent consumers when consuming
+         * from JMS (not for request/reply over JMS). See also the
+         * maxMessagesPerTask option to control dynamic scaling up/down of
+         * threads. When doing request/reply over JMS then the option
+         * replyToConcurrentConsumers is used to control number of concurrent
+         * consumers on the reply message listener.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 1
          * Group: consumer
          * 
-         * @param consumerCount the value to set
+         * @param concurrentConsumers the value to set
          * @return the dsl builder
          */
-        default Sjms2EndpointConsumerBuilder consumerCount(String consumerCount) {
-            doSetProperty("consumerCount", consumerCount);
+        default Sjms2EndpointConsumerBuilder concurrentConsumers(
+                String concurrentConsumers) {
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -261,71 +394,6 @@ public interface Sjms2EndpointBuilderFactory {
         default Sjms2EndpointConsumerBuilder durableSubscriptionId(
                 String durableSubscriptionId) {
             doSetProperty("durableSubscriptionId", durableSubscriptionId);
-            return this;
-        }
-        /**
-         * Backoff in millis on consumer pool reconnection attempts.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 5000
-         * Group: consumer
-         * 
-         * @param reconnectBackOff the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder reconnectBackOff(
-                long reconnectBackOff) {
-            doSetProperty("reconnectBackOff", reconnectBackOff);
-            return this;
-        }
-        /**
-         * Backoff in millis on consumer pool reconnection attempts.
-         * 
-         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 5000
-         * Group: consumer
-         * 
-         * @param reconnectBackOff the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder reconnectBackOff(
-                String reconnectBackOff) {
-            doSetProperty("reconnectBackOff", reconnectBackOff);
-            return this;
-        }
-        /**
-         * Try to apply reconnection logic on consumer pool.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param reconnectOnError the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder reconnectOnError(
-                boolean reconnectOnError) {
-            doSetProperty("reconnectOnError", reconnectOnError);
-            return this;
-        }
-        /**
-         * Try to apply reconnection logic on consumer pool.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param reconnectOnError the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder reconnectOnError(
-                String reconnectOnError) {
-            doSetProperty("reconnectOnError", reconnectOnError);
             return this;
         }
         /**
@@ -405,39 +473,6 @@ public interface Sjms2EndpointBuilderFactory {
         default Sjms2EndpointConsumerBuilder subscriptionId(
                 String subscriptionId) {
             doSetProperty("subscriptionId", subscriptionId);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder synchronous(boolean synchronous) {
-            doSetProperty("synchronous", synchronous);
-            return this;
-        }
-        /**
-         * Sets whether synchronous processing should be strictly used or Camel
-         * is allowed to use asynchronous processing (if supported).
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param synchronous the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder synchronous(String synchronous) {
-            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -542,38 +577,6 @@ public interface Sjms2EndpointBuilderFactory {
             doSetProperty("transacted", transacted);
             return this;
         }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder transactionCommitStrategy(
-                Object transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointConsumerBuilder transactionCommitStrategy(
-                String transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
     }
 
     /**
@@ -584,6 +587,68 @@ public interface Sjms2EndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default Sjms2EndpointConsumerBuilder basic() {
             return (Sjms2EndpointConsumerBuilder) this;
+        }
+        /**
+         * Enables eager loading of JMS properties and payload as soon as a
+         * message is loaded which generally is inefficient as the JMS
+         * properties may not be required but sometimes can catch early any
+         * issues with the underlying JMS provider and the use of JMS
+         * properties. See also the option eagerPoisonBody.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param eagerLoadingOfProperties the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder eagerLoadingOfProperties(
+                boolean eagerLoadingOfProperties) {
+            doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
+            return this;
+        }
+        /**
+         * Enables eager loading of JMS properties and payload as soon as a
+         * message is loaded which generally is inefficient as the JMS
+         * properties may not be required but sometimes can catch early any
+         * issues with the underlying JMS provider and the use of JMS
+         * properties. See also the option eagerPoisonBody.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param eagerLoadingOfProperties the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder eagerLoadingOfProperties(
+                String eagerLoadingOfProperties) {
+            doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
+            return this;
+        }
+        /**
+         * If eagerLoadingOfProperties is enabled and the JMS message payload
+         * (JMS body or JMS properties) is poison (cannot be read/mapped), then
+         * set this text as the message body instead so the message can be
+         * processed (the cause of the poison are already stored as exception on
+         * the Exchange). This can be turned off by setting
+         * eagerPoisonBody=false. See also the option eagerLoadingOfProperties.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: Poison JMS message due to ${exception.message}
+         * Group: consumer (advanced)
+         * 
+         * @param eagerPoisonBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder eagerPoisonBody(
+                String eagerPoisonBody) {
+            doSetProperty("eagerPoisonBody", eagerPoisonBody);
+            return this;
         }
         /**
          * To let the consumer use a custom ExceptionHandler. Notice if the
@@ -668,6 +733,45 @@ public interface Sjms2EndpointBuilderFactory {
         default AdvancedSjms2EndpointConsumerBuilder messageSelector(
                 String messageSelector) {
             doSetProperty("messageSelector", messageSelector);
+            return this;
+        }
+        /**
+         * Whether a JMS consumer is allowed to send a reply message to the same
+         * destination that the consumer is using to consume from. This prevents
+         * an endless loop by consuming and sending back the same message to
+         * itself.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param replyToSameDestinationAllowed the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder replyToSameDestinationAllowed(
+                boolean replyToSameDestinationAllowed) {
+            doSetProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
+            return this;
+        }
+        /**
+         * Whether a JMS consumer is allowed to send a reply message to the same
+         * destination that the consumer is using to consume from. This prevents
+         * an endless loop by consuming and sending back the same message to
+         * itself.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer (advanced)
+         * 
+         * @param replyToSameDestinationAllowed the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder replyToSameDestinationAllowed(
+                String replyToSameDestinationAllowed) {
+            doSetProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
             return this;
         }
         /**
@@ -821,40 +925,6 @@ public interface Sjms2EndpointBuilderFactory {
         default AdvancedSjms2EndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointConsumerBuilder connectionResource(
-                Object connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointConsumerBuilder connectionResource(
-                String connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -1120,6 +1190,136 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the interval between recovery attempts, i.e. when a
+         * connection is being refreshed, in milliseconds. The default is 5000
+         * ms, that is, 5 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param recoveryInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder recoveryInterval(
+                long recoveryInterval) {
+            doSetProperty("recoveryInterval", recoveryInterval);
+            return this;
+        }
+        /**
+         * Specifies the interval between recovery attempts, i.e. when a
+         * connection is being refreshed, in milliseconds. The default is 5000
+         * ms, that is, 5 seconds.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param recoveryInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder recoveryInterval(
+                String recoveryInterval) {
+            doSetProperty("recoveryInterval", recoveryInterval);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder synchronous(
+                boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder synchronous(
+                String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * If enabled and you are using Request Reply messaging (InOut) and an
+         * Exchange failed on the consumer side, then the caused Exception will
+         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * is Camel, the returned Exception is rethrown. This allows you to use
+         * Camel JMS as a bridge in your routing - for example, using persistent
+         * queues to enable robust routing. Notice that if you also have
+         * transferExchange enabled, this option takes precedence. The caught
+         * exception is required to be serializable. The original Exception on
+         * the consumer side can be wrapped in an outer exception such as
+         * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder transferException(
+                boolean transferException) {
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
+         * If enabled and you are using Request Reply messaging (InOut) and an
+         * Exchange failed on the consumer side, then the caused Exception will
+         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * is Camel, the returned Exception is rethrown. This allows you to use
+         * Camel JMS as a bridge in your routing - for example, using persistent
+         * queues to enable robust routing. Notice that if you also have
+         * transferExchange enabled, this option takes precedence. The caught
+         * exception is required to be serializable. The original Exception on
+         * the consumer side can be wrapped in an outer exception such as
+         * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointConsumerBuilder transferException(
+                String transferException) {
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
          * Specifies whether to share JMS session with other SJMS endpoints.
          * Turn this off if your route is accessing to multiple JMS providers.
          * If you need transaction against multiple JMS providers, use jms
@@ -1265,6 +1465,47 @@ public interface Sjms2EndpointBuilderFactory {
          */
         default Sjms2EndpointProducerBuilder replyTo(String replyTo) {
             doSetProperty("replyTo", replyTo);
+            return this;
+        }
+        /**
+         * Specifies whether to test the connection on startup. This ensures
+         * that when Camel starts that all the JMS consumers have a valid
+         * connection to the JMS broker. If a connection cannot be granted then
+         * Camel throws an exception on startup. This ensures that Camel is not
+         * started with failed connections. The JMS producers is tested as well.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointProducerBuilder testConnectionOnStartup(
+                boolean testConnectionOnStartup) {
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
+            return this;
+        }
+        /**
+         * Specifies whether to test the connection on startup. This ensures
+         * that when Camel starts that all the JMS consumers have a valid
+         * connection to the JMS broker. If a connection cannot be granted then
+         * Camel throws an exception on startup. This ensures that Camel is not
+         * started with failed connections. The JMS producers is tested as well.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointProducerBuilder testConnectionOnStartup(
+                String testConnectionOnStartup) {
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -1511,6 +1752,42 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the default number of concurrent consumers when doing
+         * request/reply over JMS. See also the maxMessagesPerTask option to
+         * control dynamic scaling up/down of threads.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: producer
+         * 
+         * @param replyToConcurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointProducerBuilder replyToConcurrentConsumers(
+                int replyToConcurrentConsumers) {
+            doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
+            return this;
+        }
+        /**
+         * Specifies the default number of concurrent consumers when doing
+         * request/reply over JMS. See also the maxMessagesPerTask option to
+         * control dynamic scaling up/down of threads.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: producer
+         * 
+         * @param replyToConcurrentConsumers the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointProducerBuilder replyToConcurrentConsumers(
+                String replyToConcurrentConsumers) {
+            doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
+            return this;
+        }
+        /**
          * Provides an explicit ReplyTo destination in the JMS message, which
          * overrides the setting of replyTo. It is useful if you want to forward
          * the message to a remote Queue and receive the reply message from the
@@ -1526,6 +1803,54 @@ public interface Sjms2EndpointBuilderFactory {
         default Sjms2EndpointProducerBuilder replyToOverride(
                 String replyToOverride) {
             doSetProperty("replyToOverride", replyToOverride);
+            return this;
+        }
+        /**
+         * Allows for explicitly specifying which kind of strategy to use for
+         * replyTo queues when doing request/reply over JMS. Possible values
+         * are: Temporary, Shared, or Exclusive. By default Camel will use
+         * temporary queues. However if replyTo has been configured, then Shared
+         * is used by default. This option allows you to use exclusive queues
+         * instead of shared ones. See Camel JMS documentation for more details,
+         * and especially the notes about the implications if running in a
+         * clustered environment, and the fact that Shared reply queues has
+         * lower performance than its alternatives Temporary and Exclusive.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.sjms.ReplyToType&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param replyToType the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointProducerBuilder replyToType(ReplyToType replyToType) {
+            doSetProperty("replyToType", replyToType);
+            return this;
+        }
+        /**
+         * Allows for explicitly specifying which kind of strategy to use for
+         * replyTo queues when doing request/reply over JMS. Possible values
+         * are: Temporary, Shared, or Exclusive. By default Camel will use
+         * temporary queues. However if replyTo has been configured, then Shared
+         * is used by default. This option allows you to use exclusive queues
+         * instead of shared ones. See Camel JMS documentation for more details,
+         * and especially the notes about the implications if running in a
+         * clustered environment, and the fact that Shared reply queues has
+         * lower performance than its alternatives Temporary and Exclusive.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.sjms.ReplyToType&lt;/code&gt;
+         * type.
+         * 
+         * Group: producer
+         * 
+         * @param replyToType the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointProducerBuilder replyToType(String replyToType) {
+            doSetProperty("replyToType", replyToType);
             return this;
         }
         /**
@@ -1630,38 +1955,6 @@ public interface Sjms2EndpointBuilderFactory {
             doSetProperty("transacted", transacted);
             return this;
         }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointProducerBuilder transactionCommitStrategy(
-                Object transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointProducerBuilder transactionCommitStrategy(
-                String transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
     }
 
     /**
@@ -1706,6 +1999,94 @@ public interface Sjms2EndpointBuilderFactory {
         default AdvancedSjms2EndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
             doSetProperty("allowNullBody", allowNullBody);
+            return this;
+        }
+        /**
+         * Use this option to force disabling time to live. For example when you
+         * do request/reply over JMS, then Camel will by default use the
+         * requestTimeout value as time to live on the message being sent. The
+         * problem is that the sender and receiver systems have to have their
+         * clocks synchronized, so they are in sync. This is not always so easy
+         * to archive. So you can use disableTimeToLive=true to not set a time
+         * to live value on the sent message. Then the message will not expire
+         * on the receiver system. See below in section About time to live for
+         * more details.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param disableTimeToLive the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder disableTimeToLive(
+                boolean disableTimeToLive) {
+            doSetProperty("disableTimeToLive", disableTimeToLive);
+            return this;
+        }
+        /**
+         * Use this option to force disabling time to live. For example when you
+         * do request/reply over JMS, then Camel will by default use the
+         * requestTimeout value as time to live on the message being sent. The
+         * problem is that the sender and receiver systems have to have their
+         * clocks synchronized, so they are in sync. This is not always so easy
+         * to archive. So you can use disableTimeToLive=true to not set a time
+         * to live value on the sent message. Then the message will not expire
+         * on the receiver system. See below in section About time to live for
+         * more details.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param disableTimeToLive the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder disableTimeToLive(
+                String disableTimeToLive) {
+            doSetProperty("disableTimeToLive", disableTimeToLive);
+            return this;
+        }
+        /**
+         * Only applicable when sending to JMS destination using InOnly (eg fire
+         * and forget). Enabling this option will enrich the Camel Exchange with
+         * the actual JMSMessageID that was used by the JMS client when the
+         * message was sent to the JMS destination.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param includeSentJMSMessageID the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder includeSentJMSMessageID(
+                boolean includeSentJMSMessageID) {
+            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
+            return this;
+        }
+        /**
+         * Only applicable when sending to JMS destination using InOnly (eg fire
+         * and forget). Enabling this option will enrich the Camel Exchange with
+         * the actual JMSMessageID that was used by the JMS client when the
+         * message was sent to the JMS destination.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param includeSentJMSMessageID the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder includeSentJMSMessageID(
+                String includeSentJMSMessageID) {
+            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
         }
         /**
@@ -1859,40 +2240,6 @@ public interface Sjms2EndpointBuilderFactory {
         default AdvancedSjms2EndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointProducerBuilder connectionResource(
-                Object connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointProducerBuilder connectionResource(
-                String connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -2158,6 +2505,136 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the interval between recovery attempts, i.e. when a
+         * connection is being refreshed, in milliseconds. The default is 5000
+         * ms, that is, 5 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param recoveryInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder recoveryInterval(
+                long recoveryInterval) {
+            doSetProperty("recoveryInterval", recoveryInterval);
+            return this;
+        }
+        /**
+         * Specifies the interval between recovery attempts, i.e. when a
+         * connection is being refreshed, in milliseconds. The default is 5000
+         * ms, that is, 5 seconds.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param recoveryInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder recoveryInterval(
+                String recoveryInterval) {
+            doSetProperty("recoveryInterval", recoveryInterval);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder synchronous(
+                boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder synchronous(
+                String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * If enabled and you are using Request Reply messaging (InOut) and an
+         * Exchange failed on the consumer side, then the caused Exception will
+         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * is Camel, the returned Exception is rethrown. This allows you to use
+         * Camel JMS as a bridge in your routing - for example, using persistent
+         * queues to enable robust routing. Notice that if you also have
+         * transferExchange enabled, this option takes precedence. The caught
+         * exception is required to be serializable. The original Exception on
+         * the consumer side can be wrapped in an outer exception such as
+         * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder transferException(
+                boolean transferException) {
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
+         * If enabled and you are using Request Reply messaging (InOut) and an
+         * Exchange failed on the consumer side, then the caused Exception will
+         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * is Camel, the returned Exception is rethrown. This allows you to use
+         * Camel JMS as a bridge in your routing - for example, using persistent
+         * queues to enable robust routing. Notice that if you also have
+         * transferExchange enabled, this option takes precedence. The caught
+         * exception is required to be serializable. The original Exception on
+         * the consumer side can be wrapped in an outer exception such as
+         * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointProducerBuilder transferException(
+                String transferException) {
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
          * Specifies whether to share JMS session with other SJMS endpoints.
          * Turn this off if your route is accessing to multiple JMS providers.
          * If you need transaction against multiple JMS providers, use jms
@@ -2305,6 +2782,47 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies whether to test the connection on startup. This ensures
+         * that when Camel starts that all the JMS consumers have a valid
+         * connection to the JMS broker. If a connection cannot be granted then
+         * Camel throws an exception on startup. This ensures that Camel is not
+         * started with failed connections. The JMS producers is tested as well.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointBuilder testConnectionOnStartup(
+                boolean testConnectionOnStartup) {
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
+            return this;
+        }
+        /**
+         * Specifies whether to test the connection on startup. This ensures
+         * that when Camel starts that all the JMS consumers have a valid
+         * connection to the JMS broker. If a connection cannot be granted then
+         * Camel throws an exception on startup. This ensures that Camel is not
+         * started with failed connections. The JMS producers is tested as well.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param testConnectionOnStartup the value to set
+         * @return the dsl builder
+         */
+        default Sjms2EndpointBuilder testConnectionOnStartup(
+                String testConnectionOnStartup) {
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
+            return this;
+        }
+        /**
          * Specifies whether to use transacted mode.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -2333,38 +2851,6 @@ public interface Sjms2EndpointBuilderFactory {
          */
         default Sjms2EndpointBuilder transacted(String transacted) {
             doSetProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointBuilder transactionCommitStrategy(
-                Object transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
-            return this;
-        }
-        /**
-         * Sets the commit strategy.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.TransactionCommitStrategy&lt;/code&gt; type.
-         * 
-         * Group: transaction
-         * 
-         * @param transactionCommitStrategy the value to set
-         * @return the dsl builder
-         */
-        default Sjms2EndpointBuilder transactionCommitStrategy(
-                String transactionCommitStrategy) {
-            doSetProperty("transactionCommitStrategy", transactionCommitStrategy);
             return this;
         }
     }
@@ -2530,40 +3016,6 @@ public interface Sjms2EndpointBuilderFactory {
         default AdvancedSjms2EndpointBuilder connectionFactory(
                 String connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointBuilder connectionResource(
-                Object connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
-            return this;
-        }
-        /**
-         * Initializes the connectionResource for the endpoint, which takes
-         * precedence over the component's connectionResource, if any.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.sjms.jms.ConnectionResource&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param connectionResource the value to set
-         * @return the dsl builder
-         */
-        default AdvancedSjms2EndpointBuilder connectionResource(
-                String connectionResource) {
-            doSetProperty("connectionResource", connectionResource);
             return this;
         }
         /**
@@ -2827,6 +3279,134 @@ public interface Sjms2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies the interval between recovery attempts, i.e. when a
+         * connection is being refreshed, in milliseconds. The default is 5000
+         * ms, that is, 5 seconds.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param recoveryInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointBuilder recoveryInterval(
+                long recoveryInterval) {
+            doSetProperty("recoveryInterval", recoveryInterval);
+            return this;
+        }
+        /**
+         * Specifies the interval between recovery attempts, i.e. when a
+         * connection is being refreshed, in milliseconds. The default is 5000
+         * ms, that is, 5 seconds.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: advanced
+         * 
+         * @param recoveryInterval the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointBuilder recoveryInterval(
+                String recoveryInterval) {
+            doSetProperty("recoveryInterval", recoveryInterval);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointBuilder synchronous(boolean synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Sets whether synchronous processing should be strictly used, or Camel
+         * is allowed to use asynchronous processing (if supported).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param synchronous the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointBuilder synchronous(String synchronous) {
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * If enabled and you are using Request Reply messaging (InOut) and an
+         * Exchange failed on the consumer side, then the caused Exception will
+         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * is Camel, the returned Exception is rethrown. This allows you to use
+         * Camel JMS as a bridge in your routing - for example, using persistent
+         * queues to enable robust routing. Notice that if you also have
+         * transferExchange enabled, this option takes precedence. The caught
+         * exception is required to be serializable. The original Exception on
+         * the consumer side can be wrapped in an outer exception such as
+         * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointBuilder transferException(
+                boolean transferException) {
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
+         * If enabled and you are using Request Reply messaging (InOut) and an
+         * Exchange failed on the consumer side, then the caused Exception will
+         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * is Camel, the returned Exception is rethrown. This allows you to use
+         * Camel JMS as a bridge in your routing - for example, using persistent
+         * queues to enable robust routing. Notice that if you also have
+         * transferExchange enabled, this option takes precedence. The caught
+         * exception is required to be serializable. The original Exception on
+         * the consumer side can be wrapped in an outer exception such as
+         * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: advanced
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSjms2EndpointBuilder transferException(
+                String transferException) {
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
          * Specifies whether to share JMS session with other SJMS endpoints.
          * Turn this off if your route is accessing to multiple JMS providers.
          * If you need transaction against multiple JMS providers, use jms
@@ -2876,6 +3456,15 @@ public interface Sjms2EndpointBuilderFactory {
         CLIENT_ACKNOWLEDGE,
         DUPS_OK_ACKNOWLEDGE,
         SESSION_TRANSACTED;
+    }
+
+    /**
+     * Proxy enum for <code>org.apache.camel.component.sjms.ReplyToType</code>
+     * enum.
+     */
+    enum ReplyToType {
+        Temporary,
+        Exclusive;
     }
 
     public interface Sjms2Builders {

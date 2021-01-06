@@ -14,20 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms;
+package org.apache.camel.component.sjms.reply;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
+import javax.jms.Message;
+import javax.jms.Session;
 
-import org.apache.camel.AfterPropertiesConfigured;
-import org.apache.camel.Service;
+/**
+ * Handles a reply.
+ */
+public interface ReplyHandler {
 
-public interface MessageListenerContainer extends Service, AfterPropertiesConfigured {
+    /**
+     * The reply message was received
+     *
+     * @param correlationId the correlation id
+     * @param reply         the JMS reply message
+     * @param session       the JMS session
+     */
+    void onReply(String correlationId, Message reply, Session session);
 
-    ConnectionFactory getConnectionFactory();
-
-    void setMessageListener(SessionMessageListener messageListener);
-
-    void setExceptionListener(ExceptionListener exceptionListener);
-
+    /**
+     * The reply message was not received and a timeout triggered
+     *
+     * @param correlationId the correlation id
+     */
+    void onTimeout(String correlationId);
 }

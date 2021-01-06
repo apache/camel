@@ -14,20 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.sjms;
+package org.apache.camel.component.sjms.reply;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
 
-import org.apache.camel.AfterPropertiesConfigured;
-import org.apache.camel.Service;
+/**
+ * {@link ReplyHandler} to handle processing replies when using regular queues.
+ */
+public class QueueReplyHandler extends TemporaryQueueReplyHandler {
 
-public interface MessageListenerContainer extends Service, AfterPropertiesConfigured {
-
-    ConnectionFactory getConnectionFactory();
-
-    void setMessageListener(SessionMessageListener messageListener);
-
-    void setExceptionListener(ExceptionListener exceptionListener);
+    public QueueReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
+                             String originalCorrelationId, String correlationId, long timeout) {
+        super(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
+    }
 
 }

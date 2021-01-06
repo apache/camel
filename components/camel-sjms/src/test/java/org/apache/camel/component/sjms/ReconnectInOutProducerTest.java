@@ -23,7 +23,6 @@ import javax.jms.MessageListener;
 import javax.jms.MessageProducer;
 import javax.jms.TextMessage;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
@@ -80,13 +79,6 @@ public class ReconnectInOutProducerTest extends JmsTestSupport {
                         .to("log:" + TEST_DESTINATION_NAME + ".out.log.1?showBody=true");
             }
         };
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.getComponent("sjms", SjmsComponent.class).setConnectionTestOnBorrow(true);
-        return camelContext;
     }
 
     protected class MyMessageListener implements MessageListener {
