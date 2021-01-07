@@ -47,10 +47,6 @@
             <artifactId>testcontainers</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>kafka</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
