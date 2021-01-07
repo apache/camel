@@ -1,11 +1,9 @@
 package org.apache.camel.component.stitch.client;
 
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,7 +20,7 @@ public final class StitchRequestBody {
     private final String tableName;
 
     @JsonProperty("schema")
-    private final Map<String, Object> schema;
+    private final StitchSchema schema;
 
     @JsonProperty("messages")
     private final List<StitchMessage> messages;
@@ -30,7 +28,7 @@ public final class StitchRequestBody {
     @JsonProperty("key_names")
     private final Set<String> keyNames;
 
-    private StitchRequestBody(String tableName, Map<String, Object> schema, List<StitchMessage> messages, Set<String> keyNames) {
+    private StitchRequestBody(String tableName, StitchSchema schema, List<StitchMessage> messages, Set<String> keyNames) {
         this.tableName = tableName;
         this.schema = schema;
         this.messages = messages;
@@ -45,7 +43,7 @@ public final class StitchRequestBody {
         return tableName;
     }
 
-    public Map<String, Object> getSchema() {
+    public StitchSchema getSchema() {
         return schema;
     }
 
@@ -63,7 +61,7 @@ public final class StitchRequestBody {
 
     public static final class Builder {
         private String tableName;
-        private Map<String, Object> schema = new LinkedHashMap<>();
+        private StitchSchema schema;
         private List<StitchMessage> messages = new LinkedList<>();
         private Set<String> keyNames = new LinkedHashSet<>();
 
@@ -88,13 +86,8 @@ public final class StitchRequestBody {
          *
          * @param schema
          */
-        public Builder withSchema(final Map<String, Object> schema) {
-            this.schema.putAll(schema);
-            return this;
-        }
-
-        public Builder withSchema(final String key, final Object value) {
-            this.schema.put(key, value);
+        public Builder withSchema(final StitchSchema schema) {
+            this.schema = schema;
             return this;
         }
 

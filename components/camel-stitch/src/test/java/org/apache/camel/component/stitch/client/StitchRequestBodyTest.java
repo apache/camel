@@ -31,23 +31,26 @@ class StitchRequestBodyTest {
                 .withSequence(1565838645)
                 .build();
 
-        final Map<String, Object> schemaProperties = new LinkedHashMap<>();
-        schemaProperties.put("id", Collections.singletonMap("type", "integer"));
-        schemaProperties.put("name", Collections.singletonMap("type", "string"));
-        schemaProperties.put("age", Collections.singletonMap("type", "integer"));
-        schemaProperties.put("has_magic", Collections.singletonMap("type", "boolean"));
-
         final Map<String, String> modifiedAtSchema = new LinkedHashMap<>();
         modifiedAtSchema.put("type", "string");
         modifiedAtSchema.put("format", "date-time");
 
-        schemaProperties.put("modified_at", modifiedAtSchema);
+        final Map<String, Object> properties = new LinkedHashMap<>();
+        properties.put("id", Collections.singletonMap("type", "integer"));
+        properties.put("name", Collections.singletonMap("type", "string"));
+        properties.put("age", Collections.singletonMap("type", "integer"));
+        properties.put("has_magic", Collections.singletonMap("type", "boolean"));
+        properties.put("modified_at", modifiedAtSchema);
+
+        final StitchSchema schema = StitchSchema.builder()
+                .addKeyword("properties", properties)
+                .build();
 
         final StitchRequestBody body = StitchRequestBody.builder()
                 .withTableName("customers")
                 .addMessage(message1)
                 .addMessage(message2)
-                .withSchema("properties", schemaProperties)
+                .withSchema(schema)
                 .withKeyNames("id")
                 .build();
 
@@ -57,7 +60,6 @@ class StitchRequestBodyTest {
                 + "\"name\":\"Bubblegum\",\"age\":17,\"has_magic\":true,\"modified_at\":\"2020-01-14T13:34:25+0000\"}}],\"key_names\":[\"id\"]}";
 
         assertEquals(expectedJson, body.toJson());
-
     }
 
 }
