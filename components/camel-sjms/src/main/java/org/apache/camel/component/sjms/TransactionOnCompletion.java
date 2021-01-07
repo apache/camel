@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.sjms;
 
+import java.util.Objects;
+
 import javax.jms.Message;
 import javax.jms.Session;
 
@@ -61,4 +63,8 @@ class TransactionOnCompletion extends SynchronizationAdapter {
         return session == that.session && message == that.message;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), session, message);
+    }
 }
