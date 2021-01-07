@@ -26,7 +26,7 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
 
     @Override
     public int size() {
-        return 103;
+        return 104;
     }
 
     @Override
@@ -362,6 +362,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
             }
             if (value instanceof java.lang.Iterable) {
                 return org.apache.camel.converter.CollectionConverter.toArrayList((java.lang.Iterable) value);
+            }
+        } else if (to == java.util.Collection.class) {
+            if (value instanceof java.util.Map) {
+                return org.apache.camel.converter.CollectionConverter.toCollection((java.util.Map) value);
             }
         } else if (to == java.util.Date.class) {
             if (value instanceof java.lang.Long) {
@@ -716,6 +720,10 @@ public final class CamelBaseBulkConverterLoader implements TypeConverterLoader, 
                 return this;
             }
             if (from == java.lang.Iterable.class) {
+                return this;
+            }
+        } else if (to == java.util.Collection.class) {
+            if (from == java.util.Map.class) {
                 return this;
             }
         } else if (to == java.util.Date.class) {
