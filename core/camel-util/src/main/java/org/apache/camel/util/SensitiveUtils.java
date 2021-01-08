@@ -24,8 +24,8 @@ import java.util.Set;
 
 public final class SensitiveUtils {
     private static final Set<String> SENSITIVE_KEYS = new HashSet<>(
-            Arrays.asList("passphrase", "password", "secretkey", "accesstoken", "clientsecret", "authorizationtoken",
-                    "sasljaasconfig", "accesskey"));
+            Arrays.asList("accesskey", "accesstoken", "authorizationtoken", "clientsecret", "passphrase", "password",
+                    "sasljaasconfig", "secretkey"));
 
     private SensitiveUtils() {
     }

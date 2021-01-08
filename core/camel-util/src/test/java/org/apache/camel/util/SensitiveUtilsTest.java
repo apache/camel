@@ -19,14 +19,24 @@ package org.apache.camel.util;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SensitiveUtilsTest {
 
     @Test
     void testContainsSensitive() {
         assertTrue(SensitiveUtils.containsSensitive("accessKey"));
+        assertTrue(SensitiveUtils.containsSensitive("accesstoken"));
+        assertTrue(SensitiveUtils.containsSensitive("authorizationtoken"));
+        assertTrue(SensitiveUtils.containsSensitive("clientsecret"));
         assertTrue(SensitiveUtils.containsSensitive("passphrase"));
+        assertTrue(SensitiveUtils.containsSensitive("password"));
+        assertTrue(SensitiveUtils.containsSensitive("sasljaasconfig"));
+        assertTrue(SensitiveUtils.containsSensitive("secretkey"));
+
+        assertFalse(SensitiveUtils.containsSensitive("foo"));
+        assertFalse(SensitiveUtils.containsSensitive("bar"));
     }
 
 }
