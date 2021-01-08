@@ -59,11 +59,12 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
     private final Predicate onWhen;
     private final boolean useOriginalBody;
     private final boolean afterConsumer;
+    private final boolean routeScoped;
 
     public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService,
                                  boolean shutdownExecutorService,
                                  boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody,
-                                 boolean afterConsumer) {
+                                 boolean afterConsumer, boolean routeScoped) {
         notNull(camelContext, "camelContext");
         notNull(processor, "processor");
         this.camelContext = camelContext;
@@ -75,6 +76,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         this.onWhen = onWhen;
         this.useOriginalBody = useOriginalBody;
         this.afterConsumer = afterConsumer;
+        this.routeScoped = routeScoped;
     }
 
     @Override
@@ -124,9 +126,11 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         if (processor != null) {
             // register callback
             if (afterConsumer) {
-                exchange.getUnitOfWork().addSynchronization(new OnCompletionSynchronizationAfterConsumer());
+                exchange.getUnitOfWork()
+                        .addSynchronization(new OnCompletionSynchronizationAfterConsumer(routeScoped, getRouteId()));
             } else {
-                exchange.getUnitOfWork().addSynchronization(new OnCompletionSynchronizationBeforeConsumer());
+                exchange.getUnitOfWork()
+                        .addSynchronization(new OnCompletionSynchronizationBeforeConsumer(routeScoped, getRouteId()));
             }
         }
 
@@ -231,6 +235,14 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
     private final class OnCompletionSynchronizationAfterConsumer extends SynchronizationAdapter implements Ordered {
 
+        private final boolean routeScoped;
+        private final String routeId;
+
+        public OnCompletionSynchronizationAfterConsumer(boolean routeScoped, String routeId) {
+            this.routeScoped = routeScoped;
+            this.routeId = routeId;
+        }
+
         @Override
         public int getOrder() {
             // we want to be last
@@ -239,6 +251,11 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
         @Override
         public void onComplete(final Exchange exchange) {
+            String currentRouteId = ExchangeHelper.getRouteId(exchange);
+            if (currentRouteId != null && !routeId.equals(currentRouteId)) {
+                return;
+            }
+
             if (onFailureOnly) {
                 return;
             }
@@ -319,6 +336,14 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
     private final class OnCompletionSynchronizationBeforeConsumer extends SynchronizationAdapter implements Ordered {
 
+        private final boolean routeScoped;
+        private final String routeId;
+
+        public OnCompletionSynchronizationBeforeConsumer(boolean routeScoped, String routeId) {
+            this.routeScoped = routeScoped;
+            this.routeId = routeId;
+        }
+
         @Override
         public int getOrder() {
             // we want to be last
@@ -327,6 +352,16 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
         @Override
         public void onAfterRoute(Route route, Exchange exchange) {
+            // route scope = should be from this route
+            if (routeScoped && !route.getRouteId().equals(routeId)) {
+                return;
+            }
+
+            // global scope = should be from the original route
+            if (!routeScoped && (!route.getRouteId().equals(routeId) || !exchange.getFromRouteId().equals(routeId))) {
+                return;
+            }
+
             if (exchange.isFailed() && onCompleteOnly) {
                 return;
             }
