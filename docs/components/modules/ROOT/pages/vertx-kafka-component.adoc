@@ -393,7 +393,7 @@ from("vertx-kafka:test_topic?bootstrapServers=kafka9092")
 .to("direct)
 ----
 
-By default all headers are being filtered by `KafkaHeaderFilterStrategy`.
+By default all headers are being filtered by `VertxKafkaHeaderFilterStrategy`.
 Strategy filters out headers which start with `Camel` or `org.apache.camel` prefixes.
 
 === Consumer Example
