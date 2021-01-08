@@ -688,40 +688,6 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
-         * Maximum number of threads used to perform an initial sync of the
-         * collections in a replica set. Defaults to 1.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: mongodb
-         * 
-         * @param initialSyncMaxThreads the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbEndpointBuilder initialSyncMaxThreads(
-                int initialSyncMaxThreads) {
-            doSetProperty("initialSyncMaxThreads", initialSyncMaxThreads);
-            return this;
-        }
-        /**
-         * Maximum number of threads used to perform an initial sync of the
-         * collections in a replica set. Defaults to 1.
-         * 
-         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 1
-         * Group: mongodb
-         * 
-         * @param initialSyncMaxThreads the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbEndpointBuilder initialSyncMaxThreads(
-                String initialSyncMaxThreads) {
-            doSetProperty("initialSyncMaxThreads", initialSyncMaxThreads);
-            return this;
-        }
-        /**
          * Maximum size of each batch of source records. Defaults to 2048.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -783,6 +749,42 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          */
         default DebeziumMongodbEndpointBuilder maxQueueSize(String maxQueueSize) {
             doSetProperty("maxQueueSize", maxQueueSize);
+            return this;
+        }
+        /**
+         * Maximum size of the queue in bytes for change events read from the
+         * database log but not yet recorded or forwarded. Defaults to 0. Mean
+         * the feature is not enabled.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         * 
+         * @param maxQueueSizeInBytes the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder maxQueueSizeInBytes(
+                long maxQueueSizeInBytes) {
+            doSetProperty("maxQueueSizeInBytes", maxQueueSizeInBytes);
+            return this;
+        }
+        /**
+         * Maximum size of the queue in bytes for change events read from the
+         * database log but not yet recorded or forwarded. Defaults to 0. Mean
+         * the feature is not enabled.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: mongodb
+         * 
+         * @param maxQueueSizeInBytes the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder maxQueueSizeInBytes(
+                String maxQueueSizeInBytes) {
+            doSetProperty("maxQueueSizeInBytes", maxQueueSizeInBytes);
             return this;
         }
         /**
@@ -1286,6 +1288,24 @@ public interface DebeziumMongodbEndpointBuilderFactory {
             return this;
         }
         /**
+         * This property contains a comma-separated list of ., for which the
+         * initial snapshot may be a subset of data present in the data source.
+         * The subset would be defined by mongodb filter query specified as
+         * value for property snapshot.collection.filter.override..
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param snapshotCollectionFilterOverrides the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder snapshotCollectionFilterOverrides(
+                String snapshotCollectionFilterOverrides) {
+            doSetProperty("snapshotCollectionFilterOverrides", snapshotCollectionFilterOverrides);
+            return this;
+        }
+        /**
          * The number of milliseconds to delay before a snapshot will begin.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
@@ -1347,6 +1367,56 @@ public interface DebeziumMongodbEndpointBuilderFactory {
         default DebeziumMongodbEndpointBuilder snapshotFetchSize(
                 String snapshotFetchSize) {
             doSetProperty("snapshotFetchSize", snapshotFetchSize);
+            return this;
+        }
+        /**
+         * this setting must be set to specify a list of tables/collections
+         * whose snapshot must be taken on creating or restarting the connector.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param snapshotIncludeCollectionList the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder snapshotIncludeCollectionList(
+                String snapshotIncludeCollectionList) {
+            doSetProperty("snapshotIncludeCollectionList", snapshotIncludeCollectionList);
+            return this;
+        }
+        /**
+         * The maximum number of threads used to perform the snapshot. Defaults
+         * to 1.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: mongodb
+         * 
+         * @param snapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder snapshotMaxThreads(
+                int snapshotMaxThreads) {
+            doSetProperty("snapshotMaxThreads", snapshotMaxThreads);
+            return this;
+        }
+        /**
+         * The maximum number of threads used to perform the snapshot. Defaults
+         * to 1.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1
+         * Group: mongodb
+         * 
+         * @param snapshotMaxThreads the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbEndpointBuilder snapshotMaxThreads(
+                String snapshotMaxThreads) {
+            doSetProperty("snapshotMaxThreads", snapshotMaxThreads);
             return this;
         }
         /**

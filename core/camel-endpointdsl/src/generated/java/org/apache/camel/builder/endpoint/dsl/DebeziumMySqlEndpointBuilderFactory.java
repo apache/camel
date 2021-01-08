@@ -1679,6 +1679,43 @@ public interface DebeziumMySqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether or not to mark snapshot events as normal inserts (op 'c'). If
+         * disabled, the standard functionality of emitting these records as
+         * reads (op 'r') will be used.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: mysql
+         * 
+         * @param snapshotEventsAsInserts the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotEventsAsInserts(
+                boolean snapshotEventsAsInserts) {
+            doSetProperty("snapshotEventsAsInserts", snapshotEventsAsInserts);
+            return this;
+        }
+        /**
+         * Whether or not to mark snapshot events as normal inserts (op 'c'). If
+         * disabled, the standard functionality of emitting these records as
+         * reads (op 'r') will be used.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: mysql
+         * 
+         * @param snapshotEventsAsInserts the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMySqlEndpointBuilder snapshotEventsAsInserts(
+                String snapshotEventsAsInserts) {
+            doSetProperty("snapshotEventsAsInserts", snapshotEventsAsInserts);
+            return this;
+        }
+        /**
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
