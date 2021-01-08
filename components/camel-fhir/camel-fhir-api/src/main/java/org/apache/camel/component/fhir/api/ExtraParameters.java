@@ -111,13 +111,13 @@ public enum ExtraParameters {
             switch (entry.getKey()) {
                 case ENCODE_JSON:
                     Boolean encode = (Boolean) extraParameters.get(ENCODE_JSON);
-                    if (encode) {
+                    if (Boolean.TRUE.equals(encode)) {
                         clientExecutable.encodedJson();
                     }
                     break;
                 case ENCODE_XML:
                     Boolean encodeXml = (Boolean) extraParameters.get(ENCODE_XML);
-                    if (encodeXml) {
+                    if (Boolean.TRUE.equals(encodeXml)) {
                         clientExecutable.encodedXml();
                     }
                     break;
@@ -146,7 +146,7 @@ public enum ExtraParameters {
                     break;
                 case PRETTY_PRINT:
                     Boolean prettyPrint = (Boolean) extraParameters.get(PRETTY_PRINT);
-                    if (prettyPrint) {
+                    if (Boolean.TRUE.equals(prettyPrint)) {
                         clientExecutable.prettyPrint();
                     }
                     break;

@@ -99,7 +99,7 @@ public final class DockerClientFactory {
         clientProfile.setSocket(socket);
         clientProfile.setCmdExecFactory(cmdExecFactory);
 
-        if (!socket) {
+        if (Boolean.FALSE.equals(socket)) {
             clientProfile.setPort(port);
         }
 

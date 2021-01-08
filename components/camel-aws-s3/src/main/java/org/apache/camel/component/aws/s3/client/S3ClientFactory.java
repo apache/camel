@@ -39,7 +39,7 @@ public final class S3ClientFactory {
      * @return                AWSS3Client
      */
     public static S3Client getAWSS3Client(S3Configuration configuration, int maxConnections) {
-        return configuration.isUseIAMCredentials()
+        return Boolean.TRUE.equals(configuration.isUseIAMCredentials())
                 ? new S3ClientIAMOptimizedImpl(configuration, maxConnections)
                 : new S3ClientStandardImpl(configuration, maxConnections);
     }
