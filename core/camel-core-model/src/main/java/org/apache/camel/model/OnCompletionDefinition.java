@@ -55,9 +55,9 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
     @AsPredicate
     private WhenDefinition onWhen;
     @XmlAttribute
+    @Metadata(javaType = "java.lang.Boolean")
     private String parallelProcessing;
     @XmlAttribute
-    @Metadata(javaType = "java.lang.Boolean")
     private String executorServiceRef;
     @XmlAttribute(name = "useOriginalMessage")
     @Metadata(javaType = "java.lang.Boolean")

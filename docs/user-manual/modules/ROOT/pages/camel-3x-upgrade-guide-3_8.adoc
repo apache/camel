@@ -6,6 +6,11 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.7 to 3.8
 
+=== OnCompletion EIP
+
+The `onCompletion` EIP has fixed it could trigger multiple completions for a given `Exchange`
+
+
 === camel-activemq and camel-jms
 
 The JMS and ActiveMQ component now supports optimized toD EIP pattern by using a single endpoint/producer for dynamic destination names.
@@ -18,7 +23,6 @@ The components are now also reactive and non-blocking, and also supports optimiz
 
 Many of the previous features and configuration options have been removed/renamed.
 To migrate you need to read their documentation and see what options they now offer.
-
 
 === Camel-AWS2-SNS
 
