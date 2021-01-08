@@ -18,17 +18,19 @@
 package org.apache.camel.util;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 public final class SensitiveUtils {
-    public static final String SENSITIVE_KEYS
-            = "passphrase|password|secretkey|accesstoken|clientsecret|authorizationtoken|sasljaasconfig|accesskey";
+    private static final Set<String> SENSITIVE_KEYS = new HashSet<>(
+            Arrays.asList("passphrase", "password", "secretkey", "accesstoken", "clientsecret", "authorizationtoken",
+                    "sasljaasconfig", "accesskey"));
 
     private SensitiveUtils() {
-
     }
 
     public static boolean containsSensitive(String text) {
-        return Arrays.stream(SENSITIVE_KEYS.split("\\|")).anyMatch(s -> text.toLowerCase(Locale.ENGLISH).contains(s));
+        return SENSITIVE_KEYS.contains(text.toLowerCase(Locale.ENGLISH));
     }
 }
