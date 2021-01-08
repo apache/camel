@@ -71,7 +71,6 @@ public class CamelNamespace extends ManagedNamespace {
                 .setTypeDefinition(Identifiers.FolderType)
                 .build();
         this.folder.addComponent(this.itemsObject);
-        this.itemsObject.addComponent(this.folder);
         this.getNodeManager().addNode(this.itemsObject);
 
         // register reference to structure
