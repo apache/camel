@@ -130,9 +130,13 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     @UriParam(label = LABEL_NAME, defaultValue = "all_tables")
     private String publicationAutocreateMode = "all_tables";
     @UriParam(label = LABEL_NAME)
+    private String snapshotIncludeCollectionList;
+    @UriParam(label = LABEL_NAME)
     private String databaseHistoryFileFilename;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean slotDropOnStop = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "0")
+    private long maxQueueSizeInBytes = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private long xminFetchIntervalMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "adaptive")
@@ -142,6 +146,8 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     private String databaseServerName;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String eventProcessingFailureHandlingMode = "fail";
+    @UriParam(label = LABEL_NAME, defaultValue = "1")
+    private int snapshotMaxThreads = 1;
     @UriParam(label = LABEL_NAME, defaultValue = "5432")
     private int databasePort = 5432;
     @UriParam(label = LABEL_NAME)
@@ -571,8 +577,9 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The name of the Postgres logical decoding plugin installed on the server.
-     * Supported values are 'decoderbufs' and 'wal2json'. Defaults to
-     * 'decoderbufs'.
+     * Supported values are 'decoderbufs', 'wal2json', 'pgoutput',
+     * 'wal2json_streaming', 'wal2json_rds' and 'wal2json_rds_streaming'.
+     * Defaults to 'decoderbufs'.
      */
     public void setPluginName(String pluginName) {
         this.pluginName = pluginName;
@@ -933,6 +940,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * this setting must be set to specify a list of tables/collections whose
+     * snapshot must be taken on creating or restarting the connector.
+     */
+    public void setSnapshotIncludeCollectionList(
+            String snapshotIncludeCollectionList) {
+        this.snapshotIncludeCollectionList = snapshotIncludeCollectionList;
+    }
+
+    public String getSnapshotIncludeCollectionList() {
+        return snapshotIncludeCollectionList;
+    }
+
+    /**
      * The path to the file that will be used to record the database history
      */
     public void setDatabaseHistoryFileFilename(
@@ -955,6 +975,19 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public boolean isSlotDropOnStop() {
         return slotDropOnStop;
+    }
+
+    /**
+     * Maximum size of the queue in bytes for change events read from the
+     * database log but not yet recorded or forwarded. Defaults to 0. Mean the
+     * feature is not enabled
+     */
+    public void setMaxQueueSizeInBytes(long maxQueueSizeInBytes) {
+        this.maxQueueSizeInBytes = maxQueueSizeInBytes;
+    }
+
+    public long getMaxQueueSizeInBytes() {
+        return maxQueueSizeInBytes;
     }
 
     /**
@@ -1021,6 +1054,18 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
 
     public String getEventProcessingFailureHandlingMode() {
         return eventProcessingFailureHandlingMode;
+    }
+
+    /**
+     * The maximum number of threads used to perform the snapshot.  Defaults to
+     * 1.
+     */
+    public void setSnapshotMaxThreads(int snapshotMaxThreads) {
+        this.snapshotMaxThreads = snapshotMaxThreads;
+    }
+
+    public int getSnapshotMaxThreads() {
+        return snapshotMaxThreads;
     }
 
     /**
@@ -1154,12 +1199,15 @@ public class PostgresConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "database.tcpKeepAlive", databaseTcpkeepalive);
         addPropertyIfNotNull(configBuilder, "schema.exclude.list", schemaExcludeList);
         addPropertyIfNotNull(configBuilder, "publication.autocreate.mode", publicationAutocreateMode);
+        addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
         addPropertyIfNotNull(configBuilder, "database.history.file.filename", databaseHistoryFileFilename);
         addPropertyIfNotNull(configBuilder, "slot.drop.on.stop", slotDropOnStop);
+        addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
         addPropertyIfNotNull(configBuilder, "xmin.fetch.interval.ms", xminFetchIntervalMs);
         addPropertyIfNotNull(configBuilder, "time.precision.mode", timePrecisionMode);
         addPropertyIfNotNull(configBuilder, "database.server.name", databaseServerName);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
+        addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "database.port", databasePort);
         addPropertyIfNotNull(configBuilder, "column.exclude.list", columnExcludeList);
         addPropertyIfNotNull(configBuilder, "include.unknown.datatypes", includeUnknownDatatypes);

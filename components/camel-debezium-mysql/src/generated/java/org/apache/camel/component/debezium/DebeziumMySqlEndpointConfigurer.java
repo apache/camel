@@ -153,6 +153,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "skippedOperations": target.getConfiguration().setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": target.getConfiguration().setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
+        case "snapshoteventsasinserts":
+        case "snapshotEventsAsInserts": target.getConfiguration().setSnapshotEventsAsInserts(property(camelContext, boolean.class, value)); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": target.getConfiguration().setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
         case "snapshotlockingmode":
@@ -319,6 +321,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "skippedOperations": return java.lang.String.class;
         case "snapshotdelayms":
         case "snapshotDelayMs": return long.class;
+        case "snapshoteventsasinserts":
+        case "snapshotEventsAsInserts": return boolean.class;
         case "snapshotfetchsize":
         case "snapshotFetchSize": return int.class;
         case "snapshotlockingmode":
@@ -486,6 +490,8 @@ public class DebeziumMySqlEndpointConfigurer extends PropertyConfigurerSupport i
         case "skippedOperations": return target.getConfiguration().getSkippedOperations();
         case "snapshotdelayms":
         case "snapshotDelayMs": return target.getConfiguration().getSnapshotDelayMs();
+        case "snapshoteventsasinserts":
+        case "snapshotEventsAsInserts": return target.getConfiguration().isSnapshotEventsAsInserts();
         case "snapshotfetchsize":
         case "snapshotFetchSize": return target.getConfiguration().getSnapshotFetchSize();
         case "snapshotlockingmode":

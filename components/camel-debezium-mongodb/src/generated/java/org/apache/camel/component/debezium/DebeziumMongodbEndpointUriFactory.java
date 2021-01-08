@@ -20,7 +20,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(56);
+        Set<String> props = new HashSet<>(59);
         props.add("mongodbServerSelectionTimeoutMs");
         props.add("maxBatchSize");
         props.add("internalKeyConverter");
@@ -35,6 +35,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("tombstonesOnDelete");
         props.add("heartbeatIntervalMs");
         props.add("heartbeatTopicsPrefix");
+        props.add("snapshotCollectionFilterOverrides");
         props.add("skippedOperations");
         props.add("mongodbHosts");
         props.add("sourceStructVersion");
@@ -58,9 +59,11 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("offsetStorageReplicationFactor");
         props.add("exceptionHandler");
         props.add("mongodbConnectTimeoutMs");
+        props.add("snapshotIncludeCollectionList");
         props.add("databaseHistoryFileFilename");
         props.add("offsetStorage");
         props.add("internalValueConverter");
+        props.add("snapshotMaxThreads");
         props.add("retriableRestartConnectorWaitMs");
         props.add("maxQueueSize");
         props.add("collectionExcludeList");
@@ -71,11 +74,11 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("mongodbPassword");
         props.add("mongodbUser");
         props.add("exchangePattern");
-        props.add("initialSyncMaxThreads");
         props.add("mongodbSocketTimeoutMs");
         props.add("collectionIncludeList");
         props.add("queryFetchSize");
         props.add("snapshotMode");
+        props.add("maxQueueSizeInBytes");
         props.add("offsetCommitPolicy");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();

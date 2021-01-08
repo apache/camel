@@ -20,7 +20,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(86);
+        Set<String> props = new HashSet<>(89);
         props.add("slotDropOnStop");
         props.add("includeUnknownDatatypes");
         props.add("maxBatchSize");
@@ -71,6 +71,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("exceptionHandler");
         props.add("databasePort");
         props.add("databaseUser");
+        props.add("snapshotIncludeCollectionList");
         props.add("databaseHistoryFileFilename");
         props.add("schemaIncludeList");
         props.add("columnPropagateSourceType");
@@ -78,6 +79,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("slotRetryDelayMs");
         props.add("internalValueConverter");
         props.add("databaseSslcert");
+        props.add("snapshotMaxThreads");
         props.add("xminFetchIntervalMs");
         props.add("retriableRestartConnectorWaitMs");
         props.add("maxQueueSize");
@@ -96,6 +98,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("tableBlacklist");
         props.add("queryFetchSize");
         props.add("snapshotMode");
+        props.add("maxQueueSizeInBytes");
         props.add("snapshotLockTimeoutMs");
         props.add("tableExcludeList");
         props.add("offsetCommitPolicy");

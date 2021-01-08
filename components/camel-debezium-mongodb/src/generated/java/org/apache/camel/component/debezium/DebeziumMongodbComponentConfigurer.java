@@ -62,8 +62,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "heartbeatIntervalMs": getOrCreateConfiguration(target).setHeartbeatIntervalMs(property(camelContext, int.class, value)); return true;
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": getOrCreateConfiguration(target).setHeartbeatTopicsPrefix(property(camelContext, java.lang.String.class, value)); return true;
-        case "initialsyncmaxthreads":
-        case "initialSyncMaxThreads": getOrCreateConfiguration(target).setInitialSyncMaxThreads(property(camelContext, int.class, value)); return true;
         case "internalkeyconverter":
         case "internalKeyConverter": getOrCreateConfiguration(target).setInternalKeyConverter(property(camelContext, java.lang.String.class, value)); return true;
         case "internalvalueconverter":
@@ -72,6 +70,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "maxBatchSize": getOrCreateConfiguration(target).setMaxBatchSize(property(camelContext, int.class, value)); return true;
         case "maxqueuesize":
         case "maxQueueSize": getOrCreateConfiguration(target).setMaxQueueSize(property(camelContext, int.class, value)); return true;
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": getOrCreateConfiguration(target).setMaxQueueSizeInBytes(property(camelContext, long.class, value)); return true;
         case "mongodbauthsource":
         case "mongodbAuthsource": getOrCreateConfiguration(target).setMongodbAuthsource(property(camelContext, java.lang.String.class, value)); return true;
         case "mongodbconnecttimeoutms":
@@ -124,10 +124,16 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "sanitizeFieldNames": getOrCreateConfiguration(target).setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
         case "skippedoperations":
         case "skippedOperations": getOrCreateConfiguration(target).setSkippedOperations(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotcollectionfilteroverrides":
+        case "snapshotCollectionFilterOverrides": getOrCreateConfiguration(target).setSnapshotCollectionFilterOverrides(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotdelayms":
         case "snapshotDelayMs": getOrCreateConfiguration(target).setSnapshotDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "snapshotfetchsize":
         case "snapshotFetchSize": getOrCreateConfiguration(target).setSnapshotFetchSize(property(camelContext, int.class, value)); return true;
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": getOrCreateConfiguration(target).setSnapshotIncludeCollectionList(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": getOrCreateConfiguration(target).setSnapshotMaxThreads(property(camelContext, int.class, value)); return true;
         case "snapshotmode":
         case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "sourcestructversion":
@@ -175,8 +181,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "heartbeatIntervalMs": return int.class;
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": return java.lang.String.class;
-        case "initialsyncmaxthreads":
-        case "initialSyncMaxThreads": return int.class;
         case "internalkeyconverter":
         case "internalKeyConverter": return java.lang.String.class;
         case "internalvalueconverter":
@@ -185,6 +189,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "maxBatchSize": return int.class;
         case "maxqueuesize":
         case "maxQueueSize": return int.class;
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": return long.class;
         case "mongodbauthsource":
         case "mongodbAuthsource": return java.lang.String.class;
         case "mongodbconnecttimeoutms":
@@ -237,10 +243,16 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "sanitizeFieldNames": return boolean.class;
         case "skippedoperations":
         case "skippedOperations": return java.lang.String.class;
+        case "snapshotcollectionfilteroverrides":
+        case "snapshotCollectionFilterOverrides": return java.lang.String.class;
         case "snapshotdelayms":
         case "snapshotDelayMs": return long.class;
         case "snapshotfetchsize":
         case "snapshotFetchSize": return int.class;
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": return java.lang.String.class;
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": return int.class;
         case "snapshotmode":
         case "snapshotMode": return java.lang.String.class;
         case "sourcestructversion":
@@ -289,8 +301,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "heartbeatIntervalMs": return getOrCreateConfiguration(target).getHeartbeatIntervalMs();
         case "heartbeattopicsprefix":
         case "heartbeatTopicsPrefix": return getOrCreateConfiguration(target).getHeartbeatTopicsPrefix();
-        case "initialsyncmaxthreads":
-        case "initialSyncMaxThreads": return getOrCreateConfiguration(target).getInitialSyncMaxThreads();
         case "internalkeyconverter":
         case "internalKeyConverter": return getOrCreateConfiguration(target).getInternalKeyConverter();
         case "internalvalueconverter":
@@ -299,6 +309,8 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "maxBatchSize": return getOrCreateConfiguration(target).getMaxBatchSize();
         case "maxqueuesize":
         case "maxQueueSize": return getOrCreateConfiguration(target).getMaxQueueSize();
+        case "maxqueuesizeinbytes":
+        case "maxQueueSizeInBytes": return getOrCreateConfiguration(target).getMaxQueueSizeInBytes();
         case "mongodbauthsource":
         case "mongodbAuthsource": return getOrCreateConfiguration(target).getMongodbAuthsource();
         case "mongodbconnecttimeoutms":
@@ -351,10 +363,16 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "sanitizeFieldNames": return getOrCreateConfiguration(target).isSanitizeFieldNames();
         case "skippedoperations":
         case "skippedOperations": return getOrCreateConfiguration(target).getSkippedOperations();
+        case "snapshotcollectionfilteroverrides":
+        case "snapshotCollectionFilterOverrides": return getOrCreateConfiguration(target).getSnapshotCollectionFilterOverrides();
         case "snapshotdelayms":
         case "snapshotDelayMs": return getOrCreateConfiguration(target).getSnapshotDelayMs();
         case "snapshotfetchsize":
         case "snapshotFetchSize": return getOrCreateConfiguration(target).getSnapshotFetchSize();
+        case "snapshotincludecollectionlist":
+        case "snapshotIncludeCollectionList": return getOrCreateConfiguration(target).getSnapshotIncludeCollectionList();
+        case "snapshotmaxthreads":
+        case "snapshotMaxThreads": return getOrCreateConfiguration(target).getSnapshotMaxThreads();
         case "snapshotmode":
         case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
         case "sourcestructversion":

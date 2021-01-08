@@ -47,7 +47,7 @@ debezium-mongodb:name[?options]
 
 
 // component options: START
-The Debezium MongoDB Connector component supports 54 options, which are listed below.
+The Debezium MongoDB Connector component supports 57 options, which are listed below.
 
 
 
@@ -82,9 +82,9 @@ The Debezium MongoDB Connector component supports 54 options, which are listed b
 | *fieldRenames* (mongodb) | Description is not available here, please check Debezium website for corresponding key 'field.renames' description. |  | String
 | *heartbeatIntervalMs* (mongodb) | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0ms | int
 | *heartbeatTopicsPrefix* (mongodb) | The prefix that is used to name heartbeat topics.Defaults to __debezium-heartbeat. | __debezium-heartbeat | String
-| *initialSyncMaxThreads* (mongodb) | Maximum number of threads used to perform an initial sync of the collections in a replica set. Defaults to 1. | 1 | int
 | *maxBatchSize* (mongodb) | Maximum size of each batch of source records. Defaults to 2048. | 2048 | int
 | *maxQueueSize* (mongodb) | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | int
+| *maxQueueSizeInBytes* (mongodb) | Maximum size of the queue in bytes for change events read from the database log but not yet recorded or forwarded. Defaults to 0. Mean the feature is not enabled | 0 | long
 | *mongodbAuthsource* (mongodb) | Database containing user credentials. | admin | String
 | *mongodbConnectTimeoutMs* (mongodb) | The connection timeout in milliseconds | 10s | int
 | *mongodbHosts* (mongodb) | The hostname and port pairs (in the form 'host' or 'host:port') of the MongoDB server(s) in the replica set. |  | String
@@ -103,8 +103,11 @@ The Debezium MongoDB Connector component supports 54 options, which are listed b
 | *retriableRestartConnectorWait{zwsp}Ms* (mongodb) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
 | *sanitizeFieldNames* (mongodb) | Whether field names will be sanitized to Avro naming conventions | false | boolean
 | *skippedOperations* (mongodb) | The comma-separated list of operations to skip during streaming, defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
+| *snapshotCollectionFilter{zwsp}Overrides* (mongodb) | This property contains a comma-separated list of ., for which the initial snapshot may be a subset of data present in the data source. The subset would be defined by mongodb filter query specified as value for property snapshot.collection.filter.override.. |  | String
 | *snapshotDelayMs* (mongodb) | The number of milliseconds to delay before a snapshot will begin. | 0ms | long
 | *snapshotFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
+| *snapshotIncludeCollectionList* (mongodb) | this setting must be set to specify a list of tables/collections whose snapshot must be taken on creating or restarting the connector. |  | String
+| *snapshotMaxThreads* (mongodb) | The maximum number of threads used to perform the snapshot. Defaults to 1. | 1 | int
 | *snapshotMode* (mongodb) | The criteria for running a snapshot upon startup of the connector. Options include: 'initial' (the default) to specify the connector should always perform an initial sync when required; 'never' to specify the connector should never perform an initial sync | initial | String
 | *sourceStructVersion* (mongodb) | A version of the format of the publicly visible source part in the message | v2 | String
 | *tombstonesOnDelete* (mongodb) | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | boolean
@@ -131,7 +134,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (55 parameters):
+=== Query Parameters (58 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -166,9 +169,9 @@ with the following path and query parameters:
 | *fieldRenames* (mongodb) | Description is not available here, please check Debezium website for corresponding key 'field.renames' description. |  | String
 | *heartbeatIntervalMs* (mongodb) | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0ms | int
 | *heartbeatTopicsPrefix* (mongodb) | The prefix that is used to name heartbeat topics.Defaults to __debezium-heartbeat. | __debezium-heartbeat | String
-| *initialSyncMaxThreads* (mongodb) | Maximum number of threads used to perform an initial sync of the collections in a replica set. Defaults to 1. | 1 | int
 | *maxBatchSize* (mongodb) | Maximum size of each batch of source records. Defaults to 2048. | 2048 | int
 | *maxQueueSize* (mongodb) | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | int
+| *maxQueueSizeInBytes* (mongodb) | Maximum size of the queue in bytes for change events read from the database log but not yet recorded or forwarded. Defaults to 0. Mean the feature is not enabled | 0 | long
 | *mongodbAuthsource* (mongodb) | Database containing user credentials. | admin | String
 | *mongodbConnectTimeoutMs* (mongodb) | The connection timeout in milliseconds | 10s | int
 | *mongodbHosts* (mongodb) | The hostname and port pairs (in the form 'host' or 'host:port') of the MongoDB server(s) in the replica set. |  | String
@@ -187,8 +190,11 @@ with the following path and query parameters:
 | *retriableRestartConnectorWait{zwsp}Ms* (mongodb) | Time to wait before restarting connector after retriable exception occurs. Defaults to 10000ms. | 10s | long
 | *sanitizeFieldNames* (mongodb) | Whether field names will be sanitized to Avro naming conventions | false | boolean
 | *skippedOperations* (mongodb) | The comma-separated list of operations to skip during streaming, defined as: 'i' for inserts; 'u' for updates; 'd' for deletes. By default, no operations will be skipped. |  | String
+| *snapshotCollectionFilter{zwsp}Overrides* (mongodb) | This property contains a comma-separated list of ., for which the initial snapshot may be a subset of data present in the data source. The subset would be defined by mongodb filter query specified as value for property snapshot.collection.filter.override.. |  | String
 | *snapshotDelayMs* (mongodb) | The number of milliseconds to delay before a snapshot will begin. | 0ms | long
 | *snapshotFetchSize* (mongodb) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
+| *snapshotIncludeCollectionList* (mongodb) | this setting must be set to specify a list of tables/collections whose snapshot must be taken on creating or restarting the connector. |  | String
+| *snapshotMaxThreads* (mongodb) | The maximum number of threads used to perform the snapshot. Defaults to 1. | 1 | int
 | *snapshotMode* (mongodb) | The criteria for running a snapshot upon startup of the connector. Options include: 'initial' (the default) to specify the connector should always perform an initial sync when required; 'never' to specify the connector should never perform an initial sync | initial | String
 | *sourceStructVersion* (mongodb) | A version of the format of the publicly visible source part in the message | v2 | String
 | *tombstonesOnDelete* (mongodb) | Whether delete operations should be represented by a delete event and a subsquenttombstone event (true) or only by a delete event (false). Emitting the tombstone event (the default behavior) allows Kafka to completely delete all events pertaining to the given key once the source record got deleted. | false | boolean

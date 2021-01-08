@@ -1239,6 +1239,24 @@ public interface DebeziumMysqlComponentBuilderFactory {
             return this;
         }
         /**
+         * Whether or not to mark snapshot events as normal inserts (op 'c'). If
+         * disabled, the standard functionality of emitting these records as
+         * reads (op 'r') will be used.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: mysql
+         * 
+         * @param snapshotEventsAsInserts the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMysqlComponentBuilder snapshotEventsAsInserts(
+                boolean snapshotEventsAsInserts) {
+            doSetProperty("snapshotEventsAsInserts", snapshotEventsAsInserts);
+            return this;
+        }
+        /**
          * The maximum number of records that should be loaded into memory while
          * performing a snapshot.
          * 
@@ -1594,6 +1612,7 @@ public interface DebeziumMysqlComponentBuilderFactory {
             case "pollIntervalMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setPollIntervalMs((long) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSkippedOperations((java.lang.String) value); return true;
             case "snapshotDelayMs": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotDelayMs((long) value); return true;
+            case "snapshotEventsAsInserts": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotEventsAsInserts((boolean) value); return true;
             case "snapshotFetchSize": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotFetchSize((int) value); return true;
             case "snapshotLockingMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotLockingMode((java.lang.String) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumMySqlComponent) component).setSnapshotMode((java.lang.String) value); return true;

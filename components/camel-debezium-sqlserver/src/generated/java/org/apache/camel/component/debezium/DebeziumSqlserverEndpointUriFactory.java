@@ -20,7 +20,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(66);
+        Set<String> props = new HashSet<>(69);
         props.add("maxBatchSize");
         props.add("internalKeyConverter");
         props.add("synchronous");
@@ -56,12 +56,14 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("sourceTimestampMode");
         props.add("databasePort");
         props.add("databaseUser");
+        props.add("snapshotIncludeCollectionList");
         props.add("databaseHistoryFileFilename");
         props.add("databaseHistory");
         props.add("columnPropagateSourceType");
         props.add("offsetStorage");
         props.add("includeSchemaChanges");
         props.add("internalValueConverter");
+        props.add("snapshotMaxThreads");
         props.add("retriableRestartConnectorWaitMs");
         props.add("maxQueueSize");
         props.add("messageKeyColumns");
@@ -78,6 +80,7 @@ public class DebeziumSqlserverEndpointUriFactory extends org.apache.camel.suppor
         props.add("tableBlacklist");
         props.add("queryFetchSize");
         props.add("snapshotMode");
+        props.add("maxQueueSizeInBytes");
         props.add("snapshotLockTimeoutMs");
         props.add("tableExcludeList");
         props.add("offsetCommitPolicy");
