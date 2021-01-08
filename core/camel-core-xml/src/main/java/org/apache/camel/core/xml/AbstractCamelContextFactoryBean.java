@@ -360,7 +360,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 ServiceRegistry service = entry.getValue();
 
                 if (service.getId() == null) {
-                    service.setId(getContext().getUuidGenerator().generateUuid());
+                    service.setGeneratedId(getContext().getUuidGenerator().generateUuid());
                 }
 
                 LOG.info("Using ServiceRegistry with id: {} and implementation: {}", service.getId(), service);

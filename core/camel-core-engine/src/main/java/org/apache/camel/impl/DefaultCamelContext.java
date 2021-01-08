@@ -43,6 +43,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.Resilience4jConfigurationDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
@@ -588,6 +589,9 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     Properties prop = new Properties();
                     prop.putAll(routeDefinition.getTemplateParameters());
                     pc.setLocalProperties(prop);
+
+                    // need to reset auto assigned ids, so there is no clash when creating routes
+                    ProcessorDefinitionHelper.resetAllAutoAssignedNodeIds(routeDefinition);
                 }
 
                 // must ensure route is prepared, before we can start it

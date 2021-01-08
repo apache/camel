@@ -222,6 +222,35 @@ public final class ProcessorDefinitionHelper {
         return set;
     }
 
+    /**
+     * Resets (nulls) all the auto assigned ids on the node and the nested children (outputs)
+     */
+    public static void resetAllAutoAssignedNodeIds(ProcessorDefinition<?> node) {
+        if (node == null) {
+            return;
+        }
+
+        // skip abstract
+        if (node.isAbstract()) {
+            return;
+        }
+
+        if (node.getId() != null) {
+            if (!node.hasCustomIdAssigned()) {
+                node.setId(null);
+            }
+        }
+
+        // traverse outputs and recursive children as well
+        List<ProcessorDefinition<?>> children = node.getOutputs();
+        if (children != null && !children.isEmpty()) {
+            for (ProcessorDefinition<?> child : children) {
+                // traverse children also
+                resetAllAutoAssignedNodeIds(child);
+            }
+        }
+    }
+
     private static <T> void doFindType(List<ProcessorDefinition<?>> outputs, Class<T> type, List<T> found, int maxDeep) {
 
         // do we have any top level abstracts, then we should max deep one more

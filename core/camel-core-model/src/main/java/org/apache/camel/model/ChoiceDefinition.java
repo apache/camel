@@ -199,16 +199,16 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
     }
 
     @Override
-    public void setId(String value) {
+    public void setId(String id) {
         // when setting id, we should set it on the fine grained element, if
         // possible
         if (otherwise != null) {
-            otherwise.setId(value);
+            otherwise.setId(id);
         } else if (!getWhenClauses().isEmpty()) {
             int size = getWhenClauses().size();
-            getWhenClauses().get(size - 1).setId(value);
+            getWhenClauses().get(size - 1).setId(id);
         } else {
-            super.setId(value);
+            super.setId(id);
         }
     }
 

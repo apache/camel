@@ -379,7 +379,7 @@ public final class DefaultConfigurationConfigurer {
                 ServiceRegistry service = entry.getValue();
 
                 if (service.getId() == null) {
-                    service.setId(camelContext.getUuidGenerator().generateUuid());
+                    service.setGeneratedId(camelContext.getUuidGenerator().generateUuid());
                 }
 
                 LOG.info("Using ServiceRegistry with id: {} and implementation: {}", service.getId(), service);

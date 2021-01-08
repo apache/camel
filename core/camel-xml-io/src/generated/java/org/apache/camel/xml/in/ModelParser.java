@@ -159,11 +159,12 @@ public class ModelParser extends BaseParser {
     }
     protected <T extends OptionalIdentifiedDefinition> ElementHandler<T> optionalIdentifiedDefinitionElementHandler() {
         return (def, key) -> {
-            if ("description".equals(key)) {
-                def.setDescription(doParseDescriptionDefinition());
-                return true;
+            switch (key) {
+                case "description": def.setDescription(doParseDescriptionDefinition()); break;
+                case "generatedId": def.setGeneratedId(doParseText()); break;
+                default: return false;
             }
-            return false;
+            return true;
         };
     }
     protected DescriptionDefinition doParseDescriptionDefinition() throws IOException, XmlPullParserException {
