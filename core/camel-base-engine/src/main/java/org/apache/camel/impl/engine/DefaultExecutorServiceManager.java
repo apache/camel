@@ -56,7 +56,8 @@ public class DefaultExecutorServiceManager extends BaseExecutorServiceManager {
             NodeIdFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getNodeIdFactory();
             if (node.getId() == null) {
                 String id = factory.createId(node);
-                ((IdAware) source).setId(id);
+                // we auto generated an id to be assigned
+                ((IdAware) source).setGeneratedId(id);
             }
         }
         return source;

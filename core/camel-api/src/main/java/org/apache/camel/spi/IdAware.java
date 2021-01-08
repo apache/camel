@@ -32,4 +32,13 @@ public interface IdAware extends HasId {
      */
     void setId(String id);
 
+    /**
+     * Sets the id which has been auto generated
+     *
+     * @param id the auto generated id
+     */
+    default void setGeneratedId(String id) {
+        setId(id);
+    }
+
 }
