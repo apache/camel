@@ -213,11 +213,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
             try {
                 return contextClassLoader.loadClass(name);
             } catch (ClassNotFoundException e) {
-                try {
-                    return loader.loadClass(name);
-                } catch (ClassNotFoundException e1) {
-                    throw e1;
-                }
+                return loader.loadClass(name);
             }
         } else {
             return loader.loadClass(name);
