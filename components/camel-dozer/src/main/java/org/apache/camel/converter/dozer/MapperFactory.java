@@ -83,7 +83,7 @@ public class MapperFactory {
         ClassLoader appcl = camelContext.getApplicationContextClassLoader();
         ClassLoader auxcl = appcl == null ? DozerEndpoint.class.getClassLoader() : appcl;
 
-        if (ELExpressionFactory.isSupported(auxcl)) {
+        if (Boolean.TRUE.equals(ELExpressionFactory.isSupported(auxcl))) {
             if (RuntimeUtils.isOSGi()) {
                 answer = new TcclELEngine(ELExpressionFactory.newInstance(auxcl), auxcl);
             } else {

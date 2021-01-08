@@ -46,7 +46,7 @@ public abstract class CryptoCmsMarshallerAbstract implements Processor {
 
         OutputStreamBuilder output = OutputStreamBuilder.withExchange(exchange);
         OutputStream outStream;
-        if (config.getToBase64()) {
+        if (Boolean.TRUE.equals(config.getToBase64())) {
             outStream = new Base64OutputStream(output);
         } else {
             outStream = output;
