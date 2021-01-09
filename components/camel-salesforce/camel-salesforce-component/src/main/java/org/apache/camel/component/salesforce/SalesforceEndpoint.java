@@ -72,7 +72,14 @@ public class SalesforceEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(String.format("Invalid Operation %s", topicName));
         }
 
-        return new SalesforceProducer(this);
+        SalesforceProducer producer = new SalesforceProducer(this);
+        if (isSynchronous()) {
+            LOG.warn("Synchronous processing for the Salesforce Component is deprecated and will " +
+                    "be removed in the next LTS release.");
+            return new SynchronousDelegateProducer(producer);
+        } else {
+            return producer;
+        }
     }
 
     @Override
