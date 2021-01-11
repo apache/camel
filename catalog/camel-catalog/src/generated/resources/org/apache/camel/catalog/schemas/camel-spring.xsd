@@ -8451,6 +8451,7 @@ Will only synchronize when the org.apache.camel.Exchange ended with failure
 If enabled then the on completion process will run asynchronously by a separate
 thread from a thread pool. By default this is false, meaning the on completion
 process will run synchronously using the same caller thread as from the route.
+Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -8459,7 +8460,7 @@ process will run synchronously using the same caller thread as from the route.
             <xs:documentation xml:lang="en"><![CDATA[
 Refers to a custom Thread Pool to be used for parallel processing. Notice if you
 set this option, then parallel processing is automatic implied, and you do not
-have to enable that option as well. Default value: false
+have to enable that option as well.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
