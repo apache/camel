@@ -20,10 +20,11 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(98);
+        Set<String> props = new HashSet<>(103);
         props.add("synchronous");
         props.add("receiveBufferBytes");
         props.add("saslLoginRefreshWindowFactor");
+        props.add("socketConnectionSetupTimeoutMs");
         props.add("reconnectBackoffMaxMs");
         props.add("valueDeserializer");
         props.add("metricReporters");
@@ -49,7 +50,9 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("saslKerberosKinitCmd");
         props.add("sslKeyPassword");
         props.add("keySerializer");
+        props.add("socketConnectionSetupTimeoutMaxMs");
         props.add("allowAutoCreateTopics");
+        props.add("sslTruststoreCertificates");
         props.add("maxPartitionFetchBytes");
         props.add("saslLoginCallbackHandlerClass");
         props.add("headerFilterStrategy");
@@ -63,10 +66,12 @@ public class VertxKafkaEndpointUriFactory extends org.apache.camel.support.compo
         props.add("maxInFlightRequestsPerConnection");
         props.add("partitionId");
         props.add("seekToOffset");
+        props.add("sslKeystoreKey");
         props.add("sslEngineFactoryClass");
         props.add("sslTrustmanagerAlgorithm");
         props.add("seekToPosition");
         props.add("saslKerberosMinTimeBeforeRelogin");
+        props.add("sslKeystoreCertificateChain");
         props.add("maxPollIntervalMs");
         props.add("reconnectBackoffMs");
         props.add("groupId");

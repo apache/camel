@@ -58,7 +58,7 @@ public class VertxKafkaConfiguration
     @UriParam(label = "common", defaultValue = "2")
     private int metricsNumSamples = 2;
     // metrics.recording.level
-    @UriParam(label = "common", defaultValue = "INFO", enums = "INFO,DEBUG")
+    @UriParam(label = "common", defaultValue = "INFO", enums = "INFO,DEBUG,TRACE")
     private String metricsRecordingLevel = "INFO";
     // metric.reporters
     @UriParam(label = "common")
@@ -66,6 +66,12 @@ public class VertxKafkaConfiguration
     // request.timeout.ms
     @UriParam(label = "common", defaultValue = "30s", javaType = "java.time.Duration")
     private int requestTimeoutMs = 30000;
+    // socket.connection.setup.timeout.ms
+    @UriParam(label = "common", defaultValue = "10s", javaType = "java.time.Duration")
+    private long socketConnectionSetupTimeoutMs = 10000;
+    // socket.connection.setup.timeout.max.ms
+    @UriParam(label = "common", defaultValue = "2m7s", javaType = "java.time.Duration")
+    private long socketConnectionSetupTimeoutMaxMs = 127000;
     // connections.max.idle.ms
     @UriParam(label = "common", defaultValue = "9m", javaType = "java.time.Duration")
     private long connectionsMaxIdleMs = 540000;
@@ -102,6 +108,15 @@ public class VertxKafkaConfiguration
     // ssl.key.password
     @UriParam(label = "common,security")
     private String sslKeyPassword;
+    // ssl.keystore.key
+    @UriParam(label = "common,security")
+    private String sslKeystoreKey;
+    // ssl.keystore.certificate.chain
+    @UriParam(label = "common,security")
+    private String sslKeystoreCertificateChain;
+    // ssl.truststore.certificates
+    @UriParam(label = "common,security")
+    private String sslTruststoreCertificates;
     // ssl.truststore.type
     @UriParam(label = "common,security", defaultValue = "JKS")
     private String sslTruststoreType = "JKS";
@@ -521,6 +536,37 @@ public class VertxKafkaConfiguration
     }
 
     /**
+     * The amount of time the client will wait for the socket connection to be
+     * established. If the connection is not built before the timeout elapses,
+     * clients will close the socket channel.
+     */
+    public void setSocketConnectionSetupTimeoutMs(
+            long socketConnectionSetupTimeoutMs) {
+        this.socketConnectionSetupTimeoutMs = socketConnectionSetupTimeoutMs;
+    }
+
+    public long getSocketConnectionSetupTimeoutMs() {
+        return socketConnectionSetupTimeoutMs;
+    }
+
+    /**
+     * The maximum amount of time the client will wait for the socket connection
+     * to be established. The connection setup timeout will increase
+     * exponentially for each consecutive connection failure up to this maximum.
+     * To avoid connection storms, a randomization factor of 0.2 will be applied
+     * to the timeout resulting in a random range between 20% below and 20%
+     * above the computed value.
+     */
+    public void setSocketConnectionSetupTimeoutMaxMs(
+            long socketConnectionSetupTimeoutMaxMs) {
+        this.socketConnectionSetupTimeoutMaxMs = socketConnectionSetupTimeoutMaxMs;
+    }
+
+    public long getSocketConnectionSetupTimeoutMaxMs() {
+        return socketConnectionSetupTimeoutMaxMs;
+    }
+
+    /**
      * Close idle connections after the number of milliseconds specified by this
      * config.
      */
@@ -659,7 +705,8 @@ public class VertxKafkaConfiguration
 
     /**
      * The store password for the key store file. This is optional for client
-     * and only needed if ssl.keystore.location is configured. 
+     * and only needed if 'ssl.keystore.location' is configured.  Key store
+     * password is not supported for PEM format.
      */
     public void setSslKeystorePassword(String sslKeystorePassword) {
         this.sslKeystorePassword = sslKeystorePassword;
@@ -670,8 +717,9 @@ public class VertxKafkaConfiguration
     }
 
     /**
-     * The password of the private key in the key store file. This is optional
-     * for client.
+     * The password of the private key in the key store file orthe PEM key
+     * specified in `ssl.keystore.key'. This is required for clients only if
+     * two-way authentication is configured.
      */
     public void setSslKeyPassword(String sslKeyPassword) {
         this.sslKeyPassword = sslKeyPassword;
@@ -679,6 +727,46 @@ public class VertxKafkaConfiguration
 
     public String getSslKeyPassword() {
         return sslKeyPassword;
+    }
+
+    /**
+     * Private key in the format specified by 'ssl.keystore.type'. Default SSL
+     * engine factory supports only PEM format with PKCS#8 keys. If the key is
+     * encrypted, key password must be specified using 'ssl.key.password'
+     */
+    public void setSslKeystoreKey(String sslKeystoreKey) {
+        this.sslKeystoreKey = sslKeystoreKey;
+    }
+
+    public String getSslKeystoreKey() {
+        return sslKeystoreKey;
+    }
+
+    /**
+     * Certificate chain in the format specified by 'ssl.keystore.type'. Default
+     * SSL engine factory supports only PEM format with a list of X.509
+     * certificates
+     */
+    public void setSslKeystoreCertificateChain(
+            String sslKeystoreCertificateChain) {
+        this.sslKeystoreCertificateChain = sslKeystoreCertificateChain;
+    }
+
+    public String getSslKeystoreCertificateChain() {
+        return sslKeystoreCertificateChain;
+    }
+
+    /**
+     * Trusted certificates in the format specified by 'ssl.truststore.type'.
+     * Default SSL engine factory supports only PEM format with X.509
+     * certificates.
+     */
+    public void setSslTruststoreCertificates(String sslTruststoreCertificates) {
+        this.sslTruststoreCertificates = sslTruststoreCertificates;
+    }
+
+    public String getSslTruststoreCertificates() {
+        return sslTruststoreCertificates;
     }
 
     /**
@@ -704,8 +792,9 @@ public class VertxKafkaConfiguration
     }
 
     /**
-     * The password for the trust store file. If a password is not set access to
-     * the truststore is still available, but integrity checking is disabled.
+     * The password for the trust store file. If a password is not set, trust
+     * store file configured will still be used, but integrity checking is
+     * disabled. Trust store password is not supported for PEM format.
      */
     public void setSslTruststorePassword(String sslTruststorePassword) {
         this.sslTruststorePassword = sslTruststorePassword;
@@ -1539,11 +1628,17 @@ public class VertxKafkaConfiguration
     }
 
     /**
-     * The configuration controls how long <code>KafkaProducer.send()</code> and
-     * <code>KafkaProducer.partitionsFor()</code> will block.These methods can
-     * be blocked either because the buffer is full or metadata
-     * unavailable.Blocking in the user-supplied serializers or partitioner will
-     * not be counted against this timeout.
+     * The configuration controls how long the <code>KafkaProducer</code>'s
+     * <code>send()</code>, <code>partitionsFor()</code>,
+     * <code>initTransactions()</code>, <code>sendOffsetsToTransaction()</code>,
+     * <code>commitTransaction()</code> and <code>abortTransaction()</code>
+     * methods will block. For <code>send()</code> this timeout bounds the total
+     * time waiting for both metadata fetch and buffer allocation (blocking in
+     * the user-supplied serializers or partitioner is not counted against this
+     * timeout). For <code>partitionsFor()</code> this timeout bounds the time
+     * spent waiting for metadata if it is unavailable. The transaction-related
+     * methods always block, but may timeout if the transaction coordinator
+     * could not be discovered or did not respond within the timeout.
      */
     public void setMaxBlockMs(long maxBlockMs) {
         this.maxBlockMs = maxBlockMs;
@@ -1642,7 +1737,7 @@ public class VertxKafkaConfiguration
      * wait for a transaction status update from the producer before proactively
      * aborting the ongoing transaction.If this value is larger than the
      * transaction.max.timeout.ms setting in the broker, the request will fail
-     * with a <code>InvalidTransactionTimeout</code> error.
+     * with a <code>InvalidTxnTimeoutException</code> error.
      */
     public void setTransactionTimeoutMs(int transactionTimeoutMs) {
         this.transactionTimeoutMs = transactionTimeoutMs;
@@ -1692,6 +1787,8 @@ public class VertxKafkaConfiguration
         addPropertyIfNotNull(props, "metrics.recording.level", metricsRecordingLevel);
         addPropertyIfNotNull(props, "metric.reporters", metricReporters);
         addPropertyIfNotNull(props, "request.timeout.ms", requestTimeoutMs);
+        addPropertyIfNotNull(props, "socket.connection.setup.timeout.ms", socketConnectionSetupTimeoutMs);
+        addPropertyIfNotNull(props, "socket.connection.setup.timeout.max.ms", socketConnectionSetupTimeoutMaxMs);
         addPropertyIfNotNull(props, "connections.max.idle.ms", connectionsMaxIdleMs);
         addPropertyIfNotNull(props, "interceptor.classes", interceptorClasses);
         addPropertyIfNotNull(props, "security.providers", securityProviders);
@@ -1704,6 +1801,9 @@ public class VertxKafkaConfiguration
         addPropertyIfNotNull(props, "ssl.keystore.location", sslKeystoreLocation);
         addPropertyIfNotNull(props, "ssl.keystore.password", sslKeystorePassword);
         addPropertyIfNotNull(props, "ssl.key.password", sslKeyPassword);
+        addPropertyIfNotNull(props, "ssl.keystore.key", sslKeystoreKey);
+        addPropertyIfNotNull(props, "ssl.keystore.certificate.chain", sslKeystoreCertificateChain);
+        addPropertyIfNotNull(props, "ssl.truststore.certificates", sslTruststoreCertificates);
         addPropertyIfNotNull(props, "ssl.truststore.type", sslTruststoreType);
         addPropertyIfNotNull(props, "ssl.truststore.location", sslTruststoreLocation);
         addPropertyIfNotNull(props, "ssl.truststore.password", sslTruststorePassword);
@@ -1772,6 +1872,8 @@ public class VertxKafkaConfiguration
         addPropertyIfNotNull(props, "metrics.recording.level", metricsRecordingLevel);
         addPropertyIfNotNull(props, "metric.reporters", metricReporters);
         addPropertyIfNotNull(props, "request.timeout.ms", requestTimeoutMs);
+        addPropertyIfNotNull(props, "socket.connection.setup.timeout.ms", socketConnectionSetupTimeoutMs);
+        addPropertyIfNotNull(props, "socket.connection.setup.timeout.max.ms", socketConnectionSetupTimeoutMaxMs);
         addPropertyIfNotNull(props, "connections.max.idle.ms", connectionsMaxIdleMs);
         addPropertyIfNotNull(props, "interceptor.classes", interceptorClasses);
         addPropertyIfNotNull(props, "security.providers", securityProviders);
@@ -1784,6 +1886,9 @@ public class VertxKafkaConfiguration
         addPropertyIfNotNull(props, "ssl.keystore.location", sslKeystoreLocation);
         addPropertyIfNotNull(props, "ssl.keystore.password", sslKeystorePassword);
         addPropertyIfNotNull(props, "ssl.key.password", sslKeyPassword);
+        addPropertyIfNotNull(props, "ssl.keystore.key", sslKeystoreKey);
+        addPropertyIfNotNull(props, "ssl.keystore.certificate.chain", sslKeystoreCertificateChain);
+        addPropertyIfNotNull(props, "ssl.truststore.certificates", sslTruststoreCertificates);
         addPropertyIfNotNull(props, "ssl.truststore.type", sslTruststoreType);
         addPropertyIfNotNull(props, "ssl.truststore.location", sslTruststoreLocation);
         addPropertyIfNotNull(props, "ssl.truststore.password", sslTruststorePassword);
