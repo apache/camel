@@ -5,6 +5,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.apache.camel.component.stitch.client.models.StitchMessage;
+import org.apache.camel.component.stitch.client.models.StitchRequestBody;
+import org.apache.camel.component.stitch.client.models.StitchSchema;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

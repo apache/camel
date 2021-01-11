@@ -1,9 +1,8 @@
-package org.apache.camel.component.stitch.client;
+package org.apache.camel.component.stitch.client.models;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

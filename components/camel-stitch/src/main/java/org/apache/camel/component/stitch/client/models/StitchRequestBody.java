@@ -1,4 +1,4 @@
-package org.apache.camel.component.stitch.client;
+package org.apache.camel.component.stitch.client.models;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
