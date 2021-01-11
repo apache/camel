@@ -364,7 +364,7 @@
     <jta-api-1.2-version>1.2</jta-api-1.2-version>
     <junit-jupiter-version>5.7.0</junit-jupiter-version>
     <junit-toolbox-version>2.3</junit-toolbox-version>
-    <junit-version>4.13</junit-version>
+    <junit-version>4.13.1</junit-version>
     <jxmpp-version>0.6.4</jxmpp-version>
     <jython-standalone-version>2.5.3</jython-standalone-version>
     <jython-version>2.5.3</jython-version>
