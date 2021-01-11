@@ -74,7 +74,7 @@ public final class MnistTraining {
 
                 // initialize trainer with proper input shape
                 trainer.initialize(inputShape);
-                EasyTrain.fit(trainer, 10, trainingSet, validateSet);
+                EasyTrain.fit(trainer, 20, trainingSet, validateSet);
             }
             model.save(Paths.get(MODEL_DIR), MODEL_NAME);
         }
