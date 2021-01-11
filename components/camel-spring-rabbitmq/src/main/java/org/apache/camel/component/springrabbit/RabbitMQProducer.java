@@ -1,0 +1,182 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.springrabbit;
+
+import java.util.concurrent.RejectedExecutionException;
+
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateProducerException;
+import org.apache.camel.support.DefaultAsyncProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.connection.Connection;
+import org.springframework.amqp.rabbit.connection.RabbitUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+
+public class RabbitMQProducer extends DefaultAsyncProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RabbitMQProducer.class);
+
+    private RabbitTemplate inOnlyTemplate;
+    private RabbitTemplate inOutTemplate;
+
+    public RabbitMQProducer(Endpoint endpoint) {
+        super(endpoint);
+    }
+
+    @Override
+    public RabbitMQEndpoint getEndpoint() {
+        return (RabbitMQEndpoint) super.getEndpoint();
+    }
+
+    public RabbitTemplate getInOnlyTemplate() {
+        if (inOutTemplate == null) {
+            inOnlyTemplate = getEndpoint().createInOnlyTemplate();
+        }
+        return inOnlyTemplate;
+    }
+
+    public void setInOnlyTemplate(RabbitTemplate inOnlyTemplate) {
+        this.inOnlyTemplate = inOnlyTemplate;
+    }
+
+    public RabbitTemplate getInOutTemplate() {
+        if (inOutTemplate == null) {
+            inOutTemplate = getEndpoint().createInOutTemplate();
+        }
+        return inOutTemplate;
+    }
+
+    public void setInOutTemplate(RabbitTemplate inOutTemplate) {
+        this.inOutTemplate = inOutTemplate;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        if (getEndpoint().isTestConnectionOnStartup()) {
+            testConnectionOnStartup();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (inOnlyTemplate != null) {
+            inOnlyTemplate.stop();
+            inOnlyTemplate = null;
+        }
+        if (inOutTemplate != null) {
+            inOutTemplate.stop();
+            inOutTemplate = null;
+        }
+        super.doStop();
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        // deny processing if we are not started
+        if (!isRunAllowed()) {
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException());
+            }
+            // we cannot process so invoke callback
+            callback.done(true);
+            return true;
+        }
+
+        try {
+            // TODO: request/reply
+            /*
+            if (!getEndpoint().isDisableReplyTo() && exchange.getPattern().isOutCapable()) {
+                // in out requires a bit more work than in only
+                return processInOut(exchange, callback);
+            } else {*/
+            // in only
+            return processInOnly(exchange, callback);
+            //}
+        } catch (Throwable e) {
+            // must catch exception to ensure callback is invoked as expected
+            // to let Camel error handling deal with this
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
+    }
+
+    protected boolean processInOnly(Exchange exchange, AsyncCallback callback) {
+        // header take precedence over endpoint
+        String exchangeName = (String) exchange.getMessage().removeHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        if (exchangeName == null) {
+            exchangeName = getEndpoint().getExchangeName();
+        }
+        exchangeName = RabbitMQHelper.isDefaultExchange(exchangeName) ? "" : exchangeName;
+
+        String routingKey = (String) exchange.getMessage().removeHeader(RabbitMQConstants.ROUTING_OVERRIDE_KEY);
+        if (routingKey == null) {
+            routingKey = getEndpoint().getRoutingKey();
+        }
+
+        Object body = exchange.getMessage().getBody();
+        Message msg;
+        if (body instanceof Message) {
+            msg = (Message) body;
+        } else {
+            MessageProperties mp = getEndpoint().getMessagePropertiesConverter().toMessageProperties(exchange);
+            msg = getEndpoint().getMessageConverter().toMessage(body, mp);
+        }
+
+        try {
+            getInOnlyTemplate().send(exchangeName, routingKey, msg);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        callback.done(true);
+        return true;
+    }
+
+    /**
+     * Pre tests the connection before starting the listening.
+     * <p/>
+     * In case of connection failure the exception is thrown which prevents Camel from starting.
+     *
+     * @throws FailedToCreateProducerException is thrown if testing the connection failed
+     */
+    protected void testConnectionOnStartup() throws FailedToCreateProducerException {
+        Connection conn = null;
+        try {
+            RabbitTemplate template = getInOnlyTemplate();
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Testing RabbitMQ Connection on startup for: {}", getEndpoint().getConnectionFactory().getHost());
+            }
+            conn = template.getConnectionFactory().createConnection();
+
+            LOG.debug("Successfully tested RabbitMQ Connection on startup for: {}",
+                    getEndpoint().getConnectionFactory().getHost());
+        } catch (Exception e) {
+            throw new FailedToCreateProducerException(getEndpoint(), e);
+        } finally {
+            RabbitUtils.closeConnection(conn);
+        }
+    }
+
+}

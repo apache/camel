@@ -14370,6 +14370,55 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SpringLdapEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Spring RabbitMQ (camel-spring-rabbitmq)
+     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * 
+     * Category: messaging
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
+     * 
+     * Syntax: <code>spring-rabbitmq:exchangeName</code>
+     * 
+     * Path parameter: exchangeName (required)
+     * The exchange name determines the exchange to which the produced messages
+     * will be sent to. In the case of consumers, the exchange name determines
+     * the exchange the queue will be bound to. Note: to use default exchange
+     * then do not use empty name, but use default instead.
+     * 
+     * @param path exchangeName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder springRabbitmq(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder("spring-rabbitmq", path);
+    }
+    /**
+     * Spring RabbitMQ (camel-spring-rabbitmq)
+     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * 
+     * Category: messaging
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
+     * 
+     * Syntax: <code>spring-rabbitmq:exchangeName</code>
+     * 
+     * Path parameter: exchangeName (required)
+     * The exchange name determines the exchange to which the produced messages
+     * will be sent to. In the case of consumers, the exchange name determines
+     * the exchange the queue will be bound to. Note: to use default exchange
+     * then do not use empty name, but use default instead.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path exchangeName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder springRabbitmq(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Spring Redis (camel-spring-redis)
      * Send and receive messages from Redis.
      * 
