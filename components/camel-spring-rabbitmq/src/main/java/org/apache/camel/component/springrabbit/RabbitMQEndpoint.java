@@ -39,6 +39,7 @@ import org.springframework.amqp.core.ExchangeBuilder;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.QueueBuilder;
+import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -122,6 +123,12 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam(label = "consumer", defaultValue = "direct", enums = "direct,fanout,headers,topic",
               description = "The type of the dead letter exchange")
     private String deadLetterExchangeType = "direct";
+    @UriParam(description = "Specifies whether Camel ignores the ReplyTo header in messages. If true, Camel does not send a reply back to"
+                            + " the destination specified in the ReplyTo header. You can use this option if you want Camel to consume from a"
+                            + " route and you do not want Camel to automatically send back a reply message because another component in your code"
+                            + " handles the reply message. You can also use this option if you want to use Camel as a proxy between different"
+                            + " message brokers and you want to route message from one system to another.")
+    private boolean disableReplyTo;
 
     public RabbitMQEndpoint(String endpointUri, Component component, String exchangeName) {
         super(endpointUri, component);
@@ -265,6 +272,14 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         this.deadLetterExchangeType = deadLetterExchangeType;
     }
 
+    public boolean isDisableReplyTo() {
+        return disableReplyTo;
+    }
+
+    public void setDisableReplyTo(boolean disableReplyTo) {
+        this.disableReplyTo = disableReplyTo;
+    }
+
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         DefaultMessageListenerContainer listenerContainer = createMessageListenerContainer();
@@ -329,10 +344,10 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     /**
      * Factory method for creating a new template for InOut message exchanges
      */
-    public RabbitTemplate createInOutTemplate() {
+    public AsyncRabbitTemplate createInOutTemplate() {
         RabbitTemplate template = new RabbitTemplate(getConnectionFactory());
         template.setRoutingKey(getRoutingKey());
-        return template;
+        return new AsyncRabbitTemplate(template);
     }
 
     public DefaultMessageListenerContainer createMessageListenerContainer() throws Exception {

@@ -58,6 +58,7 @@ public class RabbitMQConsumer extends DefaultConsumer implements Suspendable {
         messageListener = new EndpointMessageListener(endpoint, processor);
         getEndpoint().configureMessageListener(messageListener);
         messageListener.setAsync(endpoint.isAsyncConsumer());
+        messageListener.setDisableReplyTo(endpoint.isDisableReplyTo());
     }
 
     /**

@@ -188,29 +188,5 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>qpid-itest</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <skipTests>${skipTests}</skipTests>
-                            <argLine>-Drabbitmq.instance.type=qpid</argLine>
-                            <excludes>
-                                <exclude>**/*IntTest</exclude>
-                            </excludes>
-                            <includes>
-                                <include>**/*QpidTest</include>
-                            </includes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 </project>

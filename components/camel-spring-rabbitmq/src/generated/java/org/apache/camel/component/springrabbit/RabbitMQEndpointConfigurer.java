@@ -40,6 +40,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "deadLetterQueue": target.setDeadLetterQueue(property(camelContext, java.lang.String.class, value)); return true;
         case "deadletterroutingkey":
         case "deadLetterRoutingKey": target.setDeadLetterRoutingKey(property(camelContext, java.lang.String.class, value)); return true;
+        case "disablereplyto":
+        case "disableReplyTo": target.setDisableReplyTo(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
@@ -85,6 +87,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "deadLetterQueue": return java.lang.String.class;
         case "deadletterroutingkey":
         case "deadLetterRoutingKey": return java.lang.String.class;
+        case "disablereplyto":
+        case "disableReplyTo": return boolean.class;
         case "exceptionhandler":
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
@@ -131,6 +135,8 @@ public class RabbitMQEndpointConfigurer extends PropertyConfigurerSupport implem
         case "deadLetterQueue": return target.getDeadLetterQueue();
         case "deadletterroutingkey":
         case "deadLetterRoutingKey": return target.getDeadLetterRoutingKey();
+        case "disablereplyto":
+        case "disableReplyTo": return target.isDisableReplyTo();
         case "exceptionhandler":
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":

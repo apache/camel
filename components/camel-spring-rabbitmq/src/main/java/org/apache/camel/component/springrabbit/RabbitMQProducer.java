@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.springrabbit;
 
+import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
@@ -27,16 +28,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.RabbitUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 
 public class RabbitMQProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQProducer.class);
 
     private RabbitTemplate inOnlyTemplate;
-    private RabbitTemplate inOutTemplate;
+    private AsyncRabbitTemplate inOutTemplate;
 
     public RabbitMQProducer(Endpoint endpoint) {
         super(endpoint);
@@ -58,14 +61,15 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         this.inOnlyTemplate = inOnlyTemplate;
     }
 
-    public RabbitTemplate getInOutTemplate() {
+    public AsyncRabbitTemplate getInOutTemplate() {
         if (inOutTemplate == null) {
             inOutTemplate = getEndpoint().createInOutTemplate();
         }
+        inOutTemplate.start();
         return inOutTemplate;
     }
 
-    public void setInOutTemplate(RabbitTemplate inOutTemplate) {
+    public void setInOutTemplate(AsyncRabbitTemplate inOutTemplate) {
         this.inOutTemplate = inOutTemplate;
     }
 
@@ -103,15 +107,13 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         }
 
         try {
-            // TODO: request/reply
-            /*
             if (!getEndpoint().isDisableReplyTo() && exchange.getPattern().isOutCapable()) {
                 // in out requires a bit more work than in only
                 return processInOut(exchange, callback);
-            } else {*/
-            // in only
-            return processInOnly(exchange, callback);
-            //}
+            } else {
+                // in only
+                return processInOnly(exchange, callback);
+            }
         } catch (Throwable e) {
             // must catch exception to ensure callback is invoked as expected
             // to let Camel error handling deal with this
@@ -119,6 +121,67 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
             callback.done(true);
             return true;
         }
+    }
+
+    protected boolean processInOut(Exchange exchange, AsyncCallback callback) {
+        // header take precedence over endpoint
+        String exchangeName = (String) exchange.getMessage().removeHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        if (exchangeName == null) {
+            exchangeName = getEndpoint().getExchangeName();
+        }
+        exchangeName = RabbitMQHelper.isDefaultExchange(exchangeName) ? "" : exchangeName;
+
+        String routingKey = (String) exchange.getMessage().removeHeader(RabbitMQConstants.ROUTING_OVERRIDE_KEY);
+        if (routingKey == null) {
+            routingKey = getEndpoint().getRoutingKey();
+        }
+
+        Object body = exchange.getMessage().getBody();
+        Message msg;
+        if (body instanceof Message) {
+            msg = (Message) body;
+        } else {
+            MessageProperties mp = getEndpoint().getMessagePropertiesConverter().toMessageProperties(exchange);
+            msg = getEndpoint().getMessageConverter().toMessage(body, mp);
+        }
+
+        try {
+            // will use RabbitMQ direct reply-to
+            AsyncRabbitTemplate.RabbitMessageFuture future = getInOutTemplate().sendAndReceive(exchangeName, routingKey, msg);
+            future.addCallback(new ListenableFutureCallback<Message>() {
+                @Override
+                public void onFailure(Throwable throwable) {
+                    exchange.setException(throwable);
+                    callback.done(false);
+                }
+
+                @Override
+                public void onSuccess(Message message) {
+                    try {
+                        Object body = getEndpoint().getMessageConverter().fromMessage(message);
+                        exchange.getMessage().setBody(body);
+                        Map<String, Object> headers
+                                = getEndpoint().getMessagePropertiesConverter()
+                                        .fromMessageProperties(message.getMessageProperties(), exchange);
+                        if (!headers.isEmpty()) {
+                            exchange.getMessage().getHeaders().putAll(headers);
+                        }
+                    } catch (Throwable e) {
+                        exchange.setException(e);
+                    } finally {
+                        callback.done(false);
+                    }
+                }
+            });
+
+            return false;
+
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        callback.done(true);
+        return true;
     }
 
     protected boolean processInOnly(Exchange exchange, AsyncCallback callback) {

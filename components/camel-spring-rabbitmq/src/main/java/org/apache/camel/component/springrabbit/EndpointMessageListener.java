@@ -11,7 +11,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Address;
 import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageProperties;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.listener.api.ChannelAwareMessageListener;
 
 import static org.apache.camel.RuntimeCamelException.wrapRuntimeCamelException;
@@ -22,6 +25,7 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
 
     private final RabbitMQEndpoint endpoint;
     private final AsyncProcessor processor;
+    private RabbitTemplate template;
     private boolean disableReplyTo;
     private boolean async;
 
@@ -44,19 +48,36 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
         this.async = async;
     }
 
+    public boolean isDisableReplyTo() {
+        return disableReplyTo;
+    }
+
+    public void setDisableReplyTo(boolean disableReplyTo) {
+        this.disableReplyTo = disableReplyTo;
+    }
+
+    public synchronized RabbitTemplate getTemplate() {
+        if (template == null) {
+            template = endpoint.createInOnlyTemplate();
+        }
+        return template;
+    }
+
+    public void setTemplate(RabbitTemplate template) {
+        this.template = template;
+    }
+
     @Override
     public void onMessage(Message message, Channel channel) throws Exception {
         LOG.trace("onMessage START");
 
         LOG.debug("{} consumer received RabbitMQ message: {}", endpoint, message);
-        boolean sendReply;
         RuntimeCamelException rce;
         try {
-            Object replyDestination = null;
+            final Address replyDestination
+                    = message.getMessageProperties() != null ? message.getMessageProperties().getReplyToAddress() : null;
+            final boolean sendReply = !isDisableReplyTo() && replyDestination != null;
             final Exchange exchange = createExchange(message, channel, replyDestination);
-
-            // TODO: request/reply
-            sendReply = false;
 
             // process the exchange either asynchronously or synchronous
             LOG.trace("onMessage.process START");
@@ -133,10 +154,10 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
         private final Exchange exchange;
         private final RabbitMQEndpoint endpoint;
         private final boolean sendReply;
-        private final Object replyDestination;
+        private final Address replyDestination;
 
         private EndpointMessageListenerAsyncCallback(Message message, Exchange exchange, RabbitMQEndpoint endpoint,
-                                                     boolean sendReply, Object replyDestination) {
+                                                     boolean sendReply, Address replyDestination) {
             this.message = message;
             this.exchange = exchange;
             this.endpoint = endpoint;
@@ -154,7 +175,6 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
 
             // if we send back a reply it can either be the message body or transferring a caused exception
             org.apache.camel.Message body = null;
-            Exception cause = null;
             RuntimeCamelException rce = null;
 
             if (exchange.isFailed() || exchange.isRollbackOnly()) {
@@ -175,19 +195,17 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
                     } else {
                         body = exchange.getIn();
                     }
-                    cause = null;
                 }
             }
 
             // send back reply if there was no error and we are supposed to send back a reply
-            if (rce == null && sendReply && (body != null || cause != null)) {
+            if (rce == null && sendReply && body != null) {
                 LOG.trace("onMessage.sendReply START");
-                // TODO: reply
-                /*if (replyDestination instanceof Destination) {
-                    sendReply((Destination) replyDestination, message, exchange, body, cause);
-                } else {
-                    sendReply((String) replyDestination, message, exchange, body, cause);
-                }*/
+                try {
+                    sendReply(replyDestination, message, exchange, body);
+                } catch (Throwable e) {
+                    rce = new RuntimeCamelException(e);
+                }
                 LOG.trace("onMessage.sendReply END");
             }
 
@@ -204,6 +222,30 @@ public class EndpointMessageListener implements ChannelAwareMessageListener {
                     }
                 }
             }
+        }
+
+        private void sendReply(Address replyDestination, Message message, Exchange exchange, org.apache.camel.Message out) {
+            if (replyDestination == null) {
+                LOG.debug("Cannot send reply message as there is no reply-to for: {}", out);
+                return;
+            }
+
+            String cid = message.getMessageProperties().getCorrelationId();
+            Object body = out.getBody();
+            Message msg;
+            if (body instanceof Message) {
+                msg = (Message) body;
+            } else {
+                MessageProperties mp = endpoint.getMessagePropertiesConverter().toMessageProperties(exchange);
+                mp.setCorrelationId(cid);
+                msg = endpoint.getMessageConverter().toMessage(body, mp);
+            }
+
+            // send reply back
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("{} sending reply message [correlationId:{}]: {}", endpoint, cid, msg);
+            }
+            getTemplate().send(replyDestination.getExchangeName(), replyDestination.getRoutingKey(), msg);
         }
     }
 
