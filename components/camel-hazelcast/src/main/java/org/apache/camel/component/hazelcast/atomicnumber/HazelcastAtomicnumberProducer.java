@@ -92,15 +92,15 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
     }
 
     private void get(Exchange exchange) {
-        exchange.getOut().setBody(this.atomicnumber.get());
+        exchange.getMessage().setBody(this.atomicnumber.get());
     }
 
     private void increment(Exchange exchange) {
-        exchange.getOut().setBody(this.atomicnumber.incrementAndGet());
+        exchange.getMessage().setBody(this.atomicnumber.incrementAndGet());
     }
 
     private void decrement(Exchange exchange) {
-        exchange.getOut().setBody(this.atomicnumber.decrementAndGet());
+        exchange.getMessage().setBody(this.atomicnumber.decrementAndGet());
     }
 
     private void compare(long expected, Exchange exchange) {
@@ -108,12 +108,12 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
         if (ObjectHelper.isEmpty(expected)) {
             throw new IllegalArgumentException("Expected value must be specified");
         }
-        exchange.getOut().setBody(this.atomicnumber.compareAndSet(expected, update));
+        exchange.getMessage().setBody(this.atomicnumber.compareAndSet(expected, update));
     }
 
     private void getAndAdd(Exchange exchange) {
         long delta = exchange.getIn().getBody(Long.class);
-        exchange.getOut().setBody(this.atomicnumber.getAndAdd(delta));
+        exchange.getMessage().setBody(this.atomicnumber.getAndAdd(delta));
     }
 
     private void set(Exchange exchange) {

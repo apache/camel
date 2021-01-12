@@ -73,23 +73,23 @@ public class HazelcastRingbufferProducer extends HazelcastDefaultProducer {
     }
 
     private void readOnceHead(Exchange exchange) throws InterruptedException {
-        exchange.getOut().setBody(this.ringbuffer.readOne(ringbuffer.headSequence()));
+        exchange.getMessage().setBody(this.ringbuffer.readOne(ringbuffer.headSequence()));
     }
 
     private void readOnceTail(Exchange exchange) throws InterruptedException {
-        exchange.getOut().setBody(this.ringbuffer.readOne(ringbuffer.tailSequence()));
+        exchange.getMessage().setBody(this.ringbuffer.readOne(ringbuffer.tailSequence()));
     }
 
-    private void getCapacity(Exchange exchange) throws InterruptedException {
-        exchange.getOut().setBody(this.ringbuffer.capacity());
+    private void getCapacity(Exchange exchange) {
+        exchange.getMessage().setBody(this.ringbuffer.capacity());
     }
 
-    private void getRemainingCapacity(Exchange exchange) throws InterruptedException {
-        exchange.getOut().setBody(this.ringbuffer.remainingCapacity());
+    private void getRemainingCapacity(Exchange exchange) {
+        exchange.getMessage().setBody(this.ringbuffer.remainingCapacity());
     }
 
     private void add(Exchange exchange) {
         final Object body = exchange.getIn().getBody();
-        exchange.getOut().setBody(ringbuffer.add(body));
+        exchange.getMessage().setBody(ringbuffer.add(body));
     }
 }

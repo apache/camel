@@ -45,7 +45,7 @@ public class HazelcastReplicatedmapConsumer extends HazelcastDefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        listener = cache.addEntryListener(new CamelEntryListener(this, cacheName), true);
+        listener = cache.addEntryListener(new CamelEntryListener(this, cacheName));
     }
 
     /**

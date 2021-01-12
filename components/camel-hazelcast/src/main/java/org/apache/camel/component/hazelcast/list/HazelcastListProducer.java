@@ -114,7 +114,7 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
     }
 
     private void get(Integer pos, Exchange exchange) {
-        exchange.getOut().setBody(this.list.get(pos));
+        exchange.getMessage().setBody(this.list.get(pos));
     }
 
     private void set(Integer pos, Exchange exchange) {

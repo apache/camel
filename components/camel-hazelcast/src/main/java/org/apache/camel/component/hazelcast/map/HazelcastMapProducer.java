@@ -128,7 +128,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
                 break;
 
             case CLEAR:
-                this.clear(exchange);
+                this.clear();
                 break;
 
             case EVICT:
@@ -159,7 +159,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
         } else {
             result = this.cache.values();
         }
-        exchange.getOut().setBody(result);
+        exchange.getMessage().setBody(result);
     }
 
     /**
@@ -193,14 +193,14 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
      * find an object by the given id and give it back
      */
     private void get(Object oid, Exchange exchange) {
-        exchange.getOut().setBody(this.cache.get(oid));
+        exchange.getMessage().setBody(this.cache.get(oid));
     }
 
     /**
      * GET All objects and give it back
      */
     private void getAll(Object oid, Exchange exchange) {
-        exchange.getOut().setBody(this.cache.getAll((Set<Object>) oid));
+        exchange.getMessage().setBody(this.cache.getAll((Set<Object>) oid));
     }
 
     /**
@@ -239,7 +239,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
     /**
      * Clear all the entries
      */
-    private void clear(Exchange exchange) {
+    private void clear() {
         this.cache.clear();
     }
 
@@ -261,7 +261,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
      * Check for a specific key in the cache and return true if it exists or false otherwise
      */
     private void containsKey(Object oid, Exchange exchange) {
-        exchange.getOut().setBody(this.cache.containsKey(oid));
+        exchange.getMessage().setBody(this.cache.containsKey(oid));
     }
 
     /**
@@ -269,13 +269,13 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
      */
     private void containsValue(Exchange exchange) {
         Object body = exchange.getIn().getBody();
-        exchange.getOut().setBody(this.cache.containsValue(body));
+        exchange.getMessage().setBody(this.cache.containsValue(body));
     }
 
     /**
      * GET keys set of objects and give it back
      */
     private void getKeys(Exchange exchange) {
-        exchange.getOut().setBody(this.cache.keySet());
+        exchange.getMessage().setBody(this.cache.keySet());
     }
 }
