@@ -151,6 +151,16 @@ The `ConnectionFactory` is auto-detected by default, so you can just do
 </camelContext>
 ----
 
+== Default Exchange Name
+
+To use default exchange name (which would be an empty exchange name in RabbitMQ) then you should use `default` as name
+in the endpoint uri, such as:
+
+[source,java]
+----
+to("spring-rabbitmq:default?routingKey=foo")
+----
+
 == Request / Reply
 
 Request and reply messaging is supported using https://www.rabbitmq.com/direct-reply-to.html[RabbitMQ direct reply-to].
