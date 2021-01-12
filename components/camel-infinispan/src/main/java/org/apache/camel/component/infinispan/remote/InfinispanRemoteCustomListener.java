@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
-import org.apache.camel.component.infinispan.InfinispanCustomListener;
-import org.infinispan.client.hotrod.annotation.ClientCacheEntryCreated;
-import org.infinispan.client.hotrod.annotation.ClientCacheEntryExpired;
-import org.infinispan.client.hotrod.annotation.ClientCacheEntryModified;
-import org.infinispan.client.hotrod.annotation.ClientCacheEntryRemoved;
-import org.infinispan.client.hotrod.annotation.ClientCacheFailover;
+import java.util.Collections;
+import java.util.Set;
+
+import org.apache.camel.component.infinispan.InfinispanEventListener;
 import org.infinispan.client.hotrod.event.ClientCacheEntryCreatedEvent;
 import org.infinispan.client.hotrod.event.ClientCacheEntryCustomEvent;
 import org.infinispan.client.hotrod.event.ClientCacheEntryModifiedEvent;
@@ -32,23 +30,27 @@ import org.infinispan.client.hotrod.event.ClientEvent;
  * This class is supposed to be extended by users and annotated with @ClientListener and passed to the consumer endpoint
  * through the 'customListener' parameter.
  */
-public abstract class InfinispanRemoteCustomListener extends InfinispanCustomListener {
-    public InfinispanRemoteCustomListener() {
-        super(null, null);
+public abstract class InfinispanRemoteCustomListener extends InfinispanEventListener<ClientEvent.Type> {
+    protected InfinispanRemoteCustomListener() {
+        super(Collections.emptySet());
     }
 
-    @ClientCacheEntryCreated
-    @ClientCacheEntryModified
-    @ClientCacheEntryRemoved
-    @ClientCacheEntryExpired
-    @ClientCacheFailover
-    public void processClientEvent(ClientEvent event) {
-        if (isAccepted(event.getType().toString())) {
-            infinispanConsumer.processEvent(event.getType().toString(), false, cacheName, getKey(event), getEventData(event));
+    protected InfinispanRemoteCustomListener(Set<ClientEvent.Type> events) {
+        super(events);
+    }
+
+    protected void processEvent(ClientEvent event) {
+        if (isAccepted(event.getType())) {
+            getEventProcessor().processEvent(
+                    event.getType().toString(),
+                    getCacheName(),
+                    getKey(event),
+                    getEventData(event),
+                    null);
         }
     }
 
-    private Object getKey(ClientEvent event) {
+    protected static Object getKey(ClientEvent event) {
         if (event instanceof ClientCacheEntryCreatedEvent) {
             return ((ClientCacheEntryCreatedEvent<?>) event).getKey();
         } else if (event instanceof ClientCacheEntryModifiedEvent) {
@@ -59,7 +61,7 @@ public abstract class InfinispanRemoteCustomListener extends InfinispanCustomLis
         return null;
     }
 
-    private Object getEventData(ClientEvent e) {
+    protected static Object getEventData(ClientEvent e) {
         if (e instanceof ClientCacheEntryCustomEvent) {
             return ((ClientCacheEntryCustomEvent<?>) e).getEventData();
         }

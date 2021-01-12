@@ -63,7 +63,22 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-query</artifactId>
+            <version>${infinispan-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
             <artifactId>infinispan-remote-query-client</artifactId>
+            <version>${infinispan-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-marshaller-protostuff</artifactId>
+            <version>${infinispan-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-jboss-marshalling</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
 
@@ -94,7 +109,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-marshaller-protostuff</artifactId>
+            <artifactId>infinispan-spring5-embedded</artifactId>
             <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
@@ -118,6 +133,16 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-log</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -151,12 +176,12 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skipTests>true</skipTests>
-                    <systemProperties>
-                        <property>
-                            <name>infinispan.test.jgroups.protocol</name>
-                            <value>tcp</value>
-                        </property>
-                    </systemProperties>
+                            <systemProperties>
+                                <property>
+                                    <name>infinispan.test.jgroups.protocol</name>
+                                    <value>tcp</value>
+                                </property>
+                            </systemProperties>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -180,12 +205,12 @@
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
                             </systemPropertyVariables>
-                    <systemProperties>
-                        <property>
-                            <name>infinispan.test.jgroups.protocol</name>
-                            <value>tcp</value>
-                        </property>
-                    </systemProperties>
+                            <systemProperties>
+                                <property>
+                                    <name>infinispan.test.jgroups.protocol</name>
+                                    <value>tcp</value>
+                                </property>
+                            </systemProperties>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -209,12 +234,12 @@
                             <systemPropertyVariables>
                                 <visibleassertions.silence>true</visibleassertions.silence>
                             </systemPropertyVariables>
-                    <systemProperties>
-                        <property>
-                            <name>infinispan.test.jgroups.protocol</name>
-                            <value>tcp</value>
-                        </property>
-                    </systemProperties>
+                            <systemProperties>
+                                <property>
+                                    <name>infinispan.test.jgroups.protocol</name>
+                                    <value>tcp</value>
+                                </property>
+                            </systemProperties>
                         </configuration>
                     </plugin>
                 </plugins>

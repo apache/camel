@@ -132,16 +132,7 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
 
     @Override
     protected void doStart() throws Exception {
-        for (final Method method : target.getClass().getDeclaredMethods()) {
-            InvokeOnHeaders annotation = method.getAnnotation(InvokeOnHeaders.class);
-            if (annotation != null) {
-                for (InvokeOnHeader processor : annotation.value()) {
-                    bind(processor, method);
-                }
-            } else {
-                bind(method.getAnnotation(InvokeOnHeader.class), method);
-            }
-        }
+        bind();
 
         handlers = Collections.unmodifiableMap(handlers);
 
@@ -169,6 +160,19 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
                 "Unsupported operation " + exchange.getIn().getHeader(headerSupplier.get()));
     }
 
+    protected void bind() {
+        for (final Method method : getTarget().getClass().getDeclaredMethods()) {
+            InvokeOnHeaders annotation = method.getAnnotation(InvokeOnHeaders.class);
+            if (annotation != null) {
+                for (InvokeOnHeader processor : annotation.value()) {
+                    bind(processor, method);
+                }
+            } else {
+                bind(method.getAnnotation(InvokeOnHeader.class), method);
+            }
+        }
+    }
+
     protected final void bind(String key, Processor processor) {
         if (handlers.containsKey(key)) {
             LOGGER.warn("A processor is already set for action {}", key);
@@ -177,7 +181,7 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
         this.handlers.put(key, processor);
     }
 
-    private void bind(InvokeOnHeader handler, final Method method) {
+    protected void bind(InvokeOnHeader handler, final Method method) {
         if (handler != null && method.getParameterCount() == 1) {
             final Class<?> type = method.getParameterTypes()[0];
 
@@ -190,5 +194,9 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
                 bind(handler.value(), e -> invokeMethodSafe(method, target, e));
             }
         }
+    }
+
+    protected final Object getTarget() {
+        return getTarget();
     }
 }

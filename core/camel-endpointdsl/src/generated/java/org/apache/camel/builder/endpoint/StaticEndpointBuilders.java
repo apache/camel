@@ -8059,9 +8059,9 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.InfinispanEndpointBuilderFactory.InfinispanEndpointBuilder infinispan(
+    public static org.apache.camel.builder.endpoint.dsl.InfinispanRemoteEndpointBuilderFactory.InfinispanRemoteEndpointBuilder infinispan(
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.InfinispanEndpointBuilderFactory.endpointBuilder("infinispan", path);
+        return org.apache.camel.builder.endpoint.dsl.InfinispanRemoteEndpointBuilderFactory.endpointBuilder("infinispan", path);
     }
     /**
      * Infinispan (camel-infinispan)
@@ -8084,10 +8084,59 @@ public class StaticEndpointBuilders {
      * @param path cacheName
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.InfinispanEndpointBuilderFactory.InfinispanEndpointBuilder infinispan(
+    public static org.apache.camel.builder.endpoint.dsl.InfinispanRemoteEndpointBuilderFactory.InfinispanRemoteEndpointBuilder infinispan(
             String componentName,
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.InfinispanEndpointBuilderFactory.endpointBuilder(componentName, path);
+        return org.apache.camel.builder.endpoint.dsl.InfinispanRemoteEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Infinispan Embedded (camel-infinispan)
+     * Read and write from/to Infinispan distributed key/value store and data
+     * grid.
+     * 
+     * Category: cache,datagrid,clustering
+     * Since: 2.13
+     * Maven coordinates: org.apache.camel:camel-infinispan
+     * 
+     * Syntax: <code>infinispan-embedded:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache to use. Use current to use the existing cache name
+     * from the currently configured cached manager. Or use default for the
+     * default cache manager name.
+     * 
+     * @param path cacheName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.InfinispanEmbeddedEndpointBuilderFactory.InfinispanEmbeddedEndpointBuilder infinispanEmbedded(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.InfinispanEmbeddedEndpointBuilderFactory.endpointBuilder("infinispan-embedded", path);
+    }
+    /**
+     * Infinispan Embedded (camel-infinispan)
+     * Read and write from/to Infinispan distributed key/value store and data
+     * grid.
+     * 
+     * Category: cache,datagrid,clustering
+     * Since: 2.13
+     * Maven coordinates: org.apache.camel:camel-infinispan
+     * 
+     * Syntax: <code>infinispan-embedded:cacheName</code>
+     * 
+     * Path parameter: cacheName (required)
+     * The name of the cache to use. Use current to use the existing cache name
+     * from the currently configured cached manager. Or use default for the
+     * default cache manager name.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path cacheName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.InfinispanEmbeddedEndpointBuilderFactory.InfinispanEmbeddedEndpointBuilder infinispanEmbedded(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.InfinispanEmbeddedEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * InfluxDB (camel-influxdb)

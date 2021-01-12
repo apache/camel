@@ -16,31 +16,41 @@
  */
 package org.apache.camel.component.infinispan;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
-public abstract class InfinispanEventListener {
-    protected InfinispanConsumer infinispanConsumer;
-    protected Set<String> eventTypes;
-    protected String cacheName;
+public abstract class InfinispanEventListener<T> {
+    private final Set<T> events;
 
-    public InfinispanEventListener(InfinispanConsumer infinispanConsumer, Set<String> eventTypes) {
-        this.infinispanConsumer = infinispanConsumer;
-        this.eventTypes = eventTypes;
+    private InfinispanEventProcessor eventProcessor;
+    private String cacheName;
+
+    public InfinispanEventListener(Set<T> events) {
+        this.events = Collections.unmodifiableSet(new HashSet<>(events));
     }
 
-    public void setInfinispanConsumer(InfinispanConsumer infinispanConsumer) {
-        this.infinispanConsumer = infinispanConsumer;
-    }
-
-    public void setEventTypes(Set<String> eventTypes) {
-        this.eventTypes = eventTypes;
+    public String getCacheName() {
+        return cacheName;
     }
 
     public void setCacheName(String cacheName) {
         this.cacheName = cacheName;
     }
 
-    protected boolean isAccepted(String eventType) {
-        return eventTypes == null || eventTypes.isEmpty() || eventTypes.contains(eventType);
+    public InfinispanEventProcessor getEventProcessor() {
+        return eventProcessor;
+    }
+
+    public void setEventProcessor(InfinispanEventProcessor eventProcessor) {
+        this.eventProcessor = eventProcessor;
+    }
+
+    public Set<T> getEvents() {
+        return events;
+    }
+
+    protected boolean isAccepted(T eventType) {
+        return events == null || events.isEmpty() || events.contains(eventType);
     }
 }

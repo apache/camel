@@ -178,6 +178,7 @@
 *** xref:ignite-queue-component.adoc[Ignite Queues]
 *** xref:ignite-set-component.adoc[Ignite Sets]
 ** xref:infinispan-component.adoc[Infinispan]
+** xref:infinispan-embedded-component.adoc[Infinispan Embedded]
 ** xref:influxdb-component.adoc[InfluxDB]
 ** xref:iota-component.adoc[IOTA]
 ** xref:ipfs-component.adoc[IPFS]

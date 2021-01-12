@@ -20,7 +20,7 @@ import javax.annotation.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
-import org.apache.camel.component.infinispan.InfinispanComponent;
+import org.apache.camel.component.infinispan.remote.InfinispanRemoteComponent;
 
 /**
  * Read and write from/to Infinispan distributed key/value store and data grid.
@@ -50,12 +50,12 @@ public interface InfinispanComponentBuilderFactory {
      */
     interface InfinispanComponentBuilder
             extends
-                ComponentBuilder<InfinispanComponent> {
+                ComponentBuilder<InfinispanRemoteComponent> {
         /**
          * Component configuration.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanConfiguration&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -63,7 +63,7 @@ public interface InfinispanComponentBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanComponentBuilder configuration(
-                org.apache.camel.component.infinispan.InfinispanConfiguration configuration) {
+                org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration configuration) {
             doSetProperty("configuration", configuration);
             return this;
         }
@@ -135,22 +135,6 @@ public interface InfinispanComponentBuilderFactory {
             return this;
         }
         /**
-         * If true, the listener will be installed for the entire cluster.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param clusteredListener the value to set
-         * @return the dsl builder
-         */
-        default InfinispanComponentBuilder clusteredListener(
-                boolean clusteredListener) {
-            doSetProperty("clusteredListener", clusteredListener);
-            return this;
-        }
-        /**
          * The operation to perform.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -170,7 +154,7 @@ public interface InfinispanComponentBuilderFactory {
          * Returns the custom listener in use, if provided.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.camel.component.infinispan.InfinispanCustomListener&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener&lt;/code&gt; type.
          * 
          * Group: consumer
          * 
@@ -178,19 +162,16 @@ public interface InfinispanComponentBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanComponentBuilder customListener(
-                org.apache.camel.component.infinispan.InfinispanCustomListener customListener) {
+                org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener customListener) {
             doSetProperty("customListener", customListener);
             return this;
         }
         /**
-         * Specifies the set of event types to register by the consumer.
-         * Multiple event can be separated by comma. The possible event types
-         * are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED,
-         * CACHE_ENTRY_VISITED, CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED,
-         * CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED,
-         * TRANSACTION_COMPLETED, TRANSACTION_REGISTERED,
-         * CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED,
-         * PARTITION_STATUS_CHANGED.
+         * Specifies the set of event types to register by the consumer.Multiple
+         * event can be separated by comma. The possible event types are:
+         * CLIENT_CACHE_ENTRY_CREATED, CLIENT_CACHE_ENTRY_MODIFIED,
+         * CLIENT_CACHE_ENTRY_REMOVED, CLIENT_CACHE_ENTRY_EXPIRED,
+         * CLIENT_CACHE_FAILOVER.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -202,21 +183,6 @@ public interface InfinispanComponentBuilderFactory {
         default InfinispanComponentBuilder eventTypes(
                 java.lang.String eventTypes) {
             doSetProperty("eventTypes", eventTypes);
-            return this;
-        }
-        /**
-         * If true, the consumer will receive notifications synchronously.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param sync the value to set
-         * @return the dsl builder
-         */
-        default InfinispanComponentBuilder sync(boolean sync) {
-            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -415,7 +381,7 @@ public interface InfinispanComponentBuilderFactory {
          * Specifies the cache Container to connect.
          * 
          * The option is a:
-         * &lt;code&gt;org.infinispan.commons.api.BasicCacheContainer&lt;/code&gt; type.
+         * &lt;code&gt;org.infinispan.client.hotrod.RemoteCacheManager&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -423,7 +389,7 @@ public interface InfinispanComponentBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanComponentBuilder cacheContainer(
-                org.infinispan.commons.api.BasicCacheContainer cacheContainer) {
+                org.infinispan.client.hotrod.RemoteCacheManager cacheContainer) {
             doSetProperty("cacheContainer", cacheContainer);
             return this;
         }
@@ -435,7 +401,8 @@ public interface InfinispanComponentBuilderFactory {
          * org.infinispan.configuration.cache.Configuration - for embedded cache
          * interaction configuration;.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a:
+         * &lt;code&gt;org.infinispan.client.hotrod.configuration.Configuration&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -443,7 +410,7 @@ public interface InfinispanComponentBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanComponentBuilder cacheContainerConfiguration(
-                java.lang.Object cacheContainerConfiguration) {
+                org.infinispan.client.hotrod.configuration.Configuration cacheContainerConfiguration) {
             doSetProperty("cacheContainerConfiguration", cacheContainerConfiguration);
             return this;
         }
@@ -518,7 +485,7 @@ public interface InfinispanComponentBuilderFactory {
          * preserved. This value can be overridden by an in message header
          * named: CamelInfinispanOperationResultHeader.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -526,7 +493,7 @@ public interface InfinispanComponentBuilderFactory {
          * @return the dsl builder
          */
         default InfinispanComponentBuilder resultHeader(
-                java.lang.Object resultHeader) {
+                java.lang.String resultHeader) {
             doSetProperty("resultHeader", resultHeader);
             return this;
         }
@@ -534,17 +501,17 @@ public interface InfinispanComponentBuilderFactory {
 
     class InfinispanComponentBuilderImpl
             extends
-                AbstractComponentBuilder<InfinispanComponent>
+                AbstractComponentBuilder<InfinispanRemoteComponent>
             implements
                 InfinispanComponentBuilder {
         @Override
-        protected InfinispanComponent buildConcreteComponent() {
-            return new InfinispanComponent();
+        protected InfinispanRemoteComponent buildConcreteComponent() {
+            return new InfinispanRemoteComponent();
         }
-        private org.apache.camel.component.infinispan.InfinispanConfiguration getOrCreateConfiguration(
-                org.apache.camel.component.infinispan.InfinispanComponent component) {
+        private org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration getOrCreateConfiguration(
+                org.apache.camel.component.infinispan.remote.InfinispanRemoteComponent component) {
             if (component.getConfiguration() == null) {
-                component.setConfiguration(new org.apache.camel.component.infinispan.InfinispanConfiguration());
+                component.setConfiguration(new org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration());
             }
             return component.getConfiguration();
         }
@@ -554,35 +521,33 @@ public interface InfinispanComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "configuration": ((InfinispanComponent) component).setConfiguration((org.apache.camel.component.infinispan.InfinispanConfiguration) value); return true;
-            case "hosts": getOrCreateConfiguration((InfinispanComponent) component).setHosts((java.lang.String) value); return true;
-            case "queryBuilder": getOrCreateConfiguration((InfinispanComponent) component).setQueryBuilder((org.apache.camel.component.infinispan.InfinispanQueryBuilder) value); return true;
-            case "secure": getOrCreateConfiguration((InfinispanComponent) component).setSecure((boolean) value); return true;
-            case "bridgeErrorHandler": ((InfinispanComponent) component).setBridgeErrorHandler((boolean) value); return true;
-            case "clusteredListener": getOrCreateConfiguration((InfinispanComponent) component).setClusteredListener((boolean) value); return true;
-            case "command": getOrCreateConfiguration((InfinispanComponent) component).setCommand((java.lang.String) value); return true;
-            case "customListener": getOrCreateConfiguration((InfinispanComponent) component).setCustomListener((org.apache.camel.component.infinispan.InfinispanCustomListener) value); return true;
-            case "eventTypes": getOrCreateConfiguration((InfinispanComponent) component).setEventTypes((java.lang.String) value); return true;
-            case "sync": getOrCreateConfiguration((InfinispanComponent) component).setSync((boolean) value); return true;
-            case "defaultValue": getOrCreateConfiguration((InfinispanComponent) component).setDefaultValue((java.lang.Object) value); return true;
-            case "key": getOrCreateConfiguration((InfinispanComponent) component).setKey((java.lang.Object) value); return true;
-            case "lazyStartProducer": ((InfinispanComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "oldValue": getOrCreateConfiguration((InfinispanComponent) component).setOldValue((java.lang.Object) value); return true;
-            case "operation": getOrCreateConfiguration((InfinispanComponent) component).setOperation((org.apache.camel.component.infinispan.InfinispanOperation) value); return true;
-            case "value": getOrCreateConfiguration((InfinispanComponent) component).setValue((java.lang.Object) value); return true;
-            case "password": getOrCreateConfiguration((InfinispanComponent) component).setPassword((java.lang.String) value); return true;
-            case "saslMechanism": getOrCreateConfiguration((InfinispanComponent) component).setSaslMechanism((java.lang.String) value); return true;
-            case "securityRealm": getOrCreateConfiguration((InfinispanComponent) component).setSecurityRealm((java.lang.String) value); return true;
-            case "securityServerName": getOrCreateConfiguration((InfinispanComponent) component).setSecurityServerName((java.lang.String) value); return true;
-            case "username": getOrCreateConfiguration((InfinispanComponent) component).setUsername((java.lang.String) value); return true;
-            case "autowiredEnabled": ((InfinispanComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "cacheContainer": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainer((org.infinispan.commons.api.BasicCacheContainer) value); return true;
-            case "cacheContainerConfiguration": getOrCreateConfiguration((InfinispanComponent) component).setCacheContainerConfiguration((java.lang.Object) value); return true;
-            case "configurationProperties": getOrCreateConfiguration((InfinispanComponent) component).setConfigurationProperties((java.util.Map) value); return true;
-            case "configurationUri": getOrCreateConfiguration((InfinispanComponent) component).setConfigurationUri((java.lang.String) value); return true;
-            case "flags": getOrCreateConfiguration((InfinispanComponent) component).setFlags((java.lang.String) value); return true;
-            case "remappingFunction": getOrCreateConfiguration((InfinispanComponent) component).setRemappingFunction((java.util.function.BiFunction) value); return true;
-            case "resultHeader": getOrCreateConfiguration((InfinispanComponent) component).setResultHeader((java.lang.Object) value); return true;
+            case "configuration": ((InfinispanRemoteComponent) component).setConfiguration((org.apache.camel.component.infinispan.remote.InfinispanRemoteConfiguration) value); return true;
+            case "hosts": getOrCreateConfiguration((InfinispanRemoteComponent) component).setHosts((java.lang.String) value); return true;
+            case "queryBuilder": getOrCreateConfiguration((InfinispanRemoteComponent) component).setQueryBuilder((org.apache.camel.component.infinispan.InfinispanQueryBuilder) value); return true;
+            case "secure": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecure((boolean) value); return true;
+            case "bridgeErrorHandler": ((InfinispanRemoteComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "command": getOrCreateConfiguration((InfinispanRemoteComponent) component).setCommand((java.lang.String) value); return true;
+            case "customListener": getOrCreateConfiguration((InfinispanRemoteComponent) component).setCustomListener((org.apache.camel.component.infinispan.remote.InfinispanRemoteCustomListener) value); return true;
+            case "eventTypes": getOrCreateConfiguration((InfinispanRemoteComponent) component).setEventTypes((java.lang.String) value); return true;
+            case "defaultValue": getOrCreateConfiguration((InfinispanRemoteComponent) component).setDefaultValue((java.lang.Object) value); return true;
+            case "key": getOrCreateConfiguration((InfinispanRemoteComponent) component).setKey((java.lang.Object) value); return true;
+            case "lazyStartProducer": ((InfinispanRemoteComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "oldValue": getOrCreateConfiguration((InfinispanRemoteComponent) component).setOldValue((java.lang.Object) value); return true;
+            case "operation": getOrCreateConfiguration((InfinispanRemoteComponent) component).setOperation((org.apache.camel.component.infinispan.InfinispanOperation) value); return true;
+            case "value": getOrCreateConfiguration((InfinispanRemoteComponent) component).setValue((java.lang.Object) value); return true;
+            case "password": getOrCreateConfiguration((InfinispanRemoteComponent) component).setPassword((java.lang.String) value); return true;
+            case "saslMechanism": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSaslMechanism((java.lang.String) value); return true;
+            case "securityRealm": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecurityRealm((java.lang.String) value); return true;
+            case "securityServerName": getOrCreateConfiguration((InfinispanRemoteComponent) component).setSecurityServerName((java.lang.String) value); return true;
+            case "username": getOrCreateConfiguration((InfinispanRemoteComponent) component).setUsername((java.lang.String) value); return true;
+            case "autowiredEnabled": ((InfinispanRemoteComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "cacheContainer": getOrCreateConfiguration((InfinispanRemoteComponent) component).setCacheContainer((org.infinispan.client.hotrod.RemoteCacheManager) value); return true;
+            case "cacheContainerConfiguration": getOrCreateConfiguration((InfinispanRemoteComponent) component).setCacheContainerConfiguration((org.infinispan.client.hotrod.configuration.Configuration) value); return true;
+            case "configurationProperties": getOrCreateConfiguration((InfinispanRemoteComponent) component).setConfigurationProperties((java.util.Map) value); return true;
+            case "configurationUri": getOrCreateConfiguration((InfinispanRemoteComponent) component).setConfigurationUri((java.lang.String) value); return true;
+            case "flags": getOrCreateConfiguration((InfinispanRemoteComponent) component).setFlags((java.lang.String) value); return true;
+            case "remappingFunction": getOrCreateConfiguration((InfinispanRemoteComponent) component).setRemappingFunction((java.util.function.BiFunction) value); return true;
+            case "resultHeader": getOrCreateConfiguration((InfinispanRemoteComponent) component).setResultHeader((java.lang.String) value); return true;
             default: return false;
             }
         }

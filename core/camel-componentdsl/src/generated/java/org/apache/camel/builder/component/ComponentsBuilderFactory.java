@@ -2415,6 +2415,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.InfinispanComponentBuilderFactory.infinispan();
     }
     /**
+     * Infinispan Embedded (camel-infinispan)
+     * Read and write from/to Infinispan distributed key/value store and data
+     * grid.
+     * 
+     * Category: cache,datagrid,clustering
+     * Since: 2.13
+     * Maven coordinates: org.apache.camel:camel-infinispan
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.InfinispanEmbeddedComponentBuilderFactory.InfinispanEmbeddedComponentBuilder infinispanEmbedded() {
+        return org.apache.camel.builder.component.dsl.InfinispanEmbeddedComponentBuilderFactory.infinispanEmbedded();
+    }
+    /**
      * InfluxDB (camel-influxdb)
      * Interact with InfluxDB, a time series database.
      * 

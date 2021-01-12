@@ -38,6 +38,11 @@ public interface InfinispanConstants {
     String IGNORE_RETURN_VALUES = "CamelInfinispanIgnoreReturnValues";
     String EVENT_DATA = "CamelInfinispanEventData";
     String QUERY_BUILDER = "CamelInfinispanQueryBuilder";
+    String ENTRY_VERSION = "CamelInfinispanEntryVersion";
+    String COMMAND_RETRIED = "CamelInfinispanCommandRetried";
+    String ENTRY_CREATED = "CamelInfinispanEntryCreated";
+    String ORIGIN_LOCAL = "CamelInfinispanOriginLocal";
+    String CURRENT_STATE = "CamelInfinispanCurrentState";
 
     String CACHE_ENTRY_JOINING = "CacheEntryJoining";
     String CACHE_ENTRY_LEAVING = "CacheEntryLeaving";
