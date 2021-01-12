@@ -16,32 +16,22 @@
  */
 package org.apache.camel.component.infinispan.embedded;
 
-import org.apache.camel.component.infinispan.InfinispanCustomListener;
-import org.infinispan.notifications.cachelistener.annotation.CacheEntryCreated;
-import org.infinispan.notifications.cachelistener.annotation.CacheEntryExpired;
-import org.infinispan.notifications.cachelistener.annotation.CacheEntryModified;
-import org.infinispan.notifications.cachelistener.annotation.CacheEntryRemoved;
-import org.infinispan.notifications.cachelistener.event.CacheEntryEvent;
+import java.util.Collections;
+import java.util.Set;
+
+import org.apache.camel.component.infinispan.InfinispanEventListener;
+import org.infinispan.notifications.cachelistener.event.Event;
 
 /**
  * This class is supposed to be extended by users and annotated with @Listener and passed to the consumer endpoint
  * through the 'customListener' parameter.
  */
-public abstract class InfinispanEmbeddedCustomListener extends InfinispanCustomListener {
-
-    public InfinispanEmbeddedCustomListener() {
-        super(null, null);
+public abstract class InfinispanEmbeddedCustomListener extends InfinispanEventListener<Event.Type> {
+    protected InfinispanEmbeddedCustomListener() {
+        super(Collections.emptySet());
     }
 
-    @CacheEntryCreated
-    @CacheEntryModified
-    @CacheEntryRemoved
-    @CacheEntryExpired
-    public void processEvent(CacheEntryEvent<Object, Object> event) {
-        if (isAccepted(event.getType().toString())) {
-            infinispanConsumer.processEvent(event.getType().toString(), event.isPre(), event.getCache().getName(),
-                    event.getKey());
-        }
+    protected InfinispanEmbeddedCustomListener(Set<Event.Type> events) {
+        super(events);
     }
-
 }

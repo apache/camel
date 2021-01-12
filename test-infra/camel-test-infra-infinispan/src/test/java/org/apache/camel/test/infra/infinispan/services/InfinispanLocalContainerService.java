@@ -16,14 +16,18 @@
  */
 package org.apache.camel.test.infra.infinispan.services;
 
+import java.util.function.Consumer;
+
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.infinispan.common.InfinispanProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.output.OutputFrame;
+import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
-public class InfinispanLocalContainerService implements InfinispanService, ContainerService<GenericContainer> {
+public class InfinispanLocalContainerService implements InfinispanService, ContainerService<GenericContainer<?>> {
     public static final String CONTAINER_IMAGE = "infinispan/server:11.0.9.Final-1";
     public static final String CONTAINER_NAME = "infinispan";
     private static final String DEFAULT_USERNAME = "admin";
@@ -31,23 +35,27 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
 
     private static final Logger LOG = LoggerFactory.getLogger(InfinispanLocalContainerService.class);
 
-    private GenericContainer container;
+    private GenericContainer<?> container;
 
     public InfinispanLocalContainerService() {
-        String containerName = System.getProperty("infinispan.container", CONTAINER_IMAGE);
+        String containerImage = System.getProperty("infinispan.container", CONTAINER_IMAGE);
 
-        initContainer(containerName);
+        initContainer(containerImage);
     }
 
-    public InfinispanLocalContainerService(String containerName) {
-        initContainer(containerName);
+    public InfinispanLocalContainerService(String containerImage) {
+        initContainer(containerImage);
     }
 
-    protected void initContainer(String containerName) {
-        container = new GenericContainer(containerName)
+    protected void initContainer(String containerImage) {
+        final Logger containerLog = LoggerFactory.getLogger("container." + CONTAINER_NAME);
+        final Consumer<OutputFrame> logConsumer = new Slf4jLogConsumer(containerLog);
+
+        container = new GenericContainer<>(containerImage)
                 .withNetworkAliases(CONTAINER_NAME)
                 .withEnv("USER", DEFAULT_USERNAME)
                 .withEnv("PASS", DEFAULT_PASSWORD)
+                .withLogConsumer(logConsumer)
                 .withExposedPorts(InfinispanProperties.DEFAULT_SERVICE_PORT)
                 .waitingFor(Wait.forListeningPort())
                 .waitingFor(Wait.forLogMessage(".*Infinispan.*Server.*started.*", 1));
@@ -58,6 +66,8 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
         System.setProperty(InfinispanProperties.SERVICE_HOST, host());
         System.setProperty(InfinispanProperties.SERVICE_PORT, String.valueOf(port()));
         System.setProperty(InfinispanProperties.SERVICE_ADDRESS, getServiceAddress());
+        System.setProperty(InfinispanProperties.SERVICE_USERNAME, DEFAULT_USERNAME);
+        System.setProperty(InfinispanProperties.SERVICE_PASSWORD, DEFAULT_PASSWORD);
     }
 
     @Override
@@ -73,6 +83,12 @@ public class InfinispanLocalContainerService implements InfinispanService, Conta
     public void shutdown() {
         LOG.info("Stopping the Infinispan container");
         container.stop();
+
+        System.clearProperty(InfinispanProperties.SERVICE_HOST);
+        System.clearProperty(InfinispanProperties.SERVICE_PORT);
+        System.clearProperty(InfinispanProperties.SERVICE_ADDRESS);
+        System.clearProperty(InfinispanProperties.SERVICE_USERNAME);
+        System.clearProperty(InfinispanProperties.SERVICE_PASSWORD);
     }
 
     @Override

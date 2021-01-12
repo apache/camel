@@ -16,211 +16,40 @@
  */
 package org.apache.camel.component.infinispan;
 
-import java.io.InputStream;
-import java.util.Properties;
-
-import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.infinispan.cache.impl.CacheImpl;
-import org.infinispan.cache.impl.DecoratedCache;
-import org.infinispan.client.hotrod.RemoteCacheManager;
-import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
+import org.apache.camel.Service;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
-import org.infinispan.commons.util.EnumUtil;
-import org.infinispan.configuration.global.GlobalConfigurationBuilder;
-import org.infinispan.manager.DefaultCacheManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.infinispan.InfinispanConstants.CACHE_MANAGER_CURRENT;
+public interface InfinispanManager<C extends BasicCacheContainer> extends BasicCacheContainer, CamelContextAware, Service {
+    <K, V> BasicCache<K, V> getCache(String cacheName);
 
-public class InfinispanManager extends ServiceSupport {
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanManager.class);
-
-    private final InfinispanConfiguration configuration;
-    private final CamelContext camelContext;
-    private BasicCacheContainer cacheContainer;
-    private boolean isManagedCacheContainer;
-
-    public InfinispanManager() {
-        this.camelContext = null;
-        this.configuration = new InfinispanConfiguration();
-        this.configuration.setCacheContainer(
-                new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build()));
+    default <K, V, CacheType extends BasicCache<K, V>> CacheType getCache(String cacheName, Class<CacheType> type) {
+        return type.cast(getCache(cacheName));
     }
 
-    public InfinispanManager(InfinispanConfiguration configuration) {
-        this(null, configuration);
-    }
-
-    public InfinispanManager(CamelContext camelContext, InfinispanConfiguration configuration) {
-        this.camelContext = camelContext;
-        this.configuration = configuration;
-    }
-
-    @Override
-    public void doStart() throws Exception {
-        cacheContainer = configuration.getCacheContainer();
-
-        if (cacheContainer == null) {
-            final Object containerConf = configuration.getCacheContainerConfiguration();
-            // Check if a container configuration object has been provided so use
-            // it and discard any other additional configuration.
-            if (containerConf != null) {
-                if (containerConf instanceof org.infinispan.client.hotrod.configuration.Configuration) {
-                    cacheContainer = new RemoteCacheManager(
-                            (org.infinispan.client.hotrod.configuration.Configuration) containerConf,
-                            true);
-                } else if (containerConf instanceof org.infinispan.configuration.cache.Configuration) {
-                    cacheContainer = new DefaultCacheManager(
-                            new GlobalConfigurationBuilder().defaultCacheName("default").build(),
-                            (org.infinispan.configuration.cache.Configuration) containerConf,
-                            true);
-                } else {
-                    throw new IllegalArgumentException(
-                            "Unsupported CacheContainer Configuration type: " + containerConf.getClass());
-                }
-            }
-
-            // If the hosts properties has been configured, it means we want to
-            // connect to a remote cache so set-up a RemoteCacheManager
-            if (cacheContainer == null && configuration.getHosts() != null) {
-                ConfigurationBuilder builder = new ConfigurationBuilder();
-                builder.addServers(configuration.getHosts());
-
-                if (camelContext != null && camelContext.getApplicationContextClassLoader() != null) {
-                    builder.classLoader(camelContext.getApplicationContextClassLoader());
-                } else {
-                    builder.classLoader(Thread.currentThread().getContextClassLoader());
-                }
-
-                if (configuration.isSecure()) {
-                    if (ObjectHelper.isNotEmpty(configuration.getUsername())
-                            && ObjectHelper.isNotEmpty(configuration.getPassword())) {
-                        builder.security().authentication().username(configuration.getUsername())
-                                .password(configuration.getPassword());
-                    } else {
-                        throw new IllegalArgumentException(
-                                "If the Infinispan instance is secured, username and password are needed");
-                    }
-                    if (ObjectHelper.isNotEmpty(configuration.getSaslMechanism())) {
-                        builder.security().authentication().saslMechanism(configuration.getSaslMechanism());
-                    }
-                    if (ObjectHelper.isNotEmpty(configuration.getSecurityRealm())) {
-                        builder.security().authentication().realm(configuration.getSecurityRealm());
-                    }
-                    if (ObjectHelper.isNotEmpty(configuration.getSecurityServerName())) {
-                        builder.security().authentication().serverName(configuration.getSecurityServerName());
-                    }
-                }
-
-                Properties properties = new Properties();
-
-                // Properties can be set either via a properties file or via
-                // properties on configuration, if you set both they are merged
-                // with properties defined on configuration overriding those from
-                // file.
-                if (ObjectHelper.isNotEmpty(configuration.getConfigurationUri())) {
-                    properties.putAll(InfinispanUtil.loadProperties(camelContext, configuration.getConfigurationUri()));
-                }
-                if (ObjectHelper.isNotEmpty(configuration.getConfigurationProperties())) {
-                    properties.putAll(configuration.getConfigurationProperties());
-                }
-                if (!properties.isEmpty()) {
-                    builder.withProperties(properties);
-                }
-
-                cacheContainer = new RemoteCacheManager(builder.build(), true);
-            }
-
-            // Finally we can set-up a DefaultCacheManager if none of the methods
-            // above was triggered. You can configure the cache using a configuration
-            // file.
-            if (cacheContainer == null) {
-                if (ObjectHelper.isNotEmpty(configuration.getConfigurationUri())) {
-                    try (InputStream is = InfinispanUtil.openInputStream(camelContext, configuration.getConfigurationUri())) {
-                        cacheContainer = new DefaultCacheManager(is, true);
-                    }
-                } else {
-                    cacheContainer = new DefaultCacheManager(
-                            new GlobalConfigurationBuilder().defaultCacheName("default").build(),
-                            new org.infinispan.configuration.cache.ConfigurationBuilder().build());
-                }
-            }
-
-            isManagedCacheContainer = true;
-        }
-    }
-
-    @Override
-    public void doStop() throws Exception {
-        if (isManagedCacheContainer) {
-            cacheContainer.stop();
-        }
-    }
-
-    public BasicCacheContainer getCacheContainer() {
-        return cacheContainer;
-    }
-
-    public boolean isCacheContainerEmbedded() {
-        return InfinispanUtil.isEmbedded(cacheContainer);
-    }
-
-    public boolean isCacheContainerRemote() {
-        return InfinispanUtil.isRemote(cacheContainer);
-    }
-
-    public <K, V> BasicCache<K, V> getCache(String cacheName) {
-        BasicCache<K, V> cache;
-        if (ObjectHelper.isEmpty(cacheName) || CACHE_MANAGER_CURRENT.equals(cacheName)) {
-            cache = cacheContainer.getCache();
-            cacheName = cache.getName();
-        } else {
-            cache = cacheContainer.getCache(cacheName);
-        }
-
-        LOGGER.trace("Cache[{}]", cacheName);
-
-        if (configuration.hasFlags() && InfinispanUtil.isEmbedded(cache)) {
-            cache = new DecoratedCache(
-                    (CacheImpl) InfinispanUtil.asAdvanced(cache), EnumUtil.bitSetOf(configuration.getFlags()));
-        }
+    default <K, V> BasicCache<K, V> getCache(Message message, String defaultCache) {
+        final String cacheName = message.getHeader(InfinispanConstants.CACHE_NAME, defaultCache, String.class);
+        final BasicCache<K, V> cache = getCache(cacheName);
 
         return cache;
     }
 
-    public <K, V> BasicCache<K, V> getCache(String cacheName, boolean forceReturnValue) {
-        if (isCacheContainerRemote()) {
-            BasicCache<K, V> cache;
-            if (ObjectHelper.isEmpty(cacheName)) {
-                cache = InfinispanUtil.asRemote(cacheContainer).getCache(forceReturnValue);
-                cacheName = cache.getName();
-            } else {
-                cache = InfinispanUtil.asRemote(cacheContainer).getCache(cacheName, forceReturnValue);
-            }
-
-            LOGGER.trace("Cache[{}]", cacheName);
-
-            return cache;
-        } else {
-            return getCache(cacheName);
-        }
+    default <K, V, CacheType extends BasicCache<K, V>> CacheType getCache(
+            Message message, String defaultCache, Class<CacheType> type) {
+        return type.cast(getCache(message, defaultCache));
     }
 
-    public <K, V> BasicCache<K, V> getCache(Exchange exchange, String defaultCache) {
-        return getCache(exchange.getIn(), defaultCache);
+    default <K, V> BasicCache<K, V> getCache(Exchange exchange, String defaultCache) {
+        return getCache(exchange.getMessage(), defaultCache);
     }
 
-    public <K, V> BasicCache<K, V> getCache(Message message, String defaultCache) {
-        BasicCache<K, V> cache = getCache(message.getHeader(InfinispanConstants.CACHE_NAME, defaultCache, String.class));
-
-        return message.getHeader(InfinispanConstants.IGNORE_RETURN_VALUES) != null
-                ? cache
-                : InfinispanUtil.ignoreReturnValuesCache(cache);
+    default <K, V, CacheType extends BasicCache<K, V>> CacheType getCache(
+            Exchange exchange, String defaultCache, Class<CacheType> type) {
+        return type.cast(getCache(exchange, defaultCache));
     }
+
+    C getCacheContainer();
 }

@@ -16,53 +16,22 @@
  */
 package org.apache.camel.component.infinispan;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.infinispan.commons.api.BasicCache;
-import org.infinispan.commons.api.BasicCacheContainer;
-import org.infinispan.commons.time.TimeService;
-import org.infinispan.configuration.cache.ConfigurationBuilder;
-import org.infinispan.configuration.global.GlobalConfigurationBuilder;
-import org.infinispan.manager.DefaultCacheManager;
-import org.infinispan.test.TestingUtil;
-import org.infinispan.util.ControlledTimeService;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.TestMethodOrder;
 
-public class InfinispanTestSupport extends CamelTestSupport {
-    protected static final String KEY_ONE = "keyOne";
-    protected static final String VALUE_ONE = "valueOne";
-    protected static final String KEY_TWO = "keyTwo";
-    protected static final String VALUE_TWO = "valueTwo";
+@TestMethodOrder(MethodOrderer.MethodName.class)
+public abstract class InfinispanTestSupport extends CamelTestSupport {
+    protected static final String TEST_CACHE = "mycache";
 
-    @BindToRegistry("cacheContainer")
-    protected BasicCacheContainer basicCacheContainer;
-    protected ControlledTimeService ts;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        basicCacheContainer = new DefaultCacheManager(
-                new GlobalConfigurationBuilder().defaultCacheName("default").build(), new ConfigurationBuilder().build());
-        basicCacheContainer.start();
-        super.setUp();
+    protected BasicCache<Object, Object> getCache() {
+        return getCache(getCacheName());
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        basicCacheContainer.stop();
-        super.tearDown();
+    protected String getCacheName() {
+        return TEST_CACHE;
     }
 
-    protected BasicCache<Object, Object> currentCache() {
-        return basicCacheContainer.getCache();
-    }
-
-    protected BasicCache<Object, Object> namedCache(String name) {
-        return basicCacheContainer.getCache(name);
-    }
-
-    protected void injectTimeService() {
-        ts = new ControlledTimeService();
-        TestingUtil.replaceComponent((DefaultCacheManager) basicCacheContainer, TimeService.class, ts, true);
-    }
+    protected abstract BasicCache<Object, Object> getCache(String name);
 }

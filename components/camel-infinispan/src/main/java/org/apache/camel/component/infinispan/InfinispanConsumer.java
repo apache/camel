@@ -16,51 +16,51 @@
  */
 package org.apache.camel.component.infinispan;
 
+import java.util.function.Consumer;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.infinispan.embedded.InfinispanConsumerEmbeddedHandler;
-import org.apache.camel.component.infinispan.remote.InfinispanConsumerRemoteHandler;
-import org.apache.camel.component.infinispan.remote.InfinispanRemoteOperation;
 import org.apache.camel.support.DefaultConsumer;
-import org.infinispan.client.hotrod.RemoteCache;
-import org.infinispan.client.hotrod.Search;
 import org.infinispan.commons.api.BasicCache;
-import org.infinispan.query.api.continuous.ContinuousQuery;
-import org.infinispan.query.api.continuous.ContinuousQueryListener;
-import org.infinispan.query.dsl.Query;
+import org.infinispan.commons.api.BasicCacheContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InfinispanConsumer extends DefaultConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(InfinispanProducer.class);
-    private final InfinispanConfiguration configuration;
-    private final InfinispanManager manager;
-    private final String cacheName;
-    private InfinispanEventListener listener;
-    private InfinispanConsumerHandler consumerHandler;
-    private BasicCache<Object, Object> cache;
-    private ContinuousQuery<Object, Object> continuousQuery;
+public abstract class InfinispanConsumer<
+        ContainerType extends BasicCacheContainer,
+        ManagerType extends InfinispanManager<ContainerType>,
+        ConfigurationType extends InfinispanConfiguration>
+        extends DefaultConsumer
+        implements InfinispanEventProcessor {
 
-    public InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, String cacheName, InfinispanManager manager,
-                              InfinispanConfiguration configuration) {
+    private static final Logger LOG = LoggerFactory.getLogger(InfinispanProducer.class);
+
+    protected final ConfigurationType configuration;
+    protected final ManagerType manager;
+    protected final String cacheName;
+
+    protected InfinispanConsumer(InfinispanEndpoint endpoint, Processor processor, String cacheName, ManagerType manager,
+                                 ConfigurationType configuration) {
         super(endpoint, processor);
         this.cacheName = cacheName;
         this.configuration = configuration;
         this.manager = manager;
     }
 
-    public void processEvent(String eventType, boolean isPre, String cacheName, Object key) {
-        processEvent(eventType, isPre, cacheName, key, null);
-    }
-
-    public void processEvent(String eventType, boolean isPre, String cacheName, Object key, Object eventData) {
+    @Override
+    public void processEvent(String eventType, String cacheName, Object key, Object eventData, Consumer<Exchange> consumer) {
         Exchange exchange = getEndpoint().createExchange();
         exchange.getMessage().setHeader(InfinispanConstants.EVENT_TYPE, eventType);
-        exchange.getMessage().setHeader(InfinispanConstants.IS_PRE, isPre);
         exchange.getMessage().setHeader(InfinispanConstants.CACHE_NAME, cacheName);
-        exchange.getMessage().setHeader(InfinispanConstants.KEY, key);
+
+        if (key != null) {
+            exchange.getMessage().setHeader(InfinispanConstants.KEY, key);
+        }
         if (eventData != null) {
             exchange.getMessage().setHeader(InfinispanConstants.EVENT_DATA, eventData);
+        }
+        if (consumer != null) {
+            consumer.accept(exchange);
         }
 
         try {
@@ -70,83 +70,15 @@ public class InfinispanConsumer extends DefaultConsumer {
         }
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        manager.start();
-
-        cache = manager.getCache(cacheName);
-        if (configuration.hasQueryBuilder()) {
-            if (InfinispanUtil.isRemote(cache)) {
-                RemoteCache<Object, Object> remoteCache = InfinispanUtil.asRemote(cache);
-                Query query = InfinispanRemoteOperation.buildQuery(configuration.getQueryBuilder(), remoteCache);
-
-                continuousQuery = Search.getContinuousQuery(remoteCache);
-                continuousQuery.addContinuousQueryListener(query, new ContinuousQueryEventListener(cache.getName()));
-            } else {
-                throw new IllegalArgumentException(
-                        "Can't run continuous queries against embedded cache (" + cache.getName() + ")");
-            }
-        } else {
-            if (manager.isCacheContainerEmbedded()) {
-                consumerHandler = InfinispanConsumerEmbeddedHandler.INSTANCE;
-            } else if (manager.isCacheContainerRemote()) {
-                consumerHandler = InfinispanConsumerRemoteHandler.INSTANCE;
-            } else {
-                throw new UnsupportedOperationException(
-                        "Unsupported CacheContainer type " + manager.getCacheContainer().getClass().getName());
-            }
-
-            listener = consumerHandler.start(this);
-        }
+    public <K, V> BasicCache<K, V> getCache() {
+        return manager.getCache(cacheName);
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        if (continuousQuery != null) {
-            continuousQuery.removeAllListeners();
-        }
-
-        if (consumerHandler != null) {
-            consumerHandler.stop(this);
-        }
-
-        manager.stop();
-        super.doStop();
+    public <K, V, C extends BasicCache<K, V>> C getCache(Class<C> type) {
+        return type.cast(getCache());
     }
 
-    public BasicCache<Object, Object> getCache() {
-        return cache;
-    }
-
-    public InfinispanEventListener getListener() {
-        return listener;
-    }
-
-    public InfinispanConfiguration getConfiguration() {
+    public ConfigurationType getConfiguration() {
         return configuration;
-    }
-
-    private class ContinuousQueryEventListener implements ContinuousQueryListener<Object, Object> {
-        private final String cacheName;
-
-        ContinuousQueryEventListener(String cacheName) {
-            this.cacheName = cacheName;
-        }
-
-        @Override
-        public void resultJoining(Object key, Object value) {
-            processEvent(InfinispanConstants.CACHE_ENTRY_JOINING, false, cacheName, key, value);
-        }
-
-        @Override
-        public void resultUpdated(Object key, Object value) {
-            processEvent(InfinispanConstants.CACHE_ENTRY_UPDATED, false, cacheName, key, value);
-        }
-
-        @Override
-        public void resultLeaving(Object key) {
-            processEvent(InfinispanConstants.CACHE_ENTRY_LEAVING, false, cacheName, key);
-        }
     }
 }

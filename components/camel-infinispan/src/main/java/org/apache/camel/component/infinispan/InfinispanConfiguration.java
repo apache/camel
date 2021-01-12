@@ -16,24 +16,11 @@
  */
 package org.apache.camel.component.infinispan;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.BiFunction;
 
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
-import org.infinispan.commons.api.BasicCacheContainer;
-import org.infinispan.context.Flag;
 
-@UriParams
-public class InfinispanConfiguration implements Cloneable {
-    @UriParam
-    private String hosts;
+public abstract class InfinispanConfiguration {
     @UriParam(label = "producer", defaultValue = "PUT")
     private InfinispanOperation operation = InfinispanOperation.PUT;
     @UriParam(label = "producer")
@@ -47,43 +34,14 @@ public class InfinispanConfiguration implements Cloneable {
     @Deprecated
     @UriParam(label = "consumer", defaultValue = "PUT")
     private String command = "PUT";
-    @UriParam(label = "consumer", defaultValue = "true")
-    private boolean sync = true;
-    @UriParam(label = "consumer", javaType = "java.lang.String")
-    private Set<String> eventTypes;
-    @UriParam(label = "consumer")
-    private InfinispanCustomListener customListener;
-    @UriParam(label = "consumer", defaultValue = "false")
-    private boolean clusteredListener;
-    @UriParam
-    private InfinispanQueryBuilder queryBuilder;
-    @UriParam(label = "advanced", javaType = "java.lang.String")
-    private Flag[] flags;
     @UriParam(label = "advanced")
     private String configurationUri;
     @UriParam(label = "advanced")
-    private Map<String, String> configurationProperties;
-    @Metadata(autowired = true)
-    @UriParam(label = "advanced")
-    private BasicCacheContainer cacheContainer;
-    @UriParam(label = "advanced")
-    private Object cacheContainerConfiguration;
-    @UriParam(label = "advanced")
-    private Object resultHeader;
+    private String resultHeader;
     @UriParam(label = "advanced")
     private BiFunction remappingFunction;
-    @UriParam(label = "common", defaultValue = "false")
-    private boolean secure;
-    @UriParam(label = "common, security")
-    private String username;
-    @UriParam(label = "common, security", secret = true)
-    private String password;
-    @UriParam(label = "common, security")
-    private String saslMechanism;
-    @UriParam(label = "common, security")
-    private String securityRealm;
-    @UriParam(label = "common, security")
-    private String securityServerName;
+    @UriParam
+    private InfinispanQueryBuilder queryBuilder;
 
     public String getCommand() {
         return operation.toString();
@@ -119,133 +77,6 @@ public class InfinispanConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the host of the cache on Infinispan instance
-     */
-    public String getHosts() {
-        return hosts;
-    }
-
-    public void setHosts(String hosts) {
-        this.hosts = hosts;
-    }
-
-    /**
-     * Specifies the cache Container to connect
-     */
-    public BasicCacheContainer getCacheContainer() {
-        return cacheContainer;
-    }
-
-    public void setCacheContainer(BasicCacheContainer cacheContainer) {
-        this.cacheContainer = cacheContainer;
-    }
-
-    /**
-     * If true, the consumer will receive notifications synchronously
-     */
-    public boolean isSync() {
-        return sync;
-    }
-
-    public void setSync(boolean sync) {
-        this.sync = sync;
-    }
-
-    /**
-     * If true, the listener will be installed for the entire cluster
-     */
-    public boolean isClusteredListener() {
-        return clusteredListener;
-    }
-
-    public void setClusteredListener(boolean clusteredListener) {
-        this.clusteredListener = clusteredListener;
-    }
-
-    public Set<String> getEventTypes() {
-        return eventTypes;
-    }
-
-    /**
-     * Specifies the set of event types to register by the consumer. Multiple event can be separated by comma.
-     * <p/>
-     * The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED,
-     * CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED,
-     * TRANSACTION_COMPLETED, TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED,
-     * PARTITION_STATUS_CHANGED
-     */
-    public void setEventTypes(Set<String> eventTypes) {
-        this.eventTypes = eventTypes;
-    }
-
-    /**
-     * Specifies the set of event types to register by the consumer. Multiple event can be separated by comma.
-     * <p/>
-     * The possible event types are: CACHE_ENTRY_ACTIVATED, CACHE_ENTRY_PASSIVATED, CACHE_ENTRY_VISITED,
-     * CACHE_ENTRY_LOADED, CACHE_ENTRY_EVICTED, CACHE_ENTRY_CREATED, CACHE_ENTRY_REMOVED, CACHE_ENTRY_MODIFIED,
-     * TRANSACTION_COMPLETED, TRANSACTION_REGISTERED, CACHE_ENTRY_INVALIDATED, DATA_REHASHED, TOPOLOGY_CHANGED,
-     * PARTITION_STATUS_CHANGED
-     */
-    public void setEventTypes(String eventTypes) {
-        this.eventTypes = new HashSet<>(Arrays.asList(eventTypes.split(",")));
-    }
-
-    /**
-     * Returns the custom listener in use, if provided
-     */
-    public InfinispanCustomListener getCustomListener() {
-        return customListener;
-    }
-
-    public void setCustomListener(InfinispanCustomListener customListener) {
-        this.customListener = customListener;
-    }
-
-    public boolean hasCustomListener() {
-        return customListener != null;
-    }
-
-    public InfinispanQueryBuilder getQueryBuilder() {
-        return queryBuilder;
-    }
-
-    /**
-     * Specifies the query builder.
-     */
-    public void setQueryBuilder(InfinispanQueryBuilder queryBuilder) {
-        this.queryBuilder = queryBuilder;
-    }
-
-    public boolean hasQueryBuilder() {
-        return queryBuilder != null;
-    }
-
-    public Flag[] getFlags() {
-        return flags;
-    }
-
-    /**
-     * A comma separated list of Flag to be applied by default on each cache invocation, not applicable to remote
-     * caches.
-     */
-    public void setFlags(String flagsAsString) {
-        String[] flagsArray = flagsAsString.split(",");
-        this.flags = new Flag[flagsArray.length];
-
-        for (int i = 0; i < flagsArray.length; i++) {
-            this.flags[i] = Flag.valueOf(flagsArray[i]);
-        }
-    }
-
-    public void setFlags(Flag... flags) {
-        this.flags = flags;
-    }
-
-    public boolean hasFlags() {
-        return flags != null && flags.length > 0;
-    }
-
-    /**
      * An implementation specific URI for the CacheManager
      */
     public String getConfigurationUri() {
@@ -256,50 +87,7 @@ public class InfinispanConfiguration implements Cloneable {
         this.configurationUri = configurationUri;
     }
 
-    public Map<String, String> getConfigurationProperties() {
-        return configurationProperties;
-    }
-
-    /**
-     * Implementation specific properties for the CacheManager
-     */
-    public void setConfigurationProperties(Map<String, String> configurationProperties) {
-        this.configurationProperties = configurationProperties;
-    }
-
-    /**
-     * Adds an implementation specific property for the CacheManager
-     */
-    public void addConfigurationProperty(String key, String value) {
-        if (this.configurationProperties == null) {
-            this.configurationProperties = new HashMap<>();
-        }
-
-        this.configurationProperties.put(key, value);
-    }
-
-    public Object getCacheContainerConfiguration() {
-        return cacheContainerConfiguration;
-    }
-
-    /**
-     * The CacheContainer configuration. Uses if the cacheContainer is not defined. Must be the following types:
-     * org.infinispan.client.hotrod.configuration.Configuration - for remote cache interaction configuration;
-     * org.infinispan.configuration.cache.Configuration - for embedded cache interaction configuration;
-     */
-    public void setCacheContainerConfiguration(Object cacheContainerConfiguration) {
-        this.cacheContainerConfiguration = cacheContainerConfiguration;
-    }
-
-    public InfinispanConfiguration copy() {
-        try {
-            return (InfinispanConfiguration) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeCamelException(e);
-        }
-    }
-
-    public Object getResultHeader() {
+    public String getResultHeader() {
         return resultHeader;
     }
 
@@ -310,7 +98,7 @@ public class InfinispanConfiguration implements Cloneable {
      * message body is preserved. This value can be overridden by an in message header named:
      * CamelInfinispanOperationResultHeader
      */
-    public void setResultHeader(Object resultHeader) {
+    public void setResultHeader(String resultHeader) {
         this.resultHeader = resultHeader;
     }
 
@@ -369,70 +157,19 @@ public class InfinispanConfiguration implements Cloneable {
         this.defaultValue = defaultValue;
     }
 
-    public boolean isSecure() {
-        return secure;
+    public InfinispanQueryBuilder getQueryBuilder() {
+        return queryBuilder;
     }
 
     /**
-     * Define if we are connecting to a secured Infinispan instance
+     * Specifies the query builder.
      */
-    public void setSecure(boolean secure) {
-        this.secure = secure;
+    public void setQueryBuilder(InfinispanQueryBuilder queryBuilder) {
+        this.queryBuilder = queryBuilder;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    /**
-     * Define the username to access the infinispan instance
-     */
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    /**
-     * Define the password to access the infinispan instance
-     */
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getSaslMechanism() {
-        return saslMechanism;
-    }
-
-    /**
-     * Define the SASL Mechanism to access the infinispan instance
-     */
-    public void setSaslMechanism(String saslMechanism) {
-        this.saslMechanism = saslMechanism;
-    }
-
-    public String getSecurityRealm() {
-        return securityRealm;
-    }
-
-    /**
-     * Define the security realm to access the infinispan instance
-     */
-    public void setSecurityRealm(String securityRealm) {
-        this.securityRealm = securityRealm;
-    }
-
-    public String getSecurityServerName() {
-        return securityServerName;
-    }
-
-    /**
-     * Define the security server name to access the infinispan instance
-     */
-    public void setSecurityServerName(String securityServerName) {
-        this.securityServerName = securityServerName;
+    public boolean hasQueryBuilder() {
+        return queryBuilder != null;
     }
 
 }

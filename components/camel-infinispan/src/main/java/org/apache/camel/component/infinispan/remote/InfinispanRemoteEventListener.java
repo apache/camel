@@ -18,7 +18,7 @@ package org.apache.camel.component.infinispan.remote;
 
 import java.util.Set;
 
-import org.apache.camel.component.infinispan.InfinispanConsumer;
+import org.apache.camel.component.infinispan.InfinispanConstants;
 import org.apache.camel.component.infinispan.InfinispanEventListener;
 import org.infinispan.client.hotrod.annotation.ClientCacheEntryCreated;
 import org.infinispan.client.hotrod.annotation.ClientCacheEntryExpired;
@@ -31,50 +31,54 @@ import org.infinispan.client.hotrod.event.ClientCacheEntryExpiredEvent;
 import org.infinispan.client.hotrod.event.ClientCacheEntryModifiedEvent;
 import org.infinispan.client.hotrod.event.ClientCacheEntryRemovedEvent;
 import org.infinispan.client.hotrod.event.ClientCacheFailoverEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.infinispan.client.hotrod.event.ClientEvent;
 
 @ClientListener
-public class InfinispanRemoteEventListener extends InfinispanEventListener {
-    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    public InfinispanRemoteEventListener(InfinispanConsumer infinispanConsumer, Set<String> eventTypes) {
-        super(infinispanConsumer, eventTypes);
+public class InfinispanRemoteEventListener extends InfinispanEventListener<ClientEvent.Type> {
+    public InfinispanRemoteEventListener(Set<ClientEvent.Type> events) {
+        super(events);
     }
 
     @ClientCacheEntryCreated
     public void processEvent(ClientCacheEntryCreatedEvent<Object> event) {
-        logger.trace("Received ClientEvent [{}]", event);
-        dispatch(event.getType().toString(), false, cacheName, event.getKey());
+        if (isAccepted(event.getType())) {
+            getEventProcessor().processEvent(event.getType().toString(), getCacheName(), event.getKey(), null, e -> {
+                e.getMessage().setHeader(InfinispanConstants.ENTRY_VERSION, event.getVersion());
+                e.getMessage().setHeader(InfinispanConstants.COMMAND_RETRIED, event.isCommandRetried());
+            });
+        }
     }
 
     @ClientCacheEntryModified
     public void processEvent(ClientCacheEntryModifiedEvent<Object> event) {
-        logger.trace("Received ClientEvent [{}]", event);
-        dispatch(event.getType().toString(), false, cacheName, event.getKey());
+        if (isAccepted(event.getType())) {
+            getEventProcessor().processEvent(event.getType().toString(), getCacheName(), event.getKey(), null, e -> {
+                e.getMessage().setHeader(InfinispanConstants.ENTRY_VERSION, event.getVersion());
+                e.getMessage().setHeader(InfinispanConstants.COMMAND_RETRIED, event.isCommandRetried());
+            });
+        }
     }
 
     @ClientCacheEntryRemoved
     public void processEvent(ClientCacheEntryRemovedEvent<Object> event) {
-        logger.trace("Received ClientEvent [{}]", event);
-        dispatch(event.getType().toString(), false, cacheName, event.getKey());
+        if (isAccepted(event.getType())) {
+            getEventProcessor().processEvent(event.getType().toString(), getCacheName(), event.getKey(), null, e -> {
+                e.getMessage().setHeader(InfinispanConstants.COMMAND_RETRIED, event.isCommandRetried());
+            });
+        }
     }
 
     @ClientCacheFailover
     public void processEvent(ClientCacheFailoverEvent event) {
-        logger.trace("Received ClientEvent [{}]", event);
-        dispatch(event.getType().toString(), false, cacheName, null);
+        if (isAccepted(event.getType())) {
+            getEventProcessor().processEvent(event.getType().toString(), getCacheName(), null, null, null);
+        }
     }
 
     @ClientCacheEntryExpired
     public void processEvent(ClientCacheEntryExpiredEvent<Object> event) {
-        logger.trace("Received ClientEvent [{}]", event);
-        dispatch(event.getType().toString(), false, cacheName, event.getKey());
-    }
-
-    private void dispatch(String eventType, boolean isPre, String cacheName, Object key) {
-        if (isAccepted(eventType)) {
-            infinispanConsumer.processEvent(eventType, isPre, cacheName, key, null);
+        if (isAccepted(event.getType())) {
+            getEventProcessor().processEvent(event.getType().toString(), getCacheName(), event.getKey(), null, null);
         }
     }
 }
