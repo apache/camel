@@ -18,12 +18,11 @@ package org.apache.camel.component.kubernetes.services;
 
 import java.util.concurrent.ExecutorService;
 
-import io.fabric8.kubernetes.api.model.DoneableService;
 import io.fabric8.kubernetes.api.model.Service;
 import io.fabric8.kubernetes.api.model.ServiceList;
-import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.WatcherException;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.ServiceResource;
 import org.apache.camel.Exchange;
@@ -90,8 +89,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            MixedOperation<Service, ServiceList, DoneableService, ServiceResource<Service, DoneableService>> w
-                    = getEndpoint().getKubernetesClient().services();
+            MixedOperation<Service, ServiceList, ServiceResource<Service>> w = getEndpoint().getKubernetesClient().services();
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
                 w.inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace());
             }
@@ -121,7 +119,7 @@ public class KubernetesServicesConsumer extends DefaultConsumer {
                 }
 
                 @Override
-                public void onClose(KubernetesClientException cause) {
+                public void onClose(WatcherException cause) {
                     if (cause != null) {
                         LOG.error(cause.getMessage(), cause);
                     }

@@ -18,12 +18,10 @@ package org.apache.camel.component.kubernetes.replication_controllers;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.DoneableReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
 import io.fabric8.kubernetes.api.model.ReplicationControllerList;
 import io.fabric8.kubernetes.api.model.ReplicationControllerSpec;
-import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
@@ -111,7 +109,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
 
-            NonNamespaceOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, RollableScalableResource<ReplicationController, DoneableReplicationController>> replicationControllers
+            NonNamespaceOperation<ReplicationController, ReplicationControllerList, RollableScalableResource<ReplicationController>> replicationControllers
                     = getEndpoint()
                             .getKubernetesClient().replicationControllers().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
@@ -119,7 +117,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             }
             rcList = replicationControllers.list();
         } else {
-            FilterWatchListMultiDeletable<ReplicationController, ReplicationControllerList, Boolean, Watch> replicationControllers
+            FilterWatchListMultiDeletable<ReplicationController, ReplicationControllerList> replicationControllers
                     = getEndpoint()
                             .getKubernetesClient().replicationControllers().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {

@@ -22,7 +22,6 @@ import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodBuilder;
 import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.PodSpec;
-import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
@@ -103,8 +102,7 @@ public class KubernetesPodsProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get pods by labels require specify a labels set");
         }
 
-        FilterWatchListMultiDeletable<Pod, PodList, Boolean, Watch> pods
-                = getEndpoint().getKubernetesClient().pods().inAnyNamespace();
+        FilterWatchListMultiDeletable<Pod, PodList> pods = getEndpoint().getKubernetesClient().pods().inAnyNamespace();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             pods.withLabel(entry.getKey(), entry.getValue());
         }

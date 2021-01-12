@@ -18,13 +18,11 @@ package org.apache.camel.component.openshift.builds;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.LogWatch;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.openshift.api.model.Build;
 import io.fabric8.openshift.api.model.BuildList;
-import io.fabric8.openshift.api.model.DoneableBuild;
 import io.fabric8.openshift.client.OpenShiftClient;
 import io.fabric8.openshift.client.dsl.BuildResource;
 import org.apache.camel.Exchange;
@@ -89,15 +87,14 @@ public class OpenshiftBuildsProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_BUILDS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<Build, BuildList, DoneableBuild, BuildResource<Build, DoneableBuild, String, LogWatch>> builds
-                    = getEndpoint().getKubernetesClient()
-                            .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName);
+            NonNamespaceOperation<Build, BuildList, BuildResource<Build, LogWatch>> builds = getEndpoint().getKubernetesClient()
+                    .adapt(OpenShiftClient.class).builds().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 builds.withLabel(entry.getKey(), entry.getValue());
             }
             buildList = builds.list();
         } else {
-            FilterWatchListMultiDeletable<Build, BuildList, Boolean, Watch> builds
+            FilterWatchListMultiDeletable<Build, BuildList> builds
                     = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
                             .inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {

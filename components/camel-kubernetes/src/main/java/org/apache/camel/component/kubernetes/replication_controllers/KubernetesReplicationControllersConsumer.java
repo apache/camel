@@ -18,12 +18,11 @@ package org.apache.camel.component.kubernetes.replication_controllers;
 
 import java.util.concurrent.ExecutorService;
 
-import io.fabric8.kubernetes.api.model.DoneableReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerList;
-import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
+import io.fabric8.kubernetes.client.WatcherException;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
 import org.apache.camel.Exchange;
@@ -90,7 +89,7 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
 
         @Override
         public void run() {
-            MixedOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, RollableScalableResource<ReplicationController, DoneableReplicationController>> w
+            MixedOperation<ReplicationController, ReplicationControllerList, RollableScalableResource<ReplicationController>> w
                     = getEndpoint()
                             .getKubernetesClient().replicationControllers();
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
@@ -122,7 +121,7 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
                 }
 
                 @Override
-                public void onClose(KubernetesClientException cause) {
+                public void onClose(WatcherException cause) {
                     if (cause != null) {
                         LOG.error(cause.getMessage(), cause);
                     }

@@ -18,7 +18,6 @@ package org.apache.camel.component.kubernetes.job;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.batch.DoneableJob;
 import io.fabric8.kubernetes.api.model.batch.Job;
 import io.fabric8.kubernetes.api.model.batch.JobBuilder;
 import io.fabric8.kubernetes.api.model.batch.JobList;
@@ -99,8 +98,7 @@ public class KubernetesJobProducer extends DefaultProducer {
             throw new IllegalArgumentException("Get Job by labels require specify a labels set");
         }
 
-        MixedOperation<Job, JobList, DoneableJob, ScalableResource<Job, DoneableJob>> jobs
-                = getEndpoint().getKubernetesClient().batch().jobs();
+        MixedOperation<Job, JobList, ScalableResource<Job>> jobs = getEndpoint().getKubernetesClient().batch().jobs();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             jobs.withLabel(entry.getKey(), entry.getValue());
         }

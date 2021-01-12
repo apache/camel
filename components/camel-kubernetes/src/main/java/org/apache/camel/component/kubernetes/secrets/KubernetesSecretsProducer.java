@@ -18,10 +18,8 @@ package org.apache.camel.component.kubernetes.secrets;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.DoneableSecret;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretList;
-import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -96,14 +94,14 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<Secret, SecretList, DoneableSecret, Resource<Secret, DoneableSecret>> secrets;
-            secrets = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName);
+            NonNamespaceOperation<Secret, SecretList, Resource<Secret>> secrets
+                    = getEndpoint().getKubernetesClient().secrets().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 secrets.withLabel(entry.getKey(), entry.getValue());
             }
             secretsList = secrets.list();
         } else {
-            FilterWatchListMultiDeletable<Secret, SecretList, Boolean, Watch> secrets
+            FilterWatchListMultiDeletable<Secret, SecretList> secrets
                     = getEndpoint().getKubernetesClient().secrets().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 secrets.withLabel(entry.getKey(), entry.getValue());

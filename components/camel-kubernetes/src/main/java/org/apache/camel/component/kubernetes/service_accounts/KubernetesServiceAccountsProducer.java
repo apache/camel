@@ -18,10 +18,8 @@ package org.apache.camel.component.kubernetes.service_accounts;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.api.model.DoneableServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccount;
 import io.fabric8.kubernetes.api.model.ServiceAccountList;
-import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.dsl.FilterWatchListMultiDeletable;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.Resource;
@@ -97,14 +95,14 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
                 = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_SERVICE_ACCOUNTS_LABELS, Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            NonNamespaceOperation<ServiceAccount, ServiceAccountList, DoneableServiceAccount, Resource<ServiceAccount, DoneableServiceAccount>> serviceAccounts;
-            serviceAccounts = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName);
+            NonNamespaceOperation<ServiceAccount, ServiceAccountList, Resource<ServiceAccount>> serviceAccounts
+                    = getEndpoint().getKubernetesClient().serviceAccounts().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 serviceAccounts.withLabel(entry.getKey(), entry.getValue());
             }
             saList = serviceAccounts.list();
         } else {
-            FilterWatchListMultiDeletable<ServiceAccount, ServiceAccountList, Boolean, Watch> serviceAccounts
+            FilterWatchListMultiDeletable<ServiceAccount, ServiceAccountList> serviceAccounts
                     = getEndpoint().getKubernetesClient().serviceAccounts().inAnyNamespace();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 serviceAccounts.withLabel(entry.getKey(), entry.getValue());
