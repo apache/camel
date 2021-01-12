@@ -4214,6 +4214,19 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SpringLdapComponentBuilderFactory.springLdap();
     }
     /**
+     * Spring RabbitMQ (camel-spring-rabbitmq)
+     * Send and receive messages from RabbitMQ using Spring RabbitMQ client.
+     * 
+     * Category: messaging
+     * Since: 3.8
+     * Maven coordinates: org.apache.camel:camel-spring-rabbitmq
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.SpringRabbitmqComponentBuilderFactory.SpringRabbitmqComponentBuilder springRabbitmq() {
+        return org.apache.camel.builder.component.dsl.SpringRabbitmqComponentBuilderFactory.springRabbitmq();
+    }
+    /**
      * Spring Redis (camel-spring-redis)
      * Send and receive messages from Redis.
      * 

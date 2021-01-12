@@ -182,7 +182,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private String consumerTag = "";
     @UriParam(label = "advanced")
     private ExceptionHandler connectionFactoryExceptionHandler;
-    @UriParam(label = "allowMessageBodySerialization", defaultValue = "false")
+    @UriParam(label = "advanced", defaultValue = "false")
     private boolean allowMessageBodySerialization;
     @UriParam(label = "consumer")
     private boolean reQueue;
