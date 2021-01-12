@@ -418,7 +418,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
             Map<String, Object> args = getExchangeArgs();
             boolean durable = parseArgsBoolean(args, "durable", "true");
             boolean autoDelete = parseArgsBoolean(args, "autoDelete", "false");
-            if ((!durable || autoDelete)) {
+            if (!durable || autoDelete) {
                 LOG.info("Auto-declaring a non-durable or auto-delete Exchange ("
                          + exchangeName
                          + ") durable:" + durable + ", auto-delete:" + autoDelete + ". "
@@ -445,7 +445,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                     autoDelete = parseArgsBoolean(args, "autoDelete", "false");
                     boolean exclusive = parseArgsBoolean(args, "exclusive", "false");
 
-                    if ((!durable || autoDelete || exclusive)) {
+                    if (!durable || autoDelete || exclusive) {
                         LOG.info("Auto-declaring a non-durable, auto-delete, or exclusive Queue ("
                                  + queue
                                  + ") durable:" + durable + ", auto-delete:" + autoDelete + ", exclusive:"

@@ -75,7 +75,8 @@ public class RabbitMQComponent extends HeaderFilterStrategyComponent {
               description = "Tell the broker how many messages to send to each consumer in a single request. Often this can be set quite high to improve throughput.")
     private int prefetchCount = DEFAULT_PREFETCH_COUNT;
     @Metadata(label = "consumer,advanced", javaType = "java.time.Duration", defaultValue = "" + DEFAULT_SHUTDOWN_TIMEOUT,
-              description = "The time to wait for workers in milliseconds after the container is stopped. If any workers are active when the shutdown signal comes they will be allowed to finish processing as long as they can finish within this timeout.")
+              description = "The time to wait for workers in milliseconds after the container is stopped. If any workers are active when the shutdown signal comes"
+                            + " they will be allowed to finish processing as long as they can finish within this timeout.")
     private long shutdownTimeout = DEFAULT_SHUTDOWN_TIMEOUT;
     @Metadata(label = "consumer,advanced",
               description = "To use a custom factory for creating and configuring ListenerContainer to be used by the consumer for receiving messages")
