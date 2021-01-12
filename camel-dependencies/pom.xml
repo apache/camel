@@ -519,7 +519,7 @@
     <sourcecheckExcludesComma></sourcecheckExcludesComma>
     <spark-version>2.4.6</spark-version>
     <splunk-version>1.6.5.0_1</splunk-version>
-    <spring-batch-version>4.3.0</spring-batch-version>
+    <spring-batch-version>4.3.1</spring-batch-version>
     <spring-data-redis-version>2.3.0.RELEASE</spring-data-redis-version>
     <spring-integration-version>5.4.1</spring-integration-version>
     <spring-ldap-version>2.3.3.RELEASE</spring-ldap-version>
