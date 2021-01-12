@@ -71,14 +71,19 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                             + " In the case of consumers, the exchange name determines the exchange the queue will be bound to."
                             + " Note: to use default exchange then do not use empty name, but use default instead.")
     private String exchangeName;
-    @UriParam(description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
-    private ConnectionFactory connectionFactory;
     @UriParam(label = "consumer", defaultValue = "direct", enums = "direct,fanout,headers,topic",
               description = "The type of the exchange")
     private String exchangeType = "direct";
+    @UriParam(label = "common",
+              description = "The value of a routing key to use. Default is empty which is not helpful when using the default (or any direct) exchange, but fine if the exchange is a headers exchange for instance.")
+    private String routingKey = "";
+    @UriParam(label = "common",
+              description = "The connection factory to be use. A connection factory must be configured either on the component or endpoint.")
+    private ConnectionFactory connectionFactory;
     @UriParam
     @Metadata(label = "consumer",
-              description = "The queue(s) to use for consuming messages. Multiple queue names can be separated by comma.")
+              description = "The queue(s) to use for consuming messages. Multiple queue names can be separated by comma."
+                            + " If none has been configured then Camel will generate an unique id as the queue name for the consumer.")
     private String queues;
     @UriParam(label = "consumer", defaultValue = "true",
               description = "Specifies whether the consumer container should auto-startup.")
@@ -93,8 +98,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
                             + " This means that messages may be processed not 100% strictly in order. If disabled (as default)"
                             + " then the Exchange is fully processed before the consumer will pickup the next message from the queue.")
     private boolean asyncConsumer;
-    @UriParam(label = "common", description = "Routing key.")
-    private String routingKey;
     @UriParam(description = "Specifies whether to test the connection on startup."
                             + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
                             + " If a connection cannot be granted then Camel throws an exception on startup."
@@ -133,7 +136,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam(label = "consumer", defaultValue = "direct", enums = "direct,fanout,headers,topic",
               description = "The type of the dead letter exchange")
     private String deadLetterExchangeType = "direct";
-    @UriParam(description = "Specifies whether Camel ignores the ReplyTo header in messages. If true, Camel does not send a reply back to"
+    @UriParam(label = "common",
+              description = "Specifies whether Camel ignores the ReplyTo header in messages. If true, Camel does not send a reply back to"
                             + " the destination specified in the ReplyTo header. You can use this option if you want Camel to consume from a"
                             + " route and you do not want Camel to automatically send back a reply message because another component in your code"
                             + " handles the reply message. You can also use this option if you want to use Camel as a proxy between different"
@@ -428,6 +432,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         }
     }
 
+    // TODO: auto-declare for producer only
+
     public void declareElements(AbstractMessageListenerContainer container) {
         AmqpAdmin admin = null;
         if (container instanceof DefaultMessageListenerContainer) {
@@ -479,40 +485,60 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
             final org.springframework.amqp.core.Exchange rabbitExchange = eb.build();
             admin.declareExchange(rabbitExchange);
 
-            if (queues != null) {
-                for (String queue : queues.split(",")) {
-                    args = getQueueArgs();
-                    prepareDeadLetterQueueArgs(args);
-                    durable = parseArgsBoolean(args, "durable", "false");
-                    autoDelete = parseArgsBoolean(args, "autoDelete", "false");
-                    boolean exclusive = parseArgsBoolean(args, "exclusive", "false");
+            // if the consumer has no specific queue names then auto-create an unique queue (auto deleted)
+            String queuesToDeclare = queues;
+            String autoDeleteDefault = "false";
+            boolean generateUniqueQueue = false;
+            if (queuesToDeclare == null) {
+                // no explicit queue names so use a single blank so we can create a single new unique queue for the consumer
+                queuesToDeclare = " ";
+                generateUniqueQueue = true;
+            }
 
-                    if (!durable || autoDelete || exclusive) {
-                        LOG.info("Auto-declaring a non-durable, auto-delete, or exclusive Queue ("
-                                 + queue
-                                 + ") durable:" + durable + ", auto-delete:" + autoDelete + ", exclusive:"
-                                 + exclusive + ". "
-                                 + "It will be redeclared if the broker stops and is restarted while the connection factory is "
-                                 + "alive, but all messages will be lost.");
-                    }
+            for (String queue : queuesToDeclare.split(",")) {
+                queue = queue.trim();
+                args = getQueueArgs();
+                prepareDeadLetterQueueArgs(args);
+                durable = parseArgsBoolean(args, "durable", "false");
+                autoDelete = parseArgsBoolean(args, "autoDelete", autoDeleteDefault);
+                boolean exclusive = parseArgsBoolean(args, "exclusive", "false");
 
-                    QueueBuilder qb = durable ? QueueBuilder.durable(queue) : QueueBuilder.nonDurable(queue);
-                    if (autoDelete) {
-                        qb.autoDelete();
-                    }
-                    if (exclusive) {
-                        qb.exclusive();
-                    }
-                    qb.withArguments(args);
-                    final Queue rabbitQueue = qb.build();
-                    admin.declareQueue(rabbitQueue);
-
-                    // bind queue to exchange
-                    Binding binding = new Binding(
-                            rabbitQueue.getName(), Binding.DestinationType.QUEUE, rabbitExchange.getName(), routingKey,
-                            getBindingArgs());
-                    admin.declareBinding(binding);
+                QueueBuilder qb;
+                if (queue.isEmpty()) {
+                    qb = durable ? QueueBuilder.durable() : QueueBuilder.nonDurable();
+                } else {
+                    qb = durable ? QueueBuilder.durable(queue) : QueueBuilder.nonDurable(queue);
                 }
+                if (autoDelete) {
+                    qb.autoDelete();
+                }
+                if (exclusive) {
+                    qb.exclusive();
+                }
+                qb.withArguments(args);
+                final Queue rabbitQueue = qb.build();
+
+                if (!durable || autoDelete || exclusive) {
+                    LOG.info("Auto-declaring a non-durable, auto-delete, or exclusive Queue ("
+                             + rabbitQueue.getName()
+                             + ") durable:" + durable + ", auto-delete:" + autoDelete + ", exclusive:"
+                             + exclusive + ". "
+                             + "It will be redeclared if the broker stops and is restarted while the connection factory is "
+                             + "alive, but all messages will be lost.");
+                }
+
+                String qn = admin.declareQueue(rabbitQueue);
+
+                // if we auto created a new unique queue then the container needs to know the queue name
+                if (generateUniqueQueue) {
+                    container.setQueueNames(qn);
+                }
+
+                // bind queue to exchange
+                Binding binding = new Binding(
+                        qn, Binding.DestinationType.QUEUE, rabbitExchange.getName(), routingKey,
+                        getBindingArgs());
+                admin.declareBinding(binding);
             }
         }
     }
