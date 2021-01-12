@@ -13765,53 +13765,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.Sjms2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Simple JMS Batch (camel-sjms)
-     * Highly performant and transactional batch consumption of messages from a
-     * JMS queue.
-     * 
-     * Category: messaging
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-sjms
-     * 
-     * Syntax: <code>sjms-batch:destinationName</code>
-     * 
-     * Path parameter: destinationName (required)
-     * The destination name. Only queues are supported, names may be prefixed by
-     * 'queue:'.
-     * 
-     * @param path destinationName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.SjmsBatchEndpointBuilder sjmsBatch(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.endpointBuilder("sjms-batch", path);
-    }
-    /**
-     * Simple JMS Batch (camel-sjms)
-     * Highly performant and transactional batch consumption of messages from a
-     * JMS queue.
-     * 
-     * Category: messaging
-     * Since: 2.16
-     * Maven coordinates: org.apache.camel:camel-sjms
-     * 
-     * Syntax: <code>sjms-batch:destinationName</code>
-     * 
-     * Path parameter: destinationName (required)
-     * The destination name. Only queues are supported, names may be prefixed by
-     * 'queue:'.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path destinationName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.SjmsBatchEndpointBuilder sjmsBatch(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SjmsBatchEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Slack (camel-slack)
      * Send and receive messages to/from Slack.
      * 
